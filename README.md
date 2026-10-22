@@ -97,48 +97,64 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 
 ```text
 .
-├─ packages/
-│  ├─ core/                    # 公共工具函数与 Vue composables
+├─ packages/                   # 32 个 workspace 包：2 个基础包 + 30 个组件包
+│  ├─ core/                    # 公共工具函数、composables 与 DOM 基础设施
 │  ├─ tokens/                  # 设计令牌与主题
-│  ├─ scrollbar/               # 每个组件一个独立 workspace 包
+│  ├─ scrollbar/               # 基础能力组件
 │  ├─ copy/
 │  ├─ highlight/
+│  ├─ time/
 │  ├─ lazy-container/
 │  ├─ resize-container/
 │  ├─ error-boundary/
-│  ├─ time/
-│  ├─ img-comparison-slider/
-│  ├─ cropper/
-│  ├─ motion-group/
-│  ├─ gradient-text/
-│  ├─ number-ticker/
-│  ├─ sliding-highlight/
-│  ├─ command-menu/
-│  ├─ code-editor/
-│  ├─ dock/
-│  ├─ icon/
-│  ├─ icon-picker/
 │  ├─ ellipsis/
 │  ├─ permission/
 │  ├─ count-down/
 │  ├─ loading/
 │  ├─ view/
+│  ├─ icon/
+│  ├─ exception/
+│  ├─ gradient-text/           # 视觉表达组件
+│  ├─ number-ticker/
+│  ├─ sliding-highlight/
+│  ├─ img-comparison-slider/
 │  ├─ ripple/
+│  ├─ command-menu/            # 交互增强组件
+│  ├─ cropper/
+│  ├─ motion-group/
+│  ├─ slider-captcha/
+│  ├─ code-editor/
+│  ├─ dock/
+│  ├─ icon-picker/
+│  ├─ gantt/                   # 数据展示组件
+│  ├─ file-viewer/
 │  ├─ org-tree/
-│  ├─ json-viewer/
-│  ├─ gantt/
-│  └─ file-viewer/
+│  └─ json-viewer/
 ├─ playground/                 # 编写与调试 Vue Demo
+│  ├─ src/demos/               # 每个组件的 Demo
+│  ├─ src/docs/component-meta.ts # 组件元数据（首页/侧边栏共用）
+│  └─ src/docs/catalog.ts      # 元数据 + Demo 组件映射
 ├─ docs/                       # VitePress 文档站
-│  ├─ .vitepress/              # 站点配置与主题
+│  ├─ .vitepress/              # 站点配置、主题与 HomeCatalog
 │  ├─ components/              # 每个组件一个 Markdown 页面
+│  ├─ demos/                   # 文档站 Demo
 │  ├─ guide/                   # 快速开始与主题说明
-│  └─ public/                  # 文档静态资源
+│  └─ public/                  # 文档静态资源（含 samples）
 ├─ scripts/
 │  ├─ vite.library.ts          # 统一的组件库构建配置
 │  ├─ workspace-source.ts      # playground / docs 共用的源码别名插件
 │  ├─ build-tokens.mjs         # Less → CSS 令牌构建
-│  └─ generate-file-viewer-samples.mjs # 生成 playground 二进制样例
+│  ├─ generate-file-viewer-samples.mjs # 生成 playground/docs 二进制样例
+│  ├─ visual-check.mjs         # 浏览器截图与控制台/溢出检查
+│  ├─ a11y-check.mjs           # axe-core 无障碍扫描
+│  └─ memory-check.mjs         # 路由切换堆趋势检查
+├─ tests/                      # 跨包测试（SSR、attrs、setup）
+├─ types/                      # 全局 .d.ts
+├─ vite.config.ts              # Vitest / Oxlint / Oxfmt 统一配置
+├─ .husky/                     # pre-commit
+├─ .gitattributes              # LF 行尾规范
+├─ pnpm-workspace.yaml
+├─ tsconfig.json
 └─ package.json
 ```
 

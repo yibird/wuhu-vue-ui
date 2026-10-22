@@ -1,6 +1,6 @@
 # AGENTS.md
 
-本文件面向在此仓库工作的 AI 编码代理与新协作者。请先阅读本文件，再按需加载 `.claude/skills/` 中的专项技能。
+本文件面向在此仓库工作的 AI 编码代理与新协作者。请先阅读本文件，再按需加载 `.agents/skills/` 中的专项技能。
 
 ## 项目概览
 
@@ -50,38 +50,68 @@ pnpm install
 
 ```text
 .
-├─ packages/
-│  ├─ core/                 # 公共工具函数与 Vue composables
+├─ packages/                # 32 个 workspace 包：2 个基础包 + 30 个组件包
+│  ├─ core/                 # 公共工具、组合式函数与 DOM 基础设施
 │  ├─ tokens/               # --w-* 设计令牌与亮/暗主题
-│  ├─ scrollbar/            # 各组件独立 workspace 包
+│  ├─ scrollbar/            # 基础能力组件
 │  ├─ copy/
 │  ├─ highlight/
+│  ├─ time/
 │  ├─ lazy-container/
 │  ├─ resize-container/
 │  ├─ error-boundary/
-│  ├─ time/
-│  ├─ img-comparison-slider/
-│  ├─ cropper/
-│  ├─ motion-group/
-│  ├─ gradient-text/
+│  ├─ ellipsis/
+│  ├─ permission/
+│  ├─ count-down/
+│  ├─ loading/
+│  ├─ view/
+│  ├─ icon/
+│  ├─ exception/
+│  ├─ gradient-text/        # 视觉表达组件
 │  ├─ number-ticker/
 │  ├─ sliding-highlight/
-│  ├─ command-menu/
-│  ├─ gantt/
-│  └─ file-viewer/
-├─ playground/              # 本地调试与 Demo（docs 直接复用）
-│  ├─ src/demos/            # 每个组件的 Demo
-│  └─ src/docs/catalog.ts   # Demo 目录 / playground 侧边栏数据
+│  ├─ img-comparison-slider/
+│  ├─ ripple/
+│  ├─ command-menu/         # 交互增强组件
+│  ├─ cropper/
+│  ├─ motion-group/
+│  ├─ slider-captcha/
+│  ├─ code-editor/
+│  ├─ dock/
+│  ├─ icon-picker/
+│  ├─ gantt/                # 数据展示组件
+│  ├─ file-viewer/
+│  ├─ org-tree/
+│  └─ json-viewer/
+├─ playground/              # 本地调试与 Demo（docs 部分复用）
+│  ├─ src/demos/            # 每个组件的 playground Demo
+│  ├─ src/docs/component-meta.ts  # 组件元数据（首页/侧边栏/playground 共用）
+│  ├─ src/docs/catalog.ts   # 元数据 + Demo 组件映射
+│  └─ src/home/             # playground 首页
 ├─ docs/                    # VitePress 文档站
-│  ├─ .vitepress/           # 站点配置与主题
+│  ├─ .vitepress/           # 站点配置、主题与 HomeCatalog
 │  ├─ components/           # 组件文档
-│  └─ guide/                # 快速开始与主题说明
+│  ├─ demos/                # 文档站 Demo
+│  ├─ guide/                # 快速开始与主题说明
+│  └─ public/               # 文档静态资源（含 samples）
 ├─ scripts/
 │  ├─ vite.library.ts       # 统一组件库构建配置
 │  ├─ workspace-source.ts   # playground / docs 源码别名插件
-│  └─ build-tokens.mjs      # Less → CSS 令牌构建
+│  ├─ build-tokens.mjs      # Less → CSS 令牌构建
+│  ├─ generate-file-viewer-samples.mjs # 生成 playground/docs 二进制样例
+│  ├─ visual-check.mjs      # 浏览器截图 + console/溢出/破图检查
+│  ├─ a11y-check.mjs        # axe-core WCAG A/AA 扫描
+│  └─ memory-check.mjs      # 路由切换后的 JS 堆趋势检查
+├─ tests/                   # 跨包测试（SSR、attrs、setup）
 ├─ types/                   # 全局 .d.ts
-└─ .claude/skills/          # 项目级 AI 技能
+├─ vite.config.ts           # Vitest / Oxlint / Oxfmt 统一配置
+├─ .husky/                  # pre-commit
+├─ .gitattributes           # LF 行尾规范
+├─ pnpm-workspace.yaml
+├─ tsconfig.json
+├─ AGENTS.md
+├─ CHANGELOG.md
+└─ .agents/skills/          # 项目级 AI 技能
 ```
 
 ## 组件包约定
@@ -119,12 +149,12 @@ packages/<name>/
 2. 实现组件、类型、样式与 `index.ts` 导出。
 3. 添加 `src/__tests__/<Name>.spec.ts`。
 4. `playground/package.json` 增加 `"@wuhu-ui/<name>": "workspace:*"`。
-5. 新建 `playground/src/demos/<name>-demo.vue`，并在 `playground/src/docs/catalog.ts` 注册。
+5. 新建 `playground/src/demos/<name>-demo.vue`，在 `playground/src/docs/component-meta.ts` 登记元数据，并在 `playground/src/docs/catalog.ts` 映射 Demo 组件。
 6. 新建 `docs/components/<name>.md`，使用 `<demo vue="../../playground/src/demos/<name>-demo.vue" />`，并在 `docs/.vitepress/config.ts` 侧边栏登记。
 7. 更新根 `README.md` 组件表格。
 8. `pnpm install` 后运行 `pnpm check && pnpm build && pnpm docs:build`。
 
-详细步骤见 `.claude/skills/wuhu-component/SKILL.md`。
+详细步骤见 `.agents/skills/wuhu-component/SKILL.md`。
 
 ## 测试约定
 

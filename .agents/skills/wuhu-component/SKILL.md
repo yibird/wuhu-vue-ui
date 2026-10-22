@@ -113,7 +113,7 @@ describe('WuFoo', () => {
 
 1. 在 `playground/package.json` 的 `dependencies` 增加 `"@wuhu-ui/<name>": "workspace:*"`。
 2. 新建 `playground/src/demos/<name>-demo.vue`，使用 `<script setup lang="ts">` + `DemoCard`。
-3. 在 `playground/src/docs/catalog.ts` 的 `componentDocs` 注册条目：`slug`、`name`、`title`、`summary`、`packageName`、`category`（`foundation` / `visual` / `interaction` / `data`）、`tags`、`demo`，并在文件顶部导入 Demo 组件。
+3. 在 `playground/src/docs/component-meta.ts` 的 `componentMetas` 注册元数据：`slug`、`name`、`title`、`summary`、`packageName`、`category`（`foundation` / `visual` / `interaction` / `data`）、`tags`；在 `playground/src/docs/catalog.ts` 的 `demos` 映射中导入并绑定 Demo 组件。
 4. 执行 `pnpm install` 使 workspace 链接生效。
 
 ## 7. 接入文档站
