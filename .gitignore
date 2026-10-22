@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+.DS_Store
+*.local
+*.log
+.vite/
+**/.vitepress/cache/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+playground/dist/
+.screenshots/
+
+.agent-tests/

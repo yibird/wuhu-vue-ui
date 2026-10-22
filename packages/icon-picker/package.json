@@ -1,0 +1,50 @@
+{
+  "name": "@wuhu-ui/icon-picker",
+  "version": "0.1.0",
+  "description": "Grouped, searchable and virtualized icon picker for Vue 3.",
+  "keywords": [
+    "component",
+    "icon",
+    "icon-picker",
+    "ui",
+    "virtual",
+    "vue",
+    "vue3"
+  ],
+  "license": "MIT",
+  "style": "./dist/style.css",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.node.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "@tanstack/vue-virtual": "^3.13.47",
+    "@wuhu-ui/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

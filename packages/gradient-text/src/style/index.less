@@ -1,0 +1,42 @@
+.w-gradient-text {
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: 0% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+
+  &.is-animated {
+    animation-name: w-gradient-text-flow;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: background-position;
+  }
+}
+
+@keyframes w-gradient-text-flow {
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-gradient-text.is-animated {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .w-gradient-text {
+    background-image: none !important;
+    color: CanvasText;
+    -webkit-text-fill-color: currentColor;
+  }
+}

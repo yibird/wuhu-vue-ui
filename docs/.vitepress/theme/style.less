@@ -1,0 +1,128 @@
+body {
+  margin: 0;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  font-family: var(--vp-font-family-base);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+}
+
+/* VitePress scopes its max-width rule with a data-v attribute. */
+.VPDoc .content-container[class] {
+  max-width: 1024px;
+}
+
+.VPDoc .content[class] {
+  max-width: 100%;
+}
+
+.VPDoc .demo-grid {
+  margin: 18px 0;
+}
+
+/* Home catalog */
+.home-catalog {
+  margin: 8px 0 40px;
+}
+
+.home-catalog__group {
+  margin-top: 28px;
+
+  h3 {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0 0 14px;
+    color: var(--vp-c-text-2);
+    font-size: 13px;
+  }
+}
+
+.home-catalog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-catalog__card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--w-radius-lg, 12px);
+  background: var(--vp-c-bg-soft);
+  transition:
+    border-color var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
+    background-color var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
+    transform var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
+    box-shadow var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
+
+  &:hover {
+    border-color: var(--vp-c-brand-1);
+    background: var(--vp-c-brand-soft);
+    box-shadow: var(--w-shadow-md);
+    transform: translateY(-2px);
+  }
+
+  strong {
+    color: var(--vp-c-text-1);
+    font-size: 14px;
+    font-weight: 650;
+  }
+
+  span {
+    color: var(--vp-c-text-3);
+    font-size: 11px;
+  }
+
+  p {
+    margin: 0;
+    color: var(--vp-c-text-2);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+}
+
+.home-start {
+  margin-top: 36px;
+  padding: 22px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--w-radius-panel, 16px);
+  background: var(--vp-c-bg-soft);
+}
+
+.home-start h2 {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .home-catalog__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .home-catalog__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-catalog__card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

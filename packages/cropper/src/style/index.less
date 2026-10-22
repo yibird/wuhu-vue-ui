@@ -1,0 +1,41 @@
+.w-cropper {
+  position: relative;
+  width: 100%;
+  height: var(--w-cropper-height, 360px);
+  overflow: hidden;
+  border-radius: var(--w-cropper-radius, var(--w-radius-lg, 12px));
+  background: var(--w-color-surface-subtle, #f1f5f9);
+  isolation: isolate;
+  user-select: none;
+
+  &:focus-visible {
+    outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+    outline-offset: calc(-1 * var(--w-focus-ring-width, 2px));
+  }
+
+  &__source {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  > cropper-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &.is-disabled > cropper-canvas {
+    cursor: not-allowed;
+    opacity: 0.72;
+    transition: opacity var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-cropper.is-disabled > cropper-canvas {
+    transition: none;
+  }
+}

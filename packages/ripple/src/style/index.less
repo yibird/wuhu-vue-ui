@@ -1,0 +1,42 @@
+.w-ripple {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &__wave {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    background: var(--w-ripple-color, currentColor);
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0);
+    animation: w-ripple-spread var(--w-ripple-duration, 600ms) ease-out forwards;
+    will-change: transform, opacity;
+  }
+}
+
+@keyframes w-ripple-spread {
+  0% {
+    opacity: var(--w-ripple-opacity, 0.3);
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-ripple__wave {
+    animation: none;
+  }
+
+  /* Keep a subtle press affordance when the wave is disabled. */
+  .w-ripple:active {
+    background-color: color-mix(in srgb, currentcolor 8%, transparent);
+  }
+}

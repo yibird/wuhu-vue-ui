@@ -1,0 +1,48 @@
+{
+  "name": "@wuhu-ui/cropper",
+  "version": "0.1.0",
+  "description": "Image cropper for Vue 3, powered by Cropper.js.",
+  "keywords": [
+    "component",
+    "cropper",
+    "image",
+    "ui",
+    "vue",
+    "vue3"
+  ],
+  "license": "MIT",
+  "style": "./dist/style.css",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.node.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "cropperjs": "^2.3.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

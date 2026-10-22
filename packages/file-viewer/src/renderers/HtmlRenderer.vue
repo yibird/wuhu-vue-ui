@@ -1,0 +1,141 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { formatBytes } from '../core/format'
+import { formatFileViewerMessage } from '../i18n'
+import { defaultCapabilities } from '../core/capabilities'
+import type { FileViewerRendererProps } from '../types'
+import CodeBlock from './CodeBlock.vue'
+import { useCopy } from '@wuhu-ui/core'
+import { useTextSource } from './useTextSource'
+
+defineOptions({
+  name: 'WFileViewerHtmlRenderer',
+})
+
+const props = defineProps<FileViewerRendererProps>()
+
+const emit = defineEmits<{
+  ready: [
+    payload: {
+      pageCount: number
+      capabilities: { zoom: boolean; rotate: boolean; paged: boolean; print: boolean }
+    },
+  ]
+  error: [error: Error]
+}>()
+
+const view = ref<'preview' | 'source'>('preview')
+const { copied, copy } = useCopy()
+const maxBytes = computed(() => props.options.text?.maxBytes ?? 4 * 1024 * 1024)
+const {
+  text: source,
+  truncated,
+  loaded,
+  load,
+  loadFull,
+} = useTextSource(props, {
+  maxBytes: () => maxBytes.value,
+  errorMessage: () => props.messages.renderers.html.readError,
+  onReady: () =>
+    emit('ready', {
+      pageCount: 0,
+      capabilities: defaultCapabilities(props.kind),
+    }),
+  onError: (error) => emit('error', error),
+})
+
+const truncatedNotice = computed(() =>
+  truncated.value
+    ? formatFileViewerMessage(props.messages.viewer.truncatedHint, {
+        size: formatBytes(maxBytes.value, props.locale) ?? '',
+      })
+    : '',
+)
+
+onMounted(load)
+</script>
+
+<template>
+  <div class="w-file-viewer__html">
+    <div class="w-file-viewer__renderer-toolbar">
+      <div class="w-file-viewer__segmented" role="group">
+        <button
+          type="button"
+          :class="{ 'is-active': view === 'preview' }"
+          @click="view = 'preview'"
+        >
+          {{ messages.renderers.html.preview }}
+        </button>
+        <button type="button" :class="{ 'is-active': view === 'source' }" @click="view = 'source'">
+          {{ messages.renderers.html.source }}
+        </button>
+      </div>
+      <div class="w-file-viewer__renderer-actions">
+        <button
+          type="button"
+          class="w-file-viewer__icon-button"
+          :title="copied ? messages.renderers.html.copied : messages.renderers.html.copy"
+          :aria-label="copied ? messages.renderers.html.copied : messages.renderers.html.copy"
+          @click="copy(source)"
+        >
+          <svg v-if="copied" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="m4 10 4 4 8-8"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <svg v-else viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect
+              x="7"
+              y="7"
+              width="9"
+              height="9"
+              rx="1.5"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+            <path
+              d="M13 7V5.5A1.5 1.5 0 0 0 11.5 4h-7A1.5 1.5 0 0 0 3 5.5v7A1.5 1.5 0 0 0 4.5 14H6"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div v-if="truncatedNotice" class="w-file-viewer__notice">
+      <div>
+        <strong>{{ messages.viewer.truncated }}</strong>
+        <span>{{ truncatedNotice }}</span>
+      </div>
+      <button type="button" class="w-file-viewer__link-button" @click="loadFull">
+        {{ messages.viewer.loadFull }}
+      </button>
+    </div>
+
+    <div v-if="loaded && !source" class="w-file-viewer__placeholder is-compact">
+      <p>{{ messages.renderers.code.empty }}</p>
+    </div>
+    <template v-else>
+      <p v-if="view === 'preview'" class="w-file-viewer__isolation-note">
+        {{ messages.renderers.html.isolated }}
+      </p>
+      <iframe
+        v-if="view === 'preview' && source"
+        :key="`html-preview-${source.length}`"
+        class="w-file-viewer__html-frame"
+        sandbox=""
+        referrerpolicy="no-referrer"
+        :title="messages.renderers.html.preview"
+        :srcdoc="source"
+      />
+      <div v-else class="w-file-viewer__code-shell" tabindex="0">
+        <CodeBlock :code="source" language="html" :line-numbers="true" :wrap="true" />
+      </div>
+    </template>
+  </div>
+</template>

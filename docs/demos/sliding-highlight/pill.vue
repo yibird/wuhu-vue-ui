@@ -1,0 +1,217 @@
+<script setup lang="ts">
+import { SlidingHighlight } from '@wuhu-ui/sliding-highlight'
+
+const cards = [
+  { label: 'Design', desc: '设计令牌与主题' },
+  { label: 'Develop', desc: 'Vue 3 组件开发' },
+  { label: 'Deliver', desc: '构建与发布' },
+]
+</script>
+
+<template>
+  <SlidingHighlight class="sliding-cards" :inset="0" pill-class-name="sliding-cards__pill">
+    <button v-for="card in cards" :key="card.label" type="button" class="sliding-card">
+      <strong>{{ card.label }}</strong>
+      <span>{{ card.desc }}</span>
+    </button>
+  </SlidingHighlight>
+</template>
+
+<style lang="less">
+.sliding-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--w-color-border);
+  border-radius: 12px;
+  background: var(--w-color-surface-subtle);
+  list-style: none;
+
+  > li {
+    display: flex;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--w-color-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color var(--w-duration-fast) ease;
+
+    &:hover {
+      color: var(--w-color-text);
+    }
+
+    &.is-active {
+      color: var(--w-color-primary);
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--w-color-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  &__pill {
+    border-radius: 8px;
+    background: var(--w-color-surface);
+    box-shadow: var(--w-shadow-sm);
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9999px;
+    background: var(--w-color-primary-soft);
+    color: var(--w-color-primary);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1;
+  }
+}
+
+/* VitePress 的 `.vp-doc ul` / `li + li` 会覆盖 demo 自身间距并造成纵向错位。 */
+.vp-doc .sliding-nav {
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+
+  > li {
+    margin: 0;
+  }
+}
+
+.sliding-cards {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--w-color-border);
+  border-radius: 12px;
+  background: var(--w-color-surface-subtle);
+
+  &__pill {
+    border: 1px solid var(--w-color-border);
+    border-radius: 10px;
+    background: var(--w-color-surface);
+    box-shadow: var(--w-shadow-sm);
+  }
+}
+
+.sliding-card {
+  display: flex;
+  min-height: 88px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--w-color-text-secondary);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--w-duration-fast) ease;
+
+  strong {
+    color: var(--w-color-text);
+    font-size: 13px;
+  }
+
+  span {
+    font-size: 11px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--w-color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--w-color-primary);
+    outline-offset: -2px;
+  }
+}
+
+.sliding-list {
+  display: flex;
+  width: min(100%, 320px);
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid var(--w-color-border);
+  border-radius: 12px;
+  background: var(--w-color-surface-subtle);
+
+  &__pill {
+    border-radius: 8px;
+    background: var(--w-color-surface);
+    box-shadow: var(--w-shadow-sm);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--w-color-text-secondary);
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--w-color-text);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--w-color-primary);
+      outline-offset: -1px;
+    }
+  }
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--w-color-primary);
+  }
+}
+.sliding-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--w-color-border-subtle);
+    color: var(--w-color-text-secondary);
+    font-size: 11px;
+  }
+}
+</style>

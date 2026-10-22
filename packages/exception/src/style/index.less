@@ -1,0 +1,107 @@
+.w-exception {
+  --w-exception-accent: var(--w-color-primary, #4f46e5);
+  --w-exception-soft: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+  --w-exception-surface: var(--w-color-surface, #ffffff);
+  --w-exception-image-width: 340px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(24px, 5vw, 64px);
+  padding: clamp(24px, 5vw, 56px);
+  color: var(--w-color-text, #0f172a);
+  font-family: var(--w-font-family, inherit);
+  line-height: var(--w-line-height-normal, 1.55);
+
+  &--forbidden {
+    --w-exception-accent: var(--w-color-warning, #d97706);
+    --w-exception-soft: var(--w-color-warning-soft, rgba(217, 119, 6, 0.12));
+  }
+
+  &--serverError {
+    --w-exception-accent: var(--w-color-danger, #dc2626);
+    --w-exception-soft: var(--w-color-danger-soft, rgba(220, 38, 38, 0.1));
+  }
+
+  &--badRequest {
+    --w-exception-accent: var(--w-color-info, #0284c7);
+    --w-exception-soft: var(--w-color-info-soft, rgba(2, 132, 199, 0.1));
+  }
+
+  &--networkError {
+    --w-exception-accent: var(--w-color-warning, #d97706);
+    --w-exception-soft: var(--w-color-warning-soft, rgba(217, 119, 6, 0.12));
+  }
+
+  &__media {
+    flex: 0 0 auto;
+    width: var(--w-exception-image-width);
+    max-width: 42%;
+    color: var(--w-exception-accent);
+  }
+
+  &__illustration,
+  &__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  &__image {
+    object-fit: contain;
+    border-radius: var(--w-radius-xl, 16px);
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    max-width: 560px;
+  }
+
+  /* Extra specificity keeps host page typography (e.g. docs h2 / p rules)
+   * from leaking into the exception headings and copy. */
+  & &__title {
+    margin: 0 0 8px;
+    padding: 0;
+    border: 0;
+    color: var(--w-color-text, #0f172a);
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: var(--w-font-weight-semibold, 600);
+    letter-spacing: -0.02em;
+    line-height: var(--w-line-height-tight, 1.25);
+  }
+
+  & &__description {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--w-color-text-secondary, #475569);
+    font-size: var(--w-font-size-md, 14px);
+    line-height: 1.7;
+  }
+
+  &__extra {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+  }
+}
+
+@media (max-width: 720px) {
+  .w-exception {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+
+    &__media {
+      width: min(var(--w-exception-image-width), 72%);
+      max-width: 260px;
+    }
+
+    &__extra {
+      justify-content: center;
+    }
+  }
+}

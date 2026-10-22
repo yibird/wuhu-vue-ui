@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@wuhu-ui/*": ["../packages/*", "../packages/*/src"]
+    }
+  },
+  "include": [".vitepress/**/*.ts", ".vitepress/**/*.d.ts", "demos/**/*.ts", "demos/**/*.vue"],
+  "exclude": ["node_modules", ".vitepress/dist", ".vitepress/cache"]
+}

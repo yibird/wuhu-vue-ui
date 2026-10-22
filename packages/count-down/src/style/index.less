@@ -1,0 +1,21 @@
+.w-count-down {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--w-color-text, #0f172a);
+  font-family: var(--w-font-family, inherit);
+  font-size: var(--w-count-down-size, var(--w-font-size-lg, 16px));
+  font-weight: var(--w-font-weight-semibold, 600);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+
+  &.is-running {
+    color: var(--w-color-text, #0f172a);
+  }
+
+  &.is-finished {
+    color: var(--w-color-text-secondary, #475569);
+  }
+}

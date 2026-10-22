@@ -1,0 +1,207 @@
+.w-dock {
+  --w-dock-size: 48px;
+  --w-dock-gap: 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--w-dock-gap);
+  padding: 8px;
+  margin: 0;
+  list-style: none;
+  background: var(--w-color-surface, #ffffff);
+  border: 1px solid var(--w-color-border-subtle, #f1f5f9);
+  border-radius: var(--w-radius-xl, 16px);
+  box-shadow: var(--w-shadow-lg, 0 16px 32px -8px rgba(15, 23, 42, 0.16));
+  font-family: var(--w-font-family, inherit);
+  user-select: none;
+  touch-action: manipulation;
+
+  /*
+   * Keep the tooltip clear of the scaled item tile. The tile grows from the
+   * dock-facing edge by (maxScale - 1) × size.
+   */
+  --w-dock-tooltip-offset: calc(
+    var(--w-dock-size, 48px) * (var(--w-dock-max-scale, 1.6) - 1) + 12px
+  );
+
+  &--bottom,
+  &--top {
+    flex-direction: row;
+  }
+
+  &--left,
+  &--right {
+    flex-direction: column;
+  }
+}
+
+.w-dock__item-wrap {
+  display: flex;
+  flex: none;
+}
+
+.w-dock__item {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--w-dock-size, 48px);
+  height: var(--w-dock-size, 48px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--w-radius-lg, 12px);
+  background: transparent;
+  color: var(--w-color-text-secondary, #475569);
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+
+  &.is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.w-dock__inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  transition:
+    transform var(--w-duration-normal, 220ms) cubic-bezier(0.22, 1, 0.36, 1),
+    background-color var(--w-duration-fast, 120ms) ease,
+    color var(--w-duration-fast, 120ms) ease;
+  will-change: transform;
+}
+
+.w-dock__item:hover .w-dock__inner,
+.w-dock__item.is-active .w-dock__inner {
+  background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+  color: var(--w-color-primary, #4f46e5);
+}
+
+.w-dock__item:active .w-dock__inner {
+  background: var(--w-color-primary-soft-hover, rgba(79, 70, 229, 0.16));
+}
+
+.w-dock--bottom .w-dock__inner {
+  transform-origin: center bottom;
+}
+
+.w-dock--top .w-dock__inner {
+  transform-origin: center top;
+}
+
+.w-dock--left .w-dock__inner {
+  transform-origin: left center;
+}
+
+.w-dock--right .w-dock__inner {
+  transform-origin: right center;
+}
+
+.w-dock__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.w-dock__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.w-dock__svg {
+  width: 58%;
+  height: 58%;
+  color: inherit;
+  pointer-events: none;
+}
+
+.w-dock__fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+  color: var(--w-color-primary, #4f46e5);
+  font-size: var(--w-font-size-lg, 16px);
+  font-weight: var(--w-font-weight-semibold, 600);
+  line-height: 1;
+}
+
+.w-dock__tooltip {
+  position: absolute;
+  z-index: 1;
+  padding: 4px 8px;
+  color: var(--w-color-text, #0f172a);
+  font-size: var(--w-font-size-xs, 12px);
+  line-height: 1.4;
+  white-space: nowrap;
+  background: var(--w-color-surface-elevated, #ffffff);
+  border: 1px solid var(--w-color-border, #e2e8f0);
+  border-radius: var(--w-radius-sm, 6px);
+  box-shadow: var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+  pointer-events: none;
+}
+
+.w-dock--bottom .w-dock__tooltip {
+  bottom: calc(100% + var(--w-dock-tooltip-offset));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.w-dock--top .w-dock__tooltip {
+  top: calc(100% + var(--w-dock-tooltip-offset));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.w-dock--left .w-dock__tooltip {
+  top: 50%;
+  left: calc(100% + var(--w-dock-tooltip-offset));
+  transform: translateY(-50%);
+}
+
+.w-dock--right .w-dock__tooltip {
+  top: 50%;
+  right: calc(100% + var(--w-dock-tooltip-offset));
+  transform: translateY(-50%);
+}
+
+.w-dock__separator {
+  flex: none;
+  background: var(--w-color-border, #e2e8f0);
+}
+
+.w-dock--bottom .w-dock__separator,
+.w-dock--top .w-dock__separator {
+  width: 1px;
+  height: calc(var(--w-dock-size, 48px) * 0.7);
+}
+
+.w-dock--left .w-dock__separator,
+.w-dock--right .w-dock__separator {
+  width: calc(var(--w-dock-size, 48px) * 0.7);
+  height: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-dock__inner {
+    transition: none;
+  }
+}

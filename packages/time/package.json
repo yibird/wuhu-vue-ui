@@ -1,0 +1,46 @@
+{
+  "name": "@wuhu-ui/time",
+  "version": "0.1.0",
+  "description": "Auto-updating relative time component for Vue 3.",
+  "keywords": [
+    "component",
+    "ui",
+    "vue",
+    "vue3"
+  ],
+  "license": "MIT",
+  "style": "./dist/style.css",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.node.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "@wuhu-ui/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

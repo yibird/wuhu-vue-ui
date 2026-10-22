@@ -1,0 +1,57 @@
+{
+  "name": "@wuhu-ui/file-viewer",
+  "version": "0.1.0",
+  "description": "A themeable, internationalized file preview component for Vue 3.",
+  "keywords": [
+    "document-viewer",
+    "docx",
+    "epub",
+    "file-preview",
+    "file-viewer",
+    "pdf",
+    "pptx",
+    "vue",
+    "xlsx"
+  ],
+  "license": "MIT",
+  "style": "./dist/style.css",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.node.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "@wuhu-ui/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "pdfjs-dist": ">=3.0.0",
+    "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "pdfjs-dist": {
+      "optional": true
+    }
+  }
+}

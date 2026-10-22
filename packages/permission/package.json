@@ -1,0 +1,39 @@
+{
+  "name": "@wuhu-ui/permission",
+  "version": "0.1.0",
+  "description": "Permission guard component and directive for Vue 3.",
+  "keywords": [
+    "component",
+    "permission",
+    "ui",
+    "vue",
+    "vue3"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepack": "pnpm run build"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

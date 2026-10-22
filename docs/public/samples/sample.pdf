@@ -1,0 +1,79 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 769 >>
+stream
+0.98 0.99 1 rg 0 0 612 792 re f
+0.31 0.27 0.9 rg 48 690 120 6 re f
+BT
+/F1 30 Tf 0.08 0.1 0.18 rg 48 640 Td (Wuhu File Viewer) Tj
+/F1 14 Tf 0.08 0.1 0.18 rg 48 608 Td (Native PDF fallback + optional pdf.js enhancement) Tj
+ET
+0.31 0.27 0.9 rg 48 570 150 4 re f
+BT
+/F1 12 Tf 0.08 0.1 0.18 rg 48 535 Td 16 TL
+(This PDF is embedded by the file viewer. Without pdf.js the browser) Tj
+T* (native viewer is used. Install pdfjs-dist and pass it through) Tj
+T* (options.pdf.pdfjs to enable the custom canvas, zoom, rotation,) Tj
+T* (page navigation and selectable text layer.) Tj
+T* () Tj
+T* (Use the toolbar to zoom, rotate, download or enter fullscreen.) Tj
+ET
+0.31 0.27 0.9 rg 48 90 516 1 re f
+BT
+/F1 9 Tf 0.45 0.5 0.6 rg 48 70 Td (Wuhu Vue UI - zero dependency preview) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 608 >>
+stream
+0.04 0.05 0.1 rg 0 0 612 792 re f
+0.51 0.55 0.97 rg 48 690 120 6 re f
+BT
+/F1 30 Tf 0.92 0.95 1 rg 48 640 Td (Second page) Tj
+/F1 14 Tf 0.92 0.95 1 rg 48 608 Td (Page navigation stays in sync) Tj
+ET
+0.51 0.55 0.97 rg 48 570 150 4 re f
+BT
+/F1 12 Tf 0.92 0.95 1 rg 48 535 Td 16 TL
+(The viewer reports the page count and emits page-change events so) Tj
+T* (the application can persist reading position.) Tj
+T* () Tj
+T* (Theme tokens can be overridden with the themeVars prop or with CSS.) Tj
+ET
+0.51 0.55 0.97 rg 48 90 516 1 re f
+BT
+/F1 9 Tf 0.45 0.5 0.6 rg 48 70 Td (Wuhu Vue UI - zero dependency preview) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000001067 00000 n 
+0000001193 00000 n 
+0000001852 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+1922
+%%EOF

@@ -1,0 +1,229 @@
+import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vite-plus/test'
+import { nextTick } from 'vue'
+import ImgComparisonSlider from '../ImgComparisonSlider.vue'
+
+function pointer(type: string, init: Record<string, unknown>) {
+  const event = new Event(type, { bubbles: true, cancelable: true })
+  Object.assign(event, { button: 0, pointerId: 1, clientX: 20, ...init })
+  return event
+}
+
+describe('ImgComparisonSlider', () => {
+  it('applies semantic classes and styles to internal parts', () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: {
+        before: '/before.png',
+        after: '/after.png',
+        showLabels: true,
+        classes: {
+          root: 'custom-root',
+          before: 'custom-before',
+          after: 'custom-after',
+          image: 'custom-image',
+          label: 'custom-label',
+          beforeLabel: 'custom-before-label',
+          afterLabel: 'custom-after-label',
+          handle: 'custom-handle',
+          line: 'custom-line',
+          knob: 'custom-knob',
+        },
+        styles: {
+          root: { padding: '2px' },
+          line: { width: '3px' },
+          knob: { color: 'rgb(1, 2, 3)' },
+          handle: { color: 'rgb(4, 5, 6)' },
+        },
+      },
+    })
+
+    expect(wrapper.get('.w-img-comparison-slider').classes()).toContain('custom-root')
+    expect(wrapper.get('.w-img-comparison-slider__layer--before').classes()).toContain(
+      'custom-before',
+    )
+    expect(wrapper.get('.w-img-comparison-slider__layer--after').classes()).toContain(
+      'custom-after',
+    )
+    expect(wrapper.get('.custom-before img').classes()).toContain('custom-image')
+    expect(wrapper.get('.custom-before-label').classes()).toContain('custom-label')
+    expect(wrapper.get('.custom-after-label').classes()).toContain('custom-label')
+    expect(wrapper.get('.w-img-comparison-slider__handle').classes()).toContain('custom-handle')
+    expect(wrapper.get('.w-img-comparison-slider__line').classes()).toContain('custom-line')
+    expect(wrapper.get('.w-img-comparison-slider__knob').classes()).toContain('custom-knob')
+
+    const root = wrapper.get('.w-img-comparison-slider').element as HTMLElement
+    const line = wrapper.get('.w-img-comparison-slider__line').element as HTMLElement
+    const knob = wrapper.get('.w-img-comparison-slider__knob').element as HTMLElement
+    expect(root.style.padding).toBe('2px')
+    expect(line.style.width).toBe('3px')
+    expect(knob.style.color).toBe('rgb(1, 2, 3)')
+    expect(wrapper.get('[role="slider"]').attributes('aria-label')).toBe('图片对比滑块')
+
+    wrapper.unmount()
+  })
+
+  it('supports keyboard navigation in uncontrolled mode', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { keyboardStep: 5 },
+    })
+    const slider = wrapper.get('[role="slider"]')
+
+    await slider.trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([55])
+    expect(wrapper.emitted('change')?.[0]).toEqual([55])
+
+    await slider.trigger('keydown', { key: 'Home' })
+    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([0])
+
+    await slider.trigger('keydown', { key: 'End' })
+    expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([100])
+    expect(slider.attributes('aria-valuenow')).toBe('100')
+    expect(wrapper.emitted('dragstart')).toBeUndefined()
+    expect(wrapper.emitted('dragend')).toBeUndefined()
+  })
+
+  it('does not emit while disabled', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { disabled: true },
+    })
+
+    await wrapper.get('[role="slider"]').trigger('keydown', { key: 'ArrowLeft' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('reverts when a controlled parent rejects the update', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { modelValue: 50, keyboardStep: 5 },
+    })
+    const slider = wrapper.get('[role="slider"]')
+
+    await slider.trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([55])
+    expect(slider.attributes('aria-valuenow')).toBe('50')
+  })
+
+  it('updates its position when the model changes', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { modelValue: 20 },
+    })
+
+    await wrapper.setProps({ modelValue: 75 })
+    expect(wrapper.get('[role="slider"]').attributes('aria-valuenow')).toBe('75')
+  })
+
+  it('exposes vertical orientation', () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { direction: 'vertical' },
+    })
+
+    expect(wrapper.get('[role="slider"]').attributes('aria-orientation')).toBe('vertical')
+  })
+
+  it('clips labels together with their image layer at 0% and 100%', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { showLabels: true, beforeLabel: '概念稿', afterLabel: '成品' },
+    })
+    const beforeLayer = wrapper.get('.w-img-comparison-slider__layer--before')
+    const afterLayer = wrapper.get('.w-img-comparison-slider__layer--after')
+    const slider = wrapper.get('[role="slider"]')
+
+    expect(beforeLayer.get('.w-img-comparison-slider__label--before').text()).toBe('概念稿')
+    expect(afterLayer.get('.w-img-comparison-slider__label--after').text()).toBe('成品')
+
+    await slider.trigger('keydown', { key: 'Home' })
+    expect(beforeLayer.attributes('style')).toContain('inset(0 100% 0 0)')
+    expect(afterLayer.attributes('style')).toContain('inset(0 0 0 0%)')
+    expect(slider.attributes('aria-valuenow')).toBe('0')
+    expect(slider.attributes('aria-valuetext')).toBe('0%')
+
+    await slider.trigger('keydown', { key: 'End' })
+    expect(beforeLayer.attributes('style')).toContain('inset(0 0% 0 0)')
+    expect(afterLayer.attributes('style')).toContain('inset(0 0 0 100%)')
+    expect(slider.attributes('aria-valuenow')).toBe('100')
+    expect(slider.attributes('aria-valuetext')).toBe('100%')
+  })
+
+  it('keeps fractional precision in aria values', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { keyboardStep: 0.1 },
+    })
+    const slider = wrapper.get('[role="slider"]')
+
+    for (let index = 0; index < 4; index += 1) {
+      await slider.trigger('keydown', { key: 'ArrowRight' })
+    }
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([50.4])
+    expect(slider.attributes('aria-valuenow')).toBe('50.4')
+    expect(slider.attributes('aria-valuetext')).toBe('50.4%')
+  })
+
+  it('hides broken images, shows a placeholder and emits the error side', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { before: '/missing-before.png', after: '/after.png' },
+    })
+    const beforeLayer = wrapper.get('.w-img-comparison-slider__layer--before')
+
+    await beforeLayer.get('img').trigger('error')
+
+    expect(beforeLayer.find('img').exists()).toBe(false)
+    expect(beforeLayer.classes()).toContain('has-image-error')
+    expect(wrapper.find('.w-img-comparison-slider__layer--after img').exists()).toBe(true)
+    expect(wrapper.emitted('error')?.[0]?.[0]).toBe('before')
+  })
+
+  it('restores the failed image when its source changes', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { before: '/missing-before.png' },
+    })
+    const beforeLayer = wrapper.get('.w-img-comparison-slider__layer--before')
+
+    await beforeLayer.get('img').trigger('error')
+    expect(beforeLayer.find('img').exists()).toBe(false)
+
+    await wrapper.setProps({ before: '/recovered-before.png' })
+    expect(beforeLayer.find('img').exists()).toBe(true)
+    expect(beforeLayer.classes()).not.toContain('has-image-error')
+  })
+
+  it('restores the previous value when a pointer gesture is canceled', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      attachTo: document.body,
+    })
+    const root = wrapper.get('.w-img-comparison-slider')
+    ;(root.element as HTMLElement).getBoundingClientRect = () =>
+      ({
+        left: 0,
+        top: 0,
+        width: 100,
+        height: 100,
+        right: 100,
+        bottom: 100,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect
+
+    root.element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([20])
+
+    window.dispatchEvent(pointer('pointercancel', { clientX: 0, clientY: 0 }))
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([50])
+    expect(wrapper.get('[role="slider"]').attributes('aria-valuenow')).toBe('50')
+    wrapper.unmount()
+  })
+
+  it('fills the container height when aspectRatio is auto', () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      props: { aspectRatio: 'auto', direction: 'vertical' },
+    })
+
+    const root = wrapper.element as HTMLElement
+    expect(root.style.aspectRatio).toBe('auto')
+    expect(root.style.height).toBe('100%')
+
+    wrapper.unmount()
+  })
+})

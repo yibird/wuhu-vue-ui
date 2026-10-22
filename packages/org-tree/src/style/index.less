@@ -1,0 +1,458 @@
+.w-org-tree {
+  --w-org-tree-line-color: color-mix(in srgb, var(--w-color-text, #0f172a) 22%, transparent);
+  --w-org-tree-line-width: 1.5px;
+  --w-org-tree-line-style: solid;
+  --w-org-tree-line-length: 30px;
+  --w-org-tree-node-gap: 20px;
+  --w-org-tree-card-bg: var(--w-color-surface, #ffffff);
+  --w-org-tree-card-border: var(--w-color-border, #e2e8f0);
+  --w-org-tree-card-hover: var(--w-color-surface-hover, #f1f5f9);
+  --w-org-tree-selected-bg: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+  --w-org-tree-selected-color: var(--w-color-primary, #4f46e5);
+  --w-org-tree-menu-bg: var(--w-color-surface, #ffffff);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 400px;
+  overflow: hidden;
+  border: 1px solid var(--w-color-border, #e2e8f0);
+  border-radius: var(--w-radius-lg, 12px);
+  background: var(--w-color-surface, #ffffff);
+  color: var(--w-color-text, #0f172a);
+  font-family: var(--w-font-family, inherit);
+  font-size: var(--w-font-size-sm, 13px);
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  &__viewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+
+  &.is-panning &__viewport {
+    cursor: grabbing;
+  }
+
+  &.is-node-dragging &__viewport {
+    cursor: default;
+  }
+
+  &__canvas {
+    display: inline-block;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+
+  &__roots {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-width: max-content;
+    padding: 28px 36px;
+  }
+
+  &.is-horizontal &__roots {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__node {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: none;
+  }
+
+  &.is-horizontal &__node {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__node-head {
+    position: relative;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__node-card {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    max-width: 280px;
+    padding: 9px 15px;
+    border: 1px solid var(--w-org-tree-card-border);
+    border-radius: var(--w-radius-lg, 10px);
+    background: var(--w-org-tree-card-bg);
+    color: var(--w-color-text, #0f172a);
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.05),
+      0 2px 6px -4px rgba(15, 23, 42, 0.08);
+    cursor: pointer;
+    outline: none;
+    transition:
+      border-color var(--w-duration-fast, 120ms) ease,
+      background-color var(--w-duration-fast, 120ms) ease,
+      box-shadow var(--w-duration-fast, 120ms) ease,
+      transform var(--w-duration-fast, 120ms) ease;
+
+    &:hover {
+      border-color: var(--w-color-border-strong, #cbd5e1);
+      background: var(--w-org-tree-card-hover);
+      box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.05),
+        0 6px 14px -8px rgba(15, 23, 42, 0.18);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: 2px;
+    }
+
+    &.is-selected {
+      border-color: var(--w-org-tree-selected-color);
+      background: var(--w-org-tree-selected-bg);
+      color: var(--w-org-tree-selected-color);
+      box-shadow:
+        0 0 0 3px var(--w-org-tree-selected-bg),
+        0 6px 16px -10px var(--w-org-tree-selected-color);
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+  }
+
+  &.is-node-draggable &__node-card {
+    cursor: grab;
+  }
+
+  &__node.is-dragging > &__node-head > &__node-card {
+    z-index: 3;
+    cursor: grabbing;
+    opacity: 0.55;
+    box-shadow: var(--w-shadow-lg, 0 16px 32px -8px rgba(15, 23, 42, 0.16));
+  }
+
+  &__node.is-drop-target > &__node-head > &__node-card {
+    border-color: var(--w-org-tree-selected-color);
+    border-style: dashed;
+    background: var(--w-org-tree-selected-bg);
+    box-shadow: 0 0 0 3px var(--w-org-tree-selected-bg);
+  }
+
+  /* The expand trigger sits on the connector line, not inside the card. */
+  &__toggle-wrap {
+    position: absolute;
+    z-index: 2;
+    top: calc(100% + var(--w-org-tree-line-length, 30px) / 2);
+    left: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+  }
+
+  &.is-horizontal &__toggle-wrap {
+    top: 50%;
+    left: calc(100% + var(--w-org-tree-line-length, 30px) / 2);
+  }
+
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex: none;
+    padding: 0;
+    border: 1px solid var(--w-org-tree-card-border);
+    border-radius: var(--w-radius-full, 9999px);
+    background: var(--w-org-tree-card-bg);
+    color: var(--w-color-text-tertiary, #94a3b8);
+    box-shadow: var(--w-shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.06));
+    cursor: pointer;
+    transition:
+      background-color var(--w-duration-fast, 120ms) ease,
+      border-color var(--w-duration-fast, 120ms) ease,
+      color var(--w-duration-fast, 120ms) ease,
+      box-shadow var(--w-duration-fast, 120ms) ease;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      border-color: var(--w-color-primary-soft-hover, rgba(79, 70, 229, 0.16));
+      background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+      color: var(--w-color-primary, #4f46e5);
+      box-shadow: var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+
+    &:focus-visible {
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Keep a visible stem when a collapsed node has no children container. */
+  &__node:not(.is-expanded):not(.is-leaf) &__node-head::after {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    height: calc(var(--w-org-tree-line-length, 30px) / 2);
+    border-left: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+    content: '';
+    pointer-events: none;
+  }
+
+  &.is-horizontal &__node:not(.is-expanded):not(.is-leaf) &__node-head::after {
+    top: 50%;
+    left: 100%;
+    width: calc(var(--w-org-tree-line-length, 30px) / 2);
+    height: 0;
+    border-top: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+    border-left: 0;
+  }
+
+  &__toggle-vertical {
+    transform-origin: center;
+    transition:
+      opacity var(--w-duration-fast, 120ms) ease,
+      transform var(--w-duration-fast, 120ms) ease;
+  }
+
+  &__node.is-expanded > &__node-head &__toggle-vertical {
+    opacity: 0;
+    transform: scaleY(0.35);
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow: hidden;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Vertical connectors */
+  &__children {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--w-org-tree-node-gap, 16px);
+    padding-top: var(--w-org-tree-line-length, 30px);
+  }
+
+  &__children::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: calc(var(--w-org-tree-line-length, 30px) / 2);
+    border-left: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+    content: '';
+    pointer-events: none;
+  }
+
+  &__children > &__node {
+    padding: 0;
+  }
+
+  &__children > &__node::before {
+    position: absolute;
+    top: calc(var(--w-org-tree-line-length, 30px) / -2);
+    left: 0;
+    /* Bridge the flex gap so sibling connectors stay continuous. */
+    width: calc(100% + var(--w-org-tree-node-gap, 16px));
+    border-top: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+    content: '';
+    pointer-events: none;
+  }
+
+  &__children > &__node:first-child::before {
+    left: 50%;
+    width: calc(50% + var(--w-org-tree-node-gap, 16px));
+  }
+
+  &__children > &__node:last-child::before {
+    left: 0;
+    width: 50%;
+  }
+
+  &__children > &__node:only-child::before {
+    display: none;
+  }
+
+  &__children > &__node::after {
+    position: absolute;
+    top: calc(var(--w-org-tree-line-length, 30px) / -2);
+    left: 50%;
+    height: calc(var(--w-org-tree-line-length, 30px) / 2);
+    border-left: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+    content: '';
+    pointer-events: none;
+  }
+
+  /* Horizontal connectors */
+  &.is-horizontal &__children {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 0;
+    padding-left: var(--w-org-tree-line-length, 30px);
+  }
+
+  &.is-horizontal &__children::before {
+    top: 50%;
+    left: 0;
+    width: calc(var(--w-org-tree-line-length, 30px) / 2);
+    height: 0;
+    border-top: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+    border-left: 0;
+  }
+
+  &.is-horizontal &__children > &__node {
+    padding: 0;
+  }
+
+  &.is-horizontal &__children > &__node::before {
+    top: 0;
+    left: calc(var(--w-org-tree-line-length, 30px) / -2);
+    width: 0;
+    /* Bridge the flex gap so sibling connectors stay continuous. */
+    height: calc(100% + var(--w-org-tree-node-gap, 16px));
+    border-top: 0;
+    border-left: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+  }
+
+  &.is-horizontal &__children > &__node:first-child::before {
+    top: 50%;
+    height: calc(50% + var(--w-org-tree-node-gap, 16px));
+  }
+
+  &.is-horizontal &__children > &__node:last-child::before {
+    top: 0;
+    height: 50%;
+  }
+
+  &.is-horizontal &__children > &__node:only-child::before {
+    display: none;
+  }
+
+  &.is-horizontal &__children > &__node::after {
+    top: 50%;
+    left: calc(var(--w-org-tree-line-length, 30px) / -2);
+    width: calc(var(--w-org-tree-line-length, 30px) / 2);
+    height: 0;
+    border-top: var(--w-org-tree-line-width, 1px) var(--w-org-tree-line-style, solid)
+      var(--w-org-tree-line-color);
+    border-left: 0;
+  }
+
+  &__empty {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: var(--w-color-text-tertiary, #94a3b8);
+    font-size: var(--w-font-size-sm, 13px);
+  }
+
+  /* Context menu uses viewport coordinates, so it stays aligned inside
+     fullscreen containers and page scroll. */
+  &__menu {
+    position: fixed;
+    z-index: 1000;
+    min-width: 160px;
+    max-width: 260px;
+    padding: 4px;
+    border: 1px solid var(--w-color-border, #e2e8f0);
+    border-radius: var(--w-radius-md, 8px);
+    background: var(--w-org-tree-menu-bg);
+    box-shadow: var(--w-shadow-lg, 0 16px 32px -8px rgba(15, 23, 42, 0.16));
+  }
+
+  &__menu-item {
+    display: block;
+    width: 100%;
+    padding: 7px 10px;
+    border: none;
+    border-radius: var(--w-radius-sm, 6px);
+    background: transparent;
+    color: var(--w-color-text, #0f172a);
+    font-family: inherit;
+    font-size: var(--w-font-size-sm, 13px);
+    line-height: 1.4;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--w-color-surface-hover, #f1f5f9);
+    }
+
+    &:focus-visible {
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: -2px;
+    }
+
+    &:disabled {
+      color: var(--w-color-text-tertiary, #94a3b8);
+      cursor: not-allowed;
+    }
+  }
+
+  &.is-disabled &__viewport {
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-org-tree__node-card,
+  .w-org-tree__node-card:hover,
+  .w-org-tree__toggle,
+  .w-org-tree__toggle-vertical {
+    transition: none;
+    transform: none;
+  }
+}

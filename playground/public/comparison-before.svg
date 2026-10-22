@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef2ff"/>
+      <stop offset="0.55" stop-color="#e0e7ff"/>
+      <stop offset="1" stop-color="#c7d2fe"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#1e1b4b" flood-opacity="0.16"/>
+    </filter>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#4f46e5" opacity="0.22"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="750" fill="url(#bg)"/>
+  <rect width="1200" height="750" fill="url(#dots)"/>
+  <circle cx="985" cy="145" r="190" fill="#fda4af" opacity="0.35"/>
+  <circle cx="1030" cy="590" r="240" fill="#38bdf8" opacity="0.2"/>
+  <circle cx="120" cy="660" r="170" fill="#a5b4fc" opacity="0.38"/>
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="112" width="610" height="526" rx="34" fill="#ffffff"/>
+  </g>
+
+  <g font-family="Inter, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+    <text x="166" y="202" fill="#6366f1" font-size="17" font-weight="700" letter-spacing="4">CONCEPT / 01</text>
+    <text x="160" y="310" fill="#0f172a" font-size="82" font-weight="800" letter-spacing="-4">Bold</text>
+    <text x="160" y="396" fill="#0f172a" font-size="82" font-weight="800" letter-spacing="-4">ideas.</text>
+    <text x="166" y="454" fill="#64748b" font-size="21">A quieter interface with louder ideas.</text>
+
+    <g transform="translate(166 510)">
+      <rect width="146" height="48" rx="24" fill="url(#accent)"/>
+      <text x="38" y="30" fill="#ffffff" font-size="16" font-weight="700">Explore</text>
+      <path d="M104 24h16m0 0-6-6m6 6-6 6" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g transform="translate(470 220)">
+      <rect width="186" height="118" rx="20" fill="#eef2ff"/>
+      <circle cx="38" cy="38" r="15" fill="#6366f1"/>
+      <circle cx="76" cy="38" r="15" fill="#38bdf8"/>
+      <circle cx="114" cy="38" r="15" fill="#f472b6"/>
+      <rect x="26" y="74" width="132" height="8" rx="4" fill="#c7d2fe"/>
+      <rect x="26" y="90" width="86" height="8" rx="4" fill="#dbeafe"/>
+    </g>
+
+    <g transform="translate(470 372)">
+      <rect width="186" height="88" rx="18" fill="#0f172a"/>
+      <text x="22" y="36" fill="#94a3b8" font-size="11" letter-spacing="2">PROGRESS</text>
+      <text x="22" y="65" fill="#ffffff" font-size="25" font-weight="700">72%</text>
+      <rect x="92" y="48" width="70" height="7" rx="3.5" fill="#312e81"/>
+      <rect x="92" y="48" width="50" height="7" rx="3.5" fill="#818cf8"/>
+    </g>
+  </g>
+
+  <g transform="translate(790 170) rotate(-6)" filter="url(#shadow)">
+    <rect width="300" height="360" rx="32" fill="#ffffff"/>
+    <rect x="28" y="28" width="244" height="158" rx="22" fill="url(#warm)"/>
+    <circle cx="178" cy="102" r="46" fill="#ffffff" opacity="0.24"/>
+    <circle cx="142" cy="82" r="18" fill="#ffffff" opacity="0.5"/>
+    <rect x="28" y="212" width="180" height="13" rx="6.5" fill="#e2e8f0"/>
+    <rect x="28" y="238" width="126" height="13" rx="6.5" fill="#eef2ff"/>
+    <g transform="translate(28 280)">
+      <rect width="244" height="44" rx="14" fill="#f8fafc"/>
+      <circle cx="24" cy="22" r="9" fill="url(#accent)"/>
+      <rect x="44" y="17" width="96" height="9" rx="4.5" fill="#cbd5e1"/>
+    </g>
+  </g>
+
+  <g transform="translate(812 580) rotate(4)" filter="url(#shadow)">
+    <rect width="280" height="102" rx="22" fill="#ffffff"/>
+    <circle cx="52" cy="51" r="24" fill="#eef2ff"/>
+    <path d="m43 51 6 6 12-13" stroke="#4f46e5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="92" y="45" fill="#0f172a" font-family="Inter, sans-serif" font-size="16" font-weight="700">Shipped</text>
+    <text x="92" y="67" fill="#94a3b8" font-family="Inter, sans-serif" font-size="12">Ready for review</text>
+  </g>
+</svg>

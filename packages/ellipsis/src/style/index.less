@@ -1,0 +1,106 @@
+.w-ellipsis {
+  position: relative;
+  color: var(--w-color-text, #0f172a);
+  font-family: var(--w-font-family, inherit);
+  font-size: var(--w-font-size-md, 14px);
+  line-height: var(--w-line-height-normal, 1.55);
+  overflow-wrap: anywhere;
+
+  &__content {
+    display: -webkit-box;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--w-ellipsis-lines, 1);
+
+    &:focus-visible {
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: 2px;
+    }
+
+    &.is-expanded {
+      display: block;
+      overflow: visible;
+      -webkit-line-clamp: unset;
+    }
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--w-color-primary, #4f46e5);
+    font: inherit;
+    font-size: var(--w-font-size-sm, 13px);
+    font-weight: var(--w-font-weight-medium, 500);
+    line-height: var(--w-line-height-normal, 1.55);
+    cursor: pointer;
+    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+
+    &:hover {
+      color: var(--w-color-primary-hover, #6366f1);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    &:active {
+      color: var(--w-color-primary-active, #4338ca);
+    }
+
+    &:focus-visible {
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: 2px;
+      border-radius: var(--w-radius-xs, 4px);
+    }
+  }
+
+  &__tooltip {
+    position: absolute;
+    z-index: var(--w-z-dropdown, 1000);
+    max-width: 320px;
+    padding: 6px 10px;
+    border-radius: var(--w-radius-sm, 6px);
+    background: var(--w-color-tooltip-bg, rgba(15, 23, 42, 0.94));
+    box-shadow: var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+    color: var(--w-color-tooltip-text, #fff);
+    font-size: var(--w-font-size-xs, 12px);
+    line-height: var(--w-line-height-normal, 1.55);
+    text-align: left;
+    overflow-wrap: anywhere;
+    pointer-events: none;
+  }
+
+  &__tooltip--top {
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &__tooltip--bottom {
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &__tooltip--left {
+    top: 50%;
+    right: calc(100% + 6px);
+    transform: translateY(-50%);
+  }
+
+  &__tooltip--right {
+    top: 50%;
+    left: calc(100% + 6px);
+    transform: translateY(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-ellipsis__action {
+    transition: none;
+  }
+}

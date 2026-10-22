@@ -1,0 +1,274 @@
+.w-motion-group {
+  --w-motion-duration: 260ms;
+  --w-motion-move-duration: var(--w-motion-duration);
+  --w-motion-ease: var(--w-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  --w-motion-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --w-motion-enter-x: 0px;
+  --w-motion-enter-y: 8px;
+}
+
+/* `css=false` only disables Vue's enter/leave classes; TransitionGroup still
+ * runs FLIP moves when a move class has a non-zero transition duration. Zero
+ * the variables and remove child transitions so `disabled` is fully static. */
+.w-motion-group--disabled {
+  --w-motion-duration: 0ms;
+  --w-motion-move-duration: 0ms;
+
+  > * {
+    transition: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * fade — subtle fade with a short upward drift
+ * ------------------------------------------------------------------------ */
+
+.w-motion-fade-enter-active,
+.w-motion-fade-leave-active {
+  transition:
+    opacity var(--w-motion-duration) var(--w-motion-ease),
+    transform var(--w-motion-duration) var(--w-motion-ease);
+}
+
+.w-motion-fade-enter-from,
+.w-motion-fade-leave-to {
+  opacity: 0;
+  transform: translate3d(var(--w-motion-enter-x, 0px), var(--w-motion-enter-y, 8px), 0);
+}
+
+/* --------------------------------------------------------------------------
+ * slide — enter from the edge selected by the `direction` prop
+ * ------------------------------------------------------------------------ */
+
+.w-motion-group--slide.w-motion-group--vertical {
+  --w-motion-enter-x: 0px;
+  --w-motion-enter-y: -28px;
+}
+
+.w-motion-group--slide.w-motion-group--horizontal {
+  --w-motion-enter-x: -28px;
+  --w-motion-enter-y: 0px;
+}
+
+.w-motion-slide-enter-active,
+.w-motion-slide-leave-active {
+  transition:
+    opacity var(--w-motion-duration) var(--w-motion-ease),
+    transform var(--w-motion-duration) var(--w-motion-ease);
+}
+
+.w-motion-slide-enter-from,
+.w-motion-slide-leave-to {
+  opacity: 0;
+  transform: translate3d(var(--w-motion-enter-x), var(--w-motion-enter-y), 0);
+}
+
+/* --------------------------------------------------------------------------
+ * scale — cards gently grow into place
+ * ------------------------------------------------------------------------ */
+
+.w-motion-scale-enter-active,
+.w-motion-scale-leave-active {
+  transition:
+    opacity var(--w-motion-duration) var(--w-motion-ease),
+    transform var(--w-motion-duration) var(--w-motion-ease);
+  transform-origin: center;
+}
+
+.w-motion-scale-enter-from,
+.w-motion-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.86);
+}
+
+/* --------------------------------------------------------------------------
+ * flip — a light 3D tilt
+ * ------------------------------------------------------------------------ */
+
+.w-motion-flip-enter-active,
+.w-motion-flip-leave-active {
+  transform-style: preserve-3d;
+  transform-origin: center;
+  transition:
+    opacity var(--w-motion-duration) var(--w-motion-ease),
+    transform var(--w-motion-duration) var(--w-motion-ease);
+}
+
+.w-motion-flip-enter-from,
+.w-motion-flip-leave-to {
+  opacity: 0;
+  transform: perspective(900px) rotateX(-55deg) scale(0.94);
+}
+
+/* --------------------------------------------------------------------------
+ * bounce — overshooting spring on enter
+ * ------------------------------------------------------------------------ */
+
+.w-motion-bounce-enter-active {
+  transition:
+    opacity var(--w-motion-duration) var(--w-motion-ease),
+    transform var(--w-motion-duration) var(--w-motion-overshoot);
+}
+
+.w-motion-bounce-leave-active {
+  transition:
+    opacity var(--w-motion-duration) var(--w-motion-ease),
+    transform var(--w-motion-duration) var(--w-motion-ease);
+}
+
+.w-motion-bounce-enter-from {
+  opacity: 0;
+  transform: scale(0.7) translate3d(0, 12px, 0);
+}
+
+.w-motion-bounce-leave-to {
+  opacity: 0;
+  transform: scale(0.82);
+}
+
+/* --------------------------------------------------------------------------
+ * reveal — the card is uncovered with a clip-path wipe
+ * ------------------------------------------------------------------------ */
+
+.w-motion-reveal-enter-active,
+.w-motion-reveal-leave-active {
+  transition:
+    opacity var(--w-motion-duration) var(--w-motion-ease),
+    clip-path var(--w-motion-duration) var(--w-motion-ease);
+}
+
+.w-motion-reveal-enter-from {
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+}
+
+.w-motion-reveal-leave-to {
+  opacity: 0;
+  clip-path: inset(100% 0 0 0);
+}
+
+/* --------------------------------------------------------------------------
+ * FLIP move — shared by every preset
+ * ------------------------------------------------------------------------ */
+
+.w-motion-fade-move,
+.w-motion-slide-move,
+.w-motion-scale-move,
+.w-motion-flip-move,
+.w-motion-bounce-move,
+.w-motion-reveal-move {
+  transition: transform var(--w-motion-move-duration) var(--w-motion-ease);
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+ * Absolute leave — keeps the remaining items flowing while one disappears
+ * ------------------------------------------------------------------------ */
+
+.w-motion-group--absolute-leave .w-motion-fade-leave-active,
+.w-motion-group--absolute-leave .w-motion-slide-leave-active,
+.w-motion-group--absolute-leave .w-motion-scale-leave-active,
+.w-motion-group--absolute-leave .w-motion-flip-leave-active,
+.w-motion-group--absolute-leave .w-motion-bounce-leave-active,
+.w-motion-group--absolute-leave .w-motion-reveal-leave-active {
+  position: absolute;
+  pointer-events: none;
+}
+
+.w-motion-group--absolute-leave.w-motion-group--vertical
+  :is(
+    .w-motion-fade-leave-active,
+    .w-motion-slide-leave-active,
+    .w-motion-scale-leave-active,
+    .w-motion-flip-leave-active,
+    .w-motion-bounce-leave-active,
+    .w-motion-reveal-leave-active
+  ) {
+  right: 0;
+  left: 0;
+}
+
+.w-motion-group--absolute-leave.w-motion-group--horizontal
+  :is(
+    .w-motion-fade-leave-active,
+    .w-motion-slide-leave-active,
+    .w-motion-scale-leave-active,
+    .w-motion-flip-leave-active,
+    .w-motion-bounce-leave-active,
+    .w-motion-reveal-leave-active
+  ) {
+  top: 0;
+  bottom: 0;
+}
+
+/* Scoped to the list root so consumer base transitions on child cards cannot
+ * override the preset. This avoids relying on stylesheet source order. */
+.w-motion-group {
+  .w-motion-fade-enter-active,
+  .w-motion-fade-leave-active {
+    transition:
+      opacity var(--w-motion-duration) var(--w-motion-ease),
+      transform var(--w-motion-duration) var(--w-motion-ease);
+  }
+
+  .w-motion-slide-enter-active,
+  .w-motion-slide-leave-active {
+    transition:
+      opacity var(--w-motion-duration) var(--w-motion-ease),
+      transform var(--w-motion-duration) var(--w-motion-ease);
+  }
+
+  .w-motion-scale-enter-active,
+  .w-motion-scale-leave-active {
+    transition:
+      opacity var(--w-motion-duration) var(--w-motion-ease),
+      transform var(--w-motion-duration) var(--w-motion-ease);
+  }
+
+  .w-motion-flip-enter-active,
+  .w-motion-flip-leave-active {
+    transition:
+      opacity var(--w-motion-duration) var(--w-motion-ease),
+      transform var(--w-motion-duration) var(--w-motion-ease);
+  }
+
+  .w-motion-bounce-enter-active {
+    transition:
+      opacity var(--w-motion-duration) var(--w-motion-ease),
+      transform var(--w-motion-duration) var(--w-motion-overshoot);
+  }
+
+  .w-motion-bounce-leave-active {
+    transition:
+      opacity var(--w-motion-duration) var(--w-motion-ease),
+      transform var(--w-motion-duration) var(--w-motion-ease);
+  }
+
+  .w-motion-reveal-enter-active,
+  .w-motion-reveal-leave-active {
+    transition:
+      opacity var(--w-motion-duration) var(--w-motion-ease),
+      clip-path var(--w-motion-duration) var(--w-motion-ease);
+  }
+
+  .w-motion-fade-move,
+  .w-motion-slide-move,
+  .w-motion-scale-move,
+  .w-motion-flip-move,
+  .w-motion-bounce-move,
+  .w-motion-reveal-move {
+    transition: transform var(--w-motion-move-duration) var(--w-motion-ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-motion-group {
+    --w-motion-duration: 1ms;
+    --w-motion-move-duration: 1ms;
+
+    > * {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+    }
+  }
+}

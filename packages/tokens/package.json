@@ -1,0 +1,23 @@
+{
+  "name": "@wuhu-ui/tokens",
+  "version": "0.1.0",
+  "description": "Design tokens and CSS variables for Wuhu Vue UI",
+  "license": "MIT",
+  "style": "./dist/index.css",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css",
+    "**/*.less"
+  ],
+  "exports": {
+    "./index.css": "./dist/index.css",
+    "./index.less": "./dist/index.less",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-tokens.mjs"
+  }
+}

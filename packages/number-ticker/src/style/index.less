@@ -1,0 +1,57 @@
+.w-number-ticker {
+  display: inline-flex;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  &__visual {
+    display: inline-flex;
+    align-items: center;
+    height: 1.2em;
+    line-height: 1.2;
+  }
+
+  &__digit {
+    display: inline-block;
+    width: 1.1ch;
+    height: 1.2em;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+
+  &__strip {
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--w-number-ticker-duration, 800ms)
+      var(--w-number-ticker-easing, var(--w-easing-emphasized, cubic-bezier(0.22, 1, 0.36, 1)));
+
+    > span {
+      display: block;
+      width: 1.1ch;
+      height: 1.2em;
+      flex: none;
+      line-height: 1.2em;
+      text-align: center;
+    }
+  }
+
+  &__char {
+    display: inline-block;
+    height: 1.2em;
+    line-height: 1.2em;
+    text-align: center;
+  }
+
+  &__affix {
+    display: inline-block;
+    white-space: pre;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-number-ticker__strip {
+    transition: none;
+  }
+}

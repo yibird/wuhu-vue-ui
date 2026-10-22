@@ -1,0 +1,50 @@
+{
+  "name": "@wuhu-ui/playground",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@wuhu-ui/code-editor": "workspace:*",
+    "@wuhu-ui/command-menu": "workspace:*",
+    "@wuhu-ui/copy": "workspace:*",
+    "@wuhu-ui/count-down": "workspace:*",
+    "@wuhu-ui/cropper": "workspace:*",
+    "@wuhu-ui/dock": "workspace:*",
+    "@wuhu-ui/ellipsis": "workspace:*",
+    "@wuhu-ui/error-boundary": "workspace:*",
+    "@wuhu-ui/exception": "workspace:*",
+    "@wuhu-ui/file-viewer": "workspace:*",
+    "@wuhu-ui/gantt": "workspace:*",
+    "@wuhu-ui/gradient-text": "workspace:*",
+    "@wuhu-ui/highlight": "workspace:*",
+    "@wuhu-ui/icon": "workspace:*",
+    "@wuhu-ui/icon-picker": "workspace:*",
+    "@wuhu-ui/img-comparison-slider": "workspace:*",
+    "@wuhu-ui/json-viewer": "workspace:*",
+    "@wuhu-ui/lazy-container": "workspace:*",
+    "@wuhu-ui/loading": "workspace:*",
+    "@wuhu-ui/motion-group": "workspace:*",
+    "@wuhu-ui/number-ticker": "workspace:*",
+    "@wuhu-ui/org-tree": "workspace:*",
+    "@wuhu-ui/permission": "workspace:*",
+    "@wuhu-ui/resize-container": "workspace:*",
+    "@wuhu-ui/ripple": "workspace:*",
+    "@wuhu-ui/scrollbar": "workspace:*",
+    "@wuhu-ui/slider-captcha": "workspace:*",
+    "@wuhu-ui/sliding-highlight": "workspace:*",
+    "@wuhu-ui/time": "workspace:*",
+    "@wuhu-ui/tokens": "workspace:*",
+    "@wuhu-ui/view": "workspace:*",
+    "vue": "^3.5.44"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.10",
+    "monaco-editor": "^0.57.0",
+    "vite": "^7.3.7"
+  }
+}
