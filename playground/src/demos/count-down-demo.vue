@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { CountDown } from '@wuhu-ui/count-down'
+import { CountDown } from '@wuhu-vue-ui/count-down'
 import DemoCard from '../components/demo-card.vue'
 
 const launchTarget = Date.now() + 2 * 60 * 60 * 1000 + 36 * 60 * 1000 + 18 * 1000

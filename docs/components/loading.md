@@ -39,7 +39,7 @@
 ## 命令式 API
 
 ```ts
-import { createLoading, destroyLoading } from '@wuhu-ui/loading'
+import { createLoading, destroyLoading } from '@wuhu-vue-ui/loading'
 
 const loading = createLoading({
   animation: 'spinner',
@@ -64,7 +64,7 @@ loading.destroy()
 还可以使用：
 
 ```ts
-import { destroyAllLoadings, destroyLoading, useLoading } from '@wuhu-ui/loading'
+import { destroyAllLoadings, destroyLoading, useLoading } from '@wuhu-vue-ui/loading'
 
 destroyLoading(loading) // 传入实例或 id
 destroyAllLoadings()

@@ -2,48 +2,47 @@
 
 一套面向复杂业务场景的 Vue 3 组件库。采用 pnpm monorepo 组织，一个组件一个独立包，使用 TypeScript、Less、设计令牌（Design Tokens）、Vite+ 与 Husky 构建。
 
-- 29 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、图标、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
-- 每个包只将 `vue` 作为 peer dependency；`@wuhu-ui/command-menu` 额外使用 `pinyin-pro` 提供拼音搜索，`@wuhu-ui/cropper` 使用 `cropperjs` 提供裁剪能力，`@wuhu-ui/icon-picker` 使用 `@tanstack/vue-virtual` 提供虚拟滚动，`@wuhu-ui/code-editor` 将 `monaco-editor` 作为可选 peer dependency。
+- 30 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、图标、异常页、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
+- 每个包只将 `vue` 作为 peer dependency；`@wuhu-vue-ui/command-menu` 额外使用 `pinyin-pro` 提供拼音搜索，`@wuhu-vue-ui/cropper` 使用 `cropperjs` 提供裁剪能力，`@wuhu-vue-ui/icon-picker` 使用 `@tanstack/vue-virtual` 提供虚拟滚动，`@wuhu-vue-ui/code-editor` 将 `monaco-editor` 作为可选 peer dependency。
 - 样式基于 `--w-*` CSS 变量，内置亮色 / 暗色主题，可按项目品牌覆盖。
 - 单包构建自动注入自身样式，无需手动引入组件 CSS。
 - 完整的 TypeScript 类型、组合式函数导出、可访问性支持与单元测试。
 
 ## 组件一览
 
-| 包                               | 组件                  | 说明                                                              |
-| -------------------------------- | --------------------- | ----------------------------------------------------------------- |
-| `@wuhu-ui/scrollbar`             | `Scrollbar`           | 模拟原生滚动行为，自定义滚动条，支持横向 / 纵向、拖拽与点击轨道   |
-| `@wuhu-ui/copy`                  | `Copy`                | 剪贴板写入，`text` 支持同步 / 异步、成功 / 失败状态与降级方案     |
-| `@wuhu-ui/highlight`             | `Highlight`           | 安全的多关键词高亮，支持整词匹配、大小写与作用域插槽              |
-| `@wuhu-ui/lazy-container`        | `LazyContainer`       | 基于 IntersectionObserver 的懒渲染与进入 / 离开事件               |
-| `@wuhu-ui/resize-container`      | `ResizeContainer`     | 基于 ResizeObserver 的尺寸监听，支持防抖                          |
-| `@wuhu-ui/error-boundary`        | `ErrorBoundary`       | 捕获子组件渲染错误，提供默认回退与重置能力                        |
-| `@wuhu-ui/time`                  | `Time`                | 自动刷新的相对时间，基于 Intl.RelativeTimeFormat                  |
-| `@wuhu-ui/ellipsis`              | `Ellipsis`            | 单行 / 多行文本省略，支持展开收起、溢出检测与悬浮提示             |
-| `@wuhu-ui/permission`            | `Permission`          | 组件 / 组合式函数 / 指令三种权限校验，支持 all / any 与 fallback  |
-| `@wuhu-ui/count-down`            | `CountDown`           | 目标时间或时长倒计时，支持暂停、重置、格式化与完成插槽            |
-| `@wuhu-ui/loading`               | `Loading`             | 5 种内置加载动画，支持全屏遮罩、插槽与命令式创建 / 销毁           |
-| `@wuhu-ui/view`                  | `View`                | 可组合的 Header / Sider / Content / Footer 页面布局，支持折叠     |
-| `@wuhu-ui/icon`                  | `Icon`                | 轻量级内联 SVG 图标，内置 Lucide 路径并支持自定义注册             |
-| `@wuhu-ui/exception`             | `Exception`           | 400 / 403 / 404 / 500 异常页，支持插图、插槽与自定义操作          |
-| `@wuhu-ui/img-comparison-slider` | `ImgComparisonSlider` | 可拖拽、触摸与键盘操作的图片对比滑块                              |
-| `@wuhu-ui/ripple`                | `Ripple`              | Material 风格水波纹，提供组件、指令与组合式函数三种用法           |
-| `@wuhu-ui/cropper`               | `Cropper`             | 基于 Cropper.js 2 的图片裁剪，支持缩放、旋转、比例与导出          |
-| `@wuhu-ui/motion-group`          | `MotionGroup`         | 基于 TransitionGroup 的列表重排动画，内置 6 套预设                |
-| `@wuhu-ui/slider-captcha`        | `SliderCaptcha`       | Canvas 拼图滑块验证码，支持拖拽、键盘操作与自定义背景             |
-| `@wuhu-ui/gradient-text`         | `GradientText`        | 线性 / 径向 / 锥形渐变文字，支持背景流动动画                      |
-| `@wuhu-ui/number-ticker`         | `NumberTicker`        | 逐位滚动的数字动画，支持千分位、前缀与小数                        |
-| `@wuhu-ui/sliding-highlight`     | `SlidingHighlight`    | 跟随悬浮 / 焦点的滑块高亮容器，支持任意直接子项与自定义样式       |
-| `@wuhu-ui/command-menu`          | `CommandMenu`         | 命令面板：中文 / 拼音搜索、分组、键盘导航与悬浮优先高亮           |
-| `@wuhu-ui/code-editor`           | `CodeEditor`          | 基于 Monaco 的代码编辑器，支持 v-model、语言 / 主题切换与只读模式 |
-| `@wuhu-ui/json-viewer`           | `JsonViewer`          | 基于 CodeEditor 的只读 JSON 查看器，自动格式化对象与 JSON 字符串  |
-| `@wuhu-ui/dock`                  | `Dock`                | macOS 风格程序坞，支持四向布局、指针放大与插槽定制                |
-| `@wuhu-ui/icon-picker`           | `IconPicker`          | 分组、搜索与虚拟滚动的图标选择器，支持类名与 VNode 图标           |
-| `@wuhu-ui/gantt`                 | `Gantt`               | 层级任务、依赖、进度、里程碑、日 / 周 / 月视图与拖拽排期          |
-| `@wuhu-ui/org-tree`              | `OrgTree`             | 可缩放平移、拖拽改父级的组织架构图，支持右键菜单与节点插槽        |
-| `@wuhu-ui/file-viewer`           | `FileViewer`          | 图片、音视频、PDF、Office、Markdown、代码、EPUB 与压缩包预览      |
-| `@wuhu-ui/core`                  | —                     | 公共工具函数与 Vue composables（防抖、节流、复制等）              |
-| `@wuhu-ui/tokens`                | —                     | 全局设计令牌与亮 / 暗主题 CSS 变量                                |
+| 包                                   | 组件                  | 说明                                                              |
+| ------------------------------------ | --------------------- | ----------------------------------------------------------------- |
+| `@wuhu-vue-ui/scrollbar`             | `Scrollbar`           | 模拟原生滚动行为，自定义滚动条，支持横向 / 纵向、拖拽与点击轨道   |
+| `@wuhu-vue-ui/copy`                  | `Copy`                | 剪贴板写入，`text` 支持同步 / 异步、成功 / 失败状态与降级方案     |
+| `@wuhu-vue-ui/highlight`             | `Highlight`           | 安全的多关键词高亮，支持整词匹配、大小写与作用域插槽              |
+| `@wuhu-vue-ui/lazy-container`        | `LazyContainer`       | 基于 IntersectionObserver 的懒渲染与进入 / 离开事件               |
+| `@wuhu-vue-ui/resize-container`      | `ResizeContainer`     | 基于 ResizeObserver 的尺寸监听，支持防抖                          |
+| `@wuhu-vue-ui/error-boundary`        | `ErrorBoundary`       | 捕获子组件渲染错误，提供默认回退与重置能力                        |
+| `@wuhu-vue-ui/time`                  | `Time`                | 自动刷新的相对时间，基于 Intl.RelativeTimeFormat                  |
+| `@wuhu-vue-ui/ellipsis`              | `Ellipsis`            | 单行 / 多行文本省略，支持展开收起、溢出检测与悬浮提示             |
+| `@wuhu-vue-ui/permission`            | `Permission`          | 组件 / 组合式函数 / 指令三种权限校验，支持 all / any 与 fallback  |
+| `@wuhu-vue-ui/count-down`            | `CountDown`           | 目标时间或时长倒计时，支持暂停、重置、格式化与完成插槽            |
+| `@wuhu-vue-ui/loading`               | `Loading`             | 5 种内置加载动画，支持全屏遮罩、插槽与命令式创建 / 销毁           |
+| `@wuhu-vue-ui/view`                  | `View`                | 可组合的 Header / Sider / Content / Footer 页面布局，支持折叠     |
+| `@wuhu-vue-ui/icon`                  | `Icon`                | 轻量级内联 SVG 图标，内置 Lucide 路径并支持自定义注册             |
+| `@wuhu-vue-ui/exception`             | `Exception`           | 400 / 403 / 404 / 500 异常页，支持插图、插槽与自定义操作          |
+| `@wuhu-vue-ui/img-comparison-slider` | `ImgComparisonSlider` | 可拖拽、触摸与键盘操作的图片对比滑块                              |
+| `@wuhu-vue-ui/ripple`                | `Ripple`              | Material 风格水波纹，提供组件、指令与组合式函数三种用法           |
+| `@wuhu-vue-ui/cropper`               | `Cropper`             | 基于 Cropper.js 2 的图片裁剪，支持缩放、旋转、比例与导出          |
+| `@wuhu-vue-ui/motion-group`          | `MotionGroup`         | 基于 TransitionGroup 的列表重排动画，内置 6 套预设                |
+| `@wuhu-vue-ui/slider-captcha`        | `SliderCaptcha`       | Canvas 拼图滑块验证码，支持拖拽、键盘操作与自定义背景             |
+| `@wuhu-vue-ui/gradient-text`         | `GradientText`        | 线性 / 径向 / 锥形渐变文字，支持背景流动动画                      |
+| `@wuhu-vue-ui/number-ticker`         | `NumberTicker`        | 逐位滚动的数字动画，支持千分位、前缀与小数                        |
+| `@wuhu-vue-ui/sliding-highlight`     | `SlidingHighlight`    | 跟随悬浮 / 焦点的滑块高亮容器，支持任意直接子项与自定义样式       |
+| `@wuhu-vue-ui/command-menu`          | `CommandMenu`         | 命令面板：中文 / 拼音搜索、分组、键盘导航与悬浮优先高亮           |
+| `@wuhu-vue-ui/code-editor`           | `CodeEditor`          | 基于 Monaco 的代码编辑器，支持 v-model、语言 / 主题切换与只读模式 |
+| `@wuhu-vue-ui/json-viewer`           | `JsonViewer`          | 基于 CodeEditor 的只读 JSON 查看器，自动格式化对象与 JSON 字符串  |
+| `@wuhu-vue-ui/dock`                  | `Dock`                | macOS 风格程序坞，支持四向布局、指针放大与插槽定制                |
+| `@wuhu-vue-ui/icon-picker`           | `IconPicker`          | 分组、搜索与虚拟滚动的图标选择器，支持类名与 VNode 图标           |
+| `@wuhu-vue-ui/gantt`                 | `Gantt`               | 层级任务、依赖、进度、里程碑、日 / 周 / 月视图与拖拽排期          |
+| `@wuhu-vue-ui/org-tree`              | `OrgTree`             | 可缩放平移、拖拽改父级的组织架构图，支持右键菜单与节点插槽        |
+| `@wuhu-vue-ui/file-viewer`           | `FileViewer`          | 图片、音视频、PDF、Office、Markdown、代码、EPUB 与压缩包预览      |
+| `@wuhu-vue-ui/core`                  | —                     | 公共工具函数与 Vue composables（防抖、节流、复制等）              |
 
 ## 技术栈
 
@@ -97,9 +96,8 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 
 ```text
 .
-├─ packages/                   # 32 个 workspace 包：2 个基础包 + 30 个组件包
+├─ packages/                   # 31 个 workspace 包：core + 30 个组件包
 │  ├─ core/                    # 公共工具函数、composables 与 DOM 基础设施
-│  ├─ tokens/                  # 设计令牌与主题
 │  ├─ scrollbar/               # 基础能力组件
 │  ├─ copy/
 │  ├─ highlight/
@@ -133,9 +131,10 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 ├─ playground/                 # 编写与调试 Vue Demo
 │  ├─ src/demos/               # 每个组件的 Demo
 │  ├─ src/docs/component-meta.ts # 组件元数据（首页/侧边栏共用）
-│  └─ src/docs/catalog.ts      # 元数据 + Demo 组件映射
+│  ├─ src/docs/catalog.ts      # 元数据 + Demo 组件映射
+│  └─ src/tokens.less          # playground 应用级亮暗令牌
 ├─ docs/                       # VitePress 文档站
-│  ├─ .vitepress/              # 站点配置、主题与 HomeCatalog
+│  ├─ .vitepress/              # 站点配置、主题、HomeCatalog 与 tokens.less
 │  ├─ components/              # 每个组件一个 Markdown 页面
 │  ├─ demos/                   # 文档站 Demo
 │  ├─ guide/                   # 快速开始与主题说明
@@ -143,7 +142,6 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 ├─ scripts/
 │  ├─ vite.library.ts          # 统一的组件库构建配置
 │  ├─ workspace-source.ts      # playground / docs 共用的源码别名插件
-│  ├─ build-tokens.mjs         # Less → CSS 令牌构建
 │  ├─ generate-file-viewer-samples.mjs # 生成 playground/docs 二进制样例
 │  ├─ visual-check.mjs         # 浏览器截图与控制台/溢出检查
 │  ├─ a11y-check.mjs           # axe-core 无障碍扫描
@@ -161,11 +159,12 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 每个组件包均输出 ESM、`.d.ts`、source map 与 `style.css`。浏览器入口会自动注入 `import "./style.css"`；同时通过 package `exports` 的 `node` 条件提供无 CSS 依赖的 `index.node.js`，便于 Node SSR / 外部化依赖场景直接加载。
 
 ```ts
-import '@wuhu-ui/tokens/index.css' // 全局令牌，必须在应用入口引入一次
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 ```
 
-如需显式控制样式加载顺序，也可以导入 `@wuhu-ui/scrollbar/style.css`。所有组件的自定义属性统一使用 `--w-*` 命名空间（满足 `--w` 前缀约定）。
+组件样式已通过 `var(--w-*, fallback)` 内置默认令牌，无需额外引入全局令牌包。
+
+如需显式控制样式加载顺序，也可以导入 `@wuhu-vue-ui/scrollbar/style.css`。所有组件的自定义属性统一使用 `--w-*` 命名空间（满足 `--w` 前缀约定）。
 
 ## 样式与 class 定制
 
@@ -182,21 +181,27 @@ import { Scrollbar } from '@wuhu-ui/scrollbar'
 
 ## 主题与设计令牌
 
-在应用入口引入全局令牌：
+组件样式内置 `var(--w-*, fallback)` 默认值，单独安装即可使用，不需要额外的令牌包。
 
-```ts
-import '@wuhu-ui/tokens/index.css'
+如需统一品牌色或暗色主题，可以在应用中覆盖 CSS 变量：
+
+```css
+:root {
+  --w-color-primary: #16a34a;
+  --w-color-primary-hover: #22c55e;
+  --w-color-primary-soft: rgba(22, 163, 74, 0.12);
+  --w-radius-md: 10px;
+  --w-font-family: 'Your Font', system-ui, sans-serif;
+}
+
+[data-w-theme='dark'] {
+  --w-color-text: #e2e8f0;
+  --w-color-surface: #0f172a;
+  /* 其余暗色令牌可按需覆盖 */
+}
 ```
 
-亮色主题默认生效，暗色主题可通过属性切换：
-
-```html
-<html data-w-theme="dark"></html>
-```
-
-未显式设置 `data-w-theme` 时，会跟随系统 `prefers-color-scheme`。
-
-所有令牌都是 CSS 变量，可以在任意祖先节点覆盖：
+每个组件包在 `src/style/token.less` 中只维护自己实际使用的亮暗令牌；playground 与 docs 各自在应用级 `tokens.less` 中维护完整主题。所有令牌都是 CSS 变量，可以在任意祖先节点覆盖：
 
 ```css
 :root {
@@ -231,7 +236,7 @@ import '@wuhu-ui/tokens/index.css'
 
 ### Core 工具与 Hooks
 
-`@wuhu-ui/core` 为其他包和业务代码提供通用能力，不包含样式，也不会引入额外运行时依赖。
+`@wuhu-vue-ui/core` 为其他包和业务代码提供通用能力，不包含样式，也不会引入额外运行时依赖。
 
 ```ts
 import {
@@ -243,7 +248,7 @@ import {
   useDebounceFn,
   useThrottle,
   useThrottleFn,
-} from '@wuhu-ui/core'
+} from '@wuhu-vue-ui/core'
 
 const search = useDebounceFn((keyword: string) => fetchResults(keyword), 300)
 
@@ -267,7 +272,7 @@ await copyText('hello')
 
 ```vue
 <script setup lang="ts">
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 </script>
 
 <template>
@@ -303,7 +308,7 @@ import { Scrollbar } from '@wuhu-ui/scrollbar'
 
 ```vue
 <script setup lang="ts">
-import { Copy, useClipboard } from '@wuhu-ui/copy'
+import { Copy, useClipboard } from '@wuhu-vue-ui/copy'
 
 const fetchText = async () => 'content from api'
 </script>
@@ -320,7 +325,7 @@ const fetchText = async () => 'content from api'
 
 ```vue
 <script setup lang="ts">
-import { Highlight } from '@wuhu-ui/highlight'
+import { Highlight } from '@wuhu-vue-ui/highlight'
 
 const keywords = ['Vue', '组件']
 </script>
@@ -395,7 +400,7 @@ const keywords = ['Vue', '组件']
 
 ```vue
 <script setup lang="ts">
-import { Time, formatRelativeTime } from '@wuhu-ui/time'
+import { Time, formatRelativeTime } from '@wuhu-vue-ui/time'
 </script>
 
 <template>
@@ -414,7 +419,7 @@ import { Time, formatRelativeTime } from '@wuhu-ui/time'
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ImgComparisonSlider } from '@wuhu-ui/img-comparison-slider'
+import { ImgComparisonSlider } from '@wuhu-vue-ui/img-comparison-slider'
 
 const position = ref(50)
 </script>
@@ -442,7 +447,7 @@ const position = ref(50)
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Cropper, type CropperExpose } from '@wuhu-ui/cropper'
+import { Cropper, type CropperExpose } from '@wuhu-vue-ui/cropper'
 
 const cropper = ref<CropperExpose>()
 
@@ -488,7 +493,7 @@ async function exportImage() {
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MotionGroup } from '@wuhu-ui/motion-group'
+import { MotionGroup } from '@wuhu-vue-ui/motion-group'
 
 const animation = ref<'fade' | 'slide' | 'scale' | 'flip' | 'bounce' | 'reveal'>('fade')
 const cards = ref([
@@ -559,7 +564,7 @@ const cards = ref([
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { SlidingHighlight } from '@wuhu-ui/sliding-highlight'
+import { SlidingHighlight } from '@wuhu-vue-ui/sliding-highlight'
 
 const nav = ref<InstanceType<typeof SlidingHighlight> | null>(null)
 const active = ref('components')
@@ -599,7 +604,7 @@ function handleFocusin(event: FocusEvent) {
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CommandMenu, type CommandMenuItem, type CommandMenuKey } from '@wuhu-ui/command-menu'
+import { CommandMenu, type CommandMenuItem, type CommandMenuKey } from '@wuhu-vue-ui/command-menu'
 
 const selected = ref<CommandMenuKey>()
 const items: CommandMenuItem[] = [
@@ -645,7 +650,7 @@ function handleSelect(item: CommandMenuItem) {
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { FileViewer } from '@wuhu-ui/file-viewer'
+import { FileViewer } from '@wuhu-vue-ui/file-viewer'
 
 const file = ref<File | null>(null)
 </script>
@@ -678,7 +683,7 @@ const file = ref<File | null>(null)
 每个渲染器都是独立的动态 chunk，首次打开对应格式时才加载：
 
 ```ts
-import { preloadFileViewerRenderer } from '@wuhu-ui/file-viewer'
+import { preloadFileViewerRenderer } from '@wuhu-vue-ui/file-viewer'
 
 // 可选：空闲时预取，不阻塞首屏
 preloadFileViewerRenderer('pdf')
@@ -709,7 +714,7 @@ preloadFileViewerRenderer('pdf')
 ```
 
 ```ts
-import { registerFileViewerLocale, fileViewerLocales } from '@wuhu-ui/file-viewer'
+import { registerFileViewerLocale, fileViewerLocales } from '@wuhu-vue-ui/file-viewer'
 
 fileViewerLocales.en // 英文完整文案
 registerFileViewerLocale('ja', japaneseMessages)
@@ -742,7 +747,7 @@ const options = {
 ### 数据模型
 
 ```ts
-import type { GanttTask } from '@wuhu-ui/gantt'
+import type { GanttTask } from '@wuhu-vue-ui/gantt'
 
 const tasks: GanttTask[] = [
   {
@@ -791,8 +796,8 @@ const tasks: GanttTask[] = [
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Gantt } from '@wuhu-ui/gantt'
-import type { GanttTaskUpdateEvent, GanttView } from '@wuhu-ui/gantt'
+import { Gantt } from '@wuhu-vue-ui/gantt'
+import type { GanttTaskUpdateEvent, GanttView } from '@wuhu-vue-ui/gantt'
 
 const view = ref<GanttView>('week')
 const selected = ref<string | number | null>(null)
@@ -912,7 +917,7 @@ ganttRef.value?.getTaskById('task-id')
 每个组件包可以独立构建：
 
 ```bash
-pnpm --filter @wuhu-ui/scrollbar build
+pnpm --filter @wuhu-vue-ui/scrollbar build
 ```
 
 发布前建议执行：

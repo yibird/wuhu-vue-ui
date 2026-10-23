@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/json-viewer",
+  "name": "@wuhu-vue-ui/json-viewer",
   "version": "0.1.0",
   "description": "Read-only, auto-formatted JSON viewer built on CodeEditor and Monaco.",
   "keywords": [
@@ -35,7 +35,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-ui/code-editor": "workspace:*"
+    "@wuhu-vue-ui/code-editor": "workspace:*"
   },
   "peerDependencies": {
     "monaco-editor": ">=0.40.0",

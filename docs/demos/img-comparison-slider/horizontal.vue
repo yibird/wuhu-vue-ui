@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ImgComparisonSlider } from '@wuhu-ui/img-comparison-slider'
+import { ImgComparisonSlider } from '@wuhu-vue-ui/img-comparison-slider'
 
 const position = ref(56)
 </script>

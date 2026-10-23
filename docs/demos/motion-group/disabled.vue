@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MotionGroup } from '@wuhu-ui/motion-group'
+import { MotionGroup } from '@wuhu-vue-ui/motion-group'
 </script>
 
 <template>

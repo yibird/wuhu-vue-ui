@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { h, ref } from 'vue'
 import type { Component } from 'vue'
-import { Dock } from '@wuhu-ui/dock'
-import type { DockItem, DockPosition } from '@wuhu-ui/dock'
+import { Dock } from '@wuhu-vue-ui/dock'
+import type { DockItem, DockPosition } from '@wuhu-vue-ui/dock'
 import DemoCard from '../components/demo-card.vue'
 
 const FinderImage =

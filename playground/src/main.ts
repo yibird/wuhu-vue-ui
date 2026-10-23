@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import '@wuhu-ui/tokens/index.css'
+import './tokens.less'
 import App from './App.vue'
 import './style.less'
 import './docs.less'

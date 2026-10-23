@@ -1,6 +1,6 @@
 # JSON Viewer JSON 查看器
 
-基于 `@wuhu-ui/code-editor` 的只读 JSON 查看器，自动格式化对象、数组与 JSON 字符串。
+基于 `@wuhu-vue-ui/code-editor` 的只读 JSON 查看器，自动格式化对象、数组与 JSON 字符串。
 
 ## 基础用法
 
@@ -39,8 +39,8 @@
 
 - 事件：`ready`（Monaco 实例）、`error`（加载或初始化失败）。
 - 方法：`getEditor()`、`focus()`、`layout()`、`getValue()`、`getFormattedValue()`。
-- 工具函数 `formatJsonValue(value, indent)` 从 `@wuhu-ui/json-viewer` 导出，可在非组件场景复用。
+- 工具函数 `formatJsonValue(value, indent)` 从 `@wuhu-vue-ui/json-viewer` 导出，可在非组件场景复用。
 
 ### 依赖说明
 
-`JsonViewer` 依赖 `@wuhu-ui/code-editor` 与可选 peer `monaco-editor`，Monaco Worker 配置请参考 [Code Editor](/components/code-editor)。
+`JsonViewer` 依赖 `@wuhu-vue-ui/code-editor` 与可选 peer `monaco-editor`，Monaco Worker 配置请参考 [Code Editor](/components/code-editor)。

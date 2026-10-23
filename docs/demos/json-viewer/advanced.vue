@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { useData } from 'vitepress'
 import { Button } from 'antdv-next'
-import { JsonViewer } from '@wuhu-ui/json-viewer'
+import { JsonViewer } from '@wuhu-vue-ui/json-viewer'
 import '../../../playground/src/demos/monaco-env'
 
 const { isDark } = useData()

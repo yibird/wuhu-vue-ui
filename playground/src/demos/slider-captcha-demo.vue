@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { SliderCaptcha } from '@wuhu-ui/slider-captcha'
+import { SliderCaptcha } from '@wuhu-vue-ui/slider-captcha'
 
 const status = ref('拖动滑块完成拼图')
 

@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/file-viewer",
+  "name": "@wuhu-vue-ui/file-viewer",
   "version": "0.1.0",
   "description": "A themeable, internationalized file preview component for Vue 3.",
   "keywords": [
@@ -43,7 +43,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-ui/core": "workspace:*"
+    "@wuhu-vue-ui/core": "workspace:*"
   },
   "peerDependencies": {
     "pdfjs-dist": ">=3.0.0",

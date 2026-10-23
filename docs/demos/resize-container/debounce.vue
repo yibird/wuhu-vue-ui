@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ResizeContainer } from '@wuhu-ui/resize-container'
+import { ResizeContainer } from '@wuhu-vue-ui/resize-container'
 </script>
 
 <template>

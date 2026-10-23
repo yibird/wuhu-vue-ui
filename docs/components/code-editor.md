@@ -35,7 +35,7 @@ self.MonacoEnvironment = {
 
 ## JSON Viewer
 
-JSON 查看器已抽离为独立包 `@wuhu-ui/json-viewer`，内部基于 `CodeEditor` 封装。详见 [JSON Viewer](/components/json-viewer)。
+JSON 查看器已抽离为独立包 `@wuhu-vue-ui/json-viewer`，内部基于 `CodeEditor` 封装。详见 [JSON Viewer](/components/json-viewer)。
 
 ## API
 
@@ -79,8 +79,8 @@ JSON 查看器已抽离为独立包 `@wuhu-ui/json-viewer`，内部基于 `CodeE
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CodeEditor } from '@wuhu-ui/code-editor'
-import type { CodeEditorExpose } from '@wuhu-ui/code-editor'
+import { CodeEditor } from '@wuhu-vue-ui/code-editor'
+import type { CodeEditorExpose } from '@wuhu-vue-ui/code-editor'
 
 const editorRef = ref<CodeEditorExpose | null>(null)
 </script>

@@ -83,7 +83,7 @@ importers:
 
   packages/command-menu:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       pinyin-pro:
@@ -95,7 +95,7 @@ importers:
 
   packages/copy:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -110,7 +110,7 @@ importers:
 
   packages/count-down:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -128,7 +128,7 @@ importers:
 
   packages/dock:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -155,7 +155,7 @@ importers:
 
   packages/file-viewer:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       pdfjs-dist:
@@ -167,7 +167,7 @@ importers:
 
   packages/gantt:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -197,7 +197,7 @@ importers:
       '@tanstack/vue-virtual':
         specifier: ^3.13.47
         version: 3.13.47(vue@3.5.44(typescript@5.9.3))
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -206,7 +206,7 @@ importers:
 
   packages/img-comparison-slider:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -215,7 +215,7 @@ importers:
 
   packages/json-viewer:
     dependencies:
-      '@wuhu-ui/code-editor':
+      '@wuhu-vue-ui/code-editor':
         specifier: workspace:*
         version: link:../code-editor
       monaco-editor:
@@ -245,7 +245,7 @@ importers:
 
   packages/number-ticker:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -254,7 +254,7 @@ importers:
 
   packages/org-tree:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -269,7 +269,7 @@ importers:
 
   packages/resize-container:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -290,7 +290,7 @@ importers:
 
   packages/slider-captcha:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -299,7 +299,7 @@ importers:
 
   packages/sliding-highlight:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
@@ -308,18 +308,16 @@ importers:
 
   packages/time:
     dependencies:
-      '@wuhu-ui/core':
+      '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
 
-  packages/tokens: {}
-
   packages/view:
     dependencies:
-      '@wuhu-ui/icon':
+      '@wuhu-vue-ui/icon':
         specifier: workspace:*
         version: link:../icon
       vue:
@@ -328,97 +326,94 @@ importers:
 
   playground:
     dependencies:
-      '@wuhu-ui/code-editor':
+      '@wuhu-vue-ui/code-editor':
         specifier: workspace:*
         version: link:../packages/code-editor
-      '@wuhu-ui/command-menu':
+      '@wuhu-vue-ui/command-menu':
         specifier: workspace:*
         version: link:../packages/command-menu
-      '@wuhu-ui/copy':
+      '@wuhu-vue-ui/copy':
         specifier: workspace:*
         version: link:../packages/copy
-      '@wuhu-ui/count-down':
+      '@wuhu-vue-ui/count-down':
         specifier: workspace:*
         version: link:../packages/count-down
-      '@wuhu-ui/cropper':
+      '@wuhu-vue-ui/cropper':
         specifier: workspace:*
         version: link:../packages/cropper
-      '@wuhu-ui/dock':
+      '@wuhu-vue-ui/dock':
         specifier: workspace:*
         version: link:../packages/dock
-      '@wuhu-ui/ellipsis':
+      '@wuhu-vue-ui/ellipsis':
         specifier: workspace:*
         version: link:../packages/ellipsis
-      '@wuhu-ui/error-boundary':
+      '@wuhu-vue-ui/error-boundary':
         specifier: workspace:*
         version: link:../packages/error-boundary
-      '@wuhu-ui/exception':
+      '@wuhu-vue-ui/exception':
         specifier: workspace:*
         version: link:../packages/exception
-      '@wuhu-ui/file-viewer':
+      '@wuhu-vue-ui/file-viewer':
         specifier: workspace:*
         version: link:../packages/file-viewer
-      '@wuhu-ui/gantt':
+      '@wuhu-vue-ui/gantt':
         specifier: workspace:*
         version: link:../packages/gantt
-      '@wuhu-ui/gradient-text':
+      '@wuhu-vue-ui/gradient-text':
         specifier: workspace:*
         version: link:../packages/gradient-text
-      '@wuhu-ui/highlight':
+      '@wuhu-vue-ui/highlight':
         specifier: workspace:*
         version: link:../packages/highlight
-      '@wuhu-ui/icon':
+      '@wuhu-vue-ui/icon':
         specifier: workspace:*
         version: link:../packages/icon
-      '@wuhu-ui/icon-picker':
+      '@wuhu-vue-ui/icon-picker':
         specifier: workspace:*
         version: link:../packages/icon-picker
-      '@wuhu-ui/img-comparison-slider':
+      '@wuhu-vue-ui/img-comparison-slider':
         specifier: workspace:*
         version: link:../packages/img-comparison-slider
-      '@wuhu-ui/json-viewer':
+      '@wuhu-vue-ui/json-viewer':
         specifier: workspace:*
         version: link:../packages/json-viewer
-      '@wuhu-ui/lazy-container':
+      '@wuhu-vue-ui/lazy-container':
         specifier: workspace:*
         version: link:../packages/lazy-container
-      '@wuhu-ui/loading':
+      '@wuhu-vue-ui/loading':
         specifier: workspace:*
         version: link:../packages/loading
-      '@wuhu-ui/motion-group':
+      '@wuhu-vue-ui/motion-group':
         specifier: workspace:*
         version: link:../packages/motion-group
-      '@wuhu-ui/number-ticker':
+      '@wuhu-vue-ui/number-ticker':
         specifier: workspace:*
         version: link:../packages/number-ticker
-      '@wuhu-ui/org-tree':
+      '@wuhu-vue-ui/org-tree':
         specifier: workspace:*
         version: link:../packages/org-tree
-      '@wuhu-ui/permission':
+      '@wuhu-vue-ui/permission':
         specifier: workspace:*
         version: link:../packages/permission
-      '@wuhu-ui/resize-container':
+      '@wuhu-vue-ui/resize-container':
         specifier: workspace:*
         version: link:../packages/resize-container
-      '@wuhu-ui/ripple':
+      '@wuhu-vue-ui/ripple':
         specifier: workspace:*
         version: link:../packages/ripple
-      '@wuhu-ui/scrollbar':
+      '@wuhu-vue-ui/scrollbar':
         specifier: workspace:*
         version: link:../packages/scrollbar
-      '@wuhu-ui/slider-captcha':
+      '@wuhu-vue-ui/slider-captcha':
         specifier: workspace:*
         version: link:../packages/slider-captcha
-      '@wuhu-ui/sliding-highlight':
+      '@wuhu-vue-ui/sliding-highlight':
         specifier: workspace:*
         version: link:../packages/sliding-highlight
-      '@wuhu-ui/time':
+      '@wuhu-vue-ui/time':
         specifier: workspace:*
         version: link:../packages/time
-      '@wuhu-ui/tokens':
-        specifier: workspace:*
-        version: link:../packages/tokens
-      '@wuhu-ui/view':
+      '@wuhu-vue-ui/view':
         specifier: workspace:*
         version: link:../packages/view
       vue:

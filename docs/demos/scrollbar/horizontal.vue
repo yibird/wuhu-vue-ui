@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 import { scrollStripItems } from './shared'
 </script>
 

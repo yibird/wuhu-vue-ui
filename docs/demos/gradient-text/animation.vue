@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'antdv-next'
-import { GradientText } from '@wuhu-ui/gradient-text'
-import type { GradientTextProps } from '@wuhu-ui/gradient-text'
+import { GradientText } from '@wuhu-vue-ui/gradient-text'
+import type { GradientTextProps } from '@wuhu-vue-ui/gradient-text'
 
 type Direction = NonNullable<GradientTextProps['animationDirection']>
 

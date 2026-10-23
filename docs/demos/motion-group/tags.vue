@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button, Tag } from 'antdv-next'
-import { MotionGroup } from '@wuhu-ui/motion-group'
+import { MotionGroup } from '@wuhu-vue-ui/motion-group'
 
 interface Tag {
   id: number

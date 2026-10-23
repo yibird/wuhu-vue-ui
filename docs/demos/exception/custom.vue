@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Exception } from '@wuhu-ui/exception'
+import { Exception } from '@wuhu-vue-ui/exception'
 
 const message = ref('')
 

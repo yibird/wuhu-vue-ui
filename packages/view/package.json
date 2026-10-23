@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/view",
+  "name": "@wuhu-vue-ui/view",
   "version": "0.1.0",
   "description": "Composable page layout shell with header, sider, content and footer for Vue 3.",
   "keywords": [
@@ -41,7 +41,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-ui/icon": "workspace:*"
+    "@wuhu-vue-ui/icon": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

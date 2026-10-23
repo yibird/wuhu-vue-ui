@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { LazyContainer } from '@wuhu-ui/lazy-container'
+import { LazyContainer } from '@wuhu-vue-ui/lazy-container'
 import DemoCard from '../components/demo-card.vue'
 
 const lazyRoot = ref<HTMLElement>()

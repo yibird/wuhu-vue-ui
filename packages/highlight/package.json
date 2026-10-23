@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/highlight",
+  "name": "@wuhu-vue-ui/highlight",
   "version": "0.1.0",
   "description": "Safe keyword highlighting for Vue 3 with scoped slots.",
   "keywords": [

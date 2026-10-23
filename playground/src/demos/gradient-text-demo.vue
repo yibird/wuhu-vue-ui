@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { GradientText } from '@wuhu-ui/gradient-text'
+import { GradientText } from '@wuhu-vue-ui/gradient-text'
 import DemoCard from '../components/demo-card.vue'
 import { theme } from '../theme'
 

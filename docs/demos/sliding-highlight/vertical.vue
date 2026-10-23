@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SlidingHighlight } from '@wuhu-ui/sliding-highlight'
+import { SlidingHighlight } from '@wuhu-vue-ui/sliding-highlight'
 
 const items = ['工作台', '用户管理', '系统设置', '操作日志']
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Button } from 'antdv-next'
-import { NumberTicker } from '@wuhu-ui/number-ticker'
+import { NumberTicker } from '@wuhu-vue-ui/number-ticker'
 
 const delta = ref(-12480.75)
 const leverage = computed(() => Math.round(delta.value * 3.2 * 100) / 100)

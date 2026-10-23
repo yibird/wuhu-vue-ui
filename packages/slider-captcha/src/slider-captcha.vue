@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePointerDrag, useTimeoutFn } from '@wuhu-ui/core'
+import { usePointerDrag, useTimeoutFn } from '@wuhu-vue-ui/core'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'
 import type {
   SliderCaptchaFailEvent,

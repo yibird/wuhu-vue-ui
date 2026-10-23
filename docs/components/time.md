@@ -25,7 +25,7 @@
 相对时间的响应式逻辑同时以组合式函数导出，可在自定义组件或逻辑层复用：
 
 ```ts
-import { useRelativeTime } from '@wuhu-ui/time'
+import { useRelativeTime } from '@wuhu-vue-ui/time'
 
 const { relative, date, now, refresh, stop } = useRelativeTime({
   time: () => props.time,

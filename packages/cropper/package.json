@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/cropper",
+  "name": "@wuhu-vue-ui/cropper",
   "version": "0.1.0",
   "description": "Image cropper for Vue 3, powered by Cropper.js.",
   "keywords": [

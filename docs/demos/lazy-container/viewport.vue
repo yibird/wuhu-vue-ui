@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'antdv-next'
-import { LazyContainer } from '@wuhu-ui/lazy-container'
+import { LazyContainer } from '@wuhu-vue-ui/lazy-container'
 
 const root = ref<HTMLElement>()
 const visible = ref(false)

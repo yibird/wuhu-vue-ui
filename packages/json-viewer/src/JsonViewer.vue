@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { CodeEditor } from '@wuhu-ui/code-editor'
-import type { CodeEditorExpose, CodeEditorInstance, CodeEditorProps } from '@wuhu-ui/code-editor'
+import { CodeEditor } from '@wuhu-vue-ui/code-editor'
+import type {
+  CodeEditorExpose,
+  CodeEditorInstance,
+  CodeEditorProps,
+} from '@wuhu-vue-ui/code-editor'
 import { formatJsonValue } from './json'
 import type { JsonViewerErrorSlotProps, JsonViewerProps } from './types'
 

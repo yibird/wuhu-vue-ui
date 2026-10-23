@@ -3,8 +3,8 @@ import { computed, ref } from 'vue'
 import { useData } from 'vitepress'
 import { Button, RadioGroup, Select, Upload } from 'antdv-next'
 import type { RadioChangeEvent, UploadProps } from 'antdv-next'
-import { FileViewer } from '@wuhu-ui/file-viewer'
-import type { FileViewerReadyEvent } from '@wuhu-ui/file-viewer'
+import { FileViewer } from '@wuhu-vue-ui/file-viewer'
+import type { FileViewerReadyEvent } from '@wuhu-vue-ui/file-viewer'
 import { fileSamples, type FileSampleId } from './shared'
 
 const { isDark } = useData()

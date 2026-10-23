@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'antdv-next'
-import { Scrollbar } from '@wuhu-ui/scrollbar'
-import type { ScrollbarScrollEvent } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
+import type { ScrollbarScrollEvent } from '@wuhu-vue-ui/scrollbar'
 import { scrollStripItems } from './shared'
 
 const scrollbarRef = ref<InstanceType<typeof Scrollbar> | null>(null)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Button } from 'antdv-next'
-import { SlidingHighlight } from '@wuhu-ui/sliding-highlight'
+import { SlidingHighlight } from '@wuhu-vue-ui/sliding-highlight'
 
 const items = [
   { label: '概览', value: 'overview' },

@@ -118,7 +118,7 @@ function renderBlocks(lines: string[], options: MarkdownRenderOptions, depth = 0
         index += 1
       }
       const languageClass = language ? ` class="language-${escapeAttribute(language)}"` : ''
-      html += `<pre class="w-file-viewer__md-pre"><code${languageClass}>${highlightCodeToHtml(
+      html += `<pre class="w-file-viewer__md-pre" tabindex="0"><code${languageClass}>${highlightCodeToHtml(
         code.join('\n'),
         language || 'plaintext',
       )}</code></pre>\n`

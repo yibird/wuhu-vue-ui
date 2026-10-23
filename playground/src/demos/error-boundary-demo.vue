@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineComponent, h, ref } from 'vue'
-import { ErrorBoundary } from '@wuhu-ui/error-boundary'
-import type { ErrorBoundaryErrorEvent } from '@wuhu-ui/error-boundary'
+import { ErrorBoundary } from '@wuhu-vue-ui/error-boundary'
+import type { ErrorBoundaryErrorEvent } from '@wuhu-vue-ui/error-boundary'
 import DemoCard from '../components/demo-card.vue'
 
 const crashDemo = ref(false)

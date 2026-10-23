@@ -50,9 +50,8 @@ pnpm install
 
 ```text
 .
-├─ packages/                # 32 个 workspace 包：2 个基础包 + 30 个组件包
+├─ packages/                # 31 个 workspace 包：core + 30 个组件包
 │  ├─ core/                 # 公共工具、组合式函数与 DOM 基础设施
-│  ├─ tokens/               # --w-* 设计令牌与亮/暗主题
 │  ├─ scrollbar/            # 基础能力组件
 │  ├─ copy/
 │  ├─ highlight/
@@ -87,9 +86,10 @@ pnpm install
 │  ├─ src/demos/            # 每个组件的 playground Demo
 │  ├─ src/docs/component-meta.ts  # 组件元数据（首页/侧边栏/playground 共用）
 │  ├─ src/docs/catalog.ts   # 元数据 + Demo 组件映射
-│  └─ src/home/             # playground 首页
+│  ├─ src/home/             # playground 首页
+│  └─ src/tokens.less       # playground 应用级亮暗令牌
 ├─ docs/                    # VitePress 文档站
-│  ├─ .vitepress/           # 站点配置、主题与 HomeCatalog
+│  ├─ .vitepress/           # 站点配置、主题、HomeCatalog 与 tokens.less
 │  ├─ components/           # 组件文档
 │  ├─ demos/                # 文档站 Demo
 │  ├─ guide/                # 快速开始与主题说明
@@ -97,7 +97,6 @@ pnpm install
 ├─ scripts/
 │  ├─ vite.library.ts       # 统一组件库构建配置
 │  ├─ workspace-source.ts   # playground / docs 源码别名插件
-│  ├─ build-tokens.mjs      # Less → CSS 令牌构建
 │  ├─ generate-file-viewer-samples.mjs # 生成 playground/docs 二进制样例
 │  ├─ visual-check.mjs      # 浏览器截图 + console/溢出/破图检查
 │  ├─ a11y-check.mjs        # axe-core WCAG A/AA 扫描
@@ -135,7 +134,7 @@ packages/<name>/
 
 - **Vue**：`<script setup lang="ts">`；`defineOptions({ name: 'WuXxx' })`；props 类型放 `types.ts`；`defineEmits` 用元组语法；`defineSlots` 声明插槽类型；仅暴露必要 API。
 - **样式**：集中在 `src/style/index.less`，由包根目录 `index.ts` 顶部引入；BEM 命名（`.w-foo__bar.is-active`）；不写 `<style scoped>`。
-- **设计令牌**：颜色、字号、圆角、阴影、动效只使用 `--w-*`，并带 fallback，例如 `var(--w-color-primary, #4f46e5)`。新增令牌必须同时更新 `.w-light-tokens()` 与 `.w-dark-tokens()`。
+- **设计令牌**：颜色、字号、圆角、阴影、动效只使用 `--w-*`，并带 fallback，例如 `var(--w-color-primary, #4f46e5)`。每个组件包在 `src/style/token.less` 中维护自己实际使用的令牌（含亮/暗两套），由 `src/style/index.less` 引入；组件之间不共享 token 文件。新增令牌时，需同步到所有使用它的组件包；playground/docs 各自维护应用级 `tokens.less`。
 - **TypeScript**：`strict` + `verbatimModuleSyntax`；类型导入必须 `import type`；禁止 `any`（用 `unknown` + 收窄）；包内导入必须是相对路径，不要用别名。
 - **导出**：所有公共组件、composables、类型从包根目录 `index.ts` 导出；类型用 `export type`。
 - **依赖**：组件包仅将 `vue` 声明为 `peerDependencies`；额外运行时依赖放 `dependencies` 并在 `vite.library` 中 external（如需要）。
@@ -148,7 +147,7 @@ packages/<name>/
 1. 创建 `packages/<name>/{package.json,vite.config.ts,index.ts,src/...}`，`package.json` 参考 `packages/copy`。
 2. 实现组件、类型、样式与 `index.ts` 导出。
 3. 添加 `src/__tests__/<Name>.spec.ts`。
-4. `playground/package.json` 增加 `"@wuhu-ui/<name>": "workspace:*"`。
+4. `playground/package.json` 增加 `"@wuhu-vue-ui/<name>": "workspace:*"`。
 5. 新建 `playground/src/demos/<name>-demo.vue`，在 `playground/src/docs/component-meta.ts` 登记元数据，并在 `playground/src/docs/catalog.ts` 映射 Demo 组件。
 6. 新建 `docs/components/<name>.md`，使用 `<demo vue="../../playground/src/demos/<name>-demo.vue" />`，并在 `docs/.vitepress/config.ts` 侧边栏登记。
 7. 更新根 `README.md` 组件表格。

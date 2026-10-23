@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/lazy-container",
+  "name": "@wuhu-vue-ui/lazy-container",
   "version": "0.1.0",
   "description": "IntersectionObserver powered lazy container for Vue 3.",
   "keywords": [

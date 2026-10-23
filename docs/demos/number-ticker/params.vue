@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NumberTicker } from '@wuhu-ui/number-ticker'
+import { NumberTicker } from '@wuhu-vue-ui/number-ticker'
 </script>
 
 <template>

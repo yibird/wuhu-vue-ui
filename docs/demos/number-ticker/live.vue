@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, reactive, ref } from 'vue'
 import { Button } from 'antdv-next'
-import { NumberTicker } from '@wuhu-ui/number-ticker'
+import { NumberTicker } from '@wuhu-vue-ui/number-ticker'
 
 const metrics = reactive({
   requests: 12860,

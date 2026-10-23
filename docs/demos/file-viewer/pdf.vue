@@ -2,8 +2,8 @@
 import { computed, ref } from 'vue'
 import { useData } from 'vitepress'
 import { Button } from 'antdv-next'
-import { FileViewer } from '@wuhu-ui/file-viewer'
-import type { FileViewerReadyEvent } from '@wuhu-ui/file-viewer'
+import { FileViewer } from '@wuhu-vue-ui/file-viewer'
+import type { FileViewerReadyEvent } from '@wuhu-vue-ui/file-viewer'
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
 const { isDark } = useData()

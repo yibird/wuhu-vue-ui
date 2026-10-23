@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SliderCaptcha } from '@wuhu-ui/slider-captcha'
+import { SliderCaptcha } from '@wuhu-vue-ui/slider-captcha'
 </script>
 
 <template>

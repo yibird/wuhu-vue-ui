@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Copy } from '@wuhu-ui/copy'
+import { Copy } from '@wuhu-vue-ui/copy'
 
 const inviteCode = 'WUHU-VUE-UI-2026'
 </script>

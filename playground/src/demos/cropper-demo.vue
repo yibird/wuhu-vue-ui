@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Cropper } from '@wuhu-ui/cropper'
-import type { CropperExpose } from '@wuhu-ui/cropper'
+import { Cropper } from '@wuhu-vue-ui/cropper'
+import type { CropperExpose } from '@wuhu-vue-ui/cropper'
 import DemoCard from '../components/demo-card.vue'
 
 const cropperRef = ref<CropperExpose | null>(null)

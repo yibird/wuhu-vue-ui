@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineComponent, h, ref } from 'vue'
 import { Button } from 'antdv-next'
-import { ErrorBoundary } from '@wuhu-ui/error-boundary'
+import { ErrorBoundary } from '@wuhu-vue-ui/error-boundary'
 
 const crash = ref(false)
 

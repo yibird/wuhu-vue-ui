@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { computed, inject, useId, type CSSProperties } from 'vue'
-import { Icon } from '@wuhu-ui/icon'
+import { Icon } from '@wuhu-vue-ui/icon'
 import { getCssSize, toCssSize, viewContextKey } from './context'
 import type { ViewCollapseEmits, WViewSiderProps, WViewSiderSlots } from './types'
 import { useCollapse } from './useCollapse'

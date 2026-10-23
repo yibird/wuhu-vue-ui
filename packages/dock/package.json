@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/dock",
+  "name": "@wuhu-vue-ui/dock",
   "version": "0.1.0",
   "description": "macOS-style dock navigation with pointer magnification for Vue 3.",
   "keywords": [
@@ -40,7 +40,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-ui/core": "workspace:*"
+    "@wuhu-vue-ui/core": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

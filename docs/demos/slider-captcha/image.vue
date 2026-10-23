@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'antdv-next'
-import { SliderCaptcha } from '@wuhu-ui/slider-captcha'
-import type { SliderCaptchaFailEvent, SliderCaptchaSuccessEvent } from '@wuhu-ui/slider-captcha'
+import { SliderCaptcha } from '@wuhu-vue-ui/slider-captcha'
+import type { SliderCaptchaFailEvent, SliderCaptchaSuccessEvent } from '@wuhu-vue-ui/slider-captcha'
 
 const captcha = ref<{ refresh: () => void } | null>(null)
 const logs = ref<string[]>([])

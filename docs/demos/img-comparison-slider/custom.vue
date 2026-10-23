@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button, Checkbox } from 'antdv-next'
-import { ImgComparisonSlider } from '@wuhu-ui/img-comparison-slider'
+import { ImgComparisonSlider } from '@wuhu-vue-ui/img-comparison-slider'
 
 const position = ref(35)
 const disabled = ref(false)

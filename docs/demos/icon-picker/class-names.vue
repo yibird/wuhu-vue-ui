@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { IconPicker } from '@wuhu-ui/icon-picker'
-import type { IconPickerGroup } from '@wuhu-ui/icon-picker'
+import { IconPicker } from '@wuhu-vue-ui/icon-picker'
+import type { IconPickerGroup } from '@wuhu-vue-ui/icon-picker'
 
 const groups: IconPickerGroup[] = [
   {

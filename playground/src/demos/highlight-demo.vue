@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Highlight } from '@wuhu-ui/highlight'
+import { Highlight } from '@wuhu-vue-ui/highlight'
 import DemoCard from '../components/demo-card.vue'
 
 const query = ref('组件 Vue')

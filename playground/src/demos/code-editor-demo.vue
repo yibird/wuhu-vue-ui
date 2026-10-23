@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CodeEditor } from '@wuhu-ui/code-editor'
-import type { CodeEditorExpose, CodeEditorInstance } from '@wuhu-ui/code-editor'
+import { CodeEditor } from '@wuhu-vue-ui/code-editor'
+import type { CodeEditorExpose, CodeEditorInstance } from '@wuhu-vue-ui/code-editor'
 import './monaco-env'
 import DemoCard from '../components/demo-card.vue'
 

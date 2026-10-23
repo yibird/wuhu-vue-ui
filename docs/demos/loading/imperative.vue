@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { createLoading, destroyLoading } from '@wuhu-ui/loading'
-import type { LoadingInstance } from '@wuhu-ui/loading'
+import { createLoading, destroyLoading } from '@wuhu-vue-ui/loading'
+import type { LoadingInstance } from '@wuhu-vue-ui/loading'
 
 const instance = ref<LoadingInstance | null>(null)
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { MotionGroup } from '@wuhu-ui/motion-group'
-import type { MotionGroupAnimation } from '@wuhu-ui/motion-group'
+import { MotionGroup } from '@wuhu-vue-ui/motion-group'
+import type { MotionGroupAnimation } from '@wuhu-vue-ui/motion-group'
 import DemoCard from '../components/demo-card.vue'
 
 type CardStatus = 'todo' | 'doing' | 'done'

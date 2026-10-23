@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GradientText } from '@wuhu-ui/gradient-text'
+import { GradientText } from '@wuhu-vue-ui/gradient-text'
 import { docsByCategory, componentDocs } from '../docs/catalog'
 
 const features = [
@@ -42,11 +42,9 @@ const stats = [
   { value: '0', label: 'UI 框架依赖' },
 ]
 
-const installCode = `pnpm add @wuhu-ui/scrollbar
+const installCode = `pnpm add @wuhu-vue-ui/scrollbar
 
-# 在应用入口引入一次设计令牌
-import '@wuhu-ui/tokens/index.css'
-import { Scrollbar } from '@wuhu-ui/scrollbar'`
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'`
 
 function scrollToCatalog() {
   document.getElementById('component-catalog')?.scrollIntoView({

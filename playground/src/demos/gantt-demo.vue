@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { Gantt } from '@wuhu-ui/gantt'
+import { Gantt } from '@wuhu-vue-ui/gantt'
 import type {
   GanttContextMenuItem,
   GanttContextMenuSelectEvent,
@@ -8,7 +8,7 @@ import type {
   GanttTaskId,
   GanttTaskUpdateEvent,
   GanttView,
-} from '@wuhu-ui/gantt'
+} from '@wuhu-vue-ui/gantt'
 import DemoCard from '../components/demo-card.vue'
 
 function isoDate(offset: number): string {

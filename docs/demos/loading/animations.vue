@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Loading } from '@wuhu-ui/loading'
-import type { LoadingAnimation } from '@wuhu-ui/loading'
+import { Loading } from '@wuhu-vue-ui/loading'
+import type { LoadingAnimation } from '@wuhu-vue-ui/loading'
 
 const animations: LoadingAnimation[] = ['bars', 'beat', 'pulse', 'ring', 'spinner']
 const animation = ref<LoadingAnimation>('ring')

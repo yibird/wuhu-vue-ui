@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useData } from 'vitepress'
-import { FileViewer } from '@wuhu-ui/file-viewer'
+import { FileViewer } from '@wuhu-vue-ui/file-viewer'
 
 const { isDark } = useData()
 const viewerTheme = computed(() => (isDark.value ? 'dark' : 'light'))

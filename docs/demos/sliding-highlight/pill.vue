@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SlidingHighlight } from '@wuhu-ui/sliding-highlight'
+import { SlidingHighlight } from '@wuhu-vue-ui/sliding-highlight'
 
 const cards = [
   { label: 'Design', desc: '设计令牌与主题' },

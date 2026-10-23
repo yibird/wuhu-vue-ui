@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { FileViewer } from '@wuhu-ui/file-viewer'
-import type { FileViewerReadyEvent } from '@wuhu-ui/file-viewer'
+import { FileViewer } from '@wuhu-vue-ui/file-viewer'
+import type { FileViewerReadyEvent } from '@wuhu-vue-ui/file-viewer'
 import DemoCard from '../components/demo-card.vue'
 import { theme } from '../theme'
 

@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/slider-captcha",
+  "name": "@wuhu-vue-ui/slider-captcha",
   "version": "0.1.0",
   "description": "A canvas-based slide puzzle captcha for Vue 3.",
   "keywords": [
@@ -40,7 +40,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-ui/core": "workspace:*"
+    "@wuhu-vue-ui/core": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

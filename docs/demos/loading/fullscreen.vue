@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Loading } from '@wuhu-ui/loading'
+import { Loading } from '@wuhu-vue-ui/loading'
 
 const open = ref(false)
 

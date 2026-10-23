@@ -15,14 +15,14 @@ description: Wuhu Vue UI 的设计系统与样式规范。使用设计令牌、�
 ## 核心原则
 
 1. **一切视觉值走令牌**：颜色、字体、字号、圆角、阴影、时长、缓动、层级全部使用 `--w-*` CSS 变量。
-2. **令牌必须有 fallback**：`var(--w-color-primary, #4f46e5)`，保证未引入 `@wuhu-ui/tokens` 时仍可用。
+2. **令牌必须有 fallback**：`var(--w-color-primary, #4f46e5)`，保证组件在未加载主题文件时仍可独立使用。
 3. **不硬编码颜色**：唯一例外是 token 定义本身和 `fallback`。
 4. **组件私有变量用 `--w-<component>-*`**，例如 `--w-command-menu-active-bg`。
-5. **亮暗主题成对维护**：在 `packages/tokens/src/index.less` 的 `.w-light-tokens()` 与 `.w-dark-tokens()` 中同时新增。
+5. **令牌随组件包独立**：每个包只在自己的 `src/style/token.less` 中维护实际用到的令牌，亮/暗成对；组件之间不共享 token 文件。多个组件都用到同一令牌时，分别复制到各自包中。
 
 ## 令牌速查
 
-来源：`packages/tokens/src/index.less`
+来源：各组件包的 `src/style/token.less`；完整亮暗参考在 `playground/src/tokens.less` 与 `docs/.vitepress/theme/tokens.less`。
 
 | 分组   | 主要令牌                                                                                                                                        |
 | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,13 +38,15 @@ description: Wuhu Vue UI 的设计系统与样式规范。使用设计令牌、�
 | 动效   | `--w-duration-fast` / `-normal` / `-slow`、`--w-easing-standard` / `-emphasized`                                                                |
 | 层级   | `--w-z-sticky` / `--w-z-dropdown` / `--w-z-overlay` / `--w-z-toast`                                                                             |
 
-先读 `packages/tokens/src/index.less` 确认实际存在的令牌，不要凭空创造。
+先读当前组件包的 `src/style/token.less` 确认实际存在的令牌；新增跨组件令牌时，同步到所有使用它的包，不要凭空创造。
 
 ## 样式文件组织
 
 ```text
-packages/<name>/src/style/index.less   # 组件样式，index.ts 顶部引入
-packages/tokens/src/index.less         # 全局令牌（唯一来源）
+packages/<name>/src/style/token.less   # 该组件实际使用的亮/暗令牌
+packages/<name>/src/style/index.less   # 组件样式，顶部 @import './token.less'
+playground/src/tokens.less             # playground 应用级完整令牌
+docs/.vitepress/theme/tokens.less      # docs 应用级完整令牌
 ```
 
 - 不写 `<style scoped>`；样式集中在 `style/index.less`。
@@ -85,9 +87,9 @@ packages/tokens/src/index.less         # 全局令牌（唯一来源）
 
 ## 主题
 
-- 默认 `:root` 应用亮色令牌。
-- `[data-w-theme='dark']` 切换暗色；未设置时跟随 `prefers-color-scheme`。
-- 不要在组件内写 `@media (prefers-color-scheme: dark)` 硬编码颜色，依赖令牌自动切换。
+- 每个组件包通过 `src/style/token.less` 提供该组件所需的亮色、暗色与 reduced-motion 令牌；未加载主题文件时仍使用 fallback 独立渲染。
+- 组件之间不共享 token 文件；playground/docs 使用各自的应用级 `tokens.less`。
+- 不要在组件内直接写死暗色颜色，使用 `[data-w-theme='dark']` / `prefers-color-scheme` 下的 token。
 - 新增令牌时同步亮/暗两套取值，并考虑 `prefers-reduced-motion` 是否覆盖。
 
 ## 动效
@@ -108,7 +110,7 @@ packages/tokens/src/index.less         # 全局令牌（唯一来源）
 ## 修改令牌的流程
 
 1. 确认现有令牌无法满足，避免重复语义。
-2. 在 `.w-light-tokens()` 与 `.w-dark-tokens()` 同时添加。
+2. 在使用该令牌的每个组件包的 `src/style/token.less` 中同时添加亮/暗取值；如果多个包共用，逐个同步。
 3. 用 `--w-` 命名空间与语义化命名（`--w-color-*` / `--w-radius-*` …）。
 4. 更新 `docs/guide/getting-started.md` 中令牌说明（如涉及公开 API）。
 5. 运行 `pnpm docs:build` 或 `pnpm build` 验证样式构建。

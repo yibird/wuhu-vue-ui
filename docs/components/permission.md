@@ -14,7 +14,7 @@
 
 ```ts
 import { ref } from 'vue'
-import { providePermissions } from '@wuhu-ui/permission'
+import { providePermissions } from '@wuhu-vue-ui/permission'
 
 const permissions = ref(['user:read', 'user:write'])
 providePermissions(permissions)
@@ -51,7 +51,7 @@ providePermissions(permissions)
 
 ```vue
 <script setup lang="ts">
-import { vPermission } from '@wuhu-ui/permission'
+import { vPermission } from '@wuhu-vue-ui/permission'
 </script>
 
 <template>
@@ -102,7 +102,7 @@ type PermissionDirectiveValue = PermissionValue | { value: PermissionValue; mode
 ### usePermission 示例
 
 ```ts
-import { usePermission } from '@wuhu-ui/permission'
+import { usePermission } from '@wuhu-vue-ui/permission'
 
 const { has } = usePermission()
 

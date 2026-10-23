@@ -21,11 +21,7 @@ export function workspaceSource(): WorkspaceSourcePlugin {
     name: 'wuhu:workspace-source',
     enforce: 'pre',
     resolveId(source) {
-      if (source === '@wuhu-ui/tokens/index.css') {
-        return fileURLToPath(new URL('../packages/tokens/src/index.less', import.meta.url))
-      }
-
-      const match = /^@wuhu-ui\/([^/]+)$/.exec(source)
+      const match = /^@wuhu-vue-ui\/([^/]+)$/.exec(source)
       if (!match) return
 
       const packageRootEntry = fileURLToPath(

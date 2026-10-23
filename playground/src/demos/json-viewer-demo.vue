@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { JsonViewer } from '@wuhu-ui/json-viewer'
+import { JsonViewer } from '@wuhu-vue-ui/json-viewer'
 import './monaco-env'
 import DemoCard from '../components/demo-card.vue'
 

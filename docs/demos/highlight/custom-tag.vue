@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Highlight } from '@wuhu-ui/highlight'
+import { Highlight } from '@wuhu-vue-ui/highlight'
 </script>
 
 <template>

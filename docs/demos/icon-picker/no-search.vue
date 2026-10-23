@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { IconPicker } from '@wuhu-ui/icon-picker'
+import { IconPicker } from '@wuhu-vue-ui/icon-picker'
 import { iconGroups } from './icons'
 
 const selected = ref<string | null>(null)

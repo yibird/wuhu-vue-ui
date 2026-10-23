@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Gantt } from '@wuhu-ui/gantt'
+import { Gantt } from '@wuhu-vue-ui/gantt'
 import { createGanttTasks, useGanttSidebarWidth } from './shared'
 
 const tasks = createGanttTasks()

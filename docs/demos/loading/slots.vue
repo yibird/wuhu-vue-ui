@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Loading } from '@wuhu-ui/loading'
+import { Loading } from '@wuhu-vue-ui/loading'
 </script>
 
 <template>

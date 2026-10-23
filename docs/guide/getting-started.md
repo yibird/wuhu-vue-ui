@@ -6,43 +6,42 @@ Wuhu Vue UI 采用 pnpm monorepo 组织，一个组件一个独立包。所有�
 
 ::: code-group
 ```bash [pnpm]
-pnpm add @wuhu-ui/scrollbar
+pnpm add @wuhu-vue-ui/scrollbar
 ```
 
 ```bash [npm]
-npm install @wuhu-ui/scrollbar
+npm install @wuhu-vue-ui/scrollbar
 ```
 
 ```bash [yarn]
-yarn add @wuhu-ui/scrollbar
+yarn add @wuhu-vue-ui/scrollbar
 ```
 
 ```bash [bun]
-bun add @wuhu-ui/scrollbar
+bun add @wuhu-vue-ui/scrollbar
 ```
 :::
 
-## 引入设计令牌
+## 设计令牌
 
-在应用入口引入一次全局令牌：
+组件样式已通过 `var(--w-*, fallback)` 内置默认令牌，无需额外引入令牌包。
 
-```ts [main.ts]
-import '@wuhu-ui/tokens/index.css'
+如需统一品牌色或主题，在应用中覆盖 CSS 变量即可：
+
+```css [theme.css]
+:root {
+  --w-color-primary: #16a34a;
+  --w-color-primary-hover: #22c55e;
+}
 ```
 
-亮色主题默认生效，暗色主题可通过属性切换：
-
-```html
-<html data-w-theme="dark"></html>
-```
-
-未显式设置 `data-w-theme` 时，会跟随系统 `prefers-color-scheme`。
+暗色主题可在 `[data-w-theme='dark']` 下定义对应变量。示例站点的完整亮暗令牌与 `prefers-color-scheme` 参考实现位于 `playground/src/tokens.less` 与 `docs/.vitepress/theme/tokens.less`，可按需复制到业务项目。
 
 ## 使用组件
 
 ```vue [App.vue]
 <script setup lang="ts">
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 </script>
 
 <template>
@@ -52,7 +51,7 @@ import { Scrollbar } from '@wuhu-ui/scrollbar'
 </template>
 ```
 
-每个组件包会自动注入自身样式。如需显式控制样式顺序，也可以导入 `@wuhu-ui/scrollbar/style.css`。
+每个组件包会自动注入自身样式。如需显式控制样式顺序，也可以导入 `@wuhu-vue-ui/scrollbar/style.css`。
 
 ## 主题
 

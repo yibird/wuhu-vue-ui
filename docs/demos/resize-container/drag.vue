@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ResizeContainer } from '@wuhu-ui/resize-container'
-import type { ResizeContainerResizeEvent } from '@wuhu-ui/resize-container'
+import { ResizeContainer } from '@wuhu-vue-ui/resize-container'
+import type { ResizeContainerResizeEvent } from '@wuhu-vue-ui/resize-container'
 
 const size = ref({ width: 0, height: 0 })
 const count = ref(0)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Scrollbar } from '@wuhu-ui/scrollbar'
-import type { ScrollbarScrollEvent } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
+import type { ScrollbarScrollEvent } from '@wuhu-vue-ui/scrollbar'
 import DemoCard from '../components/demo-card.vue'
 
 const items = [

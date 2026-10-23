@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/scrollbar",
+  "name": "@wuhu-vue-ui/scrollbar",
   "version": "0.1.0",
   "description": "A cross-browser custom scrollbar for Vue 3.",
   "keywords": [

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { WView, WViewContent, WViewFooter, WViewHeader, WViewSider } from '@wuhu-ui/view'
+import { WView, WViewContent, WViewFooter, WViewHeader, WViewSider } from '@wuhu-vue-ui/view'
 import DemoCard from '../components/demo-card.vue'
 
 const headerCollapsed = ref(false)

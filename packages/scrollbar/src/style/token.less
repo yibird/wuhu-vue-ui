@@ -1,0 +1,32 @@
+:root {
+  color-scheme: light;
+  --w-radius-full: 9999px;
+  --w-scrollbar-size: 6px;
+  --w-scrollbar-thumb: rgba(100, 116, 139, 0.38);
+  --w-duration-fast: 120ms;
+  --w-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-scrollbar-thumb-hover: rgba(100, 116, 139, 0.62);
+  --w-scrollbar-thumb-active: rgba(100, 116, 139, 0.78);
+}
+
+[data-w-theme='dark'] {
+  color-scheme: dark;
+  --w-scrollbar-thumb: rgba(148, 163, 184, 0.34);
+  --w-scrollbar-thumb-hover: rgba(148, 163, 184, 0.58);
+  --w-scrollbar-thumb-active: rgba(148, 163, 184, 0.74);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) {
+    color-scheme: dark;
+    --w-scrollbar-thumb: rgba(148, 163, 184, 0.34);
+    --w-scrollbar-thumb-hover: rgba(148, 163, 184, 0.58);
+    --w-scrollbar-thumb-active: rgba(148, 163, 184, 0.74);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --w-duration-fast: 0.01ms;
+  }
+}

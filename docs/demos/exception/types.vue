@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Exception } from '@wuhu-ui/exception'
-import type { ExceptionType } from '@wuhu-ui/exception'
+import { Exception } from '@wuhu-vue-ui/exception'
+import type { ExceptionType } from '@wuhu-vue-ui/exception'
 
 const types: ExceptionType[] = [
   'badRequest',

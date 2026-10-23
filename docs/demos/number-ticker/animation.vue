@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'antdv-next'
-import { NumberTicker } from '@wuhu-ui/number-ticker'
+import { NumberTicker } from '@wuhu-vue-ui/number-ticker'
 
 const replayKey = ref(0)
 

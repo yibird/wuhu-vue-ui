@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Copy } from '@wuhu-ui/copy'
+import { Copy } from '@wuhu-vue-ui/copy'
 
 const inviteCode = 'WUHU-VUE-UI-2026'
 const message = ref('通过 prefix / suffix 插槽自定义图标两侧的内容')

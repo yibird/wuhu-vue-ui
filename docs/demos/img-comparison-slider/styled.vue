@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImgComparisonSlider } from '@wuhu-ui/img-comparison-slider'
+import { ImgComparisonSlider } from '@wuhu-vue-ui/img-comparison-slider'
 
 const classes = {
   root: 'styled-comparison',

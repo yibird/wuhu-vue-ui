@@ -11,7 +11,7 @@ import {
   type CSSProperties,
   type VNodeChild,
 } from 'vue'
-import { toCssUnit, useListNavigation } from '@wuhu-ui/core'
+import { toCssUnit, useListNavigation } from '@wuhu-vue-ui/core'
 import { pinyin } from 'pinyin-pro'
 import type {
   CommandMenuEmptySlotProps,

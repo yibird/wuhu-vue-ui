@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/exception",
+  "name": "@wuhu-vue-ui/exception",
   "version": "0.1.0",
   "description": "Ready-to-use exception pages for 400, 403, 404 and 500 errors in Vue 3.",
   "keywords": [

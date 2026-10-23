@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Button } from 'antdv-next'
-import { OrgTree } from '@wuhu-ui/org-tree'
-import type { OrgTreeId, OrgTreeNode } from '@wuhu-ui/org-tree'
+import { OrgTree } from '@wuhu-vue-ui/org-tree'
+import type { OrgTreeId, OrgTreeNode } from '@wuhu-vue-ui/org-tree'
 
 const data: OrgTreeNode[] = [
   {

@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@wuhu-ui/icon'
+import { Icon } from '@wuhu-vue-ui/icon'
 import { getCssSize, viewContextKey } from './context'
 import type { ViewCollapseEmits, WViewHeaderProps, WViewHeaderSlots } from './types'
 import { useCollapse } from './useCollapse'

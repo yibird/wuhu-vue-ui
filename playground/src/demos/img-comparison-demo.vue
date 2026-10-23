@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ImgComparisonSlider } from '@wuhu-ui/img-comparison-slider'
+import { ImgComparisonSlider } from '@wuhu-vue-ui/img-comparison-slider'
 import DemoCard from '../components/demo-card.vue'
 
 const horizontalPosition = ref(56)

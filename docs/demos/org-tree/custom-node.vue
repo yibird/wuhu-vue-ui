@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { OrgTree } from '@wuhu-ui/org-tree'
-import type { OrgTreeId, OrgTreeNode } from '@wuhu-ui/org-tree'
+import { OrgTree } from '@wuhu-vue-ui/org-tree'
+import type { OrgTreeId, OrgTreeNode } from '@wuhu-vue-ui/org-tree'
 
 const data: OrgTreeNode[] = [
   {

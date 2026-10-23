@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/icon",
+  "name": "@wuhu-vue-ui/icon",
   "version": "0.1.0",
   "description": "Lightweight inline-SVG icon component with a small built-in Lucide registry for Vue 3.",
   "keywords": [

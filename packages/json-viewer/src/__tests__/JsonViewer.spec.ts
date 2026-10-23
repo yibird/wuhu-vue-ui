@@ -1,10 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { CodeEditor } from '@wuhu-ui/code-editor'
+import { CodeEditor } from '@wuhu-vue-ui/code-editor'
 import JsonViewer from '../JsonViewer.vue'
 import { formatJsonValue } from '../json'
 
-vi.mock('@wuhu-ui/code-editor', async () => {
+vi.mock('@wuhu-vue-ui/code-editor', async () => {
   const { defineComponent, h } = await import('vue')
 
   const MockCodeEditor = defineComponent({

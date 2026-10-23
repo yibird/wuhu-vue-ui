@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileViewer } from '@wuhu-ui/file-viewer'
+import { FileViewer } from '@wuhu-vue-ui/file-viewer'
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Icon, registerIcon } from '@wuhu-ui/icon'
+import { Icon, registerIcon } from '@wuhu-vue-ui/icon'
 import DemoCard from '../components/demo-card.vue'
 
 const icons = [

@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/ripple",
+  "name": "@wuhu-vue-ui/ripple",
   "version": "0.1.0",
   "description": "Material-style ripple effect component and directive for Vue 3.",
   "keywords": [

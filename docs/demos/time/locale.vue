@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Segmented, Select } from 'antdv-next'
-import { Time } from '@wuhu-ui/time'
+import { Time } from '@wuhu-vue-ui/time'
 
 const timeSeed = Date.now()
 const locale = ref('zh-CN')

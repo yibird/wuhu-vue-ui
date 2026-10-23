@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/ellipsis",
+  "name": "@wuhu-vue-ui/ellipsis",
   "version": "0.1.0",
   "description": "Multi-line text ellipsis with expandable content and tooltip for Vue 3.",
   "keywords": [

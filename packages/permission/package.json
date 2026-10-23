@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/permission",
+  "name": "@wuhu-vue-ui/permission",
   "version": "0.1.0",
   "description": "Permission guard component and directive for Vue 3.",
   "keywords": [

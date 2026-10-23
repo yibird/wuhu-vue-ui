@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Time } from '@wuhu-ui/time'
+import { Time } from '@wuhu-vue-ui/time'
 
 const timeSeed = Date.now()
 const samples = [

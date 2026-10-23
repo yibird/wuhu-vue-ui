@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue'
-import { Copy } from '@wuhu-ui/copy'
+import { Copy } from '@wuhu-vue-ui/copy'
 import DemoCard from '../components/demo-card.vue'
 
 type FeedbackState = 'idle' | 'success' | 'error'
@@ -63,7 +63,7 @@ function handleInstallError() {
 
 async function copyInstallCommand() {
   await new Promise((resolve) => setTimeout(resolve, 360))
-  return 'pnpm add @wuhu-ui/copy'
+  return 'pnpm add @wuhu-vue-ui/copy'
 }
 
 onBeforeUnmount(() => {
@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
       <div class="copy-demo">
         <div class="copy-demo__code">
           <span>安装命令</span>
-          <code>pnpm add @wuhu-ui/copy</code>
+          <code>pnpm add @wuhu-vue-ui/copy</code>
         </div>
         <Copy
           :text="copyInstallCommand"

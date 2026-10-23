@@ -1,0 +1,32 @@
+:root {
+  color-scheme: light;
+  --w-radius-lg: 12px;
+  --w-color-surface-subtle: #f1f5f9;
+  --w-focus-ring-width: 2px;
+  --w-focus-ring-color: var(--w-color-primary);
+  --w-color-primary: #4f46e5;
+  --w-duration-normal: 220ms;
+  --w-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-w-theme='dark'] {
+  color-scheme: dark;
+  --w-color-surface-subtle: #162034;
+  --w-focus-ring-color: #a5b4fc;
+  --w-color-primary: #818cf8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) {
+    color-scheme: dark;
+    --w-color-surface-subtle: #162034;
+    --w-focus-ring-color: #a5b4fc;
+    --w-color-primary: #818cf8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --w-duration-normal: 0.01ms;
+  }
+}

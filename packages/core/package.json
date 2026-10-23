@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/core",
+  "name": "@wuhu-vue-ui/core",
   "version": "0.1.0",
   "description": "Shared utilities and Vue composables for Wuhu UI packages.",
   "keywords": [

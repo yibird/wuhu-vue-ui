@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '@wuhu-ui/icon'
+import { Icon } from '@wuhu-vue-ui/icon'
 
 const icons = [
   'chevron-up',

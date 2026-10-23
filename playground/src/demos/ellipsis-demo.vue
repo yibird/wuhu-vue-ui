@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Ellipsis } from '@wuhu-ui/ellipsis'
+import { Ellipsis } from '@wuhu-vue-ui/ellipsis'
 import DemoCard from '../components/demo-card.vue'
 
 const longText =

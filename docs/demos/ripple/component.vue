@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ripple } from '@wuhu-ui/ripple'
+import { Ripple } from '@wuhu-vue-ui/ripple'
 </script>
 
 <template>

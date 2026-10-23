@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "types": ["vite/client", "node"],
     "paths": {
-      "@wuhu-ui/*": ["../packages/*", "../packages/*/src"]
+      "@wuhu-vue-ui/*": ["../packages/*", "../packages/*/src"]
     }
   },
   "include": [".vitepress/**/*.ts", ".vitepress/**/*.d.ts", "demos/**/*.ts", "demos/**/*.vue"],

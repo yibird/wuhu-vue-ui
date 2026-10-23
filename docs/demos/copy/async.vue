@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Copy } from '@wuhu-ui/copy'
+import { Copy } from '@wuhu-vue-ui/copy'
 
 const message = ref('异步取数期间按钮会进入 loading 状态')
 
 async function copyInstallCommand() {
   await new Promise((resolve) => setTimeout(resolve, 360))
-  return 'pnpm add @wuhu-ui/copy'
+  return 'pnpm add @wuhu-vue-ui/copy'
 }
 
 function handleSuccess() {
@@ -18,7 +18,7 @@ function handleSuccess() {
   <div class="copy-demo">
     <div class="copy-demo__code">
       <span>安装命令</span>
-      <code>pnpm add @wuhu-ui/copy</code>
+      <code>pnpm add @wuhu-vue-ui/copy</code>
     </div>
     <Copy :text="copyInstallCommand" @success="handleSuccess" />
   </div>

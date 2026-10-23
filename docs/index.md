@@ -40,27 +40,26 @@ import HomeCatalog from './.vitepress/theme/HomeCatalog.vue'
 
 ::: code-group
 ```bash [pnpm]
-pnpm add @wuhu-ui/scrollbar
+pnpm add @wuhu-vue-ui/scrollbar
 ```
 
 ```bash [npm]
-npm install @wuhu-ui/scrollbar
+npm install @wuhu-vue-ui/scrollbar
 ```
 
 ```bash [yarn]
-yarn add @wuhu-ui/scrollbar
+yarn add @wuhu-vue-ui/scrollbar
 ```
 
 ```bash [bun]
-bun add @wuhu-ui/scrollbar
+bun add @wuhu-vue-ui/scrollbar
 ```
 :::
 
 ```ts [main.ts]
-import '@wuhu-ui/tokens/index.css'
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 ```
 
-所有组件基于同一套设计令牌，主题与品牌色可在应用入口统一覆盖。
+组件样式内置 `var(--w-*, fallback)` 默认令牌，无需额外引入令牌包；主题与品牌色可在应用入口通过 CSS 变量统一覆盖。
 
 </div>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Button, Segmented } from 'antdv-next'
-import { Gantt } from '@wuhu-ui/gantt'
-import type { GanttTaskId, GanttTaskUpdateEvent, GanttView } from '@wuhu-ui/gantt'
+import { Gantt } from '@wuhu-vue-ui/gantt'
+import type { GanttTaskId, GanttTaskUpdateEvent, GanttView } from '@wuhu-vue-ui/gantt'
 import { createGanttTasks, findGanttTask, formatDateValue, useGanttSidebarWidth } from './shared'
 
 const tasks = ref(createGanttTasks())

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 
 const items = [
   { title: 'Dashboard', desc: '固定头部与底部，中间区域独立滚动。' },

@@ -7,7 +7,7 @@ import {
   useDismissable,
   useListNavigation,
   usePointerDrag,
-} from '@wuhu-ui/core'
+} from '@wuhu-vue-ui/core'
 import {
   computed,
   nextTick,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useResize } from '@wuhu-ui/core'
+import { useResize } from '@wuhu-vue-ui/core'
 import {
   computed,
   nextTick,

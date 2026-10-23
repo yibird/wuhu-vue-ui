@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/code-editor",
+  "name": "@wuhu-vue-ui/code-editor",
   "version": "0.1.0",
   "description": "Monaco-powered code editor component for Vue 3.",
   "keywords": [

@@ -1,4 +1,4 @@
-import type { CodeEditorInstance, CodeEditorProps } from '@wuhu-ui/code-editor'
+import type { CodeEditorInstance, CodeEditorProps } from '@wuhu-vue-ui/code-editor'
 
 export interface JsonViewerProps {
   /** JSON value or a JSON string to display. */

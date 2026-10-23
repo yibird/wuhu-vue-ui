@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/error-boundary",
+  "name": "@wuhu-vue-ui/error-boundary",
   "version": "0.1.0",
   "description": "Composable error boundary with reset support for Vue 3.",
   "keywords": [

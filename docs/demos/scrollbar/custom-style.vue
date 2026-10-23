@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 
 const items = [
   { title: 'Scrollbar', desc: '复刻原生滚动体验，同时完全自定义滚动条样式。' },

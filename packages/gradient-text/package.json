@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/gradient-text",
+  "name": "@wuhu-vue-ui/gradient-text",
   "version": "0.1.0",
   "description": "Configurable gradient text with optional animation for Vue 3.",
   "keywords": [

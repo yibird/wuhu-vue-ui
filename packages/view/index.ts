@@ -1,3 +1,4 @@
+import './src/style/index.less'
 import View from './src/view.vue'
 import WViewHeader from './src/view-header.vue'
 import WViewContent from './src/view-content.vue'

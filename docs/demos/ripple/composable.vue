@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRipple } from '@wuhu-ui/ripple'
+import { useRipple } from '@wuhu-vue-ui/ripple'
 
 const { createRipple } = useRipple()
 const surface = ref<HTMLElement | null>(null)

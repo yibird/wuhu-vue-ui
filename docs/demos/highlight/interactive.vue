@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Checkbox, Input } from 'antdv-next'
-import { Highlight } from '@wuhu-ui/highlight'
+import { Highlight } from '@wuhu-vue-ui/highlight'
 
 const query = ref('组件 Vue')
 const keywords = computed(() => query.value.trim().split(/\s+/).filter(Boolean))

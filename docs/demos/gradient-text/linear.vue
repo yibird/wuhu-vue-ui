@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GradientText } from '@wuhu-ui/gradient-text'
+import { GradientText } from '@wuhu-vue-ui/gradient-text'
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Loading, createLoading } from '@wuhu-ui/loading'
-import type { LoadingAnimation, LoadingGradient, LoadingInstance } from '@wuhu-ui/loading'
+import { Loading, createLoading } from '@wuhu-vue-ui/loading'
+import type { LoadingAnimation, LoadingGradient, LoadingInstance } from '@wuhu-vue-ui/loading'
 import DemoCard from '../components/demo-card.vue'
 
 const animations: LoadingAnimation[] = ['bars', 'beat', 'pulse', 'ring', 'spinner']

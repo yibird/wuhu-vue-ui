@@ -592,7 +592,7 @@ const pptxSlide1 = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       <p:sp>
         <p:nvSpPr><p:cNvPr id="6" name="Footer"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
         <p:spPr><a:xfrm><a:off x="762000" y="5486400"/><a:ext cx="8382000" cy="457200"/></a:xfrm></p:spPr>
-        <p:txBody><a:bodyPr/><a:p><a:pPr algn="l"/><a:r><a:rPr sz="1400"><a:solidFill><a:srgbClr val="64748B"/></a:solidFill></a:rPr><a:t>Wuhu Vue UI · @wuhu-ui/file-viewer</a:t></a:r></a:p></p:txBody>
+        <p:txBody><a:bodyPr/><a:p><a:pPr algn="l"/><a:r><a:rPr sz="1400"><a:solidFill><a:srgbClr val="64748B"/></a:solidFill></a:rPr><a:t>Wuhu Vue UI · @wuhu-vue-ui/file-viewer</a:t></a:r></a:p></p:txBody>
       </p:sp>
     </p:spTree>
   </p:cSld>
@@ -742,7 +742,7 @@ writeFileSync(
 \pard\f1\fs22\bullet\tab PDF, EPUB and Markdown\par
 \pard\f1\fs22\bullet\tab Images, audio, video and archives\par
 \par
-\pard\f0\fs20\cf2\i Rendered with @wuhu-ui/file-viewer\i0\cf0\par
+\pard\f0\fs20\cf2\i Rendered with @wuhu-vue-ui/file-viewer\i0\cf0\par
 }`,
 )
 

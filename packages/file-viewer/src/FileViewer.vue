@@ -11,7 +11,7 @@ import {
   type CSSProperties,
   type ComponentPublicInstance,
 } from 'vue'
-import { useMediaQuery, useTimeoutFn } from '@wuhu-ui/core'
+import { useMediaQuery, useTimeoutFn } from '@wuhu-vue-ui/core'
 import Icon from './components/Icon.vue'
 import { defaultCapabilities } from './core/capabilities'
 import { detectFormat } from './core/detect'

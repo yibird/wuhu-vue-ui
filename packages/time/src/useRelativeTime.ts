@@ -1,4 +1,4 @@
-import { useIntervalFn } from '@wuhu-ui/core'
+import { useIntervalFn } from '@wuhu-vue-ui/core'
 import {
   computed,
   getCurrentInstance,

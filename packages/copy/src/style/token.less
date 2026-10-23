@@ -1,0 +1,60 @@
+:root {
+  color-scheme: light;
+  --w-color-text-secondary: #475569;
+  --w-font-family:
+    'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --w-font-size-sm: 13px;
+  --w-font-weight-medium: 500;
+  --w-color-border: #e2e8f0;
+  --w-radius-sm: 6px;
+  --w-color-surface: #ffffff;
+  --w-duration-fast: 120ms;
+  --w-color-surface-hover: #f1f5f9;
+  --w-color-border-strong: #cbd5e1;
+  --w-color-text: #0f172a;
+  --w-focus-ring-width: 2px;
+  --w-focus-ring-color: var(--w-color-primary);
+  --w-color-primary: #4f46e5;
+  --w-color-surface-active: #e2e8f0;
+  --w-radius-xs: 4px;
+  --w-color-success-soft: rgba(5, 150, 105, 0.11);
+  --w-color-success: #059669;
+}
+
+[data-w-theme='dark'] {
+  color-scheme: dark;
+  --w-color-text-secondary: #cbd5e1;
+  --w-color-border: #22304a;
+  --w-color-surface: #0f172a;
+  --w-color-surface-hover: #1c2940;
+  --w-color-border-strong: #33445f;
+  --w-color-text: #e2e8f0;
+  --w-focus-ring-color: #a5b4fc;
+  --w-color-primary: #818cf8;
+  --w-color-surface-active: #24344f;
+  --w-color-success-soft: rgba(52, 211, 153, 0.14);
+  --w-color-success: #34d399;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) {
+    color-scheme: dark;
+    --w-color-text-secondary: #cbd5e1;
+    --w-color-border: #22304a;
+    --w-color-surface: #0f172a;
+    --w-color-surface-hover: #1c2940;
+    --w-color-border-strong: #33445f;
+    --w-color-text: #e2e8f0;
+    --w-focus-ring-color: #a5b4fc;
+    --w-color-primary: #818cf8;
+    --w-color-surface-active: #24344f;
+    --w-color-success-soft: rgba(52, 211, 153, 0.14);
+    --w-color-success: #34d399;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --w-duration-fast: 0.01ms;
+  }
+}

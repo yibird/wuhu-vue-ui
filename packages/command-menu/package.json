@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/command-menu",
+  "name": "@wuhu-vue-ui/command-menu",
   "version": "0.1.0",
   "description": "Searchable command palette with pinyin matching for Vue 3.",
   "keywords": [
@@ -39,7 +39,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-ui/core": "workspace:*",
+    "@wuhu-vue-ui/core": "workspace:*",
     "pinyin-pro": "^3.29.5"
   },
   "peerDependencies": {

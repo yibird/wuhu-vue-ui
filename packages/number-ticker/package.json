@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/number-ticker",
+  "name": "@wuhu-vue-ui/number-ticker",
   "version": "0.1.0",
   "description": "Animated rolling number component for Vue 3.",
   "keywords": [
@@ -38,7 +38,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-ui/core": "workspace:*"
+    "@wuhu-vue-ui/core": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

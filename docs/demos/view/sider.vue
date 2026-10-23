@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { WView, WViewContent, WViewSider } from '@wuhu-ui/view'
+import { WView, WViewContent, WViewSider } from '@wuhu-vue-ui/view'
 
 const collapsed = ref(false)
 const items = ['概览', '成员', '权限', '通知', '审计日志']

@@ -1,3 +1,5 @@
+@import './token.less';
+
 .w-slider-captcha {
   --w-slider-captcha-radius: var(--w-radius-lg, 12px);
   --w-slider-captcha-track-bg: var(--w-color-surface-subtle, #f1f5f9);
@@ -35,7 +37,7 @@
     left: 0;
     pointer-events: none;
     filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.35));
-    transition: transform var(--w-duration-fast, 120ms) var(--w-easing-standard);
+    transition: transform var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
     will-change: transform;
   }
 
@@ -110,7 +112,7 @@
     left: 0;
     background: var(--w-slider-captcha-fill-bg);
     transition:
-      width var(--w-duration-fast, 120ms) var(--w-easing-standard),
+      width var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
       background-color var(--w-duration-normal, 220ms) ease;
   }
 
@@ -148,7 +150,7 @@
     touch-action: none;
     appearance: none;
     transition:
-      transform var(--w-duration-fast, 120ms) var(--w-easing-standard),
+      transform var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
       color var(--w-duration-fast, 120ms) ease,
       background-color var(--w-duration-fast, 120ms) ease;
 

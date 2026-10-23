@@ -77,7 +77,7 @@ defineExpose({
 
 - 派生值用 `computed`，不要用 `watch` 回写。
 - 避免在模板里写复杂表达式；复杂逻辑移到 computed/函数。
-- 大列表/高频事件使用 `useThrottle` / `useDebounce`（`@wuhu-ui/core`）。
+- 大列表/高频事件使用 `useThrottle` / `useDebounce`（`@wuhu-vue-ui/core`）。
 - 清理逻辑与注册逻辑成对出现，禁止遗留监听。
 
 ## 可访问性（强制）

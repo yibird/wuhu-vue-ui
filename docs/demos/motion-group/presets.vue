@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button, Segmented } from 'antdv-next'
-import { MotionGroup } from '@wuhu-ui/motion-group'
-import type { MotionGroupAnimation } from '@wuhu-ui/motion-group'
+import { MotionGroup } from '@wuhu-vue-ui/motion-group'
+import type { MotionGroupAnimation } from '@wuhu-vue-ui/motion-group'
 
 type CardStatus = 'todo' | 'doing' | 'done'
 

@@ -10,8 +10,8 @@ macOS 风格的停靠导航：支持底部/顶部/左右四个方向，指针靠
 
 ```vue
 <script setup lang="ts">
-import { Dock } from '@wuhu-ui/dock'
-import type { DockItem } from '@wuhu-ui/dock'
+import { Dock } from '@wuhu-vue-ui/dock'
+import type { DockItem } from '@wuhu-vue-ui/dock'
 
 const model: DockItem[] = [
   { label: '访达', icon: '/icons/finder.png', url: 'https://example.com' },

@@ -11,7 +11,7 @@ description: 在 wuhu-vue-ui monorepo 中新增一个组件包的完整流程。
 
 - 组件是否已有同类包？避免重复。
 - 需要哪些 peer 依赖？默认只允许 `vue` 作为 peer；额外依赖放到 `dependencies` 并确认体积。
-- 组件名：`Wu` + PascalCase；包名：`@wuhu-ui/kebab-case`。
+- 组件名：`Wu` + PascalCase；包名：`@wuhu-vue-ui/kebab-case`。
 
 ## 1. 创建包结构
 
@@ -32,7 +32,7 @@ packages/<name>/
 
 复制 `packages/copy/package.json` 后修改：
 
-- `name`: `@wuhu-ui/<name>`
+- `name`: `@wuhu-vue-ui/<name>`
 - `description`: 英文一句话描述
 - `keywords`: 至少包含 `vue`、`vue3`、`component`、`ui`
 - 保留 `style`、`files`、`sideEffects`、`exports`（含 `node` 条件）、`publishConfig`、`build`/`prepack`
@@ -111,7 +111,7 @@ describe('WuFoo', () => {
 
 ## 6. 接入 playground
 
-1. 在 `playground/package.json` 的 `dependencies` 增加 `"@wuhu-ui/<name>": "workspace:*"`。
+1. 在 `playground/package.json` 的 `dependencies` 增加 `"@wuhu-vue-ui/<name>": "workspace:*"`。
 2. 新建 `playground/src/demos/<name>-demo.vue`，使用 `<script setup lang="ts">` + `DemoCard`。
 3. 在 `playground/src/docs/component-meta.ts` 的 `componentMetas` 注册元数据：`slug`、`name`、`title`、`summary`、`packageName`、`category`（`foundation` / `visual` / `interaction` / `data`）、`tags`；在 `playground/src/docs/catalog.ts` 的 `demos` 映射中导入并绑定 Demo 组件。
 4. 执行 `pnpm install` 使 workspace 链接生效。

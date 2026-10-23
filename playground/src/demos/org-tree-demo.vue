@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { OrgTree } from '@wuhu-ui/org-tree'
-import type { OrgTreeId, OrgTreeInstance, OrgTreeMenuItem, OrgTreeNode } from '@wuhu-ui/org-tree'
+import { OrgTree } from '@wuhu-vue-ui/org-tree'
+import type {
+  OrgTreeId,
+  OrgTreeInstance,
+  OrgTreeMenuItem,
+  OrgTreeNode,
+} from '@wuhu-vue-ui/org-tree'
 import DemoCard from '../components/demo-card.vue'
 
 const treeRef = ref<OrgTreeInstance>()

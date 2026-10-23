@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { vRipple } from '@wuhu-ui/ripple'
+import { vRipple } from '@wuhu-vue-ui/ripple'
 </script>
 
 <template>

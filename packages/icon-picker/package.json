@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/icon-picker",
+  "name": "@wuhu-vue-ui/icon-picker",
   "version": "0.1.0",
   "description": "Grouped, searchable and virtualized icon picker for Vue 3.",
   "keywords": [
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@tanstack/vue-virtual": "^3.13.47",
-    "@wuhu-ui/core": "workspace:*"
+    "@wuhu-vue-ui/core": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

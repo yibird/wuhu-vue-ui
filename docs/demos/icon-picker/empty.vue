@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { IconPicker } from '@wuhu-ui/icon-picker'
-import type { IconPickerGroup } from '@wuhu-ui/icon-picker'
+import { IconPicker } from '@wuhu-vue-ui/icon-picker'
+import type { IconPickerGroup } from '@wuhu-vue-ui/icon-picker'
 
 const emptyGroups: IconPickerGroup[] = [{ key: 'empty', label: '空分组', items: [] }]
 </script>

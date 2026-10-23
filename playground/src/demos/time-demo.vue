@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Time } from '@wuhu-ui/time'
+import { Time } from '@wuhu-vue-ui/time'
 import DemoCard from '../components/demo-card.vue'
 
 const timeSeed = Date.now()

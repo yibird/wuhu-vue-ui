@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRaf } from '@wuhu-ui/core'
+import { useRaf } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
 import type {
   SlidingHighlightInstance,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Scrollbar } from '@wuhu-ui/scrollbar'
+import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 
 const items = [
   { title: 'Always', desc: '滚动条始终显示，不依赖鼠标悬浮。' },

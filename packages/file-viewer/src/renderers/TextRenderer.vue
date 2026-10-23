@@ -9,7 +9,7 @@ import { formatFileViewerMessage } from '../i18n'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 import CodeBlock from './CodeBlock.vue'
-import { useCopy } from '@wuhu-ui/core'
+import { useCopy } from '@wuhu-vue-ui/core'
 import { useTextSource } from './useTextSource'
 
 defineOptions({

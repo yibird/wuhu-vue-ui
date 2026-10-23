@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePrefersReducedMotion, useRaf } from '@wuhu-ui/core'
+import { usePrefersReducedMotion, useRaf } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
 import type { DockItem, DockPosition, DockProps, DockSlots } from './types'

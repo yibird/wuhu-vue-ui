@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/loading",
+  "name": "@wuhu-vue-ui/loading",
   "version": "0.1.0",
   "description": "Loading spinner and fullscreen overlay with five built-in animations for Vue 3.",
   "keywords": [

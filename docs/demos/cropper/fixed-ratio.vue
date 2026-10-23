@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Cropper } from '@wuhu-ui/cropper'
+import { Cropper } from '@wuhu-vue-ui/cropper'
 </script>
 
 <template>

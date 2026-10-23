@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useControllableState, usePointerDrag } from '@wuhu-ui/core'
+import { useControllableState, usePointerDrag } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, reactive, readonly, ref, watch } from 'vue'
 import type { ImgComparisonSliderProps, ImgComparisonSliderSlotProps } from './types'
 

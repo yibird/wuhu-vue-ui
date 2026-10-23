@@ -1,5 +1,5 @@
 import { h } from 'vue'
-import type { IconPickerGroup } from '@wuhu-ui/icon-picker'
+import type { IconPickerGroup } from '@wuhu-vue-ui/icon-picker'
 
 function glyph(path: string, rotation = 0) {
   return h('svg', { viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true' }, [

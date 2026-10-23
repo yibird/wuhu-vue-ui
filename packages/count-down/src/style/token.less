@@ -1,0 +1,23 @@
+:root {
+  color-scheme: light;
+  --w-color-text: #0f172a;
+  --w-font-family:
+    'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --w-font-size-lg: 16px;
+  --w-font-weight-semibold: 600;
+  --w-color-text-secondary: #475569;
+}
+
+[data-w-theme='dark'] {
+  color-scheme: dark;
+  --w-color-text: #e2e8f0;
+  --w-color-text-secondary: #cbd5e1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) {
+    color-scheme: dark;
+    --w-color-text: #e2e8f0;
+    --w-color-text-secondary: #cbd5e1;
+  }
+}

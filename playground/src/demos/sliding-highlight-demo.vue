@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { SlidingHighlight } from '@wuhu-ui/sliding-highlight'
+import { SlidingHighlight } from '@wuhu-vue-ui/sliding-highlight'
 import DemoCard from '../components/demo-card.vue'
 
 interface NavItem {

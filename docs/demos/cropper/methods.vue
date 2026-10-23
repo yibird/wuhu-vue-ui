@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'antdv-next'
-import { Cropper } from '@wuhu-ui/cropper'
-import type { CropperData, CropperExpose } from '@wuhu-ui/cropper'
+import { Cropper } from '@wuhu-vue-ui/cropper'
+import type { CropperData, CropperExpose } from '@wuhu-vue-ui/cropper'
 
 const cropperRef = ref<CropperExpose | null>(null)
 const selection = ref<CropperData | null>(null)

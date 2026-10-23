@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref } from 'vue'
-import { NumberTicker } from '@wuhu-ui/number-ticker'
+import { NumberTicker } from '@wuhu-vue-ui/number-ticker'
 import DemoCard from '../components/demo-card.vue'
 
 const tickerValue = ref(12860.5)

@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import type { GanttTask } from '@wuhu-ui/gantt'
+import type { GanttTask } from '@wuhu-vue-ui/gantt'
 
 function isoDate(offset: number): string {
   const date = new Date()

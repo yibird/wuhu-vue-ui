@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useData } from 'vitepress'
-import { JsonViewer } from '@wuhu-ui/json-viewer'
+import { JsonViewer } from '@wuhu-vue-ui/json-viewer'
 import '../../../playground/src/demos/monaco-env'
 
 const { isDark } = useData()

@@ -91,7 +91,7 @@ export type { FooProps, FooSlotProps } from './types'
 - 包源码内使用相对路径导入，不要使用 `@/` 或 workspace 别名；`vite-plugin-dts` 需要能解析并归一化产物。
 - 不从 `dist` 或测试文件导入。
 - 类型文件里不要写运行时副作用代码。
-- `@wuhu-ui/core` 可被其他包以 workspace 依赖使用；新增依赖时同步包 `package.json` 的 `dependencies` / `peerDependencies`，不要漏。
+- `@wuhu-vue-ui/core` 可被其他包以 workspace 依赖使用；新增依赖时同步包 `package.json` 的 `dependencies` / `peerDependencies`，不要漏。
 
 ## 校验命令
 

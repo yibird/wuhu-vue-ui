@@ -7,7 +7,7 @@ import {
   useListNavigation,
   usePointerDrag,
   useRaf,
-} from '@wuhu-ui/core'
+} from '@wuhu-vue-ui/core'
 import {
   computed,
   nextTick,
@@ -526,8 +526,9 @@ function taskColorStyle(color: string): CSSProperties {
 
   const style = {
     '--w-gantt-task-color': color,
-    '--w-gantt-task-soft': colorWithAlpha(color, 0.14) ?? 'var(--w-color-primary-soft)',
-    '--w-gantt-task-border': colorWithAlpha(color, 0.38) ?? 'var(--w-color-border-strong)',
+    '--w-gantt-task-soft':
+      colorWithAlpha(color, 0.14) ?? 'var(--w-color-primary-soft, rgba(79, 70, 229, 0.1))',
+    '--w-gantt-task-border': colorWithAlpha(color, 0.38) ?? 'var(--w-color-border-strong, #cbd5e1)',
   } as CSSProperties
 
   if (colorStyleCache.size >= 256) colorStyleCache.clear()

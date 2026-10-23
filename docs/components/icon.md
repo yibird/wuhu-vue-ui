@@ -6,7 +6,7 @@
 
 ```vue
 <script setup lang="ts">
-import { Icon } from '@wuhu-ui/icon'
+import { Icon } from '@wuhu-vue-ui/icon'
 </script>
 
 <template>
@@ -31,7 +31,7 @@ import { Icon } from '@wuhu-ui/icon'
 ## 自定义图标
 
 ```ts
-import { registerIcon } from '@wuhu-ui/icon'
+import { registerIcon } from '@wuhu-vue-ui/icon'
 
 registerIcon(
   'custom-star',

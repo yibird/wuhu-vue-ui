@@ -11,7 +11,7 @@
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { WView, WViewHeader, WViewContent, WViewFooter } from '@wuhu-ui/view'
+import { WView, WViewHeader, WViewContent, WViewFooter } from '@wuhu-vue-ui/view'
 
 const collapsed = ref(false)
 </script>

@@ -1,5 +1,5 @@
 {
-  "name": "@wuhu-ui/motion-group",
+  "name": "@wuhu-vue-ui/motion-group",
   "version": "0.1.0",
   "description": "Animated list reordering for Vue 3, built on TransitionGroup.",
   "keywords": [

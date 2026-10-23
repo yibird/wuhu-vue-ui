@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CommandMenu } from '@wuhu-ui/command-menu'
-import type { CommandMenuItem, CommandMenuKey } from '@wuhu-ui/command-menu'
+import { CommandMenu } from '@wuhu-vue-ui/command-menu'
+import type { CommandMenuItem, CommandMenuKey } from '@wuhu-vue-ui/command-menu'
 
 const items: CommandMenuItem[] = [
   {

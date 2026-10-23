@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { useData } from 'vitepress'
 import { Button } from 'antdv-next'
-import { FileViewer } from '@wuhu-ui/file-viewer'
+import { FileViewer } from '@wuhu-vue-ui/file-viewer'
 
 const { isDark } = useData()
 const viewerTheme = computed(() => (isDark.value ? 'dark' : 'light'))

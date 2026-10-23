@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useIntervalFn } from '@wuhu-ui/core'
+import { useIntervalFn } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { formatCountdown } from './format'
 import type { CountDownProps, CountDownState } from './types'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Copy } from '@wuhu-ui/copy'
+import { Copy } from '@wuhu-vue-ui/copy'
 
 const inviteCode = 'WUHU-VUE-UI-2026'
 const message = ref('默认显示图标与文字，只有图标会触发复制')

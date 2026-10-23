@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Loading } from '@wuhu-ui/loading'
-import type { LoadingGradient } from '@wuhu-ui/loading'
+import { Loading } from '@wuhu-vue-ui/loading'
+import type { LoadingGradient } from '@wuhu-vue-ui/loading'
 
 const presets: Array<{ label: string; value: LoadingGradient }> = [
   { label: '默认渐变', value: true },

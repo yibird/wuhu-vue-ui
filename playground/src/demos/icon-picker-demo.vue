@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { h, ref } from 'vue'
-import { IconPicker } from '@wuhu-ui/icon-picker'
-import type { IconPickerGroup, IconPickerItem } from '@wuhu-ui/icon-picker'
+import { IconPicker } from '@wuhu-vue-ui/icon-picker'
+import type { IconPickerGroup, IconPickerItem } from '@wuhu-vue-ui/icon-picker'
 import DemoCard from '../components/demo-card.vue'
 
 function glyph(path: string) {

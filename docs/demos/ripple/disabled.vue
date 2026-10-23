@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { vRipple } from '@wuhu-ui/ripple'
+import { vRipple } from '@wuhu-vue-ui/ripple'
 
 const disabled = ref(true)
 </script>

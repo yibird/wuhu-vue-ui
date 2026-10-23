@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ripple, vRipple } from '@wuhu-ui/ripple'
+import { Ripple, vRipple } from '@wuhu-vue-ui/ripple'
 import DemoCard from '../components/demo-card.vue'
 </script>
 

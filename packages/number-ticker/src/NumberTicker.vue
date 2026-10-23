@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRaf } from '@wuhu-ui/core'
+import { useRaf } from '@wuhu-vue-ui/core'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { NumberTickerCharacter, NumberTickerProps } from './types'
 
