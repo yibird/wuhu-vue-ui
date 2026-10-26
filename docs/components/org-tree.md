@@ -69,7 +69,9 @@ const expandKeys = ref<Array<string | number>>(['root'])
 
 - `draggable`（默认 `true`）：按住空白区域或节点平移画布，位移按 pointer 1:1 计算，并限制在合理边界内。
 - `scalable`（默认 `true`）：滚轮以鼠标位置为锚点缩放，范围由 `minScale` / `maxScale` 限制。`wheelZoom` 可设为 `ctrl`（仅 Ctrl/Meta + 滚轮）或 `none`，避免拦截页面滚动。
-- 节点支持键盘导航：`ArrowDown` / `ArrowUp` 在可见节点间移动焦点，`ArrowRight` / `ArrowLeft` 展开/收起或进入父/子节点，`Home` / `End` 跳到首尾；右键菜单打开后自动聚焦首项并支持方向键。
+- 节点支持键盘导航：`ArrowDown` / `ArrowUp` 在可见节点间移动焦点，`ArrowRight` / `ArrowLeft` 展开/收起或进入父/子节点，`Home` / `End` 跳到首尾；右键菜单打开后自动聚焦首项并支持方向键，关闭后焦点回到触发节点。
+- 节点采用 roving tabindex：同一时刻只有一个节点卡片进入 Tab 顺序，长树不会产生大量 Tab 停靠点。
+- 节点 `id` 使用带类型前缀的内部 key（例如 `string:1` 与 `number:1` 不会冲突）；缺少可用 `id` 或 `label` 的节点会被跳过。
 - `contextMenu=false`：完全关闭右键菜单。
 - 右键菜单使用 `position: fixed` 与视口坐标，并限制在窗口范围内，全屏或页面滚动时不会错位。
 

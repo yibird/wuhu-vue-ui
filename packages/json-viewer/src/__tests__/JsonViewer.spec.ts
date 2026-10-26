@@ -58,7 +58,7 @@ describe('formatJsonValue', () => {
 
     const circular: Record<string, unknown> = {}
     circular.self = circular
-    expect(formatJsonValue(circular)).toBe('[object Object]')
+    expect(formatJsonValue(circular)).toBe('{\n  "self": "[Circular]"\n}')
   })
 })
 
@@ -83,6 +83,12 @@ describe('JsonViewer', () => {
     expect(editor.props('theme')).toBe('vs-dark')
     expect(editor.props('modelValue')).toBe('{\n    "a": 1\n}')
 
+    wrapper.unmount()
+  })
+
+  it('defaults to the vs Monaco theme', () => {
+    const wrapper = mount(JsonViewer, { props: { value: { a: 1 } } })
+    expect(wrapper.findComponent(CodeEditor).props('theme')).toBe('vs')
     wrapper.unmount()
   })
 

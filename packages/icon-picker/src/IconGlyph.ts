@@ -14,6 +14,6 @@ export default defineComponent({
     return () =>
       typeof props.icon === 'string'
         ? h('i', { class: props.icon, 'aria-hidden': 'true' })
-        : cloneVNode(props.icon)
+        : cloneVNode(props.icon, { 'aria-hidden': 'true' })
   },
 })

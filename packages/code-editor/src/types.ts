@@ -15,7 +15,8 @@ export interface CodeEditorProps {
   /** Monaco language identifier, e.g. `typescript` or `json`. */
   language?: string
   /**
-   * Monaco theme identifier, e.g. `vs` or `vs-dark`.
+   * Monaco theme identifier, e.g. `vs` or `vs-dark`, or `auto` to follow the
+   * app's `data-w-theme` attribute / `prefers-color-scheme`.
    * Monaco themes are global: changing this value affects every editor instance.
    */
   theme?: string

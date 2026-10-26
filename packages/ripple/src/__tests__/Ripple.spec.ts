@@ -103,7 +103,7 @@ describe('Ripple component', () => {
 })
 
 describe('vRipple directive', () => {
-  it('sets up and restores position, overflow and the ripple class', () => {
+  it('adds the host class and restores the original position on unmount', () => {
     const Test = defineComponent({
       setup() {
         return () => withDirectives(h('button', { class: 'target' }, '波纹'), [[vRipple]])
@@ -113,14 +113,51 @@ describe('vRipple directive', () => {
     const node = wrapper.get('.target').element as HTMLElement
 
     expect(node.style.position).toBe('relative')
-    expect(node.style.overflow).toBe('hidden')
-    expect(node.classList.contains('w-ripple')).toBe(true)
+    // Clipping is provided by the host class, not by an inline style.
+    expect(node.style.overflow).toBe('')
+    expect(node.classList.contains('w-ripple-host')).toBe(true)
+    expect(node.classList.contains('w-ripple')).toBe(false)
 
     wrapper.unmount()
 
     expect(node.style.position).toBe('')
-    expect(node.style.overflow).toBe('')
-    expect(node.classList.contains('w-ripple')).toBe(false)
+    expect(node.classList.contains('w-ripple-host')).toBe(false)
+  })
+
+  it('does not override existing positioning on the host', () => {
+    const Test = defineComponent({
+      setup() {
+        return () =>
+          withDirectives(h('button', { class: 'target', style: 'position: absolute' }, '波纹'), [
+            [vRipple],
+          ])
+      },
+    })
+    const wrapper = mount(Test)
+    const node = wrapper.get('.target').element as HTMLElement
+
+    expect(node.style.position).toBe('absolute')
+    expect(node.classList.contains('w-ripple-host')).toBe(true)
+
+    wrapper.unmount()
+
+    expect(node.style.position).toBe('absolute')
+    expect(node.classList.contains('w-ripple-host')).toBe(false)
+  })
+
+  it('keeps a pre-existing host class on unmount', () => {
+    const Test = defineComponent({
+      setup() {
+        return () =>
+          withDirectives(h('button', { class: 'target w-ripple-host' }, '波纹'), [[vRipple]])
+      },
+    })
+    const wrapper = mount(Test)
+    const node = wrapper.get('.target').element as HTMLElement
+
+    wrapper.unmount()
+
+    expect(node.classList.contains('w-ripple-host')).toBe(true)
   })
 
   it('passes options through to the wave', async () => {

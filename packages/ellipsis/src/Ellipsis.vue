@@ -67,16 +67,32 @@ const tooltipSlotProps = computed<EllipsisTooltipSlotProps>(() => ({
 }))
 
 /**
- * Reads the intrinsic overflow while the clamp is active. Measuring an
- * expanded element requires temporarily re-clamping it, which can trigger a
- * ResizeObserver loop, so the collapsed result is kept while expanded and
- * refreshed when it collapses again.
+ * Reads the intrinsic overflow while the clamp is active. An expanded element
+ * is temporarily re-clamped synchronously and restored before the browser can
+ * paint, so no visual jump occurs and the ResizeObserver sees a net-zero
+ * change.
  */
 function measureOverflow() {
   const element = contentRef.value
-  if (!element || expanded.value) return
+  if (!element) return
 
-  overflowed.value = element.scrollHeight > element.clientHeight + 1
+  if (!expanded.value) {
+    overflowed.value = element.scrollHeight > element.clientHeight + 1
+    return
+  }
+
+  const { display, overflow, webkitLineClamp } = element.style
+  element.style.display = '-webkit-box'
+  element.style.overflow = 'hidden'
+  element.style.webkitLineClamp = String(lineCount.value)
+
+  try {
+    overflowed.value = element.scrollHeight > element.clientHeight + 1
+  } finally {
+    element.style.display = display
+    element.style.overflow = overflow
+    element.style.webkitLineClamp = webkitLineClamp
+  }
 }
 
 function scheduleMeasure() {

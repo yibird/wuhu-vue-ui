@@ -1,6 +1,10 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import Scrollbar from '../Scrollbar.vue'
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('Scrollbar', () => {
   it('renders content with default structure', () => {
@@ -39,22 +43,37 @@ describe('Scrollbar', () => {
     wrapper.unmount()
   })
 
-  it('applies semantic classes and styles', () => {
+  it('applies semantic classes and styles to wrapper, view and both thumbs', () => {
     const wrapper = mount(Scrollbar, {
       props: {
-        classes: { wrap: 'custom-wrap', view: ['custom-view', { active: true }] },
-        styles: { wrap: { padding: '4px' }, view: { color: 'red' } },
+        classes: {
+          wrap: 'custom-wrap',
+          view: ['custom-view', { active: true }],
+          thumb: 'custom-thumb',
+        },
+        styles: {
+          wrap: { padding: '4px' },
+          view: { color: 'red' },
+          thumb: { borderRadius: '2px' },
+        },
       },
     })
 
     const wrap = wrapper.get('.w-scrollbar__wrap')
     const view = wrapper.get('.w-scrollbar__view')
+    const horizontalThumb = wrapper.get('.w-scrollbar__bar.is-horizontal .w-scrollbar__thumb')
+    const verticalThumb = wrapper.get('.w-scrollbar__bar.is-vertical .w-scrollbar__thumb')
 
     expect(wrap.classes()).toContain('custom-wrap')
     expect(view.classes()).toContain('custom-view')
     expect(view.classes()).toContain('active')
+    expect(horizontalThumb.classes()).toContain('custom-thumb')
+    expect(verticalThumb.classes()).toContain('custom-thumb')
+
     expect((wrap.element as HTMLElement).style.padding).toBe('4px')
     expect((view.element as HTMLElement).style.color).toBe('red')
+    expect((horizontalThumb.element as HTMLElement).style.borderRadius).toBe('2px')
+    expect((verticalThumb.element as HTMLElement).style.borderRadius).toBe('2px')
     wrapper.unmount()
   })
 
@@ -63,6 +82,32 @@ describe('Scrollbar', () => {
 
     expect(wrapper.find('.w-scrollbar__bar').exists()).toBe(false)
     expect(wrapper.find('.w-scrollbar__wrap--hidden-default').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('does not create a ResizeObserver when native is enabled', () => {
+    const created = vi.fn()
+    class MockResizeObserver {
+      constructor() {
+        created()
+      }
+
+      observe = vi.fn()
+      disconnect = vi.fn()
+    }
+    vi.stubGlobal('ResizeObserver', MockResizeObserver)
+
+    const wrapper = mount(Scrollbar, { props: { native: true } })
+
+    expect(created).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+
+  it('marks both custom bars as decorative', () => {
+    const wrapper = mount(Scrollbar)
+
+    expect(wrapper.get('.w-scrollbar__bar.is-horizontal').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('.w-scrollbar__bar.is-vertical').attributes('aria-hidden')).toBe('true')
     wrapper.unmount()
   })
 
@@ -158,6 +203,23 @@ describe('Scrollbar', () => {
     await wrapper.trigger('mouseenter')
     await wrapper.trigger('mouseleave')
     expect(isDisplayed()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('ends an active drag when the window loses focus', async () => {
+    const wrapper = mount(Scrollbar)
+
+    await wrapper.get('.w-scrollbar__bar.is-vertical .w-scrollbar__thumb').trigger('mousedown')
+    expect(wrapper.get('.w-scrollbar__bar.is-vertical .w-scrollbar__thumb').classes()).toContain(
+      'is-dragging',
+    )
+
+    window.dispatchEvent(new Event('blur'))
+    await wrapper.vm.$nextTick()
+
+    expect(
+      wrapper.get('.w-scrollbar__bar.is-vertical .w-scrollbar__thumb').classes(),
+    ).not.toContain('is-dragging')
     wrapper.unmount()
   })
 

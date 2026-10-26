@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import Gantt from '../Gantt.vue'
 import type { GanttContextMenuSelectEvent, GanttTask } from '../types'
@@ -60,6 +60,10 @@ async function openContextMenu(wrapper: ReturnType<typeof mountGantt>, index = 1
   await nextTick()
 }
 
+const contextMenu = () => document.body.querySelector<HTMLElement>('.w-gantt__context-menu')
+const menuItemElements = () =>
+  Array.from(document.body.querySelectorAll<HTMLElement>('.w-gantt__context-menu-item'))
+
 describe('Gantt', () => {
   it('renders a row per visible task', () => {
     const wrapper = mountGantt()
@@ -113,9 +117,9 @@ describe('Gantt', () => {
     expect(wrapper.emitted('task-contextmenu')).toHaveLength(1)
     expect(wrapper.emitted('task-contextmenu')?.[0]?.[0]).toEqual(tasks[0]?.children?.[0])
     expect(wrapper.emitted('update:selected')?.[0]).toEqual(['a'])
-    expect(wrapper.find('.w-gantt__context-menu').exists()).toBe(true)
-    expect(wrapper.findAll('.w-gantt__context-menu-item')).toHaveLength(2)
-    expect(wrapper.find('.w-gantt__context-menu-divider').exists()).toBe(true)
+    expect(contextMenu()).not.toBeNull()
+    expect(menuItemElements()).toHaveLength(2)
+    expect(document.body.querySelector('.w-gantt__context-menu-divider')).not.toBeNull()
     wrapper.unmount()
   })
 
@@ -125,7 +129,7 @@ describe('Gantt', () => {
     })
     await openContextMenu(wrapper)
 
-    expect(wrapper.get('.w-gantt__context-menu-item').text()).toBe('重命名 Task A')
+    expect(menuItemElements()[0]?.textContent).toBe('重命名 Task A')
     wrapper.unmount()
   })
 
@@ -133,12 +137,13 @@ describe('Gantt', () => {
     const wrapper = mountGantt({ contextMenuItems })
     await openContextMenu(wrapper)
 
-    await wrapper.findAll('.w-gantt__context-menu-item')[0]!.trigger('click')
+    menuItemElements()[0]!.click()
+    await nextTick()
 
     const event = wrapper.emitted('context-menu-select')?.[0]?.[0] as GanttContextMenuSelectEvent
     expect(event.item.key).toBe('edit')
     expect(event.task).toEqual(tasks[0]?.children?.[0])
-    expect(wrapper.find('.w-gantt__context-menu').exists()).toBe(false)
+    await vi.waitFor(() => expect(contextMenu()).toBeNull())
     wrapper.unmount()
   })
 
@@ -147,13 +152,11 @@ describe('Gantt', () => {
     await openContextMenu(wrapper)
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-    await nextTick()
-    expect(wrapper.find('.w-gantt__context-menu').exists()).toBe(false)
+    await vi.waitFor(() => expect(contextMenu()).toBeNull())
 
     await openContextMenu(wrapper)
     window.dispatchEvent(new Event('pointerdown'))
-    await nextTick()
-    expect(wrapper.find('.w-gantt__context-menu').exists()).toBe(false)
+    await vi.waitFor(() => expect(contextMenu()).toBeNull())
     wrapper.unmount()
   })
 
@@ -170,7 +173,7 @@ describe('Gantt', () => {
     await nextTick()
 
     expect(wrapper.emitted('task-contextmenu')).toHaveLength(1)
-    expect(wrapper.find('.w-gantt__context-menu').exists()).toBe(false)
+    expect(contextMenu()).toBeNull()
     expect(event.defaultPrevented).toBe(false)
     wrapper.unmount()
   })
@@ -196,6 +199,37 @@ describe('Gantt', () => {
     })
 
     expect(wrapper.find('.w-gantt__empty').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('uses a single roving tab stop and supports row navigation keys', async () => {
+    const wrapper = mountGantt()
+    const bars = wrapper.findAll('.w-gantt__bar')
+
+    expect(bars.map((bar) => bar.attributes('tabindex'))).toEqual(['0', '-1', '-1'])
+
+    await bars[1]!.trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    expect(bars.map((bar) => bar.attributes('tabindex'))).toEqual(['-1', '-1', '0'])
+
+    await bars[2]!.trigger('keydown', { key: 'Home' })
+    await nextTick()
+    expect(bars.map((bar) => bar.attributes('tabindex'))).toEqual(['0', '-1', '-1'])
+
+    await bars[0]!.trigger('keydown', { key: 'End' })
+    await nextTick()
+    expect(bars.map((bar) => bar.attributes('tabindex'))).toEqual(['-1', '-1', '0'])
+
+    await bars[2]!.trigger('keydown', { key: 'ArrowUp' })
+    await nextTick()
+    expect(bars.map((bar) => bar.attributes('tabindex'))).toEqual(['-1', '0', '-1'])
+    wrapper.unmount()
+  })
+
+  it('does not duplicate the task name in the accessible label', () => {
+    const wrapper = mountGantt()
+    const label = wrapper.findAll('.w-gantt__bar')[1]!.attributes('aria-label') ?? ''
+    expect(label.match(/Task A/g)).toHaveLength(1)
     wrapper.unmount()
   })
 
@@ -336,7 +370,9 @@ describe('Gantt', () => {
     const wrapper = mountGantt({ tasks: milestoneTasks })
     const bar = wrapper.get('.w-gantt__bar.is-milestone')
 
-    expect(bar.attributes('aria-keyshortcuts')).toBe('ArrowLeft ArrowRight')
+    expect(bar.attributes('aria-keyshortcuts')).toBe(
+      'ArrowUp ArrowDown Home End ArrowLeft ArrowRight',
+    )
 
     await bar.trigger('keydown', { key: 'ArrowRight', shiftKey: true })
     await bar.trigger('keydown', { key: 'ArrowRight', altKey: true })

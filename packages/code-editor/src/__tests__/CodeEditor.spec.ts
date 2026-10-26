@@ -176,6 +176,26 @@ describe('CodeEditor', () => {
     wrapper.unmount()
   })
 
+  it('resolves theme auto from data-w-theme', async () => {
+    document.documentElement.setAttribute('data-w-theme', 'dark')
+    try {
+      const wrapper = await mountReady({ theme: 'auto' })
+
+      const options = monacoMock.module.editor.create.mock.calls[0]?.[1] ?? {}
+      expect(options).toMatchObject({ theme: 'vs-dark' })
+
+      document.documentElement.setAttribute('data-w-theme', 'light')
+      await wrapper.setProps({ theme: 'vs-dark' })
+      await wrapper.setProps({ theme: 'auto' })
+      await flushPromises()
+      expect(monacoMock.setTheme).toHaveBeenLastCalledWith('vs')
+
+      wrapper.unmount()
+    } finally {
+      document.documentElement.removeAttribute('data-w-theme')
+    }
+  })
+
   it('updates language, theme, readOnly and disabled state', async () => {
     const wrapper = await mountReady()
 

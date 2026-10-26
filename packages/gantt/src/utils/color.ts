@@ -48,12 +48,3 @@ export function colorWithAlpha(color: string, alpha: number): string | null {
   if (!rgb) return null
   return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`
 }
-
-export function readableTextColor(color: string): string | null {
-  const rgb = parseColor(color)
-  if (!rgb) return null
-
-  // Perceived luminance (sRGB approximation).
-  const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255
-  return luminance > 0.68 ? '#0f172a' : '#ffffff'
-}

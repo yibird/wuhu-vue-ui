@@ -12,7 +12,7 @@
 
 ## 自定义背景图
 
-通过 `src` 设置背景图，并结合 `width`、`height`、`pieceSize` 与 `tolerance` 调整难度。
+通过 `src` 设置背景图，并结合 `width`、`height`、`pieceSize` 与 `tolerance` 调整难度。`src` 支持传入 URL 数组，此时每次刷新都会切换到不同的背景图，并重新生成缺口位置。
 
 <demo vue="../demos/slider-captcha/image.vue" />
 
@@ -26,23 +26,23 @@
 
 ### Props
 
-| 属性            | 类型                                     | 默认值                   | 说明                             |
-| --------------- | ---------------------------------------- | ------------------------ | -------------------------------- |
-| `src`           | `string`                                 | `''`                     | 背景图 URL，未设置时使用生成背景 |
-| `width`         | `number`                                 | `320`                    | 验证码图片宽度                   |
-| `height`        | `number`                                 | `160`                    | 验证码图片高度                   |
-| `pieceSize`     | `number`                                 | `48`                     | 拼图方块边长                     |
-| `tolerance`     | `number`                                 | `6`                      | 验证允许的水平误差（px）         |
-| `disabled`      | `boolean`                                | `false`                  | 禁用全部交互                     |
-| `crossOrigin`   | `'' \| 'anonymous' \| 'use-credentials'` | `''`                     | 加载背景图时使用的 `crossorigin` |
-| `text`          | `string`                                 | `'向右拖动滑块完成拼图'` | 滑轨提示文案                     |
-| `successText`   | `string`                                 | `'验证通过'`             | 成功文案                         |
-| `failText`      | `string`                                 | `'验证失败，请重试'`     | 失败文案                         |
-| `loadingText`   | `string`                                 | `'拼图加载中…'`          | 背景图加载中文案                 |
-| `refreshOnFail` | `boolean`                                | `true`                   | 失败后自动生成新的验证码         |
-| `ariaLabel`     | `string`                                 | `'滑块拼图验证'`         | 无障碍名称                       |
-| `classes`       | `SliderCaptchaClasses`                   | —                        | 语义化类名，按部件注入           |
-| `styles`        | `SliderCaptchaStyles`                    | —                        | 语义化内联样式，按部件注入       |
+| 属性            | 类型                                     | 默认值                   | 说明                                         |
+| --------------- | ---------------------------------------- | ------------------------ | -------------------------------------------- |
+| `src`           | `string \| string[]`                     | `''`                     | 背景图 URL 或 URL 数组，未设置时使用生成背景 |
+| `width`         | `number`                                 | `320`                    | 验证码图片宽度                               |
+| `height`        | `number`                                 | `160`                    | 验证码图片高度                               |
+| `pieceSize`     | `number`                                 | `48`                     | 拼图方块边长                                 |
+| `tolerance`     | `number`                                 | `6`                      | 验证允许的水平误差（px）                     |
+| `disabled`      | `boolean`                                | `false`                  | 禁用全部交互                                 |
+| `crossOrigin`   | `'' \| 'anonymous' \| 'use-credentials'` | `''`                     | 加载背景图时使用的 `crossorigin`             |
+| `text`          | `string`                                 | `'向右拖动滑块完成拼图'` | 滑轨提示文案                                 |
+| `successText`   | `string`                                 | `'验证通过'`             | 成功文案                                     |
+| `failText`      | `string`                                 | `'验证失败，请重试'`     | 失败文案                                     |
+| `loadingText`   | `string`                                 | `'拼图加载中…'`          | 背景图加载中文案                             |
+| `refreshOnFail` | `boolean`                                | `true`                   | 失败后自动生成新的验证码                     |
+| `ariaLabel`     | `string`                                 | `'滑块拼图验证'`         | 无障碍名称                                   |
+| `classes`       | `SliderCaptchaClasses`                   | —                        | 语义化类名，按部件注入                       |
+| `styles`        | `SliderCaptchaStyles`                    | —                        | 语义化内联样式，按部件注入                   |
 
 ### Emits
 
@@ -55,13 +55,13 @@
 
 ### 实例方法
 
-| 方法        | 类型                       | 说明                           |
-| ----------- | -------------------------- | ------------------------------ |
-| `refresh()` | `() => void`               | 生成新验证码并重置滑块         |
-| `reset()`   | `() => void`               | 重置滑块与状态，保留当前缺口   |
-| `verify()`  | `() => boolean`            | 立即校验当前偏移并触发对应事件 |
-| `offset`    | `Ref<number>`              | 当前滑块偏移                   |
-| `target`    | `Ref<SliderCaptchaTarget>` | 当前缺口坐标                   |
+| 方法        | 类型                       | 说明                                             |
+| ----------- | -------------------------- | ------------------------------------------------ |
+| `refresh()` | `() => void`               | 生成新验证码并重置滑块；`src` 为数组时切换背景图 |
+| `reset()`   | `() => void`               | 重置滑块与状态，保留当前缺口                     |
+| `verify()`  | `() => boolean`            | 立即校验当前偏移并触发对应事件                   |
+| `offset`    | `Ref<number>`              | 当前滑块偏移                                     |
+| `target`    | `Ref<SliderCaptchaTarget>` | 当前缺口坐标                                     |
 
 ### 键盘操作
 
@@ -78,6 +78,7 @@
 | `--w-slider-captcha-fill-bg`      | `var(--w-color-primary-soft)`   | 已拖动区域背景 |
 | `--w-slider-captcha-handle-bg`    | `var(--w-color-surface)`        | 滑块背景       |
 | `--w-slider-captcha-handle-color` | `var(--w-color-text-secondary)` | 滑块图标颜色   |
+| `--w-slider-captcha-handle-size`  | `44px`                          | 滑块与滑轨高度 |
 | `--w-slider-captcha-sweep-color`  | `rgba(255, 255, 255, 0.86)`     | 成功扫光颜色   |
 
 ### 语义化类名与样式

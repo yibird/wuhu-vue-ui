@@ -7,10 +7,6 @@ export interface ResizeContainerProps {
   debounce?: number
   /** Emit an initial resize event when mounted. */
   immediate?: boolean
-  /** Stop observation and events. */
-  disabled?: boolean
-  /** Root element tag. */
-  tag?: string
 }
 
 export interface ResizeContainerResizeEvent {

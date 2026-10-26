@@ -101,11 +101,17 @@ describe('SlidingHighlight', () => {
     wrapper.unmount()
   })
 
-  it('applies custom pill classes', async () => {
+  it('applies semantic classes and styles to the container and pill', async () => {
     const wrapper = mount(SlidingHighlight, {
       props: {
-        pillClassName: 'custom-pill',
-        pillContainerClassName: 'custom-pill-container',
+        classes: {
+          container: 'custom-pill-container',
+          pill: ['custom-pill', { active: true }],
+        },
+        styles: {
+          container: { opacity: '0.9' },
+          pill: { background: 'rgb(1, 2, 3)' },
+        },
       },
       slots,
     })
@@ -117,10 +123,13 @@ describe('SlidingHighlight', () => {
     await item.trigger('pointerover')
     await nextTick()
 
-    expect(wrapper.get('.w-sliding-highlight__container').classes()).toContain(
-      'custom-pill-container',
-    )
-    expect(wrapper.get('.w-sliding-highlight__pill').classes()).toContain('custom-pill')
+    const container = wrapper.get('.w-sliding-highlight__container')
+    const pill = wrapper.get('.w-sliding-highlight__pill')
+
+    expect(container.classes()).toContain('custom-pill-container')
+    expect((container.element as HTMLElement).style.opacity).toBe('0.9')
+    expect(pill.classes()).toEqual(expect.arrayContaining(['custom-pill', 'active']))
+    expect((pill.element as HTMLElement).style.background).toBe('rgb(1, 2, 3)')
 
     wrapper.unmount()
   })
@@ -144,6 +153,28 @@ describe('SlidingHighlight', () => {
 
     instance.clear()
     await nextTick()
+    expect(wrapper.find('.w-sliding-highlight__container').exists()).toBe(false)
+
+    wrapper.unmount()
+  })
+
+  it('clears the highlight when the hovered item is detached', async () => {
+    const wrapper = mount(SlidingHighlight, { slots })
+    const instance = wrapper.vm as unknown as SlidingHighlightInstance
+    const root = wrapper.get('.w-sliding-highlight')
+    const item = wrapper.get('#b')
+
+    root.element.getBoundingClientRect = () => rect(0, 0, 200, 40)
+    item.element.getBoundingClientRect = () => rect(100, 0, 80, 40)
+
+    instance.highlight(item.element as HTMLElement)
+    await nextTick()
+    expect(wrapper.find('.w-sliding-highlight__container').exists()).toBe(true)
+
+    item.element.remove()
+    await wrapper.setProps({ inset: 8 })
+    await nextTick()
+
     expect(wrapper.find('.w-sliding-highlight__container').exists()).toBe(false)
 
     wrapper.unmount()

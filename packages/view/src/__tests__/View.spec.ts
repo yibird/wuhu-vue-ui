@@ -1,12 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vite-plus/test'
 import { h } from 'vue'
-import { WView, WViewContent, WViewFooter, WViewHeader, WViewSider } from '../../index'
+import { View, ViewContent, ViewFooter, ViewHeader, ViewSider } from '../../index'
 
 describe('View', () => {
-  it('renders a full-size flex root with padding and gap', () => {
-    const wrapper = mount(WView, {
-      props: { gap: 12, direction: 'horizontal', padding: 16 },
+  it('renders a full-size flex root with gap', () => {
+    const wrapper = mount(View, {
+      props: { gap: 12, direction: 'horizontal' },
       slots: { default: () => h('span', { class: 'content' }, 'content') },
     })
 
@@ -16,36 +16,34 @@ describe('View', () => {
     expect(root.style.display).toBe('flex')
     expect(root.style.flexDirection).toBe('row')
     expect(root.style.gap).toBe('12px')
-    expect(root.style.padding).toBe('16px')
     expect(wrapper.get('.content').text()).toBe('content')
     wrapper.unmount()
   })
 
-  it('can disable full-size mode and padding', () => {
-    const wrapper = mount(WView, {
-      props: { full: false, padding: false },
+  it('can disable full-size mode', () => {
+    const wrapper = mount(View, {
+      props: { full: false },
     })
 
     expect((wrapper.element as HTMLElement).className).not.toContain('w-view-full')
-    expect((wrapper.element as HTMLElement).style.padding).toBe('')
     wrapper.unmount()
   })
 
   it('exposes compound subcomponents', () => {
-    expect(WView.Header).toBe(WViewHeader)
-    expect(WView.Content).toBe(WViewContent)
-    expect(WView.Sider).toBe(WViewSider)
-    expect(WView.Footer).toBe(WViewFooter)
+    expect(View.Header).toBe(ViewHeader)
+    expect(View.Content).toBe(ViewContent)
+    expect(View.Sider).toBe(ViewSider)
+    expect(View.Footer).toBe(ViewFooter)
   })
 
   it('renders content and footer slots', () => {
     const wrapper = mount({
-      components: { WView, WViewContent, WViewFooter },
+      components: { View, ViewContent, ViewFooter },
       template: `
-        <WView :padding="false">
-          <WViewContent><span class="body">Body</span></WViewContent>
-          <WViewFooter><span class="foot">Footer</span></WViewFooter>
-        </WView>
+        <View>
+          <ViewContent><span class="body">Body</span></ViewContent>
+          <ViewFooter><span class="foot">Footer</span></ViewFooter>
+        </View>
       `,
     })
 
@@ -55,7 +53,7 @@ describe('View', () => {
   })
 
   it('collapses the header and emits state updates', async () => {
-    const wrapper = mount(WViewHeader, {
+    const wrapper = mount(ViewHeader, {
       props: { collapsible: true },
       slots: { default: () => h('span', 'Header') },
     })
@@ -75,7 +73,7 @@ describe('View', () => {
   })
 
   it('supports a custom header trigger slot', () => {
-    const wrapper = mount(WViewHeader, {
+    const wrapper = mount(ViewHeader, {
       props: { collapsible: true },
       slots: {
         trigger: () => h('button', { 'data-custom-trigger': '' }, 'toggle'),
@@ -89,7 +87,7 @@ describe('View', () => {
   })
 
   it('collapses the sider and applies width styles', async () => {
-    const wrapper = mount(WViewSider, {
+    const wrapper = mount(ViewSider, {
       props: {
         collapsible: true,
         width: 260,
@@ -107,6 +105,40 @@ describe('View', () => {
     expect(wrapper.emitted('collapse')?.[0]).toEqual([true])
     expect(sider.style.width).toBe('48px')
     expect(sider.className).toContain('w-view-sider-collapsed')
+    wrapper.unmount()
+  })
+
+  it('forwards class/style to the header root', () => {
+    const wrapper = mount(ViewHeader, {
+      attrs: {
+        class: 'consumer-header',
+        style: 'color: rgb(1, 2, 3)',
+        'data-consumer': 'yes',
+      },
+    })
+
+    const root = wrapper.element as HTMLElement
+    expect(root.classList.contains('consumer-header')).toBe(true)
+    expect(root.style.color).toBe('rgb(1, 2, 3)')
+    expect(root.dataset.consumer).toBe('yes')
+    expect(wrapper.get('.w-view-header__content').classes()).not.toContain('consumer-header')
+    wrapper.unmount()
+  })
+
+  it('forwards class/style to the sider root', () => {
+    const wrapper = mount(ViewSider, {
+      attrs: {
+        class: 'consumer-sider',
+        style: 'color: rgb(1, 2, 3)',
+        'data-consumer': 'yes',
+      },
+    })
+
+    const root = wrapper.element as HTMLElement
+    expect(root.classList.contains('consumer-sider')).toBe(true)
+    expect(root.style.color).toBe('rgb(1, 2, 3)')
+    expect(root.dataset.consumer).toBe('yes')
+    expect(wrapper.get('.w-view-sider__body').classes()).not.toContain('consumer-sider')
     wrapper.unmount()
   })
 })

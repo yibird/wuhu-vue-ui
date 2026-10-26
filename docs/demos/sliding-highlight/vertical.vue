@@ -6,7 +6,7 @@ const items = ['工作台', '用户管理', '系统设置', '操作日志']
 
 <template>
   <div style="padding: 10px">
-    <SlidingHighlight class="sliding-list" :inset="0" pill-class-name="sliding-list__pill">
+    <SlidingHighlight class="sliding-list" :inset="0" :classes="{ pill: 'sliding-list__pill' }">
       <button v-for="item in items" :key="item" type="button" class="sliding-list__item">
         <span class="sliding-list__dot" />
         {{ item }}

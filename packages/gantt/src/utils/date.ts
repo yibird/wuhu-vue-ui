@@ -82,12 +82,6 @@ export function isWeekend(value: Date): boolean {
   return day === 0 || day === 6
 }
 
-export function clampDate(value: Date, min: Date, max: Date): Date {
-  if (daySerial(value) < daySerial(min)) return startOfDay(min)
-  if (daySerial(value) > daySerial(max)) return startOfDay(max)
-  return startOfDay(value)
-}
-
 export function minDate(values: Date[]): Date | null {
   if (values.length === 0) return null
   return values.reduce((min, value) => (daySerial(value) < daySerial(min) ? value : min))
@@ -109,16 +103,4 @@ export function eachDay(start: Date, end: Date): Date[] {
   }
 
   return days
-}
-
-export function formatWithIntl(
-  value: Date,
-  locale: string,
-  options: Intl.DateTimeFormatOptions,
-): string {
-  try {
-    return new Intl.DateTimeFormat(locale, options).format(value)
-  } catch {
-    return new Intl.DateTimeFormat(undefined, options).format(value)
-  }
 }

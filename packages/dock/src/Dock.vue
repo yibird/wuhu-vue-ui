@@ -2,7 +2,7 @@
 import { usePrefersReducedMotion, useRaf } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
-import type { DockItem, DockPosition, DockProps, DockSlots } from './types'
+import type { DockItem, DockProps, DockSlots } from './types'
 
 defineOptions({
   name: 'WDock',
@@ -31,15 +31,6 @@ const reducedMotion = usePrefersReducedMotion()
 const items = computed(() => props.model ?? [])
 const isHorizontal = computed(() => props.position === 'bottom' || props.position === 'top')
 const maxScale = computed(() => Math.max(1, props.maxScale))
-const transformOrigin = computed(() => {
-  const origins: Record<DockPosition, string> = {
-    bottom: 'center bottom',
-    top: 'center top',
-    left: 'left center',
-    right: 'right center',
-  }
-  return origins[props.position]
-})
 
 const rootStyle = computed<Record<string, string>>(() => ({
   '--w-dock-size': `${props.baseSize}px`,
@@ -58,7 +49,6 @@ function scaleFor(index: number): number {
 function itemStyle(index: number): Record<string, string> {
   return {
     transform: `scale(${scaleFor(index)})`,
-    transformOrigin: transformOrigin.value,
   }
 }
 
@@ -185,8 +175,6 @@ onBeforeUnmount(() => {
           @pointerenter="activeIndex = index"
           @focus="activeIndex = index"
           @click="activate(item, index, $event)"
-          @keydown.enter.prevent="activate(item, index, $event)"
-          @keydown.space.prevent="activate(item, index, $event)"
         >
           <span class="w-dock__inner" :style="itemStyle(index)">
             <slot name="item" :item="item" :index="index" :active="isActive(index)">
@@ -213,7 +201,7 @@ onBeforeUnmount(() => {
           </span>
 
           <slot v-if="isActive(index)" name="tooltip" :item="item">
-            <span class="w-dock__tooltip" role="tooltip">{{ item.label }}</span>
+            <span class="w-dock__tooltip" aria-hidden="true">{{ item.label }}</span>
           </slot>
         </button>
       </li>

@@ -94,6 +94,7 @@ describe('ResizeContainer', () => {
     })
 
     const wrapper = mount(Host)
+    await nextTick()
     const element = wrapper.get('.w-resize-container').element as HTMLElement
     expect(element.style.width).toBe('200px')
 
@@ -123,33 +124,23 @@ describe('ResizeContainer', () => {
     wrapper.unmount()
   })
 
-  it('re-observes the new root element when tag changes', async () => {
+  it('normalizes vendor-prefixed style keys', async () => {
     const wrapper = mount(ResizeContainer, {
-      props: { immediate: false, tag: 'div' },
+      props: { immediate: false },
+      attrs: { style: { WebkitTransform: 'translateX(2px)' } },
     })
-    const firstObserver = instance
-    const firstElement = wrapper.element
-
-    await wrapper.setProps({ tag: 'section' })
     await nextTick()
 
-    expect(wrapper.element.tagName).toBe('SECTION')
-    expect(wrapper.element).not.toBe(firstElement)
-    expect(firstObserver?.disconnect).toHaveBeenCalled()
-    expect(instance).not.toBe(firstObserver)
+    const element = wrapper.element as HTMLElement
+    expect(element.style.getPropertyValue('-webkit-transform')).toBe('translateX(2px)')
+    wrapper.unmount()
+  })
+
+  it('renders a div root element', () => {
+    const wrapper = mount(ResizeContainer, { props: { immediate: false } })
+
+    expect(wrapper.element.tagName).toBe('DIV')
     expect(instance?.observe).toHaveBeenCalledWith(wrapper.element, { box: 'content-box' })
-
-    callback?.(
-      [createEntry({ contentRect: new DOMRectReadOnly(0, 0, 30, 20) })],
-      instance as unknown as ResizeObserver,
-    )
-    await nextTick()
-
-    const events = wrapper.emitted('resize') ?? []
-    expect(events).toHaveLength(1)
-    const event = events[0]?.[0] as { width: number } | undefined
-    expect(event?.width).toBe(30)
-
     wrapper.unmount()
   })
 

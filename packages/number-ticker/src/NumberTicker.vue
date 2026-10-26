@@ -20,12 +20,17 @@ const props = withDefaults(defineProps<NumberTickerProps>(), {
 })
 
 const displayValue = ref(props.animateOnMount ? props.startValue : props.value)
+/**
+ * Two frames: the first paints `startValue`, the second switches to the target
+ * value so the CSS wheel transition has a real starting position to animate from.
+ */
+const MOUNT_ANIMATION_FRAMES = 2
 let mountedFrames = 0
 
 const mountRaf = useRaf(() => {
   if (unmounted) return
   mountedFrames += 1
-  if (mountedFrames >= 2) {
+  if (mountedFrames >= MOUNT_ANIMATION_FRAMES) {
     displayValue.value = props.value
     return
   }
@@ -129,9 +134,20 @@ defineExpose({
 </script>
 
 <template>
-  <span class="w-number-ticker" role="img" :aria-label="accessibleLabel" :style="style">
+  <span
+    class="w-number-ticker"
+    role="img"
+    :aria-label="accessibleLabel"
+    :aria-live="ariaLive"
+    :aria-atomic="ariaAtomic"
+    :style="style"
+  >
     <span class="w-number-ticker__visual" aria-hidden="true">
       <span v-if="prefix" class="w-number-ticker__affix">{{ prefix }}</span>
+      <!--
+        Key from the right so adding/removing a leading digit (e.g. 99 -> 100)
+        keeps existing digit wheels mounted and the right-aligned roll stable.
+      -->
       <template v-for="(character, index) in characters" :key="characters.length - index">
         <span v-if="character.digit !== null" class="w-number-ticker__digit">
           <span

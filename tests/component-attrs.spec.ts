@@ -200,10 +200,7 @@ describe('class / style pass-through contract', () => {
 
   it.each([
     { name: 'WuTime', component: WuTime, props: { time: Date.now() } },
-    { name: 'WuLazyContainer', component: WuLazyContainer },
-    { name: 'WuResizeContainer', component: WuResizeContainer },
     { name: 'WuErrorBoundary', component: WuErrorBoundary },
-    { name: 'WuGradientText', component: WuGradientText },
   ])('$name applies class/style to the element rendered by `tag`', async (item) => {
     const wrapper = mount(item.component, {
       props: { ...item.props, tag: 'section' },

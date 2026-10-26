@@ -29,8 +29,6 @@
 | `box`       | `'content-box' \| 'border-box' \| 'device-pixel-content-box'` | `'content-box'` | ResizeObserver 观察盒模型   |
 | `debounce`  | `number`                                                      | `0`             | 事件防抖延迟（ms）          |
 | `immediate` | `boolean`                                                     | `true`          | 挂载时立即触发一次 `resize` |
-| `disabled`  | `boolean`                                                     | `false`         | 停止观察和事件              |
-| `tag`       | `string`                                                      | `'div'`         | 根元素标签                  |
 
 ### Emits
 

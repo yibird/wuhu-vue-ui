@@ -1,5 +1,5 @@
 import type { GanttTask, GanttTaskId } from '../types'
-import { addDays, dayDiff, maxDate, minDate, parseDate, startOfDay } from './date'
+import { dayDiff, maxDate, minDate, parseDate, startOfDay } from './date'
 
 export const DEFAULT_TASK_COLOR = '#4f46e5'
 export const DEFAULT_GROUP_COLOR = '#64748b'
@@ -120,15 +120,4 @@ export function resolveTasks(tasks: GanttTask[], today = startOfDay(new Date()))
   const roots = tasks.map((task) => resolve(task, null, undefined))
 
   return { roots, all, byKey }
-}
-
-export function taskDurationDays(start: Date, end: Date): number {
-  return Math.max(1, dayDiff(end, start) + 1)
-}
-
-export function shiftTaskRange(start: Date, end: Date, days: number): { start: Date; end: Date } {
-  return {
-    start: addDays(start, days),
-    end: addDays(end, days),
-  }
 }

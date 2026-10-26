@@ -3,7 +3,7 @@
  *
  * - JSON strings are parsed and re-indented when valid.
  * - Invalid JSON strings are rendered as-is.
- * - Circular values fall back to `String(value)`.
+ * - Circular references are replaced with a readable `"[Circular]"` marker.
  */
 export function formatJsonValue(value: unknown, indent = 2): string {
   if (value === undefined) return ''
@@ -20,9 +20,22 @@ export function formatJsonValue(value: unknown, indent = 2): string {
   }
 
   const spaces = Math.min(10, Math.max(0, Math.trunc(indent)))
+  const seen = new WeakSet<object>()
 
   try {
-    return JSON.stringify(target, null, spaces) ?? String(value)
+    return (
+      JSON.stringify(
+        target,
+        (_key, item: unknown) => {
+          if (item !== null && typeof item === 'object') {
+            if (seen.has(item)) return '[Circular]'
+            seen.add(item)
+          }
+          return item
+        },
+        spaces,
+      ) ?? String(value)
+    )
   } catch {
     return String(value)
   }

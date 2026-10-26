@@ -54,7 +54,7 @@ function handleFocusin(event: FocusEvent) {
           as="ul"
           class="sliding-nav"
           :inset="8"
-          pill-class-name="sliding-nav__pill"
+          :classes="{ pill: 'sliding-nav__pill' }"
           @focusin="handleFocusin"
         >
           <li v-for="item in navItems" :key="item.value">
@@ -79,7 +79,7 @@ function handleFocusin(event: FocusEvent) {
     </DemoCard>
 
     <DemoCard title="卡片网格" description="任意直接子元素都可以成为高亮目标，不限制子项结构。">
-      <SlidingHighlight class="sliding-cards" :inset="4" pill-class-name="sliding-cards__pill">
+      <SlidingHighlight class="sliding-cards" :inset="4" :classes="{ pill: 'sliding-cards__pill' }">
         <button v-for="item in cardItems" :key="item.label" type="button" class="sliding-card">
           <strong>{{ item.label }}</strong>
           <span>{{ item.desc }}</span>
@@ -88,7 +88,7 @@ function handleFocusin(event: FocusEvent) {
     </DemoCard>
 
     <DemoCard title="纵向列表" description="通过外部布局控制排列方向，高亮块自动适配每一项的尺寸。">
-      <SlidingHighlight class="sliding-list" :inset="6" pill-class-name="sliding-list__pill">
+      <SlidingHighlight class="sliding-list" :inset="6" :classes="{ pill: 'sliding-list__pill' }">
         <button v-for="item in verticalItems" :key="item" type="button" class="sliding-list__item">
           <span class="sliding-list__dot" />
           {{ item }}

@@ -44,7 +44,10 @@ const animations: Record<LoadingAnimation, Component> = {
   spinner: Spinner,
 }
 
-const currentAnimation = computed(() => animations[props.animation] ?? Ring)
+const resolvedAnimation = computed<LoadingAnimation>(() =>
+  Object.prototype.hasOwnProperty.call(animations, props.animation) ? props.animation : 'ring',
+)
+const currentAnimation = computed(() => animations[resolvedAnimation.value] ?? Ring)
 
 const gradientValue = computed(() => {
   const value = props.gradient
@@ -140,7 +143,7 @@ defineExpose({
           {
             'w-loading--full': full,
             'w-loading--masked': full && mask,
-            [`w-loading--${animation}`]: true,
+            [`w-loading--${resolvedAnimation}`]: true,
           },
         ]"
         :style="[rootStyle, attrs.style, props.styles?.root]"

@@ -20,6 +20,8 @@
     position: relative;
     width: 100%;
     overflow: hidden;
+    /* Keep the overlay z-index tokens local to the captcha. */
+    isolation: isolate;
     border: 1px solid var(--w-color-border, #e2e8f0);
     border-radius: var(--w-slider-captcha-radius);
     background: var(--w-color-surface-subtle, #f1f5f9);
@@ -45,7 +47,7 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    z-index: 3;
+    z-index: var(--w-z-sticky, 10);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -84,20 +86,32 @@
   &__loading {
     position: absolute;
     inset: 0;
-    z-index: 4;
+    z-index: var(--w-z-overlay, 2000);
     display: flex;
     align-items: center;
+    flex-direction: column;
     justify-content: center;
+    gap: 8px;
     background: rgba(15, 23, 42, 0.42);
     color: #ffffff;
     font-size: var(--w-font-size-xs, 12px);
     backdrop-filter: blur(2px);
+
+    &::before {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.32);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: w-slider-captcha-spin 800ms linear infinite;
+    }
   }
 
   &__slider {
     position: relative;
-    height: 44px;
+    height: var(--w-slider-captcha-handle-size, 44px);
     overflow: hidden;
+    isolation: isolate;
     border: 1px solid var(--w-color-border-strong, #cbd5e1);
     border-radius: var(--w-radius-md, 8px);
     background: var(--w-slider-captcha-track-bg);
@@ -128,17 +142,18 @@
     line-height: 1.3;
     text-align: center;
     pointer-events: none;
+    transition: opacity var(--w-duration-fast, 120ms) ease;
   }
 
   &__handle {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 2;
+    z-index: var(--w-z-sticky, 10);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
+    width: var(--w-slider-captcha-handle-size, 44px);
     height: 100%;
     padding: 0;
     border: 0;
@@ -152,7 +167,8 @@
     transition:
       transform var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
       color var(--w-duration-fast, 120ms) ease,
-      background-color var(--w-duration-fast, 120ms) ease;
+      background-color var(--w-duration-fast, 120ms) ease,
+      box-shadow var(--w-duration-fast, 120ms) ease;
 
     svg {
       width: 18px;
@@ -162,7 +178,9 @@
     &:hover:not(:disabled) {
       background: var(--w-color-surface-hover, #f1f5f9);
       color: var(--w-color-primary, #4f46e5);
-      transform: translateY(-1px);
+      box-shadow:
+        var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1)),
+        inset 0 0 0 1px var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
     }
 
     &:active {
@@ -184,6 +202,10 @@
     .w-slider-captcha__fill,
     .w-slider-captcha__piece {
       transition: none;
+    }
+
+    .w-slider-captcha__tip {
+      opacity: 0.55;
     }
   }
 
@@ -209,7 +231,7 @@
       top: -20%;
       bottom: -20%;
       left: 0;
-      z-index: 3;
+      z-index: var(--w-z-sticky, 10);
       width: 42%;
       background: linear-gradient(
         90deg,
@@ -223,25 +245,37 @@
       animation: w-slider-captcha-sweep 900ms var(--w-easing-standard, ease) 60ms 1;
     }
 
-    .w-slider-captcha__tip,
+    /* Darker text keeps AA contrast on the subtle track; the icon keeps the
+     * semantic success colour. */
+    .w-slider-captcha__tip {
+      color: var(--w-slider-captcha-success-text, #047857);
+    }
+
     .w-slider-captcha__handle {
-      color: var(--w-color-success, #059669);
+      color: var(--w-color-success, #047857);
     }
   }
 
   &.is-error {
+    .w-slider-captcha__slider {
+      animation: w-slider-captcha-shake 420ms var(--w-easing-standard, ease);
+    }
+
     .w-slider-captcha__fill {
       background: var(--w-color-danger-soft, rgba(220, 38, 38, 0.1));
     }
 
-    .w-slider-captcha__tip,
+    .w-slider-captcha__tip {
+      color: var(--w-slider-captcha-danger-text, #b91c1c);
+    }
+
     .w-slider-captcha__handle {
       color: var(--w-color-danger, #dc2626);
     }
   }
 
   &.is-disabled {
-    opacity: 0.65;
+    opacity: var(--w-opacity-disabled, 0.55);
   }
 
   &__live {
@@ -254,6 +288,35 @@
     border: 0;
     clip: rect(0 0 0 0);
     white-space: nowrap;
+  }
+}
+
+@keyframes w-slider-captcha-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes w-slider-captcha-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-5px);
+  }
+
+  40% {
+    transform: translateX(4px);
+  }
+
+  60% {
+    transform: translateX(-3px);
+  }
+
+  80% {
+    transform: translateX(2px);
   }
 }
 
@@ -289,6 +352,14 @@
     &.is-success .w-slider-captcha__slider::after {
       animation: none;
       display: none;
+    }
+
+    &.is-error .w-slider-captcha__slider {
+      animation: none;
+    }
+
+    &__loading::before {
+      animation: none;
     }
   }
 }

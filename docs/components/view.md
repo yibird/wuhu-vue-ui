@@ -4,62 +4,83 @@
 
 ## 基础布局
 
-`WView` 作为容器，`WViewHeader` / `WViewContent` / `WViewFooter` 负责页面分区。`WViewHeader` 设置 `collapsible` 后会出现内置折叠触发器。
+`View` 作为容器，`ViewHeader` / `ViewContent` / `ViewFooter` 负责页面分区。`ViewHeader` 设置 `collapsible` 后会出现内置折叠触发器。`View` 不提供内边距配置，外层留白请通过自定义样式控制。
 
 <demo vue="../demos/view/basic.vue" />
 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { WView, WViewHeader, WViewContent, WViewFooter } from '@wuhu-vue-ui/view'
+import { View, ViewHeader, ViewContent, ViewFooter } from '@wuhu-vue-ui/view'
 
 const collapsed = ref(false)
 </script>
 
 <template>
-  <WView :full="false" padding :gap="10">
-    <WViewHeader v-model:collapsed="collapsed" collapsible>
+  <View :full="false" :gap="10">
+    <ViewHeader v-model:collapsed="collapsed" collapsible>
       <h2>团队概览</h2>
-    </WViewHeader>
-    <WViewContent>内容区</WViewContent>
-    <WViewFooter>底部信息</WViewFooter>
-  </WView>
+    </ViewHeader>
+    <ViewContent>内容区</ViewContent>
+    <ViewFooter>底部信息</ViewFooter>
+  </View>
 </template>
 ```
 
+::: tip 折叠与内边距
+`ViewHeader` 折叠时只会把内部内容收缩到 0，不会清除组件根节点上的 `padding` / `border`。因此可折叠场景下不要把内边距、边框和背景直接写在 `ViewHeader` 根节点上，而是放到默认插槽的内层容器中，这样才能完整收起。
+:::
+
+## 自定义间距
+
+通过 `gap` 控制子元素间距；设置后 `View` 会启用 flex 布局。下面的示例可以切换不同的间距值。
+
+<demo vue="../demos/view/gap.vue" />
+
 ## 侧栏布局
 
-通过 `direction="horizontal"` 创建横向布局，`WViewSider` 支持 `collapsible`、`width` 与 `collapsedWidth`。
+通过 `direction="horizontal"` 创建横向布局，`ViewSider` 支持 `collapsible`、`width` 与 `collapsedWidth`。
 
 <demo vue="../demos/view/sider.vue" />
 
+## 同时折叠侧栏与头部
+
+侧栏和头部可以各自使用内置触发器，两个折叠状态互不影响。
+
+<demo vue="../demos/view/nested-triggers.vue" />
+
+## 自定义触发器
+
+`ViewHeader` 与 `ViewSider` 都提供 `trigger` 插槽，可以完全替换内置按钮，并继续通过插槽参数控制折叠状态。
+
+<demo vue="../demos/view/custom-trigger.vue" />
+
 ## 组合式导出
 
-`WView` 同时挂载了子组件，便于组合使用：
+`View` 同时挂载了子组件，便于组合使用：
 
 ```vue
-<WView>
-  <WView.Header />
-  <WView.Sider />
-  <WView.Content />
-  <WView.Footer />
-</WView>
+<View>
+  <View.Header />
+  <View.Sider />
+  <View.Content />
+  <View.Footer />
+</View>
 ```
 
-也可以按需从包中具名导入 `WViewHeader`、`WViewSider`、`WViewContent`、`WViewFooter`。
+也可以按需从包中具名导入 `ViewHeader`、`ViewSider`、`ViewContent`、`ViewFooter`。
 
 ## API
 
-### WView Props
+### View Props
 
-| 属性        | 类型                          | 默认值       | 说明                                 |
-| ----------- | ----------------------------- | ------------ | ------------------------------------ |
-| `padding`   | `boolean \| string \| number` | `true`       | 是否启用内边距，或直接指定内边距大小 |
-| `full`      | `boolean`                     | `true`       | 是否绝对定位铺满最近的定位祖先       |
-| `gap`       | `string \| number`            | —            | 子元素间距；设置后启用 flex 布局     |
-| `direction` | `'vertical' \| 'horizontal'`  | `'vertical'` | flex 布局方向                        |
+| 属性        | 类型                         | 默认值       | 说明                             |
+| ----------- | ---------------------------- | ------------ | -------------------------------- |
+| `full`      | `boolean`                    | `true`       | 是否绝对定位铺满最近的定位祖先   |
+| `gap`       | `string \| number`           | —            | 子元素间距；设置后启用 flex 布局 |
+| `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | flex 布局方向                    |
 
-### WViewHeader / WViewSider Props
+### ViewHeader / ViewSider Props
 
 | 属性             | 类型               | 默认值  | 说明                   |
 | ---------------- | ------------------ | ------- | ---------------------- |
@@ -80,12 +101,12 @@ const collapsed = ref(false)
 
 ### 插槽
 
-| 组件           | 插槽      | 参数                    | 说明             |
-| -------------- | --------- | ----------------------- | ---------------- |
-| `WView`        | `default` | —                       | 布局内容         |
-| `WViewHeader`  | `default` | `{ collapsed }`         | 头部内容         |
-| `WViewHeader`  | `trigger` | `{ collapsed, toggle }` | 自定义折叠触发器 |
-| `WViewSider`   | `default` | `{ collapsed }`         | 侧栏内容         |
-| `WViewSider`   | `trigger` | `{ collapsed, toggle }` | 自定义折叠触发器 |
-| `WViewContent` | `default` | —                       | 内容区           |
-| `WViewFooter`  | `default` | —                       | 底部区域         |
+| 组件          | 插槽      | 参数                    | 说明             |
+| ------------- | --------- | ----------------------- | ---------------- |
+| `View`        | `default` | —                       | 布局内容         |
+| `ViewHeader`  | `default` | `{ collapsed }`         | 头部内容         |
+| `ViewHeader`  | `trigger` | `{ collapsed, toggle }` | 自定义折叠触发器 |
+| `ViewSider`   | `default` | `{ collapsed }`         | 侧栏内容         |
+| `ViewSider`   | `trigger` | `{ collapsed, toggle }` | 自定义折叠触发器 |
+| `ViewContent` | `default` | —                       | 内容区           |
+| `ViewFooter`  | `default` | —                       | 底部区域         |

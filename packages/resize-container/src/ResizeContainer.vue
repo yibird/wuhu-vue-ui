@@ -28,8 +28,6 @@ const props = withDefaults(defineProps<ResizeContainerProps>(), {
   box: 'content-box',
   debounce: 0,
   immediate: true,
-  disabled: false,
-  tag: 'div',
 })
 
 const emit = defineEmits<{
@@ -57,9 +55,11 @@ const attrsWithoutStyle = computed(() => {
 })
 
 // SSR cannot run `applyDeclaredStyle`, so keep the style attribute in the
-// server-rendered markup. On the client it is managed imperatively.
+// server-rendered markup. On the client the first render also keeps it so the
+// element never paints unstyled; after mount the style is managed imperatively.
+const hasMounted = ref(false)
 const attrsForRender = computed(() =>
-  typeof window === 'undefined' ? attrs : attrsWithoutStyle.value,
+  typeof window === 'undefined' || !hasMounted.value ? attrs : attrsWithoutStyle.value,
 )
 
 /**
@@ -72,7 +72,15 @@ const attrsForRender = computed(() =>
  */
 let declaredStyleValues: Record<string, string> = {}
 
-const hyphenate = (value: string) => value.replace(/\B([A-Z])/g, '-$1').toLowerCase()
+/**
+ * Converts a camelCase style key to its CSS spelling, including vendor
+ * prefixes: `webkitTransform` -> `-webkit-transform`, `msTransform` ->
+ * `-ms-transform`.
+ */
+const hyphenate = (value: string) => {
+  const hyphenated = value.replace(/([A-Z])/g, '-$1').toLowerCase()
+  return hyphenated.replace(/^(webkit|moz|ms|o)-/, '-$1-')
+}
 
 function parseStyleString(value: string): Record<string, string> {
   const result: Record<string, string> = {}
@@ -116,7 +124,7 @@ const UNITLESS_PROPERTIES = new Set([
 function styleValueToCss(key: string, value: unknown): string {
   if (typeof value !== 'number') return String(value)
 
-  const property = key.includes('-') ? key : key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
+  const property = key.startsWith('--') ? key : hyphenate(key)
   return UNITLESS_PROPERTIES.has(property) ? String(value) : `${value}px`
 }
 
@@ -144,22 +152,18 @@ function readDeclaredStyleValues(value: unknown): Record<string, string> {
 
 function setStyleValue(element: HTMLElement, key: string, value: string) {
   const importantIndex = value.toLowerCase().indexOf('!important')
-  const property = key.startsWith('--') || key.includes('-') ? key : hyphenate(key)
+  const property = key.startsWith('--') ? key : hyphenate(key)
 
   if (importantIndex >= 0) {
     element.style.setProperty(property, value.slice(0, importantIndex).trim(), 'important')
     return
   }
 
-  if (property.includes('-')) {
-    element.style.setProperty(property, value)
-  } else {
-    ;(element.style as unknown as Record<string, string>)[property] = value
-  }
+  element.style.setProperty(property, value)
 }
 
 function removeStyleValue(element: HTMLElement, key: string) {
-  const property = key.startsWith('--') || key.includes('-') ? key : hyphenate(key)
+  const property = key.startsWith('--') ? key : hyphenate(key)
   element.style.removeProperty(property)
 }
 
@@ -213,10 +217,9 @@ function createPayload(
 const { width, height, entry, start, stop, measure } = useResize(rootRef, {
   box: () => props.box,
   debounce: () => props.debounce,
-  disabled: () => props.disabled,
   immediate: () => props.immediate,
   onResize: (measuredSize, record) => {
-    if (props.disabled || !rootRef.value) return
+    if (!rootRef.value) return
 
     const payload = createPayload(record, measuredSize)
     size.width = payload.width
@@ -232,29 +235,22 @@ const slotProps = computed<ResizeContainerSlotProps>(() => ({
 }))
 
 watch(
-  () => props.tag,
-  () => {
-    nextTick(() => {
-      // The new root element has none of the declared styles yet.
-      declaredStyleValues = {}
-      applyDeclaredStyle()
-    })
-  },
-)
-
-watch(
   () => props.immediate,
   (value) => {
     if (value) {
       nextTick(() => {
-        if (!props.disabled) measure()
+        measure()
       })
     }
   },
 )
 
 onMounted(() => {
-  applyDeclaredStyle()
+  // Let the first client render keep the declared style (no FOUC flash), then
+  // switch to imperative writes once that render has been patched. nextTick
+  // runs after the DOM update but before the browser paints.
+  hasMounted.value = true
+  nextTick(applyDeclaredStyle)
 })
 
 onBeforeUnmount(() => {
@@ -281,7 +277,7 @@ defineExpose<ResizeContainerExpose>({
 </script>
 
 <template>
-  <component :is="tag" ref="rootRef" class="w-resize-container" v-bind="attrsForRender">
+  <div ref="rootRef" class="w-resize-container" v-bind="attrsForRender">
     <slot v-bind="slotProps" />
-  </component>
+  </div>
 </template>

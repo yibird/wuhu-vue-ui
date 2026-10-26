@@ -38,6 +38,7 @@
     "@wuhu-vue-ui/slider-captcha": "workspace:*",
     "@wuhu-vue-ui/sliding-highlight": "workspace:*",
     "@wuhu-vue-ui/time": "workspace:*",
+    "@wuhu-vue-ui/tiptap-editor": "workspace:*",
     "@wuhu-vue-ui/view": "workspace:*",
     "vue": "^3.5.44"
   },

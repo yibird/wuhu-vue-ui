@@ -7,7 +7,7 @@
 
   display: flex;
   flex-direction: column;
-  height: var(--w-icon-picker-height, 420px);
+  height: 420px;
   overflow: hidden;
   border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-icon-picker-radius);
@@ -17,7 +17,7 @@
   font-size: var(--w-font-size-xs, 12px);
 
   &.is-disabled {
-    opacity: 0.72;
+    opacity: var(--w-opacity-disabled, 0.55);
   }
 
   &__toolbar {
@@ -48,7 +48,10 @@
 
     &:focus-within {
       border-color: var(--w-color-primary, #4f46e5);
-      box-shadow: 0 0 0 2px var(--w-color-primary-soft, rgba(79, 70, 229, 0.12));
+      box-shadow: var(
+        --w-focus-ring-shadow,
+        0 0 0 var(--w-focus-ring-width, 2px) var(--w-color-primary-soft, rgba(79, 70, 229, 0.12))
+      );
     }
 
     > svg {
@@ -108,8 +111,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--w-color-primary, #4f46e5);
-      outline-offset: 1px;
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: var(--w-focus-ring-offset, 2px);
     }
   }
 
@@ -190,8 +193,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--w-color-primary, #4f46e5);
-      outline-offset: -2px;
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: calc(-1 * var(--w-focus-ring-offset, 2px));
     }
   }
 
@@ -304,12 +307,12 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--w-color-primary, #4f46e5);
-      outline-offset: 1px;
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: var(--w-focus-ring-offset, 2px);
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: var(--w-opacity-disabled, 0.55);
       cursor: not-allowed;
     }
   }

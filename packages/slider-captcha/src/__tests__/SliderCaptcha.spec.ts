@@ -45,6 +45,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
 })
 
 describe('SliderCaptcha', () => {
@@ -57,6 +58,9 @@ describe('SliderCaptcha', () => {
     expect(wrapper.get('.w-slider-captcha__tip').text()).toBe('向右拖动滑块完成拼图')
     expect(exposed.offset).toBe(0)
     expect(wrapper.get('[role="slider"]').attributes('aria-valuenow')).toBe('0')
+    expect(wrapper.get('.w-slider-captcha').attributes('style')).toContain(
+      '--w-slider-captcha-handle-size: 44px',
+    )
 
     wrapper.unmount()
   })
@@ -75,6 +79,8 @@ describe('SliderCaptcha', () => {
     expect(wrapper.classes()).toContain('is-success')
     expect((slider.element as HTMLElement).style.transform).toBe('translate3d(276px, 0, 0)')
     expect(wrapper.get('.w-slider-captcha__fill').attributes('style')).toContain('width: 298px')
+    // The ARIA value follows the handle's visual position after success.
+    expect(slider.attributes('aria-valuenow')).toBe('276')
     expect((wrapper.vm as unknown as Exposed).offset).toBe(0)
     wrapper.unmount()
   })
@@ -120,7 +126,7 @@ describe('SliderCaptcha', () => {
     window.dispatchEvent(new MouseEvent('pointerup'))
     await nextTick()
 
-    expect(slider.attributes('aria-valuenow')).toBe('80')
+    expect(slider.attributes('aria-valuenow')).toBe('276')
     expect(wrapper.emitted('success')).toHaveLength(1)
     wrapper.unmount()
   })
@@ -180,6 +186,47 @@ describe('SliderCaptcha', () => {
     expect((wrapper.get('.w-slider-captcha__tip').element as HTMLElement).style.color).toBe(
       'rgb(4, 5, 6)',
     )
+    wrapper.unmount()
+  })
+
+  it('switches background images on refresh when src is a list', async () => {
+    const loaded: string[] = []
+
+    class MockImage {
+      naturalWidth = 120
+      naturalHeight = 60
+      crossOrigin = ''
+      private listeners: Record<string, () => void> = {}
+
+      addEventListener(type: string, handler: () => void) {
+        this.listeners[type] = handler
+      }
+
+      set src(value: string) {
+        loaded.push(value)
+        this.listeners.load?.()
+      }
+    }
+
+    vi.stubGlobal('Image', MockImage)
+
+    const wrapper = mount(SliderCaptcha, {
+      props: { src: ['/a.png', '/b.png', '/c.png'] },
+    })
+    await nextTick()
+    await nextTick()
+
+    expect(loaded).toHaveLength(1)
+    const first = loaded[0]
+
+    ;(wrapper.vm as unknown as Exposed).refresh()
+    await nextTick()
+    await nextTick()
+
+    expect(loaded).toHaveLength(2)
+    expect(loaded[1]).not.toBe(first)
+    expect(['/a.png', '/b.png', '/c.png']).toContain(loaded[1])
+
     wrapper.unmount()
   })
 

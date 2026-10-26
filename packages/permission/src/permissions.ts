@@ -12,7 +12,11 @@ function toList(value: PermissionValue): string[] {
   return Array.isArray(value) ? value : [value]
 }
 
-/** Evaluate `required` against the granted set using the requested mode. */
+/**
+ * Evaluate `required` against the granted set using the requested mode.
+ * An empty `required` list is vacuously satisfied by `all` (every over an
+ * empty list) and rejected by `any` (some over an empty list).
+ */
 export function checkPermission(
   required: PermissionValue,
   granted: ReadonlySet<string>,

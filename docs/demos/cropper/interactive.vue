@@ -36,6 +36,7 @@ async function exportCrop() {
         :height="380"
         :aspect-ratio="aspectRatio"
         :initial-coverage="0.72"
+        :show-action-bar="false"
       >
         <template #default="{ ready, zoomIn, zoomOut, rotateLeft, rotateRight, reset }">
           <div class="cropper-toolbar">

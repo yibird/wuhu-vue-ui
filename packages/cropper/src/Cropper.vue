@@ -28,8 +28,9 @@ const props = withDefaults(defineProps<CropperProps>(), {
   zoomable: true,
   keyboard: true,
   disabled: false,
+  showActionBar: true,
   crossOrigin: '',
-  template: '',
+  unsafeTemplate: '',
 })
 
 const emit = defineEmits<{
@@ -108,10 +109,6 @@ function emitCrop(): void {
 }
 
 function handleSelectionChange(event: Event): void {
-  // Cropper.js emits the new geometry in the event detail *before* writing it
-  // back to the selection properties, so reading `selection.x` here would emit
-  // the previous frame during drags. Prefer the detail and fall back to the
-  // (already updated) properties for synthetic events without a detail.
   const detail = (event as CustomEvent<Partial<CropperData>>).detail
   if (
     detail &&
@@ -214,7 +211,9 @@ async function initialize(): Promise<void> {
     const CropperImpl = await loadCropper()
     if (token !== initToken) return
 
-    const instance = new CropperImpl(source, { template: props.template || defaultTemplate })
+    const instance = new CropperImpl(source, {
+      template: props.unsafeTemplate || defaultTemplate,
+    })
     if (token !== initToken) {
       instance.destroy()
       return
@@ -453,7 +452,15 @@ watch(
 
 watch(
   () => props.initialCoverage,
-  () => applyOptions(),
+  (coverage) => {
+    const selection = selectionRef.value
+    if (!selection) return
+
+    // `initialCoverage` only applies when Cropper.js (re)initialises the
+    // selection, so reset it to make runtime changes take effect.
+    selection.initialCoverage = coverage
+    selection.$reset()
+  },
 )
 
 watch(
@@ -488,7 +495,7 @@ watch(
 )
 
 onMounted(() => {
-  void initialize()
+  initialize()
 })
 
 onBeforeUnmount(() => {
@@ -533,7 +540,80 @@ defineExpose<CropperExpose>({
       :src="src"
       :alt="alt"
       :crossorigin="crossOrigin || undefined"
+      aria-hidden="true"
     />
+
+    <div
+      v-if="showActionBar"
+      class="w-cropper__action-bar"
+      role="toolbar"
+      aria-label="图片裁剪操作"
+    >
+      <button
+        type="button"
+        class="w-cropper__action"
+        :disabled="!ready || disabled || !scalable"
+        aria-label="缩小"
+        title="缩小"
+        @click="zoom(-0.1)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h14" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="w-cropper__action"
+        :disabled="!ready || disabled || !scalable"
+        aria-label="放大"
+        title="放大"
+        @click="zoom(0.1)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="w-cropper__action"
+        :disabled="!ready || disabled || !rotatable"
+        aria-label="向左旋转"
+        title="向左旋转"
+        @click="rotate(-90)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+          <path d="M3 3v5h5" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="w-cropper__action"
+        :disabled="!ready || disabled || !rotatable"
+        aria-label="向右旋转"
+        title="向右旋转"
+        @click="rotate(90)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+          <path d="M21 3v5h-5" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="w-cropper__action"
+        :disabled="!ready || disabled"
+        aria-label="重置"
+        title="重置"
+        @click="reset"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
+          <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
+        </svg>
+      </button>
+    </div>
+
     <slot v-bind="slotProps" />
   </div>
 </template>

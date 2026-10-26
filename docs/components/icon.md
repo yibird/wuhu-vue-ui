@@ -65,3 +65,9 @@ registerIcon('custom-icon', ['M4 4h16', 'M4 12h16', 'M4 20h16'])
 | `registerIcon(name, paths)` | 注册或覆盖图标路径         |
 | `resolveIcon(name)`         | 解析名称对应的 path 数组   |
 | `normalizeIconName(name)`   | 规范化 `i-lucide:*` 等名称 |
+
+### CSS 变量
+
+| 变量                     | 默认值 | 说明                      |
+| ------------------------ | ------ | ------------------------- |
+| `--w-icon-spin-duration` | `1s`   | `spin` 旋转一周的动画时长 |

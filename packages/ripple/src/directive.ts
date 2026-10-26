@@ -7,8 +7,8 @@ export type RippleDirectiveValue = boolean | RippleOptions | undefined
 interface DirectiveState {
   options: RippleOptions
   originalPosition: string
-  originalOverflow: string
-  hadClass: boolean
+  positionApplied: boolean
+  hadHostClass: boolean
   onPointerDown: (event: Event) => void
   onClick: (event: Event) => void
 }
@@ -28,11 +28,17 @@ function removeWaves(element: HTMLElement) {
 export const vRipple: Directive<HTMLElement, RippleDirectiveValue> = {
   mounted(element, binding) {
     const options = normalizeOptions(binding.value)
+    const computedPosition =
+      typeof window === 'undefined' ? 'static' : window.getComputedStyle(element).position
+    // Only add positioning when the host is statically positioned. Existing
+    // relative/absolute/fixed/sticky positioning is left untouched.
+    const positionApplied = !computedPosition || computedPosition === 'static'
+
     const state: DirectiveState = {
       options,
       originalPosition: element.style.position,
-      originalOverflow: element.style.overflow,
-      hadClass: element.classList.contains('w-ripple'),
+      positionApplied,
+      hadHostClass: element.classList.contains('w-ripple-host'),
       onPointerDown(event) {
         if (state.options.disabled || state.options.trigger === 'click') return
         createRipple(element, event, state.options)
@@ -48,9 +54,10 @@ export const vRipple: Directive<HTMLElement, RippleDirectiveValue> = {
     }
 
     states.set(element, state)
-    element.style.position = 'relative'
-    element.style.overflow = 'hidden'
-    element.classList.add('w-ripple')
+    if (positionApplied) element.style.position = 'relative'
+    // The host-only class provides the clipping context without forcing a
+    // display model (inline-flex) on the consumer's element.
+    element.classList.add('w-ripple-host')
     element.addEventListener('pointerdown', state.onPointerDown)
     element.addEventListener('click', state.onClick)
   },
@@ -68,9 +75,8 @@ export const vRipple: Directive<HTMLElement, RippleDirectiveValue> = {
     element.removeEventListener('pointerdown', state.onPointerDown)
     element.removeEventListener('click', state.onClick)
     removeWaves(element)
-    element.style.position = state.originalPosition
-    element.style.overflow = state.originalOverflow
-    if (!state.hadClass) element.classList.remove('w-ripple')
+    if (state.positionApplied) element.style.position = state.originalPosition
+    if (!state.hadHostClass) element.classList.remove('w-ripple-host')
 
     states.delete(element)
   },

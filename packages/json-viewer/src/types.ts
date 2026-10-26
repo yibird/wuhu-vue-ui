@@ -1,4 +1,8 @@
-import type { CodeEditorInstance, CodeEditorProps } from '@wuhu-vue-ui/code-editor'
+import type {
+  CodeEditorErrorSlotProps,
+  CodeEditorInstance,
+  CodeEditorProps,
+} from '@wuhu-vue-ui/code-editor'
 
 export interface JsonViewerProps {
   /** JSON value or a JSON string to display. */
@@ -7,7 +11,10 @@ export interface JsonViewerProps {
   height?: string | number
   /** Container width. Numbers are treated as pixels. */
   width?: string | number
-  /** Monaco theme identifier, e.g. `vs` or `vs-dark`. */
+  /**
+   * Monaco theme identifier, e.g. `vs` or `vs-dark`. Defaults to `vs`; the
+   * viewer does not switch themes automatically (set `vs-dark` on dark pages).
+   */
   theme?: string
   /** Number of spaces used for indentation, from 0 to 10. */
   indent?: number
@@ -17,10 +24,8 @@ export interface JsonViewerProps {
   loadingText?: string
 }
 
-export interface JsonViewerErrorSlotProps {
-  error: Error
-  retry: () => void
-}
+/** Shares the code-editor error slot contract. */
+export type JsonViewerErrorSlotProps = CodeEditorErrorSlotProps
 
 export interface JsonViewerExpose {
   getEditor: () => CodeEditorInstance | null

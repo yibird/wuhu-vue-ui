@@ -167,6 +167,15 @@ export const componentMetas: ComponentMeta[] = [
     tags: ['比例锁定', '旋转', '导出'],
   },
   {
+    slug: 'tiptap-editor',
+    name: 'Tiptap Editor',
+    title: '富文本编辑器',
+    summary: '基于 Tiptap 的开箱即用富文本编辑器，内置格式化工具栏、链接、对齐与占位提示。',
+    packageName: '@wuhu-vue-ui/tiptap-editor',
+    category: 'interaction',
+    tags: ['Tiptap', 'v-model', '工具栏'],
+  },
+  {
     slug: 'motion-group',
     name: 'Motion Group',
     title: '排序动画',

@@ -45,6 +45,7 @@ function resetAll() {
       alt="通过实例方法控制的裁剪器"
       :height="320"
       :initial-coverage="0.7"
+      :show-action-bar="false"
       @crop="handleCrop"
     >
       <template #default="{ ready }">

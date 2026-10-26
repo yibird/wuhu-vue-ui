@@ -34,12 +34,14 @@ function firePointer(target: EventTarget, type: string, init: Record<string, unk
   return event
 }
 
-function card(wrapper: ReturnType<typeof mount>, key: string) {
-  return wrapper.get(`.w-org-tree__node-card[data-org-key="${key}"]`)
+const dataKey = (id: string | number) => `${typeof id}:${String(id)}`
+
+function card(wrapper: ReturnType<typeof mount>, id: string | number) {
+  return wrapper.get(`.w-org-tree__node-card[data-org-key="${dataKey(id)}"]`)
 }
 
-function toggle(wrapper: ReturnType<typeof mount>, key: string) {
-  return wrapper.get(`.w-org-tree__node[data-org-key="${key}"] .w-org-tree__toggle`)
+function toggle(wrapper: ReturnType<typeof mount>, id: string | number) {
+  return wrapper.get(`.w-org-tree__node[data-org-key="${dataKey(id)}"] .w-org-tree__toggle`)
 }
 
 function mountTree(props: Record<string, unknown> = {}, options: Record<string, unknown> = {}) {
@@ -65,7 +67,7 @@ describe('OrgTree', () => {
   it('expands down to defaultExpandLevel and honours node.expand', () => {
     const wrapper = mountTree({ defaultExpandLevel: 1 })
     expect(wrapper.findAll('.w-org-tree__node-card')).toHaveLength(3)
-    expect(wrapper.find('[data-org-key="a1"]').exists()).toBe(false)
+    expect(wrapper.find(`[data-org-key="${dataKey('a1')}"]`).exists()).toBe(false)
     wrapper.unmount()
 
     const data = createTree()
@@ -73,16 +75,16 @@ describe('OrgTree', () => {
     data[0]!.children![0]!.expand = true
     const explicit = mountTree({ data, defaultExpandLevel: 0 })
     expect(explicit.findAll('.w-org-tree__node-card')).toHaveLength(4)
-    expect(explicit.find('[data-org-key="a1"]').exists()).toBe(true)
-    expect(explicit.find('[data-org-key="a2"]').exists()).toBe(false)
+    expect(explicit.find(`[data-org-key="${dataKey('a1')}"]`).exists()).toBe(true)
+    expect(explicit.find(`[data-org-key="${dataKey('a2')}"]`).exists()).toBe(false)
     explicit.unmount()
   })
 
   it('supports defaultExpandKeys', () => {
     const wrapper = mountTree({ defaultExpandLevel: 1, defaultExpandKeys: ['a'] })
 
-    expect(wrapper.find('[data-org-key="a1"]').exists()).toBe(true)
-    expect(wrapper.find('[data-org-key="a2"]').exists()).toBe(false)
+    expect(wrapper.find(`[data-org-key="${dataKey('a1')}"]`).exists()).toBe(true)
+    expect(wrapper.find(`[data-org-key="${dataKey('a2')}"]`).exists()).toBe(false)
     wrapper.unmount()
   })
 
@@ -107,7 +109,7 @@ describe('OrgTree', () => {
     expect(card(wrapper, 'root').find('.w-org-tree__toggle').exists()).toBe(false)
     expect(
       wrapper
-        .get('.w-org-tree__node[data-org-key="root"] > .w-org-tree__node-head')
+        .get(`.w-org-tree__node[data-org-key="${dataKey('root')}"] > .w-org-tree__node-head`)
         .get('.w-org-tree__toggle-wrap')
         .get('.w-org-tree__toggle')
         .attributes('aria-hidden'),
@@ -122,11 +124,11 @@ describe('OrgTree', () => {
     const wrapper = mountTree({ data })
 
     await toggle(wrapper, 'root').trigger('click')
-    expect(wrapper.find('[data-org-key="a"]').exists()).toBe(false)
+    expect(wrapper.find(`[data-org-key="${dataKey('a')}"]`).exists()).toBe(false)
 
     await wrapper.setProps({ data: [...data, { id: 'other', label: 'Other' }] })
 
-    expect(wrapper.find('[data-org-key="a"]').exists()).toBe(false)
+    expect(wrapper.find(`[data-org-key="${dataKey('a')}"]`).exists()).toBe(false)
     expect(card(wrapper, 'other').text()).toContain('Other')
     wrapper.unmount()
   })
@@ -134,16 +136,16 @@ describe('OrgTree', () => {
   it('keeps controlled expandKeys authoritative', async () => {
     const wrapper = mountTree({ expandKeys: ['root'], defaultExpandLevel: 2 })
 
-    expect(wrapper.find('[data-org-key="a1"]').exists()).toBe(false)
+    expect(wrapper.find(`[data-org-key="${dataKey('a1')}"]`).exists()).toBe(false)
 
     await toggle(wrapper, 'a').trigger('click')
 
     expect(wrapper.emitted('update:expandKeys')?.[0]).toEqual([['root', 'a']])
     // The parent has not updated the prop, so the view must not expand.
-    expect(wrapper.find('[data-org-key="a1"]').exists()).toBe(false)
+    expect(wrapper.find(`[data-org-key="${dataKey('a1')}"]`).exists()).toBe(false)
 
     await wrapper.setProps({ expandKeys: ['root', 'a'] })
-    expect(wrapper.find('[data-org-key="a1"]').exists()).toBe(true)
+    expect(wrapper.find(`[data-org-key="${dataKey('a1')}"]`).exists()).toBe(true)
     wrapper.unmount()
   })
 
@@ -368,6 +370,60 @@ describe('OrgTree', () => {
     expect(wrapper.findAll('.w-org-tree__node-card')).toHaveLength(1)
     expect(wrapper.text()).toContain('First')
     expect(wrapper.text()).not.toContain('Second')
+    wrapper.unmount()
+  })
+
+  it('keeps numeric and string ids distinct', async () => {
+    const wrapper = mountTree({
+      data: [
+        { id: 1, label: 'Numeric one' },
+        { id: '1', label: 'String one' },
+      ],
+    })
+
+    expect(wrapper.findAll('.w-org-tree__node-card')).toHaveLength(2)
+    await card(wrapper, '1').trigger('click')
+    expect(wrapper.emitted('update:selectedKey')?.[0]).toEqual(['1'])
+
+    await card(wrapper, 1).trigger('click')
+    expect(wrapper.emitted('update:selectedKey')?.[1]).toEqual([1])
+    wrapper.unmount()
+  })
+
+  it('skips nodes without a usable id or label', () => {
+    const wrapper = mountTree({
+      data: [
+        { id: 'ok', label: 'OK' },
+        { label: 'Missing id' },
+        { id: 'missing-label' },
+        null,
+        42,
+      ] as unknown as OrgTreeNode[],
+    })
+
+    expect(wrapper.findAll('.w-org-tree__node-card')).toHaveLength(1)
+    expect(wrapper.text()).toContain('OK')
+    expect(wrapper.text()).not.toContain('Missing id')
+    wrapper.unmount()
+  })
+
+  it('exposes a roving tabindex and restores focus after the context menu closes', async () => {
+    const wrapper = mountTree()
+    const cards = wrapper.findAll('.w-org-tree__node-card')
+    expect(cards.map((item) => item.attributes('tabindex'))).toEqual(['0', '-1', '-1', '-1'])
+
+    await cards[1]!.trigger('focusin')
+    expect(cards.map((item) => item.attributes('tabindex'))).toEqual(['-1', '0', '-1', '-1'])
+
+    const trigger = card(wrapper, 'a')
+    await trigger.trigger('contextmenu', { clientX: 48, clientY: 52 })
+    await nextTick()
+    expect(document.activeElement).not.toBe(trigger.element)
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    await nextTick()
+    await nextTick()
+    expect(document.activeElement).toBe(trigger.element)
     wrapper.unmount()
   })
 

@@ -5,7 +5,9 @@ export type PermissionValue = string | string[]
 export interface PermissionContext {
   /**
    * Whether the current scope grants the requested value(s).
-   * Returns `true` for unknown scopes when no provider exists.
+   * Without a provider this returns `false` for every value (fail-closed).
+   * An empty `required` list is vacuously granted in `all` mode and denied in
+   * `any` mode.
    */
   has: (value: PermissionValue, mode?: PermissionMode) => boolean
 }

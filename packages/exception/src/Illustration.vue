@@ -22,41 +22,28 @@ defineProps<{
     <circle cx="120" cy="90" r="72" fill="var(--w-exception-soft)" />
 
     <template v-if="type === 'notFound'">
-      <rect
-        x="58"
-        y="42"
-        width="124"
-        height="96"
-        rx="12"
-        fill="var(--w-exception-surface)"
-        stroke="currentColor"
-        stroke-width="2.4"
-      />
-      <path d="M58 68h124" stroke="currentColor" stroke-width="2.4" />
-      <circle cx="73" cy="55" r="3" fill="currentColor" />
-      <circle cx="84" cy="55" r="3" fill="currentColor" opacity="0.55" />
-      <circle cx="95" cy="55" r="3" fill="currentColor" opacity="0.3" />
-      <path
-        d="M88 88h48M88 103h30"
-        stroke="currentColor"
-        stroke-width="2.4"
-        stroke-linecap="round"
-        stroke-dasharray="2 7"
-        opacity="0.6"
-      />
       <circle
-        cx="156"
-        cy="118"
-        r="24"
+        cx="111"
+        cy="85"
+        r="36"
         fill="var(--w-exception-surface)"
         stroke="currentColor"
         stroke-width="2.4"
       />
       <path
-        d="m147 109 18 18m0-18-18 18"
+        d="M104 78.5a7 7 0 0 1 14 0c0 3.7-2.4 5.3-4.1 6.6-1.3 1-1.9 1.9-1.9 3.6"
+        stroke="currentColor"
+        stroke-width="2.6"
+        stroke-linecap="round"
+      />
+      <circle cx="112" cy="93.5" r="2.2" fill="currentColor" />
+      <path d="m138 112 25 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
+      <path
+        d="M64 54h-8M196 94h8M70 140h-8"
         stroke="currentColor"
         stroke-width="2.4"
         stroke-linecap="round"
+        opacity="0.45"
       />
     </template>
 

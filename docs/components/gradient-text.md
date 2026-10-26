@@ -36,16 +36,15 @@
 
 ### Props
 
-| 属性                 | 类型                                                          | 默认值                              | 说明                                            |
-| -------------------- | ------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------- |
-| `colors`             | `string[]`                                                    | `['#4f46e5', '#9333ea', '#0ea5e9']` | 渐变色列表，建议至少两项                        |
-| `gradient`           | `string`                                                      | `''`                                | 原始 CSS `background-image`，优先于其他渐变配置 |
-| `type`               | `'linear' \| 'radial' \| 'conic'`                             | `'linear'`                          | 渐变类型                                        |
-| `angle`              | `number`                                                      | `90`                                | 线性 / 锥形渐变角度（度）                       |
-| `animate`            | `boolean`                                                     | `false`                             | 开启背景流动动画                                |
-| `duration`           | `number`                                                      | `6000`                              | 动画时长（ms）                                  |
-| `animationDirection` | `'normal' \| 'reverse' \| 'alternate' \| 'alternate-reverse'` | `'alternate'`                       | CSS `animation-direction`                       |
-| `tag`                | `string`                                                      | `'span'`                            | 根元素标签                                      |
+| 属性                 | 类型                                                          | 默认值                                         | 说明                                            |
+| -------------------- | ------------------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------- |
+| `colors`             | `string[]`                                                    | 主题令牌（亮色 `#4f46e5 → #9333ea → #0369a1`） | 渐变色列表，建议至少两项                        |
+| `gradient`           | `string`                                                      | `''`                                           | 原始 CSS `background-image`，优先于其他渐变配置 |
+| `type`               | `'linear' \| 'radial' \| 'conic'`                             | `'linear'`                                     | 渐变类型                                        |
+| `angle`              | `number`                                                      | `90`                                           | 线性 / 锥形渐变角度（度）                       |
+| `animate`            | `boolean`                                                     | `false`                                        | 开启背景流动动画                                |
+| `duration`           | `number`                                                      | `6000`                                         | 动画时长（ms）                                  |
+| `animationDirection` | `'normal' \| 'reverse' \| 'alternate' \| 'alternate-reverse'` | `'alternate'`                                  | CSS `animation-direction`                       |
 
 ### Emits
 
@@ -63,7 +62,13 @@
 
 ### CSS 变量
 
-无。
+| 变量                     | 亮色默认值 | 暗色默认值 | 说明       |
+| ------------------------ | ---------- | ---------- | ---------- |
+| `--w-gradient-text-from` | `#4f46e5`  | `#818cf8`  | 渐变起始色 |
+| `--w-gradient-text-via`  | `#9333ea`  | `#c084fc`  | 渐变中间色 |
+| `--w-gradient-text-to`   | `#0369a1`  | `#38bdf8`  | 渐变结束色 |
+
+未显式传入 `colors` 时，组件会读取这三个令牌，因此同一段文字可以随主题自动切换配色。
 
 ### 类名
 

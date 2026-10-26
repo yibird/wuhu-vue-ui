@@ -9,7 +9,7 @@ import type {
 } from './types'
 
 defineOptions({
-  name: 'SliderCaptcha',
+  name: 'WSliderCaptcha',
 })
 
 const props = withDefaults(defineProps<SliderCaptchaProps>(), {
@@ -75,7 +75,11 @@ const maxOffset = computed(() => Math.max(0, props.width - HANDLE_SIZE))
 // with the cutout when the offset matches the target.
 const pieceInset = computed(() => Math.max(8, Math.round(knob.value * 1.4)))
 const handleOffset = computed(() => (solved.value ? maxOffset.value : offset.value))
-const rootStyle = computed<CSSProperties>(() => ({ width: `${props.width}px` }))
+const rootStyle = computed<CSSProperties>(() => ({
+  width: `${props.width}px`,
+  // Single source of truth for the handle / track height shared with CSS.
+  '--w-slider-captcha-handle-size': `${HANDLE_SIZE}px`,
+}))
 const imageStyle = computed<CSSProperties>(() => ({ height: `${props.height}px` }))
 const pieceStyle = computed<CSSProperties>(() => ({
   transform: `translate3d(${offset.value - knob.value + pieceInset.value}px, ${target.value.y - knob.value}px, 0)`,
@@ -253,6 +257,18 @@ function pickTarget() {
   }
 }
 
+function pickSource(): string {
+  const { src } = props
+
+  if (typeof src === 'string') return src
+  if (src.length === 0) return ''
+  if (src.length === 1) return src[0] ?? ''
+
+  const candidates = src.filter((candidate) => candidate !== loadedSrc)
+  const pool = candidates.length > 0 ? candidates : src
+  return pool[Math.floor(Math.random() * pool.length)] ?? ''
+}
+
 function loadImage(src: string, token: number) {
   const img = new Image()
   if (props.crossOrigin) img.crossOrigin = props.crossOrigin
@@ -295,7 +311,9 @@ function prepare(notify: boolean) {
   attempts.value = 0
   startedAt = 0
 
-  if (!props.src) {
+  const source = pickSource()
+
+  if (!source) {
     loadToken += 1
     image = null
     loadedSrc = ''
@@ -303,7 +321,7 @@ function prepare(notify: boolean) {
     ready.value = false
     pickTarget()
     nextTick(render)
-  } else if (image && loadedSrc === props.src) {
+  } else if (image && loadedSrc === source) {
     loading.value = false
     ready.value = false
     pickTarget()
@@ -312,7 +330,7 @@ function prepare(notify: boolean) {
     loading.value = true
     ready.value = false
     loadToken += 1
-    loadImage(props.src, loadToken)
+    loadImage(source, loadToken)
   }
 
   if (notify) emit('refresh')
@@ -494,6 +512,7 @@ defineExpose({
     :style="[rootStyle, props.styles?.root]"
     role="group"
     :aria-label="ariaLabel"
+    :aria-busy="loading || undefined"
   >
     <div
       class="w-slider-captcha__image"
@@ -581,7 +600,7 @@ defineExpose({
         :aria-label="ariaLabel"
         aria-valuemin="0"
         :aria-valuemax="maxOffset"
-        :aria-valuenow="offset"
+        :aria-valuenow="handleOffset"
         :aria-valuetext="statusText"
         :aria-disabled="disabled || loading || solved || failed || undefined"
         @pointerdown="handlePointerDown"

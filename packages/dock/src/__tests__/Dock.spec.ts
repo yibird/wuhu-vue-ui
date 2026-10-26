@@ -101,6 +101,24 @@ describe('Dock', () => {
     wrapper.unmount()
   })
 
+  it('activates once on Enter without a duplicate keydown handler', async () => {
+    const command = vi.fn()
+    const wrapper = mount(Dock, {
+      props: { model: [{ label: 'Home', command }] },
+    })
+    const item = wrapper.get('.w-dock__item')
+
+    // Native buttons fire `click` on Enter/Space by themselves; the component
+    // must not also activate on keydown or the command runs twice.
+    await item.trigger('keydown', { key: 'Enter' })
+    expect(command).not.toHaveBeenCalled()
+
+    await item.trigger('click')
+    expect(command).toHaveBeenCalledTimes(1)
+
+    wrapper.unmount()
+  })
+
   it('opens the url in the configured target when there is no command', async () => {
     const open = vi.spyOn(window, 'open').mockImplementation(() => null)
     const wrapper = mount(Dock, {

@@ -5,6 +5,7 @@ import LazyContainer from '../LazyContainer.vue'
 
 let callback: IntersectionObserverCallback | undefined
 let observerInstance: MockIntersectionObserver | undefined
+let observerCount = 0
 
 class MockIntersectionObserver {
   disconnect = vi.fn()
@@ -12,6 +13,7 @@ class MockIntersectionObserver {
   unobserve = vi.fn()
 
   constructor(cb: IntersectionObserverCallback) {
+    observerCount += 1
     callback = cb
     // oxlint-disable-next-line typescript/no-this-alias
     observerInstance = this
@@ -25,6 +27,7 @@ class MockIntersectionObserver {
 
 beforeEach(() => {
   callback = undefined
+  observerCount = 0
   vi.stubGlobal('IntersectionObserver', MockIntersectionObserver)
 })
 
@@ -103,29 +106,29 @@ describe('LazyContainer', () => {
     wrapper.unmount()
   })
 
-  it('re-observes the new root element when tag changes', async () => {
+  it('does not rebuild the observer for equal threshold arrays or once changes', async () => {
     const wrapper = mount(LazyContainer, {
-      props: { tag: 'div' },
       slots: { default: '<div class="loaded">Loaded</div>' },
     })
-    const firstObserver = observerInstance
-    const firstElement = wrapper.element
+    expect(observerCount).toBe(1)
 
-    await wrapper.setProps({ tag: 'section' })
-    await nextTick()
+    await wrapper.setProps({ threshold: [0.2, 0.5] })
+    expect(observerCount).toBe(2)
 
-    expect(wrapper.element.tagName).toBe('SECTION')
-    expect(wrapper.element).not.toBe(firstElement)
-    expect(firstObserver?.disconnect).toHaveBeenCalled()
-    expect(observerInstance).not.toBe(firstObserver)
+    await wrapper.setProps({ threshold: [0.2, 0.5] })
+    await wrapper.setProps({ once: true })
+    expect(observerCount).toBe(2)
+
+    wrapper.unmount()
+  })
+
+  it('renders a div root element', () => {
+    const wrapper = mount(LazyContainer, {
+      slots: { default: '<div class="loaded">Loaded</div>' },
+    })
+
+    expect(wrapper.element.tagName).toBe('DIV')
     expect(observerInstance?.observe).toHaveBeenCalledWith(wrapper.element)
-
-    observerInstance!.trigger(true)
-    await nextTick()
-
-    expect(wrapper.find('.loaded').exists()).toBe(true)
-    expect(wrapper.emitted('enter')).toHaveLength(1)
-
     wrapper.unmount()
   })
 })

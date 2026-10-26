@@ -505,7 +505,7 @@ defineExpose({
         :disabled="disabled"
         :aria-label="ariaLabel"
         aria-autocomplete="list"
-        aria-expanded="true"
+        :aria-expanded="flatItems.length > 0"
         :aria-controls="`${uid}-listbox`"
         :aria-activedescendant="activeOptionId"
         :aria-disabled="disabled || undefined"

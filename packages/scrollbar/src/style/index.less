@@ -9,6 +9,11 @@
     height: 100%;
     overflow: auto;
 
+    &:focus-visible {
+      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline-offset: var(--w-focus-ring-offset, 2px);
+    }
+
     &--hidden-default {
       scrollbar-width: none;
 
@@ -31,7 +36,7 @@
       top: 2px;
       width: var(--w-scrollbar-size, 6px);
 
-      > div {
+      > .w-scrollbar__thumb {
         width: 100%;
       }
     }
@@ -40,7 +45,7 @@
       left: 2px;
       height: var(--w-scrollbar-size, 6px);
 
-      > div {
+      > .w-scrollbar__thumb {
         height: 100%;
       }
     }
@@ -66,8 +71,9 @@
     }
 
     &.is-dragging {
-      background-color: var(--w-scrollbar-thumb-active, rgba(100, 116, 139, 0.78));
-      opacity: 0.72;
+      background-color: var(--w-scrollbar-thumb-active, rgba(100, 116, 139, 0.6));
+      opacity: 0.62;
+      transition: none;
     }
   }
 }

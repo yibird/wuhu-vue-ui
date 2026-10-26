@@ -190,6 +190,7 @@ const scrollRef = ref<HTMLElement>()
 const contextMenuRef = ref<HTMLElement>()
 const contextMenuState = shallowRef<ContextMenuState | null>(null)
 const contextMenuTrigger = shallowRef<HTMLElement | null>(null)
+const activeBarKey = ref<string | null>(null)
 const today = ref(startOfDay(new Date()))
 const collapsedKeys = ref(new Set<string>())
 const { value: selected, setValue: setSelected } = useControllableState<GanttTaskId | null>({
@@ -312,6 +313,13 @@ const rows = computed<GanttRow[]>(() => {
 })
 
 const bodyHeight = computed(() => rows.value.length * props.rowHeight)
+
+// Roving tabindex: exactly one task bar is reachable with Tab at any time.
+const tabStopKey = computed(() => {
+  const key = activeBarKey.value
+  if (key && rows.value.some((row) => row.key === key)) return key
+  return rows.value[0]?.key ?? null
+})
 
 const range = computed(() => {
   const tasks = resolution.value.all
@@ -564,10 +572,14 @@ const rowViews = computed<RowView[]>(() =>
 
 function barAriaLabel(view: RowView): string {
   const progressShown = props.showProgress && view.row.progress > 0 && view.layout.width > 110
-  const visible = `${view.row.task.ariaLabel ?? view.row.task.name}${
-    progressShown ? `${view.row.progress}%` : ''
-  }`
-  return `${visible} ${view.title}`.trim()
+  const start = formatters.value.fullDate.format(view.row.start)
+  const end = formatters.value.fullDate.format(view.row.end)
+  const dates = start === end ? start : `${start} - ${end}`
+  // Keep the visible name + percentage contiguous so the accessible name
+  // contains the rendered text (axe: label-content-name-mismatch).
+  const progress = progressShown ? ` ${view.row.progress}%` : ''
+  const name = view.row.task.ariaLabel ?? view.row.task.name
+  return `${name}${progress}, ${dates}`.trim()
 }
 
 function barStyle(view: RowView): CSSProperties {
@@ -716,10 +728,58 @@ function keyboardNudge(row: GanttRow, mode: GanttDragMode, deltaDays: number) {
   })
 }
 
+function setActiveBar(row: GanttRow): void {
+  activeBarKey.value = row.key
+}
+
+/** Move focus between visible task bars without creating extra tab stops. */
+function focusBar(row: GanttRow): void {
+  activeBarKey.value = row.key
+  void nextTick(() => {
+    const bars = scrollRef.value?.querySelectorAll<HTMLElement>('.w-gantt__bar')
+    if (!bars) return
+    for (const bar of bars) {
+      if (bar.dataset.rowKey === row.key) {
+        bar.focus()
+        return
+      }
+    }
+  })
+}
+
 function onBarKeydown(event: KeyboardEvent, row: GanttRow) {
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
     selectRow(row)
+    return
+  }
+
+  if (
+    (event.key === 'ArrowUp' ||
+      event.key === 'ArrowDown' ||
+      event.key === 'Home' ||
+      event.key === 'End') &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.altKey
+  ) {
+    const visible = rows.value
+    const current = visible.findIndex((item) => item.key === row.key)
+    if (current < 0) return
+
+    const nextIndex =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? visible.length - 1
+          : event.key === 'ArrowUp'
+            ? current - 1
+            : current + 1
+    if (nextIndex === current || nextIndex < 0 || nextIndex >= visible.length) return
+
+    event.preventDefault()
+    const next = visible[nextIndex]
+    if (next) focusBar(next)
     return
   }
 
@@ -892,11 +952,12 @@ function canMove(row: GanttRow): boolean {
 }
 
 function keyboardShortcuts(row: GanttRow): string | undefined {
+  const navigation = 'ArrowUp ArrowDown Home End'
   if (canResize(row)) {
-    return 'ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight Alt+ArrowLeft Alt+ArrowRight'
+    return `${navigation} ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight Alt+ArrowLeft Alt+ArrowRight`
   }
-  if (canMove(row)) return 'ArrowLeft ArrowRight'
-  return undefined
+  if (canMove(row)) return `${navigation} ArrowLeft ArrowRight`
+  return navigation
 }
 
 function tickAutoScroll() {
@@ -1483,11 +1544,13 @@ defineExpose({
                   :style="barStyle(view)"
                   role="gridcell"
                   :aria-colindex="2"
-                  tabindex="0"
+                  :tabindex="tabStopKey === view.row.key ? 0 : -1"
+                  :data-row-key="view.row.key"
                   :aria-label="barAriaLabel(view)"
                   :aria-selected="selectedKey === view.row.key"
                   :aria-keyshortcuts="keyboardShortcuts(view.row)"
                   :title="view.title"
+                  @focus="setActiveBar(view.row)"
                   @pointerdown="beginTaskDrag($event, view.row)"
                   @click.stop="onTaskClick(view.row, $event)"
                   @dblclick.stop="onTaskDblClick(view.row, $event)"
@@ -1635,42 +1698,47 @@ defineExpose({
       </div>
     </div>
 
-    <div
-      v-if="contextMenuState"
-      ref="contextMenuRef"
-      class="w-gantt__context-menu"
-      role="menu"
-      :aria-label="contextMenuState.row.task.name"
-      :style="{ left: `${contextMenuState.x}px`, top: `${contextMenuState.y}px` }"
-      @keydown="onContextMenuKeydown"
-      @contextmenu.prevent
-    >
-      <slot
-        name="context-menu"
-        :task="contextMenuState.row.task"
-        :row="contextMenuState.row"
-        :close="closeContextMenu"
-        :select="selectContextMenuItem"
-      >
-        <template v-for="item in contextMenuItems" :key="item.key">
-          <div v-if="item.divider" class="w-gantt__context-menu-divider" role="separator" />
-          <button
-            v-else
-            type="button"
-            class="w-gantt__context-menu-item"
-            :class="{ 'is-danger': item.danger }"
-            role="menuitem"
-            :disabled="item.disabled"
-            @click="selectContextMenuItem(item)"
+    <!-- Teleported so an ancestor `transform` cannot clip the fixed menu. -->
+    <Teleport to="body">
+      <Transition name="w-gantt-context-menu">
+        <div
+          v-if="contextMenuState"
+          ref="contextMenuRef"
+          class="w-gantt__context-menu"
+          role="menu"
+          :aria-label="contextMenuState.row.task.name"
+          :style="{ left: `${contextMenuState.x}px`, top: `${contextMenuState.y}px` }"
+          @keydown="onContextMenuKeydown"
+          @contextmenu.prevent
+        >
+          <slot
+            name="context-menu"
+            :task="contextMenuState.row.task"
+            :row="contextMenuState.row"
+            :close="closeContextMenu"
+            :select="selectContextMenuItem"
           >
-            <span class="w-gantt__context-menu-label">{{ item.label }}</span>
-            <span v-if="item.shortcut" class="w-gantt__context-menu-shortcut">
-              {{ item.shortcut }}
-            </span>
-          </button>
-        </template>
-      </slot>
-    </div>
+            <template v-for="item in contextMenuItems" :key="item.key">
+              <div v-if="item.divider" class="w-gantt__context-menu-divider" role="separator" />
+              <button
+                v-else
+                type="button"
+                class="w-gantt__context-menu-item"
+                :class="{ 'is-danger': item.danger }"
+                role="menuitem"
+                :disabled="item.disabled"
+                @click="selectContextMenuItem(item)"
+              >
+                <span class="w-gantt__context-menu-label">{{ item.label }}</span>
+                <span v-if="item.shortcut" class="w-gantt__context-menu-shortcut">
+                  {{ item.shortcut }}
+                </span>
+              </button>
+            </template>
+          </slot>
+        </div>
+      </Transition>
+    </Teleport>
 
     <div v-if="loading" class="w-gantt__loading" aria-live="polite">
       <span class="w-gantt__spinner" aria-hidden="true" />

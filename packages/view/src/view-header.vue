@@ -4,16 +4,9 @@
     :class="{ 'w-view-header-collapsed': collapsed }"
     :style="headerStyle"
   >
-    <div class="w-view-header__body">
-      <div
-        :id="contentId"
-        class="w-view-header__collapse"
-        :aria-hidden="collapsed"
-        :inert="collapsed"
-      >
-        <div class="w-view-header__content" v-bind="$attrs">
-          <slot :collapsed="collapsed" />
-        </div>
+    <div :id="contentId" class="w-view-header__body" :aria-hidden="collapsed" :inert="collapsed">
+      <div class="w-view-header__content">
+        <slot :collapsed="collapsed" />
       </div>
     </div>
 
@@ -40,11 +33,11 @@
 <script setup lang="ts">
 import { Icon } from '@wuhu-vue-ui/icon'
 import { getCssSize, viewContextKey } from './context'
-import type { ViewCollapseEmits, WViewHeaderProps, WViewHeaderSlots } from './types'
+import type { ViewCollapseEmits, ViewHeaderProps, ViewHeaderSlots } from './types'
 import { useCollapse } from './useCollapse'
 import { computed, inject, useId, type CSSProperties } from 'vue'
 
-const props = withDefaults(defineProps<WViewHeaderProps>(), {
+const props = withDefaults(defineProps<ViewHeaderProps>(), {
   collapsible: false,
   trigger: true,
   collapseLabel: '收起头部',
@@ -53,8 +46,8 @@ const props = withDefaults(defineProps<WViewHeaderProps>(), {
 
 const collapsed = defineModel<boolean>('collapsed', { default: false })
 const emits = defineEmits<ViewCollapseEmits>()
-const slots = defineSlots<WViewHeaderSlots>()
-defineOptions({ name: 'WViewHeader', inheritAttrs: false })
+const slots = defineSlots<ViewHeaderSlots>()
+defineOptions({ name: 'ViewHeader' })
 
 const contentId = useId()
 const viewContext = inject(viewContextKey, null)
@@ -68,104 +61,3 @@ const headerStyle = computed<CSSProperties>(() => {
   }
 })
 </script>
-
-<style lang="less" scoped>
-.w-view-header {
-  position: relative;
-  box-sizing: border-box;
-  min-width: 0;
-  overflow: visible;
-  transition: margin-block-end var(--w-duration-slow, 300ms) var(--w-easing-standard, ease);
-
-  &__body {
-    display: grid;
-    grid-template-rows: 1fr;
-    min-width: 0;
-    overflow: hidden;
-    transition: grid-template-rows var(--w-duration-slow, 300ms) var(--w-easing-standard, ease);
-  }
-
-  &__collapse {
-    min-height: 0;
-    overflow: hidden;
-    transition:
-      opacity var(--w-duration-normal, 220ms) var(--w-easing-emphasized, ease),
-      transform var(--w-duration-normal, 220ms) var(--w-easing-emphasized, ease);
-  }
-
-  &__content {
-    box-sizing: border-box;
-    min-width: 0;
-  }
-
-  &__trigger {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translate(-50%, 50%);
-
-    &-button {
-      display: inline-grid;
-      place-items: center;
-      width: 48px;
-      height: 26px;
-      padding: 0;
-      color: var(--w-color-text-secondary, #475569);
-      cursor: pointer;
-      background: var(--w-color-surface, #ffffff);
-      border: 1px solid var(--w-color-border, #e2e8f0);
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
-
-      &:hover .w-view-header__trigger-icon {
-        scale: 1.16;
-      }
-
-      &:active .w-view-header__trigger-icon {
-        scale: 1.08;
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--w-color-primary, #4f46e5);
-        outline-offset: 2px;
-      }
-    }
-
-    &-icon {
-      display: grid;
-      place-items: center;
-      transition: scale var(--w-duration-fast, 120ms) var(--w-easing-emphasized, ease);
-    }
-  }
-
-  &.w-view-header-collapsed {
-    .w-view-header__body {
-      grid-template-rows: 0fr;
-    }
-
-    .w-view-header__collapse {
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-
-    .w-view-header__trigger-icon {
-      transform: rotate(180deg);
-    }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-view-header,
-  .w-view-header__body,
-  .w-view-header__collapse,
-  .w-view-header__trigger-button,
-  .w-view-header__trigger-icon {
-    transition: none;
-  }
-}
-</style>

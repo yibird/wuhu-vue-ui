@@ -38,6 +38,12 @@
 
 <demo vue="../demos/scrollbar/custom-style.vue" />
 
+## 语义化类名与样式
+
+`classes` 与 `styles` 只提供 `wrap`、`view`、`thumb` 三个键，`thumb` 同时作用于横向与纵向滑块。相比覆盖内部类名，语义化接口不依赖组件内部结构，样式更稳定。
+
+<demo vue="../demos/scrollbar/semantic.vue" />
+
 ## 在 Flex / Grid 布局中使用
 
 不需要设置 `height`。组件根节点与滚动容器的默认样式都是 `height: 100%`，把 `flex: 1` 直接加在 `<Scrollbar>` 上即可填满剩余空间：
@@ -52,19 +58,19 @@
 
 ### Props
 
-| 属性        | 类型                                           | 默认值  | 说明                                         |
-| ----------- | ---------------------------------------------- | ------- | -------------------------------------------- |
-| `height`    | `string \| number`                             | `''`    | 视口高度，数字按 px 处理                     |
-| `maxHeight` | `string \| number`                             | `''`    | 视口最大高度，内容超出时才显示滚动条         |
-| `native`    | `boolean`                                      | `false` | 使用浏览器原生滚动条                         |
-| `always`    | `boolean`                                      | `false` | 始终显示自定义滚动条                         |
-| `minSize`   | `number`                                       | `20`    | 滑块最小像素长度                             |
-| `distance`  | `number`                                       | `0`     | 距边缘多少像素时触发 `end`                   |
-| `noresize`  | `boolean`                                      | `false` | 关闭自动尺寸监听，仍可手动调用 `update()`    |
-| `tag`       | `string`                                       | `'div'` | 内容容器标签                                 |
-| `id`        | `string`                                       | —       | 内容容器 id                                  |
-| `classes`   | `{ wrap?:string, view?:string }`               | —       | 语义化类名，分别作用于滚动容器与内容视图     |
-| `styles`    | `{ wrap?:CssProperties, view?:CssProperties }` | —       | 语义化内联样式，分别作用于滚动容器与内容视图 |
+| 属性        | 类型               | 默认值  | 说明                                                  |
+| ----------- | ------------------ | ------- | ----------------------------------------------------- |
+| `height`    | `string \| number` | `''`    | 视口高度，数字按 px 处理                              |
+| `maxHeight` | `string \| number` | `''`    | 视口最大高度，内容超出时才显示滚动条                  |
+| `native`    | `boolean`          | `false` | 使用浏览器原生滚动条                                  |
+| `always`    | `boolean`          | `false` | 始终显示自定义滚动条                                  |
+| `minSize`   | `number`           | `20`    | 滑块最小像素长度                                      |
+| `distance`  | `number`           | `0`     | 距边缘多少像素时触发 `end`                            |
+| `noresize`  | `boolean`          | `false` | 关闭自动尺寸监听，仍可手动调用 `update()`             |
+| `tag`       | `string`           | `'div'` | 内容容器标签                                          |
+| `id`        | `string`           | —       | 内容容器 id                                           |
+| `classes`   | `ScrollbarClasses` | —       | 语义化类名：`wrap`、`view`、`thumb`（横向与纵向共用） |
+| `styles`    | `ScrollbarStyles`  | —       | 语义化内联样式，键名与 `classes` 一致                 |
 
 ### Emits
 
@@ -99,6 +105,11 @@
 | `--w-scrollbar-thumb-hover`   | `rgba(100, 116, 139, 0.62)` | 滑块悬停颜色   |
 | `--w-scrollbar-opacity`       | `0.3`                       | 滑块默认透明度 |
 | `--w-scrollbar-hover-opacity` | `0.5`                       | 滑块悬停透明度 |
+
+### 可访问性
+
+- 滚动容器可通过键盘获得焦点，`:focus-visible` 时显示焦点环。
+- 自定义轨道与滑块为纯装饰元素，标记为 `aria-hidden="true"`，滚动语义由可聚焦容器提供。
 
 ### 类名
 

@@ -183,6 +183,11 @@ onBeforeUnmount(() => {
     @scroll.passive="handleScroll"
   >
     <div class="w-file-viewer__docx-pages" :style="{ zoom: String(zoom) }">
+      <!--
+        Controlled v-html exception: page markup is assembled by core/docx.ts
+        and core/odf.ts only, with escapeHtml / escapeAttribute / sanitizeUrl
+        applied to every text and URL. No authored markup is injected as-is.
+      -->
       <article
         v-for="(page, index) in pages"
         :key="index"

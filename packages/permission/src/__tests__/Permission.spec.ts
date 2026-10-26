@@ -55,6 +55,24 @@ describe('Permission', () => {
     denied.unmount()
   })
 
+  it('treats an empty required list as vacuous for all and no match for any', () => {
+    const all = mount(Permission, {
+      props: { value: [], permissions: [] },
+      slots: defaultSlot,
+    })
+    expect(all.find('.allowed').exists()).toBe(true)
+
+    const any = mount(Permission, {
+      props: { value: [], mode: 'any', permissions: [] },
+      slots: defaultSlot,
+    })
+    expect(any.find('.allowed').exists()).toBe(false)
+    expect(any.find('.denied').exists()).toBe(true)
+
+    all.unmount()
+    any.unmount()
+  })
+
   it('uses the injected context when no explicit permissions are given', () => {
     const wrapper = mount(Permission, {
       props: { value: ['read', 'write'] },

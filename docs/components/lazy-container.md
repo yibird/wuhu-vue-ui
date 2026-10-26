@@ -14,6 +14,12 @@
 
 <demo vue="../demos/lazy-container/once.vue" />
 
+## placeholder 插槽
+
+内容首次进入视口前渲染 `placeholder` 插槽，用于骨架屏、占位卡片等。插槽参数与默认插槽一致，包含 `isVisible`、`hasEntered` 与 `entry`。未提供该插槽时，组件会渲染一个空的 `.w-lazy-container__placeholder` 占位元素。
+
+<demo vue="../demos/lazy-container/placeholder.vue" />
+
 ## API
 
 ### Props
@@ -24,7 +30,6 @@
 | `rootMargin` | `string`                      | `'0px'` | IntersectionObserver 视口外扩边距 |
 | `threshold`  | `number \| number[]`          | `0`     | 可见性阈值                        |
 | `once`       | `boolean`                     | `false` | 首次进入后停止观察                |
-| `tag`        | `string`                      | `'div'` | 根元素标签                        |
 
 ### Emits
 

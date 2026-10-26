@@ -18,6 +18,7 @@ const props = defineProps<{
   keys: Required<OrgTreeKeys>
   expandedKeys: ReadonlySet<string>
   selectedKey: string | null
+  focusKey: string | null
   collapsable: boolean
   disabled: boolean
   expandLabel: string
@@ -76,7 +77,7 @@ function toggle() {
         :aria-selected="selected"
         :aria-disabled="disabled || node.disabled ? 'true' : undefined"
         :data-org-key="key"
-        :tabindex="disabled || node.disabled ? -1 : 0"
+        :tabindex="disabled || node.disabled || focusKey !== key ? -1 : 0"
       >
         <span class="w-org-tree__label" :class="labelClassName">
           <slot name="node" :node="node" :depth="depth" :expanded="expanded" :toggle="toggle">
@@ -124,6 +125,7 @@ function toggle() {
         :keys="keys"
         :expanded-keys="expandedKeys"
         :selected-key="selectedKey"
+        :focus-key="focusKey"
         :collapsable="collapsable"
         :disabled="disabled"
         :expand-label="expandLabel"

@@ -7,8 +7,6 @@ export interface LazyContainerProps {
   threshold?: number | number[]
   /** Stop observing after the first intersection. */
   once?: boolean
-  /** Root element tag. */
-  tag?: string
 }
 
 export interface LazyContainerSlotProps {

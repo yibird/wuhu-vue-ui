@@ -17,6 +17,13 @@ export interface NumberTickerProps {
   easing?: string
   /** Animate from startValue to value on first mount. */
   animateOnMount?: boolean
+  /**
+   * Optional live-region politeness for the accessible label. Omit to keep the
+   * ticker as a static `role="img"` label.
+   */
+  ariaLive?: 'off' | 'polite' | 'assertive'
+  /** Whether a live region announces the whole label. Defaults to the browser default. */
+  ariaAtomic?: boolean
 }
 
 export interface NumberTickerCharacter {

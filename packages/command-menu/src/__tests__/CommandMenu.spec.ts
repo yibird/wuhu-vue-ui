@@ -90,6 +90,19 @@ describe('CommandMenu', () => {
     expect(wrapper.emitted('search')?.at(-1)).toEqual(['不存在'])
   })
 
+  it('reflects whether the listbox has results in aria-expanded', async () => {
+    const wrapper = mountMenu()
+    const input = getInput(wrapper)
+
+    expect(input.attributes('aria-expanded')).toBe('true')
+
+    await input.setValue('不存在')
+    expect(input.attributes('aria-expanded')).toBe('false')
+
+    await input.setValue('')
+    expect(input.attributes('aria-expanded')).toBe('true')
+  })
+
   it('hides empty groups and keeps first-appearance order', async () => {
     const wrapper = mountMenu()
     await getInput(wrapper).setValue('新建')

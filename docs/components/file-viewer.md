@@ -18,6 +18,8 @@ Office、PDF、EPUB、图片、音视频、Markdown、代码与压缩包统一�
 
 `themeVars` 可在实例级覆盖品牌色与圆角。
 
+`theme="auto"`（默认）会优先跟随应用根节点显式设置的 `data-w-theme="light" | "dark"`，未设置时回退到 `prefers-color-scheme`。组件同时支持 `.is-dark`、`[data-w-theme='dark']` 与系统深色三种暗色令牌入口。
+
 <demo vue="../demos/file-viewer/theme.vue" />
 
 ## 图片与 SVG
@@ -91,7 +93,7 @@ ZIP、TAR 会展示目录结构，文本和图片条目可以直接在组件内�
 | `title`            | `string`                                                       | `''`      | 工具栏标题，默认文件名                                |
 | `width`            | `string \| number`                                             | `'100%'`  | 组件宽度                                              |
 | `height`           | `string \| number`                                             | `'600px'` | 组件高度                                              |
-| `theme`            | `'light' \| 'dark' \| 'auto'`                                  | `'auto'`  | 主题                                                  |
+| `theme`            | `'light' \| 'dark' \| 'auto'`                                  | `'auto'`  | 主题；`auto` 跟随应用 `data-w-theme` 或系统偏好       |
 | `themeVars`        | `Record<string, string>`                                       | `{}`      | CSS 变量覆盖                                          |
 | `showToolbar`      | `boolean`                                                      | `true`    | 显示工具栏                                            |
 | `showStatusBar`    | `boolean`                                                      | `true`    | 显示底部状态栏                                        |

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vite-plus/test'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
 import ImgComparisonSlider from '../ImgComparisonSlider.vue'
 
 function pointer(type: string, init: Record<string, unknown>) {
@@ -212,6 +212,61 @@ describe('ImgComparisonSlider', () => {
 
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([50])
     expect(wrapper.get('[role="slider"]').attributes('aria-valuenow')).toBe('50')
+    wrapper.unmount()
+  })
+
+  it('does not hijack pointer interactions from interactive slot content', () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      attachTo: document.body,
+      slots: {
+        before: () => h('button', { class: 'slot-action', type: 'button' }, '播放'),
+      },
+    })
+    const root = wrapper.get('.w-img-comparison-slider')
+    ;(root.element as HTMLElement).getBoundingClientRect = () =>
+      ({
+        left: 0,
+        top: 0,
+        width: 100,
+        height: 100,
+        right: 100,
+        bottom: 100,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect
+
+    wrapper.get('.slot-action').element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('dragstart')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('emits dragstart with the value before the pointer moves the divider', () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      attachTo: document.body,
+    })
+    const root = wrapper.get('.w-img-comparison-slider')
+    ;(root.element as HTMLElement).getBoundingClientRect = () =>
+      ({
+        left: 0,
+        top: 0,
+        width: 100,
+        height: 100,
+        right: 100,
+        bottom: 100,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect
+
+    root.element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
+
+    expect(wrapper.emitted('dragstart')?.[0]).toEqual([50])
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([20])
+
+    window.dispatchEvent(pointer('pointerup', { clientX: 20 }))
     wrapper.unmount()
   })
 

@@ -35,6 +35,16 @@ describe('NumberTicker', () => {
     wrapper.unmount()
   })
 
+  it('exposes optional live-region attributes', () => {
+    const wrapper = mount(NumberTicker, {
+      props: { value: 42, animateOnMount: false, ariaLive: 'polite', ariaAtomic: true },
+    })
+
+    expect(wrapper.attributes('aria-live')).toBe('polite')
+    expect(wrapper.attributes('aria-atomic')).toBe('true')
+    wrapper.unmount()
+  })
+
   it('supports localized digit glyphs', () => {
     const wrapper = mount(NumberTicker, {
       props: {

@@ -29,6 +29,7 @@ import DockDemo from '../demos/dock-demo.vue'
 import IconPickerDemo from '../demos/icon-picker-demo.vue'
 import OrgTreeDemo from '../demos/org-tree-demo.vue'
 import JsonViewerDemo from '../demos/json-viewer-demo.vue'
+import TiptapEditorDemo from '../demos/tiptap-editor-demo.vue'
 import type { ComponentMeta } from './component-meta'
 import { componentCategories, componentMetas, metasByCategory } from './component-meta'
 
@@ -53,6 +54,7 @@ const demos: Record<string, Component> = {
   'slider-captcha': SliderCaptchaDemo,
   'command-menu': CommandMenuDemo,
   cropper: CropperDemo,
+  'tiptap-editor': TiptapEditorDemo,
   'motion-group': MotionGroupDemo,
   gantt: GanttDemo,
   'file-viewer': FileViewerDemo,

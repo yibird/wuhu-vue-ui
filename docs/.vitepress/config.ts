@@ -10,6 +10,7 @@ export default defineConfig({
   description: '为复杂业务而生的 Vue 3 组件库',
   cleanUrls: true,
   lastUpdated: true,
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]],
   markdown: {
     config(md) {
       // @types/markdown-it versions differ between VitePress and the plugin.
@@ -28,6 +29,10 @@ export default defineConfig({
     ],
   },
   themeConfig: {
+    logo: {
+      src: '/logo.svg',
+      alt: 'Wuhu Vue UI',
+    },
     nav: [
       { text: '组件', link: '/components/scrollbar' },
       { text: '指南', link: '/guide/getting-started' },

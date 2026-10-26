@@ -20,6 +20,38 @@
 
 <demo vue="../demos/exception/custom.vue" />
 
+## 全局配置
+
+通过 `setExceptionPresets` 在应用入口集中设置各错误类型的内置标题、描述和图片，无需逐个传入 props。配置会立即作用于已挂载的组件。
+
+```ts
+import { setExceptionPresets } from '@wuhu-vue-ui/exception'
+
+setExceptionPresets({
+  notFound: {
+    image: '/banner/404.png',
+    title: '页面走丢了',
+    description: '地址可能已经变更，试试从首页重新进入。',
+  },
+  serverError: {
+    title: '服务正在维护',
+    description: '我们正在紧急修复，请稍后再试。',
+  },
+})
+```
+
+<demo vue="../demos/exception/global.vue" />
+
+每次调用会替换上一份全局配置，未提供的类型回退到内置预设；传入空对象即可恢复默认。组件 props 与插槽的优先级高于全局配置。
+
+### 全局配置方法
+
+| 方法                  | 类型                                  | 说明                             |
+| --------------------- | ------------------------------------- | -------------------------------- |
+| `setExceptionPresets` | `(presets: ExceptionPresets) => void` | 覆盖各错误类型的图片、标题和描述 |
+
+`ExceptionPresets` 为 `Partial<Record<ExceptionType, ExceptionPreset>>`，其中 `ExceptionPreset` 包含可选的 `image`、`title`、`description`。
+
 ## API
 
 ### Props
@@ -88,6 +120,6 @@
 
 支持的区域：`root`、`media`、`image`、`illustration`、`content`、`title`、`description`、`extra`。
 
-### 导出类型
+### 导出
 
-`ExceptionProps`、`ExceptionSlotProps`、`ExceptionType`、`ExceptionClasses`、`ExceptionStyles`、`ExceptionClassValue`。
+`setExceptionPresets`，以及类型 `ExceptionPreset`、`ExceptionPresets`、`ExceptionProps`、`ExceptionSlotProps`、`ExceptionType`、`ExceptionClasses`、`ExceptionStyles`、`ExceptionClassValue`。

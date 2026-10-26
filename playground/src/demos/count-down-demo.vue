@@ -9,6 +9,8 @@ const duration = 30_000
 const timer = ref<InstanceType<typeof CountDown> | null>(null)
 const slotTimer = ref<InstanceType<typeof CountDown> | null>(null)
 const slotState = ref('已就绪')
+const controlledTimer = ref<InstanceType<typeof CountDown> | null>(null)
+const controlledRemaining = ref(8_000)
 
 const targetLabel = computed(() =>
   new Date(launchTarget).toLocaleString('zh-CN', {
@@ -39,6 +41,11 @@ function startSlotTimer() {
 function resetSlotTimer() {
   slotState.value = '已就绪'
   slotTimer.value?.reset()
+}
+
+function restartControlledTimer() {
+  controlledRemaining.value = 8_000
+  controlledTimer.value?.start()
 }
 </script>
 
@@ -87,6 +94,28 @@ function resetSlotTimer() {
           重置
         </button>
       </div>
+    </DemoCard>
+
+    <DemoCard
+      title="双向绑定剩余时间"
+      description="v-model:remaining 把剩余毫秒交给外部管理，也可以从外部直接改写。"
+    >
+      <CountDown
+        ref="controlledTimer"
+        v-model:remaining="controlledRemaining"
+        :duration="8_000"
+        :interval="100"
+      />
+      <div style="display: flex; gap: 8px; margin-top: 14px">
+        <button
+          type="button"
+          class="button button--ghost button--small"
+          @click="restartControlledTimer"
+        >
+          重置为 8 秒
+        </button>
+      </div>
+      <p class="hint">当前剩余：{{ controlledRemaining }}ms</p>
     </DemoCard>
 
     <DemoCard title="结束文案" description="finishText 在倒计时归零后替代默认格式化文本。">

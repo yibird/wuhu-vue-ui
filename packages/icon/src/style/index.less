@@ -1,3 +1,5 @@
+@import './token.less';
+
 .w-icon {
   display: inline-block;
   flex: none;
@@ -5,7 +7,7 @@
 }
 
 .w-icon--spin {
-  animation: w-icon-spin 1s linear infinite;
+  animation: w-icon-spin var(--w-icon-spin-duration, 1s) linear infinite;
 }
 
 @keyframes w-icon-spin {

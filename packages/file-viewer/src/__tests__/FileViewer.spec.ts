@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, onMounted } from 'vue'
-import { FileViewer } from '../../index'
+import { FileViewer, fileViewerDarkTheme, fileViewerLightTheme } from '../../index'
 
 beforeAll(() => {
   Object.defineProperty(URL, 'createObjectURL', {
@@ -91,6 +91,26 @@ describe('FileViewer', () => {
     expect(dark.classes()).toContain('is-dark')
     expect(dark.attributes('data-w-file-viewer-theme')).toBe('dark')
     dark.unmount()
+  })
+
+  it('publishes complete light and dark token maps', () => {
+    expect(fileViewerLightTheme['--w-file-viewer-surface-active']).toBe('#e2e8f0')
+    expect(fileViewerLightTheme['--w-file-viewer-text-tertiary']).toBe('#5b6678')
+    expect(fileViewerLightTheme['--w-file-viewer-success']).toBe('#047857')
+    expect(fileViewerDarkTheme['--w-file-viewer-text-tertiary']).toBe('#94a3b8')
+    expect(fileViewerDarkTheme['--w-file-viewer-on-primary']).toBe('#0f172a')
+    for (const token of Object.keys(fileViewerLightTheme)) {
+      expect(fileViewerDarkTheme[token], token).toBeTruthy()
+    }
+  })
+
+  it('follows an explicit app data-w-theme when theme is auto', async () => {
+    document.documentElement.setAttribute('data-w-theme', 'dark')
+    const wrapper = mount(FileViewer, { props: { theme: 'auto' } })
+    await flushPromises()
+    expect(wrapper.classes()).toContain('is-dark')
+    wrapper.unmount()
+    document.documentElement.removeAttribute('data-w-theme')
   })
 
   it('shows the empty state without a source', () => {

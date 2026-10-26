@@ -3,6 +3,10 @@ import type { FileViewerResolvedTheme } from '../types'
 /**
  * CSS variables used by the viewer. Every value can be overridden through the
  * `themeVars` prop or by targeting `.w-file-viewer` in your stylesheet.
+ *
+ * Keep these maps in sync with `src/style/token.less`, which owns the runtime
+ * palette. The maps exist so consumers can compute / serialize the same theme
+ * in JavaScript (SSR, `createFileViewerTheme`, `themeVars`).
  */
 export const fileViewerLightTheme: Record<string, string> = {
   '--w-file-viewer-bg': '#f8fafc',
@@ -14,12 +18,13 @@ export const fileViewerLightTheme: Record<string, string> = {
   '--w-file-viewer-border-subtle': '#f1f5f9',
   '--w-file-viewer-text': '#0f172a',
   '--w-file-viewer-text-secondary': '#475569',
-  '--w-file-viewer-text-tertiary': '#64748b',
+  '--w-file-viewer-text-tertiary': '#5b6678',
   '--w-file-viewer-primary': '#4f46e5',
+  '--w-file-viewer-on-primary': '#ffffff',
   '--w-file-viewer-primary-soft': 'rgba(79, 70, 229, 0.1)',
-  '--w-file-viewer-success': '#059669',
-  '--w-file-viewer-warning': '#d97706',
-  '--w-file-viewer-warning-soft': 'rgba(217, 119, 6, 0.12)',
+  '--w-file-viewer-success': '#047857',
+  '--w-file-viewer-warning': '#b45309',
+  '--w-file-viewer-warning-soft': 'rgba(180, 83, 9, 0.12)',
   '--w-file-viewer-danger': '#dc2626',
   '--w-file-viewer-danger-soft': 'rgba(220, 38, 38, 0.1)',
   '--w-file-viewer-content-bg': '#eef2f7',
@@ -29,7 +34,7 @@ export const fileViewerLightTheme: Record<string, string> = {
   '--w-file-viewer-mask': 'rgba(15, 23, 42, 0.46)',
   '--w-file-viewer-code-bg': '#f8fafc',
   '--w-file-viewer-code-text': '#1e293b',
-  '--w-file-viewer-code-gutter': '#94a3b8',
+  '--w-file-viewer-code-gutter': '#5b6678',
   '--w-file-viewer-scrollbar': 'rgba(100, 116, 139, 0.4)',
   '--w-file-viewer-radius': 'var(--w-radius-xl, 16px)',
   '--w-file-viewer-mono':
@@ -51,16 +56,17 @@ export const fileViewerLightTheme: Record<string, string> = {
 
 export const fileViewerDarkTheme: Record<string, string> = {
   '--w-file-viewer-bg': '#080c14',
-  '--w-file-viewer-surface': '#0f172a',
-  '--w-file-viewer-surface-subtle': '#162034',
-  '--w-file-viewer-surface-hover': '#1c2940',
-  '--w-file-viewer-surface-active': '#24344f',
-  '--w-file-viewer-border': '#22304a',
-  '--w-file-viewer-border-subtle': '#1a2539',
+  '--w-file-viewer-surface': '#1e293b',
+  '--w-file-viewer-surface-subtle': '#141d2f',
+  '--w-file-viewer-surface-hover': '#24334d',
+  '--w-file-viewer-surface-active': '#2a3a55',
+  '--w-file-viewer-border': '#2a3a55',
+  '--w-file-viewer-border-subtle': '#1e2c42',
   '--w-file-viewer-text': '#e2e8f0',
   '--w-file-viewer-text-secondary': '#cbd5e1',
   '--w-file-viewer-text-tertiary': '#94a3b8',
   '--w-file-viewer-primary': '#818cf8',
+  '--w-file-viewer-on-primary': '#0f172a',
   '--w-file-viewer-primary-soft': 'rgba(129, 140, 248, 0.16)',
   '--w-file-viewer-success': '#34d399',
   '--w-file-viewer-warning': '#fbbf24',
@@ -74,8 +80,11 @@ export const fileViewerDarkTheme: Record<string, string> = {
   '--w-file-viewer-mask': 'rgba(2, 6, 23, 0.72)',
   '--w-file-viewer-code-bg': '#0b1220',
   '--w-file-viewer-code-text': '#dbe4f0',
-  '--w-file-viewer-code-gutter': '#526079',
+  '--w-file-viewer-code-gutter': '#7c8aa5',
   '--w-file-viewer-scrollbar': 'rgba(148, 163, 184, 0.36)',
+  '--w-file-viewer-radius': 'var(--w-radius-xl, 16px)',
+  '--w-file-viewer-mono':
+    'var(--w-font-family-mono, ui-monospace, SFMono-Regular, Consolas, monospace)',
   '--w-file-viewer-watermark-color': '#e2e8f0',
   '--w-file-viewer-token-comment': '#7c8aa5',
   '--w-file-viewer-token-string': '#5eead4',

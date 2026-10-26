@@ -242,6 +242,23 @@ describe('useCopy', () => {
     expect(loading.value).toBe(false)
   })
 
+  it('reports support only when the Clipboard API or legacy fallback exists', () => {
+    const unsupported = effectScope().run(() => useCopy())!
+    expect(unsupported.isSupported.value).toBe(false)
+
+    mockClipboard(vi.fn().mockResolvedValue(undefined))
+    const secure = effectScope().run(() => useCopy())!
+    expect(secure.isSupported.value).toBe(true)
+
+    Object.defineProperty(window, 'isSecureContext', { configurable: true, value: false })
+    Object.defineProperty(document, 'execCommand', {
+      configurable: true,
+      value: vi.fn(() => true),
+    })
+    const fallback = effectScope().run(() => useCopy())!
+    expect(fallback.isSupported.value).toBe(true)
+  })
+
   it('clears the copied timer on dispose without resetting copied', async () => {
     mockClipboard(vi.fn().mockResolvedValue(undefined))
 

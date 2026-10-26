@@ -12,12 +12,21 @@
   --w-font-size-xs: 12px;
   --w-duration-fast: 120ms;
   --w-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-loading-transition-duration: var(--w-duration-fast, 120ms);
+  --w-loading-bars-duration: 860ms;
+  --w-loading-bars-delay-step: 80ms;
+  --w-loading-beat-duration: 580ms;
+  --w-loading-pulse-duration: 1350ms;
+  --w-loading-pulse-delay-step: 280ms;
+  --w-loading-ring-duration: 780ms;
+  --w-loading-ring-core-duration: 1100ms;
+  --w-loading-spinner-duration: 1100ms;
 }
 
 [data-w-theme='dark'] {
   color-scheme: dark;
   --w-color-primary: #818cf8;
-  --w-color-surface: #0f172a;
+  --w-color-surface: #1e293b;
   --w-color-text: #e2e8f0;
   --w-color-text-secondary: #cbd5e1;
 }
@@ -26,7 +35,7 @@
   :root:not([data-w-theme]) {
     color-scheme: dark;
     --w-color-primary: #818cf8;
-    --w-color-surface: #0f172a;
+    --w-color-surface: #1e293b;
     --w-color-text: #e2e8f0;
     --w-color-text-secondary: #cbd5e1;
   }

@@ -18,9 +18,19 @@ export function useCopy(options: UseCopyOptions = {}) {
   const loading = ref(false)
   const error = ref<Error | null>(null)
 
-  const isSupported = computed(
-    () => typeof navigator !== 'undefined' && typeof document !== 'undefined',
-  )
+  const isSupported = computed(() => {
+    if (typeof navigator === 'undefined' || typeof document === 'undefined') return false
+
+    // The async Clipboard API requires a secure context; otherwise the
+    // legacy `execCommand` fallback is the only option.
+    const canUseAsyncApi =
+      typeof window !== 'undefined' &&
+      Boolean(window.isSecureContext) &&
+      typeof navigator.clipboard?.writeText === 'function'
+    const canUseFallback = typeof document.execCommand === 'function'
+
+    return canUseAsyncApi || canUseFallback
+  })
 
   let timer: ReturnType<typeof setTimeout> | undefined
   let disposed = false

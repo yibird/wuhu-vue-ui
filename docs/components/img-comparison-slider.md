@@ -6,6 +6,8 @@
 
 拖拽、触摸或使用方向键调整分割位置，支持自定义标签。
 
+> 从插槽内的交互元素（`a`、`button`、`input`、`select`、`textarea`、`[role="button"]`、`[contenteditable]`）按下指针时，组件不会移动分割线，也不会抢走焦点；其它需要保留自身指针行为的元素可添加 `data-w-comparison-ignore`。
+
 <demo vue="../demos/img-comparison-slider/horizontal.vue" />
 
 ## 纵向对比
@@ -60,7 +62,7 @@
 | ------------------- | ----------------------------------------- | ------------------------ |
 | `update:modelValue` | `value: number`                           | 位置变化，用于 `v-model` |
 | `change`            | `value: number`                           | 用户交互导致位置变化     |
-| `dragstart`         | `value: number`                           | 开始拖动                 |
+| `dragstart`         | `value: number`                           | 开始拖动，值为位置更新前 |
 | `dragend`           | `value: number`                           | 拖动结束或取消           |
 | `error`             | `side: 'before' \| 'after', event: Event` | 对应图片加载失败         |
 

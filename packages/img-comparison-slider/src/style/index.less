@@ -16,7 +16,7 @@
   --w-img-comparison-slider-line: var(--w-color-surface, #ffffff);
   --w-img-comparison-slider-knob-ring: color-mix(
     in srgb,
-    var(--w-color-surface, #ffffff) 24%,
+    var(--w-color-primary, #4f46e5) 24%,
     transparent
   );
 
@@ -31,7 +31,7 @@
 
   &.is-disabled {
     cursor: default;
-    opacity: 0.7;
+    opacity: var(--w-opacity-disabled, 0.55);
   }
 
   &__layer {
@@ -65,7 +65,7 @@
       background:
         radial-gradient(
           circle at 80% 70%,
-          var(--w-color-info-soft, rgba(2, 132, 199, 0.1)),
+          var(--w-color-info-soft, rgba(3, 105, 161, 0.1)),
           transparent 60%
         ),
         var(--w-color-surface-subtle, #f1f5f9);
@@ -84,7 +84,7 @@
     padding: 4px 10px;
     border: 1px solid var(--w-color-border, #e2e8f0);
     border-radius: var(--w-radius-full, 9999px);
-    background: var(--w-color-tooltip-bg, rgba(15, 23, 42, 0.62));
+    background: var(--w-color-tooltip-bg, rgba(15, 23, 42, 0.94));
     color: var(--w-color-tooltip-text, #ffffff);
     font-family: var(--w-font-family, inherit);
     font-size: var(--w-font-size-xs, 12px);
@@ -188,8 +188,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--w-img-comparison-slider-knob-size, 40px);
-    height: var(--w-img-comparison-slider-knob-size, 40px);
+    width: var(--w-img-comparison-slider-knob-size, 30px);
+    height: var(--w-img-comparison-slider-knob-size, 30px);
     border: 1px solid color-mix(in srgb, var(--w-color-border, #e2e8f0) 72%, transparent);
     border-radius: var(--w-radius-full, 9999px);
     background:

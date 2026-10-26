@@ -19,6 +19,17 @@ const YEAR = 365 * DAY
 const relativeFormatterCache = new Map<string, Intl.RelativeTimeFormat | null>()
 const dateTimeFormatterCache = new Map<string, Intl.DateTimeFormat | null>()
 
+const FORMATTER_CACHE_LIMIT = 50
+
+/**
+ * Evicts the oldest inserted entry instead of clearing the whole cache, so a
+ * hot locale/format combination is not discarded by an unrelated one.
+ */
+function evictOldest<K, V>(cache: Map<K, V>) {
+  const oldest = cache.keys().next().value
+  if (oldest !== undefined) cache.delete(oldest)
+}
+
 export function toDate(value: TimeInput): Date | null {
   if (value === null || value === undefined || value === '') return null
 
@@ -63,7 +74,7 @@ function createFormatter(locale: string, options: RelativeTimeOptions) {
     }
   }
 
-  if (relativeFormatterCache.size > 50) relativeFormatterCache.clear()
+  if (relativeFormatterCache.size >= FORMATTER_CACHE_LIMIT) evictOldest(relativeFormatterCache)
   relativeFormatterCache.set(key, formatter)
   return formatter
 }
@@ -141,7 +152,7 @@ export function formatDateTime(
     } catch {
       formatter = null
     }
-    if (dateTimeFormatterCache.size > 50) dateTimeFormatterCache.clear()
+    if (dateTimeFormatterCache.size >= FORMATTER_CACHE_LIMIT) evictOldest(dateTimeFormatterCache)
     dateTimeFormatterCache.set(key, formatter)
   }
 

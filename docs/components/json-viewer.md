@@ -4,13 +4,13 @@
 
 ## 基础用法
 
-`value` 支持对象、数组或 JSON 字符串；无效的 JSON 字符串会原样展示。
+`value` 支持对象、数组或 JSON 字符串；无效的 JSON 字符串会原样展示，循环引用会显示为可读的 `"[Circular]"` 标记。
 
 <demo vue="../demos/json-viewer/basic.vue" />
 
 ## 自定义配置
 
-支持自定义缩进、高度、主题与 Monaco 选项。即使 `options` 中传入 `readOnly: false`，查看器仍会保持只读。
+支持自定义缩进、高度、主题与 Monaco 选项。即使 `options` 中传入 `readOnly: false`，查看器仍会保持只读。主题默认是 `vs`，不会自动跟随系统深色；深色页面请显式传入 `theme="vs-dark"`。
 
 <demo vue="../demos/json-viewer/advanced.vue" />
 

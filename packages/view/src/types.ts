@@ -9,12 +9,7 @@ export type ViewSize = number | string
  */
 export type ViewDirection = 'vertical' | 'horizontal'
 
-export interface WViewProps extends /* @vue-ignore */ HTMLAttributes {
-  /**
-   * @desc 是否启用内边距，或直接指定内边距大小
-   * @default true
-   */
-  padding?: boolean | string | number
+export interface ViewProps extends /* @vue-ignore */ HTMLAttributes {
   /**
    * @desc 是否占满整个容器
    * @default true
@@ -29,6 +24,13 @@ export interface WViewProps extends /* @vue-ignore */ HTMLAttributes {
    * @default 'vertical'
    */
   direction?: ViewDirection
+}
+
+export interface ViewSlots {
+  /**
+   * @desc 布局内容
+   */
+  default?: () => VNode | VNode[]
 }
 
 export interface ViewCollapsePayload {
@@ -67,7 +69,7 @@ export interface ViewCollapsibleProps {
    */
   collapsed?: boolean
 }
-export interface WViewSiderProps extends /* @vue-ignore */ HTMLAttributes, ViewCollapsibleProps {
+export interface ViewSiderProps extends /* @vue-ignore */ HTMLAttributes, ViewCollapsibleProps {
   /**
    * @desc 展开状态下的宽度
    * @default 240
@@ -80,19 +82,19 @@ export interface WViewSiderProps extends /* @vue-ignore */ HTMLAttributes, ViewC
   collapsedWidth?: ViewSize
 }
 
-export interface WViewHeaderProps extends /* @vue-ignore */ HTMLAttributes, ViewCollapsibleProps {}
+export interface ViewHeaderProps extends /* @vue-ignore */ HTMLAttributes, ViewCollapsibleProps {}
 
 /**
  * ViewContent 属性类型，继承原生 HTML 属性
  */
-export type WViewContentProps = HTMLAttributes
+export type ViewContentProps = HTMLAttributes
 
 /**
  * ViewFooter 属性类型，继承原生 HTML 属性
  */
-export type WViewFooterProps = HTMLAttributes
+export type ViewFooterProps = HTMLAttributes
 
-export interface WViewSiderSlots {
+export interface ViewSiderSlots {
   /**
    * @desc 侧栏内容
    */
@@ -103,7 +105,7 @@ export interface WViewSiderSlots {
   trigger?: (props: ViewCollapsePayload) => VNode | VNode[]
 }
 
-export interface WViewHeaderSlots {
+export interface ViewHeaderSlots {
   /**
    * @desc 头部内容
    */

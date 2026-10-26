@@ -141,6 +141,11 @@ onBeforeUnmount(() => {
   </div>
   <div v-else ref="viewport" class="w-file-viewer__pptx-viewport">
     <div v-if="currentSlide" class="w-file-viewer__pptx-stage" :style="stageStyle">
+      <!--
+        Controlled v-html exception: slide markup is assembled by core/pptx.ts
+        and core/odf.ts only, with escapeHtml / escapeAttribute / sanitizeUrl
+        applied to every text and URL. No authored markup is injected as-is.
+      -->
       <div class="w-file-viewer__pptx-slide" :style="slideStyle" v-html="currentSlide.html" />
     </div>
   </div>

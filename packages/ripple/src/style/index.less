@@ -1,3 +1,9 @@
+/* Applied by the directive to arbitrary hosts. It only provides what the
+ * directive itself needs, so consumer layout is not changed. */
+.w-ripple-host {
+  overflow: hidden;
+}
+
 .w-ripple {
   position: relative;
   display: inline-flex;
@@ -36,7 +42,8 @@
   }
 
   /* Keep a subtle press affordance when the wave is disabled. */
-  .w-ripple:active {
+  .w-ripple:active,
+  .w-ripple-host:active {
     background-color: color-mix(in srgb, currentcolor 8%, transparent);
   }
 }

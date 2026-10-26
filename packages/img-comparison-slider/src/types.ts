@@ -35,6 +35,12 @@ export interface ImgComparisonSliderStyles {
   knob?: StyleValue
 }
 
+/**
+ * Pointer gestures that start inside `before` / `after` slot content are
+ * ignored when the target matches `a`, `button`, `input`, `select`, `textarea`,
+ * `[role="button"]` or `[contenteditable]`. Add `data-w-comparison-ignore` to
+ * any other element that should keep its own pointer behavior and focus.
+ */
 export interface ImgComparisonSliderProps {
   /** Accessible name of the slider. Defaults to `图片对比滑块`. */
   ariaLabel?: string

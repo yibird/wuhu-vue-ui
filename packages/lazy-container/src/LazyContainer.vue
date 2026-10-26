@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   computed,
-  nextTick,
   onBeforeUnmount,
   onMounted,
   readonly,
@@ -23,7 +22,6 @@ const props = withDefaults(defineProps<LazyContainerProps>(), {
   rootMargin: '0px',
   threshold: 0,
   once: false,
-  tag: 'div',
 })
 
 const emit = defineEmits<{
@@ -42,7 +40,6 @@ const isVisible = ref(false)
 const hasEntered = ref(false)
 const entry = shallowRef<IntersectionObserverEntry | null>(null)
 let observer: IntersectionObserver | undefined
-let mounted = false
 
 const shouldRender = computed(() => hasEntered.value)
 
@@ -109,28 +106,22 @@ function observe() {
   observer.observe(rootRef.value)
 }
 
-watch(
-  () => [props.root, props.rootMargin, props.threshold, props.once],
-  () => observe(),
-)
+/** Compare threshold arrays by value so a new but equal array is a no-op. */
+function serializeThreshold(value: number | number[]): string {
+  return Array.isArray(value) ? value.join(',') : String(value)
+}
 
-watch(
-  () => props.tag,
-  () => {
-    if (!mounted) return
-    nextTick(() => {
-      if (mounted) observe()
-    })
-  },
-)
+const thresholdKey = computed(() => serializeThreshold(props.threshold))
+
+// `once` is read inside handleIntersection, so it does not need to rebuild the
+// observer when it changes.
+watch([() => props.root, () => props.rootMargin, thresholdKey], () => observe())
 
 onMounted(() => {
-  mounted = true
   observe()
 })
 
 onBeforeUnmount(() => {
-  mounted = false
   disconnect()
 })
 
@@ -152,10 +143,10 @@ defineExpose<LazyContainerExpose>({
 </script>
 
 <template>
-  <component :is="tag" ref="rootRef" class="w-lazy-container">
+  <div ref="rootRef" class="w-lazy-container">
     <slot v-if="shouldRender" v-bind="slotProps" />
     <slot v-else name="placeholder" v-bind="slotProps">
       <span class="w-lazy-container__placeholder" aria-hidden="true" />
     </slot>
-  </component>
+  </div>
 </template>

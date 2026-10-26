@@ -42,18 +42,20 @@
 
 ### Props
 
-| 属性             | 类型      | 默认值                             | 说明                                         |
-| ---------------- | --------- | ---------------------------------- | -------------------------------------------- |
-| `value`          | `number`  | —（必填）                          | 目标数值                                     |
-| `startValue`     | `number`  | `0`                                | 挂载时数字滚动的起始值                       |
-| `duration`       | `number`  | `800`                              | 滚动动画时长（ms）                           |
-| `decimals`       | `number`  | `0`                                | 小数位数（0–20）                             |
-| `locale`         | `string`  | `'zh-CN'`                          | 数字格式化区域                               |
-| `useGrouping`    | `boolean` | `true`                             | 是否启用千分位分隔                           |
-| `prefix`         | `string`  | `''`                               | 数值前缀                                     |
-| `suffix`         | `string`  | `''`                               | 数值后缀                                     |
-| `easing`         | `string`  | `'cubic-bezier(0.22, 1, 0.36, 1)'` | CSS 缓动函数                                 |
-| `animateOnMount` | `boolean` | `true`                             | 首次挂载时是否从 `startValue` 动画到 `value` |
+| 属性             | 类型                               | 默认值                             | 说明                                         |
+| ---------------- | ---------------------------------- | ---------------------------------- | -------------------------------------------- |
+| `value`          | `number`                           | —（必填）                          | 目标数值                                     |
+| `startValue`     | `number`                           | `0`                                | 挂载时数字滚动的起始值                       |
+| `duration`       | `number`                           | `800`                              | 滚动动画时长（ms）                           |
+| `decimals`       | `number`                           | `0`                                | 小数位数（0–20）                             |
+| `locale`         | `string`                           | `'zh-CN'`                          | 数字格式化区域                               |
+| `useGrouping`    | `boolean`                          | `true`                             | 是否启用千分位分隔                           |
+| `prefix`         | `string`                           | `''`                               | 数值前缀                                     |
+| `suffix`         | `string`                           | `''`                               | 数值后缀                                     |
+| `easing`         | `string`                           | `'cubic-bezier(0.22, 1, 0.36, 1)'` | CSS 缓动函数                                 |
+| `animateOnMount` | `boolean`                          | `true`                             | 首次挂载时是否从 `startValue` 动画到 `value` |
+| `ariaLive`       | `'off' \| 'polite' \| 'assertive'` | —                                  | 可选：让无障碍标签作为实时区域播报           |
+| `ariaAtomic`     | `boolean`                          | —                                  | 可选：实时区域是否整段播报                   |
 
 ### Emits
 

@@ -131,27 +131,21 @@ describe('Copy', () => {
     wrapper.unmount()
   })
 
-  it('activates the icon trigger with the keyboard', async () => {
-    mockClipboard()
-    writeText.mockResolvedValue(undefined)
-
-    const wrapper = mount(Copy, { props: { text: () => 'keyboard-copy' } })
+  it('renders the icon trigger as a native, labelled button', () => {
+    const wrapper = mount(Copy, { props: { text: () => 'native-copy' } })
     const trigger = wrapper.get('.w-copy__trigger')
 
-    expect(trigger.attributes('role')).toBe('button')
-    expect(trigger.attributes('tabindex')).toBe('0')
-
-    await trigger.trigger('keydown', { key: 'Enter' })
-    await flushPromises()
-
-    expect(writeText).toHaveBeenCalledWith('keyboard-copy')
+    expect(trigger.element.tagName).toBe('BUTTON')
+    expect(trigger.attributes('type')).toBe('button')
+    expect(trigger.attributes('aria-label')).toBe('复制')
     wrapper.unmount()
   })
 
   it('disables the icon trigger', () => {
     const wrapper = mount(Copy, { props: { text: () => 'disabled', disabled: true } })
+    const trigger = wrapper.get('.w-copy__trigger')
 
-    expect(wrapper.get('.w-copy__trigger').attributes('aria-disabled')).toBe('true')
+    expect((trigger.element as HTMLButtonElement).disabled).toBe(true)
     wrapper.unmount()
   })
 
@@ -208,8 +202,28 @@ describe('Copy', () => {
     expect(wrapper.emitted('error')).toHaveLength(1)
     expect(wrapper.classes()).not.toContain('is-copied')
     expect(wrapper.text()).not.toContain('已复制')
-    expect(wrapper.get('.w-copy__live').text()).toBe('')
+    expect(wrapper.get('.w-copy__live').text()).toBe('复制失败')
     wrapper.unmount()
+  })
+
+  it('announces clipboard failures in the live region', async () => {
+    mockClipboard()
+    writeText.mockRejectedValue(new Error('denied'))
+    Object.defineProperty(document, 'execCommand', {
+      configurable: true,
+      value: vi.fn(() => false),
+    })
+
+    const wrapper = mount(Copy, { props: { text: () => 'cannot-copy' } })
+
+    await wrapper.get('.w-copy__trigger').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.emitted('error')).toHaveLength(1)
+    expect(wrapper.get('.w-copy__live').text()).toBe('复制失败')
+
+    wrapper.unmount()
+    Reflect.deleteProperty(document, 'execCommand')
   })
 
   it('reset cancels a pending async text function', async () => {
@@ -234,13 +248,13 @@ describe('Copy', () => {
     await flushPromises()
 
     expect(vm.loading).toBe(true)
-    expect(wrapper.get('.w-copy__trigger').attributes('aria-disabled')).toBe('true')
+    expect((wrapper.get('.w-copy__trigger').element as HTMLButtonElement).disabled).toBe(true)
 
     vm.reset()
     await nextTick()
 
     expect(vm.loading).toBe(false)
-    expect(wrapper.get('.w-copy__trigger').attributes('aria-disabled')).toBeUndefined()
+    expect((wrapper.get('.w-copy__trigger').element as HTMLButtonElement).disabled).toBe(false)
 
     resolveText('late value')
     await pending

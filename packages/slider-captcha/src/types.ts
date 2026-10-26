@@ -43,8 +43,12 @@ export interface SliderCaptchaTarget {
 }
 
 export interface SliderCaptchaProps {
-  /** Background image URL. When omitted, a generated gradient artwork is used. */
-  src?: string
+  /**
+   * Background image URL, or a list of URLs. When a list is provided, every
+   * refresh switches to a different image. When omitted, a generated gradient
+   * artwork is used.
+   */
+  src?: string | string[]
   /** Captcha image width in pixels. */
   width?: number
   /** Captcha image height in pixels. */

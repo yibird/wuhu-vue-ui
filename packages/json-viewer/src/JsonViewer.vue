@@ -7,7 +7,7 @@ import type {
   CodeEditorProps,
 } from '@wuhu-vue-ui/code-editor'
 import { formatJsonValue } from './json'
-import type { JsonViewerErrorSlotProps, JsonViewerProps } from './types'
+import type { JsonViewerErrorSlotProps, JsonViewerExpose, JsonViewerProps } from './types'
 
 defineOptions({
   name: 'WJsonViewer',
@@ -70,15 +70,16 @@ function layout() {
 }
 
 function getValue() {
-  const editor = viewerRef.value?.getEditor()
-  return editor ? (viewerRef.value?.getValue() ?? formatted.value) : formatted.value
+  const viewer = viewerRef.value
+  if (!viewer?.getEditor()) return formatted.value
+  return viewer.getValue() ?? formatted.value
 }
 
 function getFormattedValue() {
   return formatted.value
 }
 
-defineExpose({
+defineExpose<JsonViewerExpose>({
   getEditor,
   focus,
   layout,

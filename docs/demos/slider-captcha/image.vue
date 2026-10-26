@@ -7,6 +7,12 @@ import type { SliderCaptchaFailEvent, SliderCaptchaSuccessEvent } from '@wuhu-vu
 const captcha = ref<{ refresh: () => void } | null>(null)
 const logs = ref<string[]>([])
 
+const sources = [
+  'https://picsum.photos/seed/aurora/720/360',
+  'https://picsum.photos/seed/sunset/720/360',
+  'https://picsum.photos/seed/lagoon/720/360',
+]
+
 function push(message: string) {
   logs.value = [message, ...logs.value].slice(0, 4)
 }
@@ -28,7 +34,7 @@ function handleRefresh() {
 <template>
   <SliderCaptcha
     ref="captcha"
-    src="/samples/banner.png"
+    :src="sources"
     :width="360"
     :height="180"
     :piece-size="52"
@@ -40,7 +46,7 @@ function handleRefresh() {
 
   <div class="command-demo__row slider-captcha-demo__actions">
     <Button @click="handleRefresh">换一张</Button>
-    <span class="hint">自定义背景图、尺寸与容差</span>
+    <span class="hint">每次刷新会轮换一张背景图，并重新生成缺口位置</span>
   </div>
 
   <div class="event-log">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { WView, WViewContent, WViewSider } from '@wuhu-vue-ui/view'
+import { View, ViewContent, ViewSider } from '@wuhu-vue-ui/view'
 
 const collapsed = ref(false)
 const items = ['概览', '成员', '权限', '通知', '审计日志']
@@ -9,12 +9,13 @@ const active = ref('概览')
 
 <template>
   <div class="view-demo">
-    <WView :full="false" :padding="false" direction="horizontal" gap="0">
-      <WViewSider
+    <View :full="false" direction="horizontal" gap="0">
+      <ViewSider
         v-model:collapsed="collapsed"
         collapsible
         :width="180"
         :collapsed-width="0"
+        :style="{ borderWidth: collapsed ? 0 : '1px' }"
         class="view-demo__sider"
       >
         <nav class="view-demo__nav">
@@ -28,30 +29,33 @@ const active = ref('概览')
             {{ item }}
           </button>
         </nav>
-      </WViewSider>
+      </ViewSider>
 
-      <WViewContent>
+      <ViewContent style="background-color: #eee">
         <section class="view-demo__panel">
           <h3>{{ active }}</h3>
           <p>
             Sider 支持 collapsible、自定义宽度与收起宽度；横向布局通过 direction="horizontal" 实现。
           </p>
         </section>
-      </WViewContent>
-    </WView>
+      </ViewContent>
+    </View>
   </div>
 </template>
 
 <style scoped>
 .view-demo {
   height: 320px;
-  overflow: hidden;
+  padding: 20px;
+  overflow: visible;
   border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-lg, 12px);
   background: var(--w-color-surface-subtle, #f8fafc);
 }
 
 .view-demo__sider {
+  position: relative;
+  z-index: 2;
   border-right: 1px solid var(--w-color-border, #e2e8f0);
   background: var(--w-color-surface, #fff);
 }

@@ -44,7 +44,7 @@ import { vRipple } from '@wuhu-vue-ui/ripple'
 
 ## 任意容器
 
-指令挂载时保存元素原有的 `position` / `overflow` 并设置为 `relative` / `hidden`，卸载时恢复。
+指令只添加 `.w-ripple-host` 类（负责 `overflow: hidden` 裁剪），并在元素计算定位为 `static` 时临时写入 `position: relative`；已有的 `absolute`、`fixed`、`sticky` 定位不会被覆盖。卸载时会移除类和临时定位，恢复元素原样。
 
 <demo vue="../demos/ripple/container.vue" />
 
@@ -104,9 +104,10 @@ function handlePointerDown(event: PointerEvent) {
 
 ### 类名
 
-| 类名              | 说明         |
-| ----------------- | ------------ |
-| `.w-ripple`       | 根元素       |
-| `.w-ripple__wave` | 单个波纹节点 |
+| 类名              | 说明                           |
+| ----------------- | ------------------------------ |
+| `.w-ripple`       | `Ripple` 组件根元素            |
+| `.w-ripple-host`  | 指令添加到宿主元素上的裁剪类   |
+| `.w-ripple__wave` | 单个波纹节点（组件与指令共用） |
 
 动画关键帧为 `w-ripple-spread`。当用户开启 `prefers-reduced-motion` 时，动画会被压缩到极短时长。

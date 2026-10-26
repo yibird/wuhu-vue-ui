@@ -116,11 +116,25 @@ const { visible, open, close, toggle } = useLoading()
 
 ### CSS 变量
 
-| 变量                  | 默认值                    | 说明                       |
-| --------------------- | ------------------------- | -------------------------- |
-| `--w-loading-primary` | `var(--w-color-primary)`  | 动画颜色                   |
-| `--w-loading-size`    | `40px`                    | 动画尺寸                   |
-| `--w-loading-radius`  | `var(--w-radius-md, 8px)` | beat 动画圆角              |
-| `--w-loading-mask`    | `var(--w-color-surface)`  | 全屏遮罩背景色（默认白色） |
+| 变量                  | 默认值                    | 说明                             |
+| --------------------- | ------------------------- | -------------------------------- |
+| `--w-loading-primary` | `var(--w-color-primary)`  | 动画颜色                         |
+| `--w-loading-size`    | `40px`                    | 动画尺寸                         |
+| `--w-loading-radius`  | `var(--w-radius-md, 8px)` | beat 动画圆角                    |
+| `--w-loading-mask`    | `var(--w-color-surface)`  | 全屏遮罩背景色（跟随主题表面色） |
+
+动画时长与延迟也可通过令牌统一调整：
+
+| 变量                              | 默认值   | 说明                   |
+| --------------------------------- | -------- | ---------------------- |
+| `--w-loading-transition-duration` | `120ms`  | 淡入淡出过渡时长       |
+| `--w-loading-bars-duration`       | `860ms`  | bars 单次跳动时长      |
+| `--w-loading-bars-delay-step`     | `80ms`   | bars 相邻柱体延迟步长  |
+| `--w-loading-beat-duration`       | `580ms`  | beat 跳动时长          |
+| `--w-loading-pulse-duration`      | `1350ms` | pulse 单次扩散时长     |
+| `--w-loading-pulse-delay-step`    | `280ms`  | pulse 相邻圆环延迟步长 |
+| `--w-loading-ring-duration`       | `780ms`  | ring 旋转一周时长      |
+| `--w-loading-ring-core-duration`  | `1100ms` | ring 中心脉冲时长      |
+| `--w-loading-spinner-duration`    | `1100ms` | spinner 旋转一周时长   |
 
 组件会自动遵循 `prefers-reduced-motion: reduce`，关闭持续动画。

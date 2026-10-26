@@ -2,6 +2,12 @@
 
 基于 Cropper.js 封装，支持拖拽、缩放、旋转、比例锁定与画布导出。
 
+## 内置操作栏
+
+默认显示内置操作栏，提供缩小、放大、向左旋转、向右旋转与重置。`rotatable`、`scalable` 或 `disabled` 会同步禁用对应按钮；设置 `showActionBar=false` 可隐藏，需要完全自定义时使用默认插槽。
+
+<demo vue="../demos/cropper/action-bar.vue" />
+
 ## 交互式裁剪与导出
 
 支持拖拽、缩放、旋转、比例锁定与键盘微调，导出结果实时预览。
@@ -42,23 +48,24 @@
 
 ### Props
 
-| 属性              | 类型                                     | 默认值              | 说明                    |
-| ----------------- | ---------------------------------------- | ------------------- | ----------------------- |
-| `src`             | `string`                                 | —（必填）           | 待裁剪图片 URL          |
-| `alt`             | `string`                                 | `'Image to crop'`   | 图片替代文本            |
-| `height`          | `string \| number`                       | `360`               | 容器高度                |
-| `aspectRatio`     | `number`                                 | —                   | 锁定选区宽高比          |
-| `initialCoverage` | `number`                                 | `0.5`               | 初始选区覆盖比例（0–1） |
-| `rotatable`       | `boolean`                                | `true`              | 允许旋转                |
-| `scalable`        | `boolean`                                | `true`              | 允许缩放图片            |
-| `translatable`    | `boolean`                                | `true`              | 允许拖拽图片            |
-| `movable`         | `boolean`                                | `true`              | 允许移动选区            |
-| `resizable`       | `boolean`                                | `true`              | 允许调整选区大小        |
-| `zoomable`        | `boolean`                                | `true`              | 允许滚轮缩放            |
-| `keyboard`        | `boolean`                                | `true`              | 允许方向键微调          |
-| `disabled`        | `boolean`                                | `false`             | 禁用全部交互            |
-| `crossOrigin`     | `'' \| 'anonymous' \| 'use-credentials'` | `''`                | 图片 `crossorigin` 属性 |
-| `template`        | `string`                                 | Cropper.js 默认模板 | 自定义 Cropper 模板     |
+| 属性              | 类型                                     | 默认值              | 说明                                           |
+| ----------------- | ---------------------------------------- | ------------------- | ---------------------------------------------- |
+| `src`             | `string`                                 | —（必填）           | 待裁剪图片 URL                                 |
+| `alt`             | `string`                                 | `'Image to crop'`   | 图片替代文本                                   |
+| `height`          | `string \| number`                       | `360`               | 容器高度                                       |
+| `aspectRatio`     | `number`                                 | —                   | 锁定选区宽高比                                 |
+| `initialCoverage` | `number`                                 | `0.5`               | 选区覆盖比例（0–1），变化时重置选区            |
+| `rotatable`       | `boolean`                                | `true`              | 允许旋转                                       |
+| `scalable`        | `boolean`                                | `true`              | 允许缩放图片                                   |
+| `translatable`    | `boolean`                                | `true`              | 允许拖拽图片                                   |
+| `movable`         | `boolean`                                | `true`              | 允许移动选区                                   |
+| `resizable`       | `boolean`                                | `true`              | 允许调整选区大小                               |
+| `zoomable`        | `boolean`                                | `true`              | 允许滚轮缩放                                   |
+| `keyboard`        | `boolean`                                | `true`              | 允许方向键微调                                 |
+| `disabled`        | `boolean`                                | `false`             | 禁用全部交互                                   |
+| `showActionBar`   | `boolean`                                | `true`              | 显示内置操作栏                                 |
+| `crossOrigin`     | `'' \| 'anonymous' \| 'use-credentials'` | `''`                | 图片 `crossorigin` 属性                        |
+| `unsafeTemplate`  | `string`                                 | Cropper.js 默认模板 | 自定义 Cropper 模板（可信 HTML，勿传用户输入） |
 
 ### Emits
 
@@ -96,10 +103,10 @@
 
 ### CSS 变量
 
-| 变量                 | 默认值                     | 说明                             |
-| -------------------- | -------------------------- | -------------------------------- |
-| `--w-cropper-height` | `360px`                    | 容器高度（由 `height` 内联注入） |
-| `--w-cropper-radius` | `var(--w-radius-lg, 12px)` | 容器圆角                         |
+| 变量                 | 默认值  | 说明                             |
+| -------------------- | ------- | -------------------------------- |
+| `--w-cropper-height` | `360px` | 容器高度（由 `height` 内联注入） |
+| `--w-cropper-radius` | `12px`  | 容器圆角                         |
 
 ### 类名
 
@@ -107,4 +114,6 @@
 | ----------------------------- | --------------------------------------------------- |
 | `.w-cropper`                  | 根容器（可聚焦），配合 `.is-ready` / `.is-disabled` |
 | `.w-cropper__source`          | 隐藏的原始图片                                      |
+| `.w-cropper__action-bar`      | 内置操作栏（`role="toolbar"`）                      |
+| `.w-cropper__action`          | 操作栏按钮                                          |
 | `.w-cropper > cropper-canvas` | Cropper.js 画布                                     |

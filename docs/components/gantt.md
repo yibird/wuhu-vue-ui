@@ -16,9 +16,13 @@
 
 ## 右键菜单
 
-在任务行或任务条上点击右键打开菜单。`contextMenuItems` 支持静态数组或按任务动态生成；选择后触发 `context-menu-select`，也可以用 `#context-menu` 插槽完全自定义菜单内容。
+在任务行或任务条上点击右键打开菜单。`contextMenuItems` 支持静态数组或按任务动态生成；选择后触发 `context-menu-select`，也可以用 `#context-menu` 插槽完全自定义菜单内容。菜单会 Teleport 到 `body`，避免祖先元素的 `transform` 裁切。
 
 <demo vue="../demos/gantt/context-menu.vue" />
+
+## 键盘可达性
+
+任务条采用 roving tabindex：只有当前（或首个）任务条可通过 Tab 聚焦，避免长列表产生大量 Tab 停靠点。聚焦后可用 `ArrowUp` / `ArrowDown` 切换任务行，`Home` / `End` 跳到首尾，`ArrowLeft` / `ArrowRight` 移动排期（配合 Shift/Alt 调整起止），`Enter` / `Space` 选中任务。
 
 ## 只读月视图
 
@@ -109,7 +113,7 @@
 | `--w-gantt-grid-line`                       | `var(--w-color-border-subtle, #f1f5f9)`              | 网格线     |
 | `--w-gantt-weekend-bg`                      | `var(--w-color-weekend, rgba(100, 116, 139, 0.045))` | 周末背景   |
 | `--w-gantt-header-bg`                       | `var(--w-color-surface, #ffffff)`                    | 表头背景   |
-| `--w-gantt-dependency-color`                | `var(--w-color-text-tertiary, #94a3b8)`              | 依赖线颜色 |
+| `--w-gantt-dependency-color`                | `var(--w-color-text-tertiary, #5b6678)`              | 依赖线颜色 |
 | `--w-gantt-task-color`                      | `var(--w-color-primary, #4f46e5)`                    | 任务主色   |
 | `--w-gantt-task-soft`                       | 由任务色计算的浅色底                                 | 任务条背景 |
 | `--w-gantt-task-border`                     | 由任务色计算的边框色                                 | 任务条边框 |

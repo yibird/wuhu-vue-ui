@@ -112,7 +112,19 @@ const showInfo = ref(false)
 const isFullscreen = ref(false)
 const pseudoFullscreen = ref(false)
 const systemDark = useMediaQuery('(prefers-color-scheme: dark)')
+const appTheme = ref<FileViewerResolvedTheme | null>(readAppTheme())
 const themeOverride = ref<FileViewerResolvedTheme | null>(null)
+let themeObserver: MutationObserver | undefined
+
+/** Read an explicit app-level `data-w-theme` so `theme="auto"` can follow it. */
+function readAppTheme(): FileViewerResolvedTheme | null {
+  if (typeof document === 'undefined') return null
+  const value =
+    document.documentElement.getAttribute('data-w-theme') ??
+    document.body?.getAttribute('data-w-theme') ??
+    null
+  return value === 'light' || value === 'dark' ? value : null
+}
 const notice = ref<{ text: string; error: boolean } | null>(null)
 const noticeTimeout = useTimeoutFn(() => {
   notice.value = null
@@ -134,6 +146,7 @@ const messages = computed(() => resolveFileViewerMessages(props.locale, props.me
 const resolvedTheme = computed<FileViewerResolvedTheme>(() => {
   if (themeOverride.value) return themeOverride.value
   if (props.theme === 'light' || props.theme === 'dark') return props.theme
+  if (appTheme.value) return appTheme.value
   return systemDark.value ? 'dark' : 'light'
 })
 
@@ -709,12 +722,24 @@ onErrorCaptured((cause) => {
 onMounted(() => {
   if (typeof document !== 'undefined') {
     document.addEventListener('fullscreenchange', onFullscreenChange)
+    appTheme.value = readAppTheme()
+    if (typeof MutationObserver !== 'undefined') {
+      themeObserver = new MutationObserver(() => {
+        appTheme.value = readAppTheme()
+      })
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-w-theme'],
+        subtree: true,
+      })
+    }
   }
 })
 
 onBeforeUnmount(() => {
   loadToken += 1
   sizeToken += 1
+  themeObserver?.disconnect()
   if (typeof document !== 'undefined') {
     document.removeEventListener('fullscreenchange', onFullscreenChange)
   }

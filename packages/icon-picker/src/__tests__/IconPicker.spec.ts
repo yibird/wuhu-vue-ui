@@ -57,6 +57,8 @@ describe('IconPicker', () => {
     expect(wrapper.text()).toContain('图标库')
     expect(wrapper.text()).toContain('按用途浏览')
     expect(wrapper.find('.w-icon-picker__search input').exists()).toBe(true)
+    expect(groupButtons[0]?.attributes('aria-pressed')).toBe('true')
+    expect(groupButtons[1]?.attributes('aria-pressed')).toBe('false')
 
     wrapper.unmount()
   })
@@ -90,6 +92,7 @@ describe('IconPicker', () => {
 
     expect(wrapper.get('.w-icon-picker__head-title').text()).toBe('文件')
     expect(wrapper.get('.w-icon-picker__head-count').text()).toBe('8 个')
+    expect(fileGroup!.attributes('aria-pressed')).toBe('true')
 
     wrapper.unmount()
   })
@@ -168,6 +171,7 @@ describe('IconPicker', () => {
     const wrapper = mountPicker({ items: [groups[2]!] })
 
     expect(wrapper.find('.w-icon-picker__item .vnode-icon').exists()).toBe(true)
+    expect(wrapper.get('.w-icon-picker__item .vnode-icon').attributes('aria-hidden')).toBe('true')
     expect(wrapper.get('.w-icon-picker__item').attributes('title')).toBe('Star Node')
 
     wrapper.unmount()

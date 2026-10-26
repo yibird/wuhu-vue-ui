@@ -167,6 +167,24 @@ const tabbableKey = computed(() => {
   return items[0]?.key ?? null
 })
 
+/**
+ * The virtualizer renders rows after the scroll position settles, so a single
+ * tick is not enough when the target row was outside the viewport. Poll a few
+ * frames for the node before giving up.
+ */
+async function waitForItemNode(key: string): Promise<HTMLElement | null> {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    const nodes = scrollRef.value?.querySelectorAll<HTMLElement>('.w-icon-picker__item')
+    const node = nodes ? Array.from(nodes).find((element) => element.dataset.key === key) : null
+    if (node) return node
+
+    await nextTick()
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+  }
+
+  return null
+}
+
 async function focusItemAt(index: number): Promise<void> {
   const items = filteredItems.value
   const target = items[Math.min(Math.max(index, 0), items.length - 1)]
@@ -174,12 +192,8 @@ async function focusItemAt(index: number): Promise<void> {
 
   focusedKey.value = target.key
   rowVirtualizer.value.scrollToIndex(Math.floor(Math.min(index, items.length - 1) / columns.value))
-  await nextTick()
 
-  const nodes = scrollRef.value?.querySelectorAll<HTMLElement>('.w-icon-picker__item')
-  const node = nodes
-    ? Array.from(nodes).find((element) => element.dataset.key === target.key)
-    : null
+  const node = await waitForItemNode(target.key)
   node?.focus({ preventScroll: true })
 }
 
@@ -258,7 +272,7 @@ onBeforeUnmount(() => {
     :aria-label="ariaLabel"
   >
     <div v-if="showSearch" class="w-icon-picker__toolbar">
-      <label v-if="showSearch" class="w-icon-picker__search">
+      <div v-if="showSearch" class="w-icon-picker__search">
         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <circle cx="8.75" cy="8.75" r="5.25" stroke="currentColor" stroke-width="1.6" />
           <path
@@ -293,7 +307,7 @@ onBeforeUnmount(() => {
             />
           </svg>
         </button>
-      </label>
+      </div>
     </div>
 
     <div class="w-icon-picker__body">
@@ -308,6 +322,7 @@ onBeforeUnmount(() => {
             type="button"
             class="w-icon-picker__group"
             :class="{ 'is-active': activeGroupKey === null }"
+            :aria-pressed="activeGroupKey === null"
             @click="selectGroup(null)"
           >
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -328,6 +343,7 @@ onBeforeUnmount(() => {
             type="button"
             class="w-icon-picker__group"
             :class="{ 'is-active': activeGroupKey === group.key }"
+            :aria-pressed="activeGroupKey === group.key"
             @click="selectGroup(group.key)"
           >
             <span class="w-icon-picker__group-dot" aria-hidden="true" />

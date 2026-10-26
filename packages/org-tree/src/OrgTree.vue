@@ -31,7 +31,14 @@ import type {
   OrgTreeReparentEvent,
   OrgTreeZoomEvent,
 } from './types'
-import { isOrgTreeNode, nodeChildren, nodeId, nodeKey, normalizeKeys } from './utils'
+import {
+  isUsableOrgTreeNode,
+  nodeChildren,
+  nodeId,
+  nodeKey,
+  normalizeKeys,
+  orgTreeIdKey,
+} from './utils'
 
 defineOptions({
   name: 'WOrgTree',
@@ -137,6 +144,7 @@ const translate = reactive({ x: props.defaultOffset.x ?? 0, y: props.defaultOffs
 const isPanning = ref(false)
 const draggingKey = ref<string | null>(null)
 const dropKey = ref<string | null>(null)
+const focusedKey = ref<string | null>(null)
 
 let pointerState: PointerState | null = null
 let lastDragAt = 0
@@ -144,11 +152,14 @@ let dragRequest = 0
 
 const menu = ref<MenuState>({ visible: false, x: 0, y: 0, node: null })
 const menuRef = ref<HTMLElement | null>(null)
+const menuTriggerKey = ref<string | null>(null)
 
 const rawRootNodes = computed<OrgTreeNode[]>(() => {
   void dataVersion.value
-  if (Array.isArray(props.data)) return props.data.filter(isOrgTreeNode)
-  return isOrgTreeNode(props.data) ? [props.data] : []
+  if (Array.isArray(props.data)) {
+    return props.data.filter((node) => isUsableOrgTreeNode(node, keys.value))
+  }
+  return isUsableOrgTreeNode(props.data, keys.value) ? [props.data] : []
 })
 
 const indexState = computed(() => {
@@ -161,7 +172,7 @@ const indexState = computed(() => {
 
   function walk(nodes: OrgTreeNode[], depth: number, parent: OrgTreeNode | null) {
     for (const node of nodes) {
-      if (!isOrgTreeNode(node)) continue
+      if (!isUsableOrgTreeNode(node, keys.value)) continue
       const key = nodeKey(node, keys.value)
       if (seen.has(key)) {
         duplicates.add(node)
@@ -209,6 +220,13 @@ const visibleEntries = computed<NodeEntry[]>(() => {
   return result
 })
 
+/** Roving tabindex: only the current (or first visible) node is a tab stop. */
+const tabStopKey = computed(() => {
+  const key = focusedKey.value
+  if (key && visibleEntries.value.some((entry) => entry.key === key)) return key
+  return visibleEntries.value[0]?.key ?? null
+})
+
 /* ------------------------------------------------------------------ */
 /* Expansion                                                           */
 /* ------------------------------------------------------------------ */
@@ -217,7 +235,7 @@ const internalExpandKeys = ref<Set<string>>(new Set())
 const expandControlled = computed(() => props.expandKeys !== undefined)
 const expandKeysSet = computed<ReadonlySet<string>>(() => {
   if (expandControlled.value) {
-    return new Set((props.expandKeys ?? []).map((key) => String(key)))
+    return new Set((props.expandKeys ?? []).map((key) => orgTreeIdKey(key)))
   }
   return internalExpandKeys.value
 })
@@ -254,7 +272,7 @@ function reconcileExpansion() {
   const next = expansionInitialized
     ? new Set([...internalExpandKeys.value].filter((key) => valid.has(key)))
     : new Set<string>()
-  const defaults = new Set(props.defaultExpandKeys.map((key) => String(key)))
+  const defaults = new Set(props.defaultExpandKeys.map((key) => orgTreeIdKey(key)))
 
   for (const entry of entries) {
     if (!entry.hasChildren) continue
@@ -340,13 +358,13 @@ const { value: selectedKey, setValue: setSelectedKey } = useControllableState<Or
 })
 const selectedKeyString = computed(() => {
   const value = selectedKey.value
-  return value === null || value === undefined ? null : String(value)
+  return value === null || value === undefined ? null : orgTreeIdKey(value)
 })
 
 function selectNode(node: OrgTreeNode) {
   if (props.disabled || node.disabled) return
   const id = nodeId(node, keys.value)
-  if (String(id) === selectedKeyString.value) return
+  if (orgTreeIdKey(id) === selectedKeyString.value) return
   setSelectedKey(id)
 }
 
@@ -455,7 +473,7 @@ function zoomOut() {
   zoomAt(scale.value / 1.2)
 }
 
-function center() {
+function center(notify = true) {
   const viewport = viewportRef.value
   const canvas = canvasRef.value
   if (!viewport || !canvas) return
@@ -464,6 +482,9 @@ function center() {
   if (width <= 0 || height <= 0) return
   translate.x = (width - canvas.offsetWidth * scale.value) / 2
   translate.y = (height - canvas.offsetHeight * scale.value) / 2
+  if (notify) {
+    emit('zoom', { scale: scale.value, translate: { x: translate.x, y: translate.y } })
+  }
 }
 
 function fit() {
@@ -482,7 +503,7 @@ function fit() {
     (height - padding * 2) / contentHeight,
   )
   scale.value = clamp(next, props.minScale, props.maxScale)
-  center()
+  center(false)
   emit('zoom', { scale: scale.value, translate: { x: translate.x, y: translate.y } })
 }
 
@@ -490,7 +511,7 @@ function resetView() {
   scale.value = clamp(props.defaultScale, props.minScale, props.maxScale)
   translate.x = props.defaultOffset.x ?? 0
   translate.y = props.defaultOffset.y ?? 0
-  if (props.center) center()
+  if (props.center) center(false)
   emit('zoom', { scale: scale.value, translate: { x: translate.x, y: translate.y } })
 }
 
@@ -912,8 +933,19 @@ function menuItems(): OrgTreeMenuItem[] {
 
 function closeMenu() {
   if (!menu.value.visible) return
+  const triggerKey = menuTriggerKey.value
   menu.value = { ...menu.value, visible: false, node: null }
   menuDismiss.stop()
+  menuTriggerKey.value = null
+  if (triggerKey && !unmounted.value) {
+    nextTick(() => focusEntry(indexState.value.byKey.get(triggerKey)))
+  }
+}
+
+function handleFocusIn(event: FocusEvent): void {
+  const target = event.target as Element | null
+  const key = target?.closest('.w-org-tree__node-card')?.getAttribute('data-org-key')
+  if (key) focusedKey.value = key
 }
 
 function menuButtons(): HTMLButtonElement[] {
@@ -961,6 +993,7 @@ function handleContextMenu(event: MouseEvent) {
 
   event.preventDefault()
 
+  menuTriggerKey.value = entry.key
   menu.value = {
     visible: true,
     x: event.clientX,
@@ -994,11 +1027,11 @@ function handleMenuItem(item: OrgTreeMenuItem) {
 /* ------------------------------------------------------------------ */
 
 function getNode(id: OrgTreeId): OrgTreeNode | undefined {
-  return indexState.value.byKey.get(String(id))?.node
+  return indexState.value.byKey.get(orgTreeIdKey(id))?.node
 }
 
 async function scrollToNode(id: OrgTreeId) {
-  const key = String(id)
+  const key = orgTreeIdKey(id)
   const entry = indexState.value.byKey.get(key)
   if (!entry) return
 
@@ -1096,6 +1129,7 @@ defineExpose({
       @dblclick="handleDoubleClick"
       @contextmenu="handleContextMenu"
       @keydown="handleKeydown"
+      @focusin="handleFocusIn"
       @dragstart.prevent
     >
       <div ref="canvasRef" class="w-org-tree__canvas" :style="canvasStyle">
@@ -1113,6 +1147,7 @@ defineExpose({
             :keys="keys"
             :expanded-keys="expandKeysSet"
             :selected-key="selectedKeyForChildren"
+            :focus-key="tabStopKey"
             :collapsable="collapsable"
             :disabled="disabled"
             :expand-label="expandLabel"

@@ -3,6 +3,11 @@ export interface CountDownProps {
   target?: Date | string | number
   /** Countdown length in milliseconds. */
   duration?: number
+  /**
+   * Remaining milliseconds. Supports `v-model:remaining`; when omitted the
+   * component keeps the value internally.
+   */
+  remaining?: number
   /** Start counting as soon as the component is mounted. Defaults to `true`. */
   autoStart?: boolean
   /** Tick interval in milliseconds. Defaults to `1000`. */

@@ -110,11 +110,66 @@ describe('Cropper', () => {
 
     expect(wrapper.get('img').attributes('src')).toBe('/photo.jpg')
     expect(wrapper.get('img').attributes('alt')).toBe('Photo')
+    // The source image is only a Cropper.js input; screen readers already get
+    // the accessible name from the root group.
+    expect(wrapper.get('img').attributes('aria-hidden')).toBe('true')
 
     await flushPromises()
 
     expect(wrapper.classes()).toContain('is-ready')
     expect(wrapper.emitted('ready')).toHaveLength(1)
+    wrapper.unmount()
+  })
+
+  it('renders the built-in action bar and wires its actions', async () => {
+    const wrapper = mount(Cropper, { props: { src: '/photo.jpg' } })
+    await flushPromises()
+
+    const actions = wrapper.findAll('.w-cropper__action')
+    expect(actions).toHaveLength(5)
+    expect(actions.every((action) => action.find('svg').exists())).toBe(true)
+
+    await actions[0]!.trigger('click')
+    expect(mocks.image.$zoom).toHaveBeenCalledWith(-0.1)
+
+    await actions[1]!.trigger('click')
+    expect(mocks.image.$zoom).toHaveBeenCalledWith(0.1)
+
+    await actions[2]!.trigger('click')
+    expect(mocks.image.$rotate).toHaveBeenCalledWith(-Math.PI / 2)
+
+    await actions[3]!.trigger('click')
+    expect(mocks.image.$rotate).toHaveBeenCalledWith(Math.PI / 2)
+
+    await actions[4]!.trigger('click')
+    expect(mocks.image.$resetTransform).toHaveBeenCalled()
+    expect(mocks.selection.$reset).toHaveBeenCalled()
+
+    wrapper.unmount()
+  })
+
+  it('can hide the built-in action bar', async () => {
+    const wrapper = mount(Cropper, {
+      props: { src: '/photo.jpg', showActionBar: false },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.w-cropper__action-bar').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('disables actions that conflict with interaction props', async () => {
+    const wrapper = mount(Cropper, {
+      props: { src: '/photo.jpg', rotatable: false, scalable: false },
+    })
+    await flushPromises()
+
+    const actions = wrapper.findAll('.w-cropper__action')
+    expect(actions[0]!.attributes('disabled')).toBeDefined()
+    expect(actions[1]!.attributes('disabled')).toBeDefined()
+    expect(actions[2]!.attributes('disabled')).toBeDefined()
+    expect(actions[3]!.attributes('disabled')).toBeDefined()
+    expect(actions[4]!.attributes('disabled')).toBeUndefined()
     wrapper.unmount()
   })
 
@@ -135,6 +190,21 @@ describe('Cropper', () => {
     expect(mocks.selection.initialCoverage).toBe(0.7)
     expect(mocks.selection.movable).toBe(false)
     expect(mocks.canvas.disabled).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('resets the selection when initialCoverage changes', async () => {
+    const wrapper = mount(Cropper, {
+      props: { src: '/photo.jpg', initialCoverage: 0.5 },
+    })
+    await flushPromises()
+
+    mocks.selection.$reset.mockClear()
+    await wrapper.setProps({ initialCoverage: 0.8 })
+
+    expect(mocks.selection.initialCoverage).toBe(0.8)
+    expect(mocks.selection.$reset).toHaveBeenCalledTimes(1)
+
     wrapper.unmount()
   })
 

@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { useIntervalFn } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { formatCountdown } from './format'
+import {
+  MILLISECONDS_PER_DAY,
+  MILLISECONDS_PER_HOUR,
+  MILLISECONDS_PER_MINUTE,
+  MILLISECONDS_PER_SECOND,
+  formatCountdown,
+} from './format'
 import type { CountDownProps, CountDownState } from './types'
 
 defineOptions({
@@ -11,6 +17,7 @@ defineOptions({
 const props = withDefaults(defineProps<CountDownProps>(), {
   target: undefined,
   duration: 0,
+  remaining: undefined,
   autoStart: true,
   interval: 1000,
   format: 'HH:mm:ss',
@@ -32,21 +39,17 @@ defineSlots<{
   finished?: (props: CountDownState) => unknown
 }>()
 
-const DAY = 86_400_000
-const HOUR = 3_600_000
-const MINUTE = 60_000
-const SECOND = 1_000
-const DEFAULT_INTERVAL = 1_000
+const DEFAULT_INTERVAL = MILLISECONDS_PER_SECOND
 
 const remaining = ref(0)
 const running = ref(false)
 const finished = ref(false)
 
-const days = computed(() => Math.floor(remaining.value / DAY))
-const hours = computed(() => Math.floor(remaining.value / HOUR) % 24)
-const minutes = computed(() => Math.floor(remaining.value / MINUTE) % 60)
-const seconds = computed(() => Math.floor(remaining.value / SECOND) % 60)
-const milliseconds = computed(() => remaining.value % SECOND)
+const days = computed(() => Math.floor(remaining.value / MILLISECONDS_PER_DAY))
+const hours = computed(() => Math.floor(remaining.value / MILLISECONDS_PER_HOUR) % 24)
+const minutes = computed(() => Math.floor(remaining.value / MILLISECONDS_PER_MINUTE) % 60)
+const seconds = computed(() => Math.floor(remaining.value / MILLISECONDS_PER_SECOND) % 60)
+const milliseconds = computed(() => remaining.value % MILLISECONDS_PER_SECOND)
 
 const state = computed<CountDownState>(() => ({
   remaining: remaining.value,
@@ -83,12 +86,16 @@ function resolveTarget(): number | null {
   return Number.isFinite(time) ? time : null
 }
 
-function getInitialRemaining(): number {
+function normalizeRemaining(value: number): number {
+  return Math.max(0, Math.floor(Number.isFinite(value) ? value : 0))
+}
+
+/** Remaining time derived from `target` / `duration`. */
+function calculateRemaining(): number {
   const targetTime = resolveTarget()
   if (targetTime !== null) return Math.max(0, targetTime - Date.now())
 
-  const duration = Number.isFinite(props.duration) ? props.duration : 0
-  return Math.max(0, Math.floor(duration))
+  return normalizeRemaining(props.duration)
 }
 
 function emitRemaining(value: number) {
@@ -133,10 +140,16 @@ function updateRemaining() {
   const next =
     targetTime !== null ? targetTime - Date.now() : baseRemaining - (Date.now() - startedAt)
 
-  const clamped = Math.max(0, Math.floor(next))
-  emitRemaining(clamped)
+  const clamped = normalizeRemaining(next)
 
-  if (remaining.value <= 0) finish()
+  // `finish()` owns the zero transition (remaining, update, change and finish
+  // events) so reaching zero never emits `change` twice.
+  if (clamped <= 0) {
+    finish()
+    return
+  }
+
+  emitRemaining(clamped)
 }
 
 function start() {
@@ -146,7 +159,7 @@ function start() {
 
   if (finished.value || remaining.value <= 0) {
     finished.value = false
-    remaining.value = getInitialRemaining()
+    remaining.value = calculateRemaining()
     emit('update:remaining', remaining.value)
   }
 
@@ -181,7 +194,7 @@ function reset() {
   running.value = false
   finished.value = false
 
-  const initial = getInitialRemaining()
+  const initial = calculateRemaining()
   remaining.value = initial
   emit('update:remaining', initial)
   emit('reset')
@@ -200,7 +213,7 @@ watch(
     clearTimer()
     running.value = false
     finished.value = false
-    remaining.value = getInitialRemaining()
+    remaining.value = calculateRemaining()
     emit('update:remaining', remaining.value)
 
     if (props.autoStart) start()
@@ -208,7 +221,33 @@ watch(
   },
 )
 
-remaining.value = getInitialRemaining()
+watch(
+  () => props.remaining,
+  (value) => {
+    if (unmounted || value === undefined) return
+
+    const next = normalizeRemaining(value)
+    // Ignore the prop echoing the value this component just emitted.
+    if (next === remaining.value) return
+
+    remaining.value = next
+    if (running.value) {
+      baseRemaining = next
+      startedAt = Date.now()
+    }
+    if (next > 0) finished.value = false
+
+    if (next <= 0 && running.value) {
+      finish()
+      return
+    }
+
+    emit('change', state.value)
+  },
+)
+
+remaining.value =
+  props.remaining !== undefined ? normalizeRemaining(props.remaining) : calculateRemaining()
 
 onMounted(() => {
   // Never create timers during SSR setup.

@@ -43,7 +43,11 @@ let unmounted = false
 let requestId = 0
 const loading = computed(() => resolving.value || clipboardLoading.value)
 const isDisabled = computed(() => props.disabled || loading.value)
-const liveMessage = computed(() => (copied.value ? '已复制' : ''))
+const liveMessage = computed(() => {
+  if (copied.value) return '已复制'
+  if (error.value) return '复制失败'
+  return ''
+})
 const rootClasses = computed(() => ({
   'is-copied': copied.value,
   'is-loading': loading.value,
@@ -118,16 +122,13 @@ defineExpose({
   <span class="w-copy" :class="rootClasses">
     <slot name="prefix" />
 
-    <span
+    <button
       v-if="showIcon"
+      type="button"
       class="w-copy__trigger w-copy__trigger--icon"
-      role="button"
       :aria-label="ariaLabel"
-      :tabindex="isDisabled ? -1 : 0"
-      :aria-disabled="isDisabled ? 'true' : undefined"
+      :disabled="isDisabled"
       @click="handleCopy"
-      @keydown.enter.prevent="handleCopy"
-      @keydown.space.prevent="handleCopy"
     >
       <span class="w-copy__icon" aria-hidden="true">
         <svg v-if="loading" viewBox="0 0 24 24" fill="none" class="w-copy__spinner">
@@ -166,7 +167,7 @@ defineExpose({
           />
         </svg>
       </span>
-    </span>
+    </button>
 
     <button v-else type="button" class="w-copy__trigger" :disabled="isDisabled" @click="handleCopy">
       <slot v-bind="slotProps" />

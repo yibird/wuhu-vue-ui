@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import type { editor as MonacoEditor, IDisposable } from 'monaco-editor'
-import type { CodeEditorErrorSlotProps, CodeEditorModel, CodeEditorProps } from './types'
+import type {
+  CodeEditorErrorSlotProps,
+  CodeEditorExpose,
+  CodeEditorModel,
+  CodeEditorProps,
+} from './types'
 
 defineOptions({
   name: 'WCodeEditor',
@@ -65,8 +70,62 @@ const rootStyle = computed(() => ({
 
 const errorMessage = computed(() => loadError.value?.message || '编辑器加载失败')
 
+const THEME_MEDIA_QUERY = '(prefers-color-scheme: dark)'
+let themeMediaQuery: MediaQueryList | null = null
+let themeObserver: MutationObserver | null = null
+
 function toCssSize(value: string | number): string {
   return typeof value === 'number' ? `${value}px` : value
+}
+
+/**
+ * Resolve the `auto` theme from the app's explicit `data-w-theme` attribute or,
+ * when it is absent, from the OS colour scheme. Any other value is a Monaco
+ * theme identifier and is forwarded unchanged.
+ */
+function resolveTheme(theme: string): string {
+  if (theme !== 'auto') return theme
+
+  if (typeof document !== 'undefined') {
+    const explicit = document.documentElement.getAttribute('data-w-theme')
+    if (explicit === 'dark') return 'vs-dark'
+    if (explicit === 'light') return 'vs'
+  }
+
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    return window.matchMedia(THEME_MEDIA_QUERY).matches ? 'vs-dark' : 'vs'
+  }
+
+  return 'vs'
+}
+
+function applyTheme(): void {
+  monacoApi?.editor.setTheme(resolveTheme(props.theme))
+}
+
+function teardownThemeWatchers(): void {
+  themeMediaQuery?.removeEventListener('change', applyTheme)
+  themeMediaQuery = null
+  themeObserver?.disconnect()
+  themeObserver = null
+}
+
+function setupThemeWatchers(): void {
+  teardownThemeWatchers()
+  if (props.theme !== 'auto' || typeof window === 'undefined') return
+
+  if (typeof window.matchMedia === 'function') {
+    themeMediaQuery = window.matchMedia(THEME_MEDIA_QUERY)
+    themeMediaQuery.addEventListener('change', applyTheme)
+  }
+
+  if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') {
+    themeObserver = new MutationObserver(applyTheme)
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-w-theme', 'class'],
+    })
+  }
 }
 
 function toError(cause: unknown): Error {
@@ -86,7 +145,7 @@ function createEditor(api: MonacoApi): void {
     instance = api.editor.create(container, {
       ...props.options,
       model: textModel,
-      theme: props.theme,
+      theme: resolveTheme(props.theme),
       readOnly: readOnlyState.value,
       automaticLayout: props.automaticLayout,
     })
@@ -105,6 +164,7 @@ function createEditor(api: MonacoApi): void {
     instance.onDidBlurEditorText(() => emit('blur')),
   ]
 
+  setupThemeWatchers()
   emit('ready', instance)
 }
 
@@ -198,7 +258,7 @@ function setLanguage(language: string): void {
 }
 
 function setTheme(theme: string): void {
-  monacoApi?.editor.setTheme(theme)
+  monacoApi?.editor.setTheme(resolveTheme(theme))
 }
 
 watch(
@@ -226,7 +286,10 @@ watch(
 
 watch(
   () => props.theme,
-  (theme) => setTheme(theme),
+  (theme) => {
+    setTheme(theme)
+    setupThemeWatchers()
+  },
 )
 
 watch(readOnlyState, (readOnly) => {
@@ -239,7 +302,7 @@ watch(
     editor.value?.updateOptions({
       ...props.options,
       readOnly: readOnlyState.value,
-    } as unknown as MonacoEditor.IEditorOptions)
+    })
   },
   { deep: true },
 )
@@ -258,12 +321,15 @@ onMounted(() => {
 onBeforeUnmount(() => {
   destroyed = true
   loadToken += 1
+  teardownThemeWatchers()
   disposeInstance()
   monacoApi = null
 })
 
-defineExpose({
-  editor,
+defineExpose<CodeEditorExpose>({
+  get editor() {
+    return editor.value
+  },
   getEditor,
   focus,
   layout,

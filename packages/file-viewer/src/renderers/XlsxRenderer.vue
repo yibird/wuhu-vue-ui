@@ -118,6 +118,12 @@ onBeforeUnmount(() => {
         }}</span>
       </div>
       <div class="w-file-viewer__sheet-scroll">
+        <!--
+          Controlled v-html exception: sheet markup is assembled by
+          core/xlsx.ts and core/odf.ts only, with escapeHtml / escapeAttribute /
+          sanitizeUrl applied to every text and URL. No authored markup is
+          injected as-is.
+        -->
         <div
           v-if="activeSheet"
           class="w-file-viewer__sheet-content"

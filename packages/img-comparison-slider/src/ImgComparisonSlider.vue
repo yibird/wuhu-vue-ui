@@ -38,6 +38,22 @@ defineSlots<{
   'after-label'?: () => unknown
 }>()
 
+/**
+ * Pointer gestures that start on interactive slot content should not move the
+ * divider or steal focus. `data-w-comparison-ignore` remains available for any
+ * other custom element that needs to opt out.
+ */
+const IGNORE_POINTER_SELECTOR = [
+  'a',
+  'button',
+  'input',
+  'select',
+  'textarea',
+  '[role="button"]',
+  '[contenteditable]',
+  '[data-w-comparison-ignore]',
+].join(',')
+
 const rootRef = ref<HTMLElement>()
 const handleRef = ref<HTMLElement>()
 const dragging = ref(false)
@@ -144,8 +160,8 @@ function updateFromPointer(event: PointerEvent, rect = dragRect) {
 function handlePointerDown(event: PointerEvent) {
   if (props.disabled || event.button !== 0) return
 
-  const target = event.target as HTMLElement | null
-  if (target?.closest('[data-w-comparison-ignore]')) return
+  const target = event.target as Element | null
+  if (target?.closest(IGNORE_POINTER_SELECTOR)) return
 
   const root = rootRef.value
   const rect = root?.getBoundingClientRect()
@@ -157,8 +173,9 @@ function handlePointerDown(event: PointerEvent) {
   dragRect = rect
   dragStartPosition = position.value
 
+  // Report the position before the pointer moves the divider.
+  emit('dragstart', dragStartPosition)
   updateFromPointer(event, rect)
-  emit('dragstart', position.value)
 
   drag.start(event)
 }

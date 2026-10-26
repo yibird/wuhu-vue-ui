@@ -1,4 +1,25 @@
-import type { VNodeChild } from 'vue'
+import type { StyleValue, VNodeChild } from 'vue'
+
+export type SlidingHighlightClassValue =
+  | string
+  | Record<string, boolean>
+  | (string | Record<string, boolean>)[]
+
+/** Semantic class names for the sliding highlight parts. */
+export interface SlidingHighlightClasses {
+  /** Class names for the positioning container. */
+  container?: SlidingHighlightClassValue
+  /** Class names for the highlight pill. */
+  pill?: SlidingHighlightClassValue
+}
+
+/** Semantic inline styles for the sliding highlight parts. */
+export interface SlidingHighlightStyles {
+  /** Inline styles for the positioning container. */
+  container?: StyleValue
+  /** Inline styles for the highlight pill. */
+  pill?: StyleValue
+}
 
 /**
  * 高亮块相对容器左上角的几何信息
@@ -21,14 +42,10 @@ export interface SlidingHighlightProps {
    * @default 20
    */
   inset?: number
-  /**
-   * @desc 高亮块的类名，用于自定义背景、圆角、阴影等视觉样式，也可以覆盖 CSS 变量 `--w-sliding-highlight-bg` / `--w-sliding-highlight-radius`
-   */
-  pillClassName?: string
-  /**
-   * @desc 定位层（承载高亮块运动的容器）的类名，用于覆盖定位方式
-   */
-  pillContainerClassName?: string
+  /** Semantic class names for the positioning container and highlight pill. */
+  classes?: SlidingHighlightClasses
+  /** Semantic inline styles for the positioning container and highlight pill. */
+  styles?: SlidingHighlightStyles
 }
 
 export interface SlidingHighlightSlots {

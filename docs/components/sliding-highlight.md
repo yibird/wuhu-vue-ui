@@ -24,16 +24,29 @@
 
 <demo vue="../demos/sliding-highlight/vertical.vue" />
 
+## 语义化类名与样式
+
+`classes` 与 `styles` 仅包含 `container`（定位层）和 `pill`（高亮块）两个部件，不依赖组件内部类名：
+
+```vue
+<SlidingHighlight
+  :classes="{ pill: 'my-pill' }"
+  :styles="{ container: { borderRadius: '8px' }, pill: { opacity: 0.9 } }"
+>
+  <!-- 子项 -->
+</SlidingHighlight>
+```
+
 ## API
 
 ### Props
 
-| 属性                     | 类型            | 默认值  | 说明                                    |
-| ------------------------ | --------------- | ------- | --------------------------------------- |
-| `as`                     | `'div' \| 'ul'` | `'div'` | 根元素标签；为 `ul` 时高亮层渲染为 `li` |
-| `inset`                  | `number`        | `20`    | 高亮块相对子项的横向外扩距离（px）      |
-| `pillClassName`          | `string`        | —       | 高亮块类名，用于自定义背景、圆角与阴影  |
-| `pillContainerClassName` | `string`        | —       | 定位层类名，用于覆盖定位方式            |
+| 属性      | 类型                      | 默认值  | 说明                                    |
+| --------- | ------------------------- | ------- | --------------------------------------- |
+| `as`      | `'div' \| 'ul'`           | `'div'` | 根元素标签；为 `ul` 时高亮层渲染为 `li` |
+| `inset`   | `number`                  | `20`    | 高亮块相对子项的横向外扩距离（px）      |
+| `classes` | `SlidingHighlightClasses` | —       | 语义化类名：`container`、`pill`         |
+| `styles`  | `SlidingHighlightStyles`  | —       | 语义化内联样式：`container`、`pill`     |
 
 ### Emits
 
@@ -54,10 +67,10 @@
 
 ### CSS 变量
 
-| 变量                           | 默认值                            | 说明         |
-| ------------------------------ | --------------------------------- | ------------ |
-| `--w-sliding-highlight-bg`     | `var(--w-color-surface, #ffffff)` | 高亮块背景色 |
-| `--w-sliding-highlight-radius` | `8px`                             | 高亮块圆角   |
+| 变量                           | 默认值                                                      | 说明         |
+| ------------------------------ | ----------------------------------------------------------- | ------------ |
+| `--w-sliding-highlight-bg`     | `rgba(79, 70, 229, .16)`（暗色 `rgba(148, 163, 184, .18)`） | 高亮块背景色 |
+| `--w-sliding-highlight-radius` | `8px`                                                       | 高亮块圆角   |
 
 ### 类名
 

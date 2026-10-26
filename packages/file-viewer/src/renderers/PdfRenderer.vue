@@ -11,6 +11,64 @@ defineOptions({
 
 const props = defineProps<FileViewerRendererProps>()
 
+/**
+ * Minimal structural types for the optional pdf.js peer. Only the APIs the
+ * renderer actually calls are described, so the component does not depend on
+ * pdfjs-dist's TypeScript declarations being installed.
+ */
+interface PdfRenderTask {
+  promise: Promise<unknown>
+  cancel?: () => void
+}
+
+interface PdfViewport {
+  width: number
+  height: number
+  transform: number[]
+}
+
+interface PdfTextItem {
+  str?: string
+  transform?: number[]
+  fontName?: string
+}
+
+interface PdfTextContent {
+  items: PdfTextItem[]
+  styles?: Record<string, { fontFamily?: string }>
+}
+
+interface PdfPage {
+  rotate: number
+  getViewport(options: { scale: number; rotation?: number }): PdfViewport
+  render(options: {
+    canvasContext: CanvasRenderingContext2D
+    viewport: PdfViewport
+    transform?: number[]
+  }): PdfRenderTask
+  getTextContent(): Promise<PdfTextContent>
+}
+
+interface PdfDocument {
+  numPages: number
+  getPage(pageNumber: number): Promise<PdfPage>
+  destroy?: () => Promise<void> | void
+}
+
+interface PdfjsModule {
+  getDocument(options: Record<string, unknown>): { promise: Promise<PdfDocument> }
+  GlobalWorkerOptions?: { workerSrc?: string }
+  Util?: { transform?: (m1: number[], m2: number[]) => number[] }
+}
+
+function isPdfjsModule(value: unknown): value is PdfjsModule {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof (value as { getDocument?: unknown }).getDocument === 'function'
+  )
+}
+
 const emit = defineEmits<{
   ready: [
     payload: {
@@ -23,8 +81,8 @@ const emit = defineEmits<{
 
 const canvasRef = ref<HTMLCanvasElement>()
 const textLayerRef = ref<HTMLDivElement>()
-const pdfDocument = shallowRef<any>()
-const pdfjsModule = shallowRef<any>()
+const pdfDocument = shallowRef<PdfDocument | undefined>()
+const pdfjsModule = shallowRef<PdfjsModule | undefined>()
 const pageCount = ref(0)
 const nativeMode = ref(false)
 const nativeSourceUrl = computed(() =>
@@ -38,7 +96,7 @@ const renderError = ref('')
 const pageWidth = ref(0)
 const pageHeight = ref(0)
 let bytes: Uint8Array | undefined
-let renderTask: any
+let renderTask: PdfRenderTask | undefined
 let renderToken = 0
 let destroyed = false
 let readyEmitted = false
@@ -49,28 +107,20 @@ const pageLabel = computed(() =>
     .replace('{total}', String(pageCount.value)),
 )
 
-async function resolvePdfjs(): Promise<any | null> {
+async function resolvePdfjs(): Promise<PdfjsModule | null> {
   const provided = props.options.pdf?.pdfjs
-  if (provided && typeof (provided as Record<string, unknown>).getDocument === 'function') {
-    return provided
-  }
+  if (isPdfjsModule(provided)) return provided
 
-  const globalCandidate = (globalThis as Record<string, unknown>).pdfjsLib as
-    | Record<string, unknown>
-    | undefined
-  if (globalCandidate && typeof globalCandidate.getDocument === 'function') {
-    return globalCandidate
-  }
+  const globalCandidate = (globalThis as Record<string, unknown>).pdfjsLib
+  if (isPdfjsModule(globalCandidate)) return globalCandidate
 
   try {
     // A static specifier lets Vite/Rollup resolve the optional peer. The
     // package build externalizes it so consumers without pdfjs-dist still
     // fall back to the native browser viewer at runtime.
     const module = await import('pdfjs-dist')
-    const resolved = (module as Record<string, unknown>).default ?? module
-    if (resolved && typeof (resolved as Record<string, unknown>).getDocument === 'function') {
-      return resolved
-    }
+    const resolved: unknown = (module as Record<string, unknown>).default ?? module
+    if (isPdfjsModule(resolved)) return resolved
   } catch {
     return null
   }
@@ -107,8 +157,8 @@ async function load(): Promise<void> {
 
     pdfjsModule.value = module
     if (props.options.pdf?.workerSrc) {
-      const workerOptions = module.GlobalWorkerOptions
-      if (workerOptions) workerOptions.workerSrc = props.options.pdf.workerSrc
+      module.GlobalWorkerOptions ??= {}
+      module.GlobalWorkerOptions.workerSrc = props.options.pdf.workerSrc
     }
 
     const hadPassword = Boolean(password.value)
@@ -163,7 +213,11 @@ function multiply(m1: number[], m2: number[]): number[] {
   ]
 }
 
-async function renderTextLayer(page: any, viewport: any, module: any): Promise<void> {
+async function renderTextLayer(
+  page: PdfPage,
+  viewport: PdfViewport,
+  module: PdfjsModule,
+): Promise<void> {
   const container = textLayerRef.value
   if (!container) return
   const content = await page.getTextContent()
@@ -174,11 +228,9 @@ async function renderTextLayer(page: any, viewport: any, module: any): Promise<v
   container.style.height = `${viewport.height}px`
   const fragment = document.createDocumentFragment()
 
-  for (const item of content.items as Array<Record<string, any>>) {
+  for (const item of content.items) {
     if (!item.str) continue
-    const transform = Array.isArray(item.transform)
-      ? (item.transform as number[])
-      : [1, 0, 0, 1, 0, 0]
+    const transform = Array.isArray(item.transform) ? item.transform : [1, 0, 0, 1, 0, 0]
     const matrix =
       module.Util?.transform && Array.isArray(viewport.transform)
         ? module.Util.transform(viewport.transform, transform)
@@ -186,11 +238,11 @@ async function renderTextLayer(page: any, viewport: any, module: any): Promise<v
     const fontHeight = Math.hypot(matrix[2] ?? 0, matrix[3] ?? 0) || 12
     const angle = Math.atan2(matrix[1] ?? 0, matrix[0] ?? 0)
     const span = document.createElement('span')
-    span.textContent = String(item.str)
+    span.textContent = item.str
     span.style.left = `${matrix[4] ?? 0}px`
     span.style.top = `${(matrix[5] ?? 0) - fontHeight}px`
     span.style.fontSize = `${fontHeight}px`
-    span.style.fontFamily = content.styles?.[item.fontName]?.fontFamily ?? 'sans-serif'
+    span.style.fontFamily = content.styles?.[item.fontName ?? '']?.fontFamily ?? 'sans-serif'
     span.style.transformOrigin = '0 0'
     if (angle) span.style.transform = `rotate(${angle}rad)`
     fragment.appendChild(span)
@@ -238,7 +290,7 @@ async function renderPage(): Promise<void> {
     await renderTask.promise
     if (token !== renderToken || destroyed) return
 
-    if (props.options.pdf?.textLayer !== false) {
+    if (module && props.options.pdf?.textLayer !== false) {
       await renderTextLayer(page, viewport, module)
     }
   } catch (cause) {

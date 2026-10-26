@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { WView, WViewContent, WViewFooter, WViewHeader, WViewSider } from '@wuhu-vue-ui/view'
+import { View, ViewContent, ViewFooter, ViewHeader, ViewSider } from '@wuhu-vue-ui/view'
 import DemoCard from '../components/demo-card.vue'
 
 const headerCollapsed = ref(false)
@@ -24,8 +24,8 @@ const metrics = [
       wide
     >
       <div class="view-demo__stage">
-        <WView :full="false" :padding="false" direction="horizontal" gap="12">
-          <WViewSider
+        <View :full="false" direction="horizontal" gap="12">
+          <ViewSider
             v-model:collapsed="siderCollapsed"
             collapsible
             :width="190"
@@ -43,10 +43,10 @@ const metrics = [
                 {{ item }}
               </button>
             </nav>
-          </WViewSider>
+          </ViewSider>
 
-          <WView :full="false" padding :gap="10" class="view-demo__main">
-            <WViewHeader v-model:collapsed="headerCollapsed" collapsible class="view-demo__header">
+          <View :full="false" :gap="10" class="view-demo__main">
+            <ViewHeader v-model:collapsed="headerCollapsed" collapsible class="view-demo__header">
               <div class="view-demo__header-inner">
                 <div>
                   <strong>团队概览</strong>
@@ -54,9 +54,9 @@ const metrics = [
                 </div>
                 <button type="button" class="button button--primary button--small">新建报表</button>
               </div>
-            </WViewHeader>
+            </ViewHeader>
 
-            <WViewContent>
+            <ViewContent>
               <div class="view-demo__grid">
                 <article v-for="metric in metrics" :key="metric.label" class="view-demo__card">
                   <span>{{ metric.label }}</span>
@@ -64,13 +64,13 @@ const metrics = [
                   <small>{{ metric.delta }}</small>
                 </article>
               </div>
-            </WViewContent>
+            </ViewContent>
 
-            <WViewFooter>
+            <ViewFooter>
               <span class="view-demo__footer">数据每 5 分钟自动刷新</span>
-            </WViewFooter>
-          </WView>
-        </WView>
+            </ViewFooter>
+          </View>
+        </View>
       </div>
     </DemoCard>
   </div>
@@ -79,13 +79,15 @@ const metrics = [
 <style scoped>
 .view-demo__stage {
   height: 460px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-lg, 12px);
   background: var(--w-color-surface-subtle, #f8fafc);
 }
 
 .view-demo__sider {
+  position: relative;
+  z-index: 2;
   border-right: 1px solid var(--w-color-border, #e2e8f0);
   background: var(--w-color-surface, #fff);
 }
@@ -115,19 +117,18 @@ const metrics = [
 }
 
 .view-demo__main {
+  box-sizing: border-box;
   min-width: 0;
+  padding: 10px;
   background: var(--w-color-bg, #f8fafc);
-}
-
-.view-demo__header {
-  padding: 12px 14px;
-  border: 1px solid var(--w-color-border, #e2e8f0);
-  border-radius: var(--w-radius-md, 8px);
-  background: var(--w-color-surface, #fff);
 }
 
 .view-demo__header-inner {
   display: flex;
+  padding: 12px 14px;
+  border: 1px solid var(--w-color-border, #e2e8f0);
+  border-radius: var(--w-radius-md, 8px);
+  background: var(--w-color-surface, #fff);
   align-items: center;
   justify-content: space-between;
   gap: 16px;

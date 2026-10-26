@@ -14,10 +14,23 @@ describe('GradientText', () => {
       slots: { default: 'Gradient' },
     })
 
+    expect(wrapper.element.tagName).toBe('SPAN')
     expect(wrapper.text()).toBe('Gradient')
     expect(wrapper.attributes('style')).toContain('linear-gradient(120deg')
     expect(wrapper.attributes('style')).toContain('4000ms')
     expect(wrapper.classes()).toContain('is-animated')
+    wrapper.unmount()
+  })
+
+  it('uses the theme gradient tokens by default', () => {
+    const wrapper = mount(GradientText, {
+      slots: { default: 'Gradient' },
+    })
+
+    const style = wrapper.attributes('style')
+    expect(style).toContain('var(--w-gradient-text-from, #4f46e5)')
+    expect(style).toContain('var(--w-gradient-text-via, #9333ea)')
+    expect(style).toContain('var(--w-gradient-text-to, #0369a1)')
     wrapper.unmount()
   })
 

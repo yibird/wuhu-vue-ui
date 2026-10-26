@@ -6,7 +6,7 @@ export interface ViewContext {
   gap: ComputedRef<string>
 }
 
-export const viewContextKey: InjectionKey<ViewContext> = Symbol('WViewContext')
+export const viewContextKey: InjectionKey<ViewContext> = Symbol('ViewContext')
 
 /**
  * 将尺寸统一为 CSS 字符串:数字按像素处理,字符串原样返回
@@ -18,5 +18,5 @@ export function toCssSize(value: ViewSize) {
 }
 
 export function getCssSize(value: string) {
-  return value === '0px' ? value : `calc(0px - ${value})`
+  return `calc(-1 * ${value})`
 }

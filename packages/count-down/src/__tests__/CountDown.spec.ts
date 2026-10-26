@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { h, nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import CountDown from '../CountDown.vue'
 import { formatCountdown } from '../format'
@@ -163,6 +163,83 @@ describe('CountDown', () => {
     vi.advanceTimersByTime(5_000)
     await nextTick()
     expect(wrapper.emitted('finish')).toHaveLength(1)
+
+    wrapper.unmount()
+  })
+
+  it('supports v-model:remaining and follows external updates', async () => {
+    const remaining = ref(5_000)
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(CountDown, {
+            duration: 5_000,
+            remaining: remaining.value,
+            'onUpdate:remaining': (value: number) => {
+              remaining.value = value
+            },
+          })
+      },
+    })
+
+    const wrapper = mount(Host)
+    expect(wrapper.text()).toBe('00:00:05')
+
+    vi.advanceTimersByTime(1_000)
+    await nextTick()
+
+    expect(remaining.value).toBe(4_000)
+    expect(wrapper.text()).toBe('00:00:04')
+
+    remaining.value = 2_000
+    await nextTick()
+    expect(wrapper.text()).toBe('00:00:02')
+
+    vi.advanceTimersByTime(1_000)
+    await nextTick()
+    expect(remaining.value).toBe(1_000)
+
+    wrapper.unmount()
+  })
+
+  it('resets a controlled countdown to its full duration', async () => {
+    const remaining = ref(1_000)
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h(CountDown, {
+            duration: 3_000,
+            remaining: remaining.value,
+            'onUpdate:remaining': (value: number) => {
+              remaining.value = value
+            },
+          })
+      },
+    })
+
+    const wrapper = mount(Host)
+    vi.advanceTimersByTime(2_000)
+    await nextTick()
+    expect(remaining.value).toBe(0)
+
+    const child = wrapper.findComponent(CountDown)
+    ;(child.vm as unknown as { reset: () => void }).reset()
+    await nextTick()
+
+    expect(remaining.value).toBe(3_000)
+    wrapper.unmount()
+  })
+
+  it('emits change only once when reaching zero', async () => {
+    const wrapper = mount(CountDown, { props: { duration: 1_000 } })
+
+    vi.advanceTimersByTime(5_000)
+    await nextTick()
+
+    const changes = wrapper.emitted('change') ?? []
+    expect(changes.filter(([state]) => (state as CountDownState).finished)).toHaveLength(1)
+    expect(changes.at(-1)?.[0]).toMatchObject({ remaining: 0, finished: true })
+    expect(wrapper.emitted('update:remaining')?.filter(([value]) => value === 0)).toHaveLength(1)
 
     wrapper.unmount()
   })

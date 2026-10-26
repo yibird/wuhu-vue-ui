@@ -133,6 +133,20 @@ describe('Ellipsis', () => {
     wrapper.unmount()
   })
 
+  it('detects overflow when it starts expanded', async () => {
+    const wrapper = mount(Ellipsis, {
+      props: { text: longText, expandable: true, expanded: true },
+    })
+
+    await mockOverflow(wrapper)
+
+    expect(wrapper.classes()).toContain('is-overflowed')
+    expect(wrapper.find('.w-ellipsis__action').exists()).toBe(true)
+    expect(wrapper.get('.w-ellipsis__action').attributes('aria-expanded')).toBe('true')
+    expect(wrapper.get('.w-ellipsis__action').text()).toBe('收起')
+    wrapper.unmount()
+  })
+
   it('follows the controlled expanded prop', async () => {
     const wrapper = mount(Ellipsis, {
       props: { text: longText, expandable: true, expanded: true },

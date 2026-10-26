@@ -71,7 +71,7 @@ defineExpose({
     :is="tag"
     class="w-time"
     :class="{ 'is-empty': !date }"
-    :datetime="datetime"
+    :datetime="tag === 'time' ? datetime : undefined"
     :title="title"
   >
     <slot v-bind="slotProps">{{ relative }}</slot>

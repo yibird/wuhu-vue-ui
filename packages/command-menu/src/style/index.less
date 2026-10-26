@@ -3,7 +3,7 @@
 .w-command-menu {
   --w-command-menu-active-bg: color-mix(
     in srgb,
-    var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)) 80%,
+    var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)) 70%,
     transparent
   );
   /* Translucent so pointer hover stays subtler than the solid keyboard state. */
@@ -12,7 +12,12 @@
     var(--w-color-surface-active, #e2e8f0) 45%,
     transparent
   );
-  --w-command-menu-selected-bg: var(--w-command-menu-active-bg);
+  /* Selection is stronger than the transient keyboard/pointer state. */
+  --w-command-menu-selected-bg: color-mix(
+    in srgb,
+    var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)) 100%,
+    transparent
+  );
 
   display: flex;
   flex-direction: column;
@@ -37,7 +42,7 @@
   }
 
   &.is-disabled {
-    opacity: 0.68;
+    opacity: var(--w-opacity-disabled, 0.55);
   }
 
   &__search {
@@ -108,7 +113,7 @@
 
     &:focus-visible {
       outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
-      outline-offset: 1px;
+      outline-offset: var(--w-focus-ring-offset, 2px);
     }
   }
 
@@ -168,15 +173,6 @@
 
     & + & {
       margin-top: 6px;
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
-      outline-offset: calc(-1 * var(--w-focus-ring-width, 2px));
     }
 
     &.is-active:not(.is-disabled) {

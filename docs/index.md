@@ -4,7 +4,10 @@ layout: home
 hero:
   name: Wuhu Vue UI
   text: 为复杂业务而生的 Vue 3 组件库
-  tagline: 30 个独立组件包，独立发布、按需引入。TypeScript、Less、设计令牌与可访问性内建。
+  tagline: 31 个独立组件包，独立发布、按需引入。TypeScript、Less、设计令牌与可访问性内建。
+  image:
+    src: /logo.svg
+    alt: Wuhu Vue UI
   actions:
     - theme: brand
       text: 快速开始
@@ -15,7 +18,7 @@ hero:
 
 features:
   - title: 独立组件包
-    details: 30 个组件独立发布、按需引入，互不耦合，升级与替换都更可控。
+    details: 31 个组件独立发布、按需引入，互不耦合，升级与替换都更可控。
   - title: TypeScript 优先
     details: Props、事件、插槽与实例方法均提供完整类型，严格模式无隐式 any。
   - title: 设计令牌驱动

@@ -32,7 +32,10 @@ export interface CropperProps {
   height?: string | number
   /** Lock the selection to a fixed width / height ratio, e.g. `1` for a square. */
   aspectRatio?: number
-  /** Fraction of the image initially covered by the selection, from 0 to 1. */
+  /**
+   * Fraction of the image covered by the selection, from 0 to 1. Changing it
+   * resets the selection to the new coverage.
+   */
   initialCoverage?: number
   /** Allow the image to be rotated. */
   rotatable?: boolean
@@ -50,13 +53,15 @@ export interface CropperProps {
   keyboard?: boolean
   /** Disable all interactions. */
   disabled?: boolean
+  /** Show the built-in action bar (zoom, rotate and reset). */
+  showActionBar?: boolean
   /** `crossorigin` attribute for the image element. */
   crossOrigin?: '' | 'anonymous' | 'use-credentials'
   /**
    * Advanced: replace the default Cropper.js template.
    * Treated as trusted HTML and assigned to `innerHTML`; never pass user input.
    */
-  template?: string
+  unsafeTemplate?: string
 }
 
 export interface CropperReadyEvent {

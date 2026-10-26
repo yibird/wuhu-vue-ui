@@ -24,6 +24,7 @@ providePermissions(permissions)
 
 - `mode="all"`（默认）：`value` 中的所有权限都必须具备。
 - `mode="any"`：具备任意一个权限即可。
+- `value` 为空数组时按集合语义处理：`all` 模式空列表视为全部满足（渲染默认插槽），`any` 模式视为无匹配（渲染 `fallback`）。没有提供者时始终拒绝。
 
 ```vue
 <Permission :value="['user:read', 'user:write']">

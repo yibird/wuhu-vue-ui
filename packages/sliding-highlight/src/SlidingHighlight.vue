@@ -12,12 +12,12 @@
         :is="pillTag"
         v-if="hoveredElement"
         class="w-sliding-highlight__container"
-        :class="pillContainerClassName"
-        :style="pillStyle"
+        :class="classes?.container"
+        :style="[pillStyle, styles?.container]"
         data-w-sliding-highlight-pill
         aria-hidden="true"
       >
-        <span class="w-sliding-highlight__pill" :class="pillClassName" />
+        <span class="w-sliding-highlight__pill" :class="classes?.pill" :style="styles?.pill" />
       </component>
     </Transition>
   </component>
@@ -36,6 +36,10 @@ import type {
 const props = withDefaults(defineProps<SlidingHighlightProps>(), {
   as: 'div',
   inset: 20,
+})
+
+defineOptions({
+  name: 'WSlidingHighlight',
 })
 
 defineSlots<SlidingHighlightSlots>()
@@ -97,9 +101,22 @@ const measure = () => {
   const root = rootRef.value
   if (!element || !root) return
 
+  // The hovered item may have been removed from the list (conditional render,
+  // virtual scrolling, etc.). Drop the highlight instead of measuring a node
+  // that is no longer part of the root.
+  if (!root.contains(element)) {
+    clear()
+    return
+  }
+
   const inset = props.inset
   const itemRect = element.getBoundingClientRect()
   const rootRect = root.getBoundingClientRect()
+
+  if (itemRect.width === 0 && itemRect.height === 0) {
+    clear()
+    return
+  }
   // getBoundingClientRect 会包含祖先 transform 的缩放,而内联定位使用局部 px,
   // 因此先把视觉尺寸换算回未缩放坐标。
   const scaleX = root.offsetWidth > 0 ? rootRect.width / root.offsetWidth : 1

@@ -311,6 +311,15 @@ function startDrag(axis: 'X' | 'Y') {
   document.addEventListener('mousemove', handleDocumentMouseMove)
   document.addEventListener('mouseup', handleDocumentMouseUp)
   document.addEventListener('selectstart', preventSelection)
+  // A drag can end outside the document (window blur) or while the tab is
+  // hidden; without these the mousemove/mouseup listeners would leak and the
+  // thumb would stay in the dragging state.
+  window.addEventListener('blur', handleDocumentMouseUp)
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+}
+
+function handleVisibilityChange() {
+  if (document.visibilityState === 'hidden') handleDocumentMouseUp()
 }
 
 function preventSelection(event: Event) {
@@ -352,6 +361,8 @@ function handleDocumentMouseUp() {
   document.removeEventListener('mousemove', handleDocumentMouseMove)
   document.removeEventListener('mouseup', handleDocumentMouseUp)
   document.removeEventListener('selectstart', preventSelection)
+  window.removeEventListener('blur', handleDocumentMouseUp)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 
   if (cursorLeave) {
     visibleX.value = false
@@ -381,7 +392,8 @@ function stopResizeObservers() {
 function startResizeObservers() {
   if (typeof window === 'undefined') return
   stopResizeObservers()
-  if (props.noresize) return
+  // Native scrollbars and `noresize` do not need any measurement.
+  if (props.native || props.noresize) return
 
   if (typeof ResizeObserver !== 'undefined') {
     resizeObserver = new ResizeObserver(update)
@@ -396,8 +408,11 @@ function startResizeObservers() {
 }
 
 watch(
-  () => props.noresize,
-  () => startResizeObservers(),
+  () => [props.native, props.noresize],
+  () => {
+    startResizeObservers()
+    if (!props.native) nextTick(update)
+  },
 )
 
 watch(
@@ -424,6 +439,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('mousemove', handleDocumentMouseMove)
   document.removeEventListener('mouseup', handleDocumentMouseUp)
   document.removeEventListener('selectstart', preventSelection)
+  window.removeEventListener('blur', handleDocumentMouseUp)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 
 defineExpose({
@@ -467,14 +484,16 @@ defineExpose({
       <div
         ref="horizontalBarRef"
         class="w-scrollbar__bar is-horizontal"
+        aria-hidden="true"
         @mousedown="handleTrackMouseDown('X', $event)"
       >
         <div
           v-show="props.always || visibleX"
           ref="horizontalThumbRef"
           class="w-scrollbar__thumb"
-          :class="{ 'is-dragging': dragging === 'X' }"
-          :style="horizontalThumbStyle"
+          aria-hidden="true"
+          :class="[props.classes?.thumb, { 'is-dragging': dragging === 'X' }]"
+          :style="[horizontalThumbStyle, props.styles?.thumb]"
           @mousedown="handleThumbMouseDown('X', $event)"
           @click.stop
         />
@@ -483,14 +502,16 @@ defineExpose({
       <div
         ref="verticalBarRef"
         class="w-scrollbar__bar is-vertical"
+        aria-hidden="true"
         @mousedown="handleTrackMouseDown('Y', $event)"
       >
         <div
           v-show="props.always || visibleY"
           ref="verticalThumbRef"
           class="w-scrollbar__thumb"
-          :class="{ 'is-dragging': dragging === 'Y' }"
-          :style="verticalThumbStyle"
+          aria-hidden="true"
+          :class="[props.classes?.thumb, { 'is-dragging': dragging === 'Y' }]"
+          :style="[verticalThumbStyle, props.styles?.thumb]"
           @mousedown="handleThumbMouseDown('Y', $event)"
           @click.stop
         />

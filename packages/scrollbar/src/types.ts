@@ -12,6 +12,8 @@ export interface ScrollbarClasses {
   wrap?: ScrollbarClassValue
   /** Class names applied to the inner view. */
   view?: ScrollbarClassValue
+  /** Class names applied to both scrollbar thumbs, regardless of direction. */
+  thumb?: ScrollbarClassValue
 }
 
 export interface ScrollbarStyles {
@@ -19,6 +21,8 @@ export interface ScrollbarStyles {
   wrap?: StyleValue
   /** Inline styles applied to the inner view. */
   view?: StyleValue
+  /** Inline styles applied to both scrollbar thumbs, regardless of direction. */
+  thumb?: StyleValue
 }
 
 export interface ScrollbarProps {
@@ -28,9 +32,9 @@ export interface ScrollbarProps {
   maxHeight?: string | number
   /** Use the browser's native scrollbar instead of the custom overlay bars. */
   native?: boolean
-  /** Semantic class names for the scrolling wrapper and inner view. */
+  /** Semantic class names for the wrapper, view and thumbs. */
   classes?: ScrollbarClasses
-  /** Semantic inline styles for the scrolling wrapper and inner view. */
+  /** Semantic inline styles for the wrapper, view and thumbs. */
   styles?: ScrollbarStyles
   /** Disable automatic resize observation. update() still works. */
   noresize?: boolean

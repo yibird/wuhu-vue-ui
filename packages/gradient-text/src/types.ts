@@ -14,7 +14,6 @@ export interface GradientTextProps {
   duration?: number
   /** CSS animation-direction value. */
   animationDirection?: 'normal' | 'reverse' | 'alternate' | 'alternate-reverse'
-  tag?: string
 }
 
 export interface GradientTextSlotProps {

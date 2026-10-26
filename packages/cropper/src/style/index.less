@@ -23,6 +23,74 @@
     pointer-events: none;
   }
 
+  &__action-bar {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    z-index: 2;
+    display: flex;
+    gap: 2px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--w-radius-full, 9999px);
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.72), rgba(15, 23, 42, 0.62));
+    box-shadow:
+      0 2px 6px rgba(15, 23, 42, 0.18),
+      0 10px 24px -8px rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(12px) saturate(1.2);
+    transform: translateX(-50%);
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex: none;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition:
+      background-color var(--w-duration-fast, 120ms) ease,
+      color var(--w-duration-fast, 120ms) ease,
+      transform var(--w-duration-fast, 120ms) ease;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentcolor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(0) scale(0.96);
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.8);
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      color: rgba(255, 255, 255, 0.38);
+      cursor: default;
+    }
+  }
+
   > cropper-canvas {
     display: block;
     width: 100%;
@@ -31,13 +99,17 @@
 
   &.is-disabled > cropper-canvas {
     cursor: not-allowed;
-    opacity: 0.72;
+    opacity: var(--w-opacity-disabled, 0.55);
     transition: opacity var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .w-cropper.is-disabled > cropper-canvas {
+    transition: none;
+  }
+
+  .w-cropper__action {
     transition: none;
   }
 }

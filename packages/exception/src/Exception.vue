@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
+import { getExceptionPreset } from './config'
 import Illustration from './Illustration.vue'
 import type { ExceptionProps, ExceptionSlotProps, ExceptionType } from './types'
 
@@ -45,9 +46,18 @@ const presets: Record<ExceptionType, { title: string; description: string }> = {
 }
 
 const titleId = useId()
-const preset = computed(() => presets[props.type] ?? presets.notFound)
-const title = computed(() => props.title ?? preset.value.title)
-const description = computed(() => props.description ?? preset.value.description)
+// Resolve the runtime type once so class names, illustrations and presets all
+// agree even when an out-of-range value is passed from untyped templates.
+const resolvedType = computed<ExceptionType>(() =>
+  props.type in presets ? props.type : 'notFound',
+)
+const preset = computed(() => presets[resolvedType.value] ?? presets.notFound)
+const globalPreset = computed(() => getExceptionPreset(resolvedType.value))
+const title = computed(() => props.title ?? globalPreset.value?.title ?? preset.value.title)
+const description = computed(
+  () => props.description ?? globalPreset.value?.description ?? preset.value.description,
+)
+const image = computed(() => props.image ?? globalPreset.value?.image)
 const alt = computed(() => props.imageAlt || title.value)
 
 const mediaStyle = computed(() => ({
@@ -56,7 +66,7 @@ const mediaStyle = computed(() => ({
 }))
 
 const slotProps = computed<ExceptionSlotProps>(() => ({
-  type: props.type,
+  type: resolvedType.value,
   title: title.value,
   description: description.value,
 }))
@@ -65,7 +75,7 @@ const slotProps = computed<ExceptionSlotProps>(() => ({
 <template>
   <section
     class="w-exception"
-    :class="[`w-exception--${type}`, classes?.root]"
+    :class="[`w-exception--${resolvedType}`, classes?.root]"
     :style="styles?.root"
     :aria-labelledby="titleId"
   >
@@ -89,7 +99,7 @@ const slotProps = computed<ExceptionSlotProps>(() => ({
           class="w-exception__illustration"
           :class="classes?.illustration"
           :style="styles?.illustration"
-          :type="type"
+          :type="resolvedType"
         />
       </slot>
     </div>

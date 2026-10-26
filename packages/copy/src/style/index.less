@@ -50,7 +50,7 @@
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.55;
+      opacity: var(--w-opacity-disabled, 0.55);
     }
 
     /* The icon itself is the trigger: no button chrome. */
@@ -64,13 +64,13 @@
       background: transparent;
       color: var(--w-color-text-secondary, #475569);
 
-      &:hover:not([aria-disabled='true']) {
+      &:hover:not(:disabled) {
         border-color: transparent;
         background: transparent;
         color: var(--w-color-text, #0f172a);
       }
 
-      &:active:not([aria-disabled='true']) {
+      &:active:not(:disabled) {
         background: transparent;
         color: var(--w-color-primary, #4f46e5);
       }
@@ -80,9 +80,9 @@
         outline-offset: 2px;
       }
 
-      &[aria-disabled='true'] {
+      &:disabled {
         cursor: not-allowed;
-        opacity: 0.55;
+        opacity: var(--w-opacity-disabled, 0.55);
       }
     }
   }
@@ -90,13 +90,13 @@
   &.is-copied &__trigger {
     border-color: var(--w-color-success-soft, rgba(5, 150, 105, 0.11));
     background: var(--w-color-success-soft, rgba(5, 150, 105, 0.11));
-    color: var(--w-color-success, #059669);
+    color: var(--w-color-success, #047857);
   }
 
   &.is-copied &__trigger--icon {
     border-color: transparent;
     background: transparent;
-    color: var(--w-color-success, #059669);
+    color: var(--w-color-success, #047857);
   }
 
   &__icon {

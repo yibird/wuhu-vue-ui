@@ -15,6 +15,16 @@
 
 `autoStart` 默认为 `true`。关闭后需要调用实例方法 `start()`，例如在用户点击按钮后再开始。
 
+## 双向绑定剩余时间
+
+传入 `remaining` 后组件会把它作为剩余时间的来源，并继续通过 `update:remaining` 回传，可直接使用 `v-model:remaining`：
+
+```vue
+<CountDown v-model:remaining="remaining" :duration="60000" />
+```
+
+外部修改 `remaining` 会同步到倒计时；回传的相同值不会触发重复更新。
+
 ## 格式化
 
 `format` 支持字符串令牌或自定义函数：
@@ -45,6 +55,7 @@
 | ------------ | ----------------------------------------------- | ------------ | ---------------------------------- |
 | `target`     | `Date \| string \| number`                      | —            | 目标时间，优先于 `duration`        |
 | `duration`   | `number`                                        | `0`          | 倒计时时长（毫秒）                 |
+| `remaining`  | `number`                                        | —            | 剩余毫秒，支持 `v-model:remaining` |
 | `autoStart`  | `boolean`                                       | `true`       | 挂载后是否自动开始                 |
 | `interval`   | `number`                                        | `1000`       | 刷新间隔（毫秒），≤0 时回退到 1000 |
 | `format`     | `string \| ((state: CountDownState) => string)` | `'HH:mm:ss'` | 输出格式                           |

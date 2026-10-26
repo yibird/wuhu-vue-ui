@@ -16,8 +16,8 @@
   line-height: var(--w-line-height-normal, 1.55);
 
   &--forbidden {
-    --w-exception-accent: var(--w-color-warning, #d97706);
-    --w-exception-soft: var(--w-color-warning-soft, rgba(217, 119, 6, 0.12));
+    --w-exception-accent: var(--w-color-warning, #b45309);
+    --w-exception-soft: var(--w-color-warning-soft, rgba(180, 83, 9, 0.12));
   }
 
   &--serverError {
@@ -26,13 +26,13 @@
   }
 
   &--badRequest {
-    --w-exception-accent: var(--w-color-info, #0284c7);
-    --w-exception-soft: var(--w-color-info-soft, rgba(2, 132, 199, 0.1));
+    --w-exception-accent: var(--w-color-info, #0369a1);
+    --w-exception-soft: var(--w-color-info-soft, rgba(3, 105, 161, 0.1));
   }
 
   &--networkError {
-    --w-exception-accent: var(--w-color-warning, #d97706);
-    --w-exception-soft: var(--w-color-warning-soft, rgba(217, 119, 6, 0.12));
+    --w-exception-accent: var(--w-color-warning, #b45309);
+    --w-exception-soft: var(--w-color-warning-soft, rgba(180, 83, 9, 0.12));
   }
 
   &__media {
@@ -60,9 +60,12 @@
     max-width: 560px;
   }
 
-  /* Extra specificity keeps host page typography (e.g. docs h2 / p rules)
-   * from leaking into the exception headings and copy. */
-  & &__title {
+  /*
+   * Two-class specificity keeps host page element rules such as
+   * `.vp-doc h2` / `.vp-doc p` from leaking into the component.
+   * Use the `styles` prop for per-instance overrides.
+   */
+  & .w-exception__title {
     margin: 0 0 8px;
     padding: 0;
     border: 0;
@@ -73,7 +76,7 @@
     line-height: var(--w-line-height-tight, 1.25);
   }
 
-  & &__description {
+  & .w-exception__description {
     margin: 0;
     padding: 0;
     border: 0;

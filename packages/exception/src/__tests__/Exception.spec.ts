@@ -1,7 +1,12 @@
 import { mount } from '@vue/test-utils'
-import { h } from 'vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { h, nextTick } from 'vue'
+import { afterEach, describe, expect, it } from 'vite-plus/test'
 import Exception from '../Exception.vue'
+import { setExceptionPresets } from '../config'
+
+afterEach(() => {
+  setExceptionPresets({})
+})
 
 describe('Exception', () => {
   it('renders the notFound preset by default', () => {
@@ -26,6 +31,18 @@ describe('Exception', () => {
 
     expect(wrapper.classes()).toContain(`w-exception--${type}`)
     expect(wrapper.get('.w-exception__title').text()).toBe(title)
+    wrapper.unmount()
+  })
+
+  it('normalizes an unknown runtime type to notFound', () => {
+    const wrapper = mount(Exception, {
+      props: { type: 'unknown' as never },
+    })
+
+    expect(wrapper.classes()).toContain('w-exception--notFound')
+    expect(wrapper.classes()).not.toContain('w-exception--unknown')
+    expect(wrapper.get('.w-exception__title').text()).toBe('页面不存在')
+    expect(wrapper.findComponent({ name: 'WExceptionIllustration' }).props('type')).toBe('notFound')
     wrapper.unmount()
   })
 
@@ -124,6 +141,64 @@ describe('Exception', () => {
     expect(wrapper.get('.w-exception__title').attributes('style')).toContain('color: rgb(4, 5, 6)')
     expect(wrapper.get('.w-exception__description').classes()).toContain('custom-description')
     expect(wrapper.get('.w-exception__extra').classes()).toContain('custom-extra')
+    wrapper.unmount()
+  })
+
+  it('applies globally configured image, title and description per type', () => {
+    setExceptionPresets({
+      forbidden: {
+        image: '/global-banner.png',
+        title: '全局无权限',
+        description: '请联系管理员开通权限。',
+      },
+    })
+
+    const wrapper = mount(Exception, { props: { type: 'forbidden' } })
+    const image = wrapper.get('.w-exception__image')
+
+    expect(wrapper.get('.w-exception__title').text()).toBe('全局无权限')
+    expect(wrapper.get('.w-exception__description').text()).toBe('请联系管理员开通权限。')
+    expect(image.attributes('src')).toBe('/global-banner.png')
+    expect(image.attributes('alt')).toBe('全局无权限')
+    expect(wrapper.find('.w-exception-illustration').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('lets props override the global preset', () => {
+    setExceptionPresets({
+      notFound: { image: '/global-banner.png', title: '全局标题', description: '全局描述' },
+    })
+
+    const wrapper = mount(Exception, {
+      props: {
+        type: 'notFound',
+        image: '/local-banner.png',
+        title: '局部标题',
+        description: '局部描述',
+      },
+    })
+
+    expect(wrapper.get('.w-exception__title').text()).toBe('局部标题')
+    expect(wrapper.get('.w-exception__description').text()).toBe('局部描述')
+    expect(wrapper.get('.w-exception__image').attributes('src')).toBe('/local-banner.png')
+    wrapper.unmount()
+  })
+
+  it('updates mounted components when the global preset changes', async () => {
+    const wrapper = mount(Exception, { props: { type: 'serverError' } })
+
+    expect(wrapper.get('.w-exception__title').text()).toBe('服务端错误')
+
+    setExceptionPresets({ serverError: { title: '服务维护中' } })
+    await nextTick()
+
+    expect(wrapper.get('.w-exception__title').text()).toBe('服务维护中')
+    expect(wrapper.get('.w-exception__description').text()).toContain('服务器开小差了')
+
+    setExceptionPresets({})
+    await nextTick()
+
+    expect(wrapper.get('.w-exception__title').text()).toBe('服务端错误')
     wrapper.unmount()
   })
 

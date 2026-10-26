@@ -25,13 +25,6 @@
  * fade — subtle fade with a short upward drift
  * ------------------------------------------------------------------------ */
 
-.w-motion-fade-enter-active,
-.w-motion-fade-leave-active {
-  transition:
-    opacity var(--w-motion-duration) var(--w-motion-ease),
-    transform var(--w-motion-duration) var(--w-motion-ease);
-}
-
 .w-motion-fade-enter-from,
 .w-motion-fade-leave-to {
   opacity: 0;
@@ -52,13 +45,6 @@
   --w-motion-enter-y: 0px;
 }
 
-.w-motion-slide-enter-active,
-.w-motion-slide-leave-active {
-  transition:
-    opacity var(--w-motion-duration) var(--w-motion-ease),
-    transform var(--w-motion-duration) var(--w-motion-ease);
-}
-
 .w-motion-slide-enter-from,
 .w-motion-slide-leave-to {
   opacity: 0;
@@ -68,14 +54,6 @@
 /* --------------------------------------------------------------------------
  * scale — cards gently grow into place
  * ------------------------------------------------------------------------ */
-
-.w-motion-scale-enter-active,
-.w-motion-scale-leave-active {
-  transition:
-    opacity var(--w-motion-duration) var(--w-motion-ease),
-    transform var(--w-motion-duration) var(--w-motion-ease);
-  transform-origin: center;
-}
 
 .w-motion-scale-enter-from,
 .w-motion-scale-leave-to {
@@ -87,15 +65,6 @@
  * flip — a light 3D tilt
  * ------------------------------------------------------------------------ */
 
-.w-motion-flip-enter-active,
-.w-motion-flip-leave-active {
-  transform-style: preserve-3d;
-  transform-origin: center;
-  transition:
-    opacity var(--w-motion-duration) var(--w-motion-ease),
-    transform var(--w-motion-duration) var(--w-motion-ease);
-}
-
 .w-motion-flip-enter-from,
 .w-motion-flip-leave-to {
   opacity: 0;
@@ -105,18 +74,6 @@
 /* --------------------------------------------------------------------------
  * bounce — overshooting spring on enter
  * ------------------------------------------------------------------------ */
-
-.w-motion-bounce-enter-active {
-  transition:
-    opacity var(--w-motion-duration) var(--w-motion-ease),
-    transform var(--w-motion-duration) var(--w-motion-overshoot);
-}
-
-.w-motion-bounce-leave-active {
-  transition:
-    opacity var(--w-motion-duration) var(--w-motion-ease),
-    transform var(--w-motion-duration) var(--w-motion-ease);
-}
 
 .w-motion-bounce-enter-from {
   opacity: 0;
@@ -132,13 +89,6 @@
  * reveal — the card is uncovered with a clip-path wipe
  * ------------------------------------------------------------------------ */
 
-.w-motion-reveal-enter-active,
-.w-motion-reveal-leave-active {
-  transition:
-    opacity var(--w-motion-duration) var(--w-motion-ease),
-    clip-path var(--w-motion-duration) var(--w-motion-ease);
-}
-
 .w-motion-reveal-enter-from {
   opacity: 0;
   clip-path: inset(0 0 100% 0);
@@ -147,20 +97,6 @@
 .w-motion-reveal-leave-to {
   opacity: 0;
   clip-path: inset(100% 0 0 0);
-}
-
-/* --------------------------------------------------------------------------
- * FLIP move — shared by every preset
- * ------------------------------------------------------------------------ */
-
-.w-motion-fade-move,
-.w-motion-slide-move,
-.w-motion-scale-move,
-.w-motion-flip-move,
-.w-motion-bounce-move,
-.w-motion-reveal-move {
-  transition: transform var(--w-motion-move-duration) var(--w-motion-ease);
-  will-change: transform;
 }
 
 /* --------------------------------------------------------------------------
@@ -222,6 +158,7 @@
 
   .w-motion-scale-enter-active,
   .w-motion-scale-leave-active {
+    transform-origin: center;
     transition:
       opacity var(--w-motion-duration) var(--w-motion-ease),
       transform var(--w-motion-duration) var(--w-motion-ease);
@@ -229,6 +166,8 @@
 
   .w-motion-flip-enter-active,
   .w-motion-flip-leave-active {
+    transform-style: preserve-3d;
+    transform-origin: center;
     transition:
       opacity var(--w-motion-duration) var(--w-motion-ease),
       transform var(--w-motion-duration) var(--w-motion-ease);
@@ -260,17 +199,13 @@
   .w-motion-bounce-move,
   .w-motion-reveal-move {
     transition: transform var(--w-motion-move-duration) var(--w-motion-ease);
+    will-change: transform;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .w-motion-group {
-    --w-motion-duration: 1ms;
-    --w-motion-move-duration: 1ms;
-
-    > * {
-      transition-duration: 0.001ms !important;
-      animation-duration: 0.001ms !important;
-    }
+  .w-motion-group > * {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
   }
 }

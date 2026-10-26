@@ -8,6 +8,7 @@ import {
   type VNode,
 } from 'vue'
 import Loading from '../Loading.vue'
+import { LOADING_TRANSITION_DURATION } from '../constants'
 import type { LoadingInstance, LoadingOptions, LoadingProps, LoadingSlots } from '../types'
 
 interface InternalInstance {
@@ -19,7 +20,6 @@ interface InternalInstance {
 const instances = new Map<number, InternalInstance>()
 let seed = 0
 
-const TRANSITION_DURATION = 200
 const noop = () => {}
 
 /**
@@ -72,12 +72,7 @@ export function createLoading(options: LoadingOptions = {}): LoadingInstance {
       return () =>
         h(
           Loading as Component,
-          {
-            ...state,
-            'onUpdate:open': (value: boolean) => {
-              if (!value) destroy()
-            },
-          },
+          state,
           currentSlots.value as unknown as Record<string, () => VNode[]> | undefined,
         )
     },
@@ -94,7 +89,7 @@ export function createLoading(options: LoadingOptions = {}): LoadingInstance {
     timer = setTimeout(() => {
       timer = undefined
       destroy()
-    }, TRANSITION_DURATION)
+    }, LOADING_TRANSITION_DURATION)
   }
 
   return {

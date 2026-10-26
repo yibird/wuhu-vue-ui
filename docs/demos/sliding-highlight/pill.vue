@@ -9,7 +9,7 @@ const cards = [
 </script>
 
 <template>
-  <SlidingHighlight class="sliding-cards" :inset="0" pill-class-name="sliding-cards__pill">
+  <SlidingHighlight class="sliding-cards" :inset="0" :classes="{ pill: 'sliding-cards__pill' }">
     <button v-for="card in cards" :key="card.label" type="button" class="sliding-card">
       <strong>{{ card.label }}</strong>
       <span>{{ card.desc }}</span>
