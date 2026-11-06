@@ -6,7 +6,10 @@ export interface GradientTextProps {
   /** Raw CSS background-image value. Overrides `colors`, `type` and `angle`. */
   gradient?: string
   type?: GradientTextType
-  /** Gradient angle in degrees for linear and conic gradients. */
+  /**
+   * Gradient angle in degrees. Applies to `linear` and `conic` gradients;
+   * `radial` ignores it.
+   */
   angle?: number
   /** Animate the gradient background. */
   animate?: boolean

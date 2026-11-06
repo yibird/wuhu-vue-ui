@@ -1,12 +1,39 @@
 # Command Menu 命令面板
 
-支持中文、全拼与首字母搜索的命令面板，内置分组、键盘导航、IME 处理与悬浮优先高亮。
+支持自定义搜索函数的命令面板，内置分组、键盘导航、IME 处理与悬浮优先高亮。
 
-## 分组 + 拼音搜索
+## 分组 + 文本搜索
 
-支持全拼、首字母、描述与关键词匹配；方向键只移动活动项，Enter 才触发选择。
+默认按标签、描述与关键词做大小写不敏感的包含匹配；方向键只移动活动项，Enter 才触发选择。
 
 <demo vue="../demos/command-menu/grouped.vue" />
+
+## 自定义搜索（拼音、模糊匹配等）
+
+`filter` 接收菜单项与归一化后的查询词（已 trim 并转小写），返回 `true` 保留该项。组件不再内置拼音依赖；需要拼音搜索时由使用方安装 `pinyin-pro` 等库并传入自定义函数：
+
+```vue
+<script setup lang="ts">
+import { pinyin } from 'pinyin-pro'
+import { CommandMenu, type CommandMenuItem } from '@wuhu-vue-ui/command-menu'
+
+function filter(item: CommandMenuItem, query: string) {
+  const sources = [item.label, item.description, ...(item.keywords ?? [])].filter(Boolean)
+
+  return sources.some((source) => {
+    const full = pinyin(source, { toneType: 'none' }).replaceAll(' ', '').toLowerCase()
+    const initials = pinyin(source, { pattern: 'first', toneType: 'none' })
+      .replaceAll(' ', '')
+      .toLowerCase()
+    return source.toLowerCase().includes(query) || full.includes(query) || initials.includes(query)
+  })
+}
+</script>
+
+<template>
+  <CommandMenu :items="items" :filter="filter" />
+</template>
+```
 
 ## 无分组 + 自定义 Escape
 
@@ -36,21 +63,22 @@
 
 ### Props
 
-| 属性             | 类型                           | 默认值               | 说明                           |
-| ---------------- | ------------------------------ | -------------------- | ------------------------------ |
-| `items`          | `CommandMenuItem[]`            | —（必填）            | 命令列表，组件不会修改原数组   |
-| `modelValue`     | `string \| number`             | —                    | 当前选中项 key，支持 `v-model` |
-| `placeholder`    | `string`                       | `'搜索命令...'`      | 搜索框占位文本                 |
-| `emptyText`      | `string`                       | `'未找到匹配的命令'` | 空结果提示                     |
-| `autoFocus`      | `boolean`                      | `false`              | 挂载后自动聚焦搜索框           |
-| `filterable`     | `boolean`                      | `true`               | 是否随输入过滤                 |
-| `disabled`       | `boolean`                      | `false`              | 禁用搜索、导航与选择           |
-| `escapeBehavior` | `'clear' \| 'close' \| 'none'` | `'clear'`            | Escape 行为                    |
-| `maxHeight`      | `string \| number`             | `360`                | 结果列表最大高度               |
-| `ariaLabel`      | `string`                       | `'搜索命令'`         | 搜索框与结果列表的无障碍名称   |
-| `clearLabel`     | `string`                       | `'清除搜索'`         | 清除按钮的无障碍名称与提示     |
-| `classes`        | `CommandMenuClasses`           | —                    | 语义化类名，按内部部件注入     |
-| `styles`         | `CommandMenuStyles`            | —                    | 语义化内联样式，按内部部件注入 |
+| 属性             | 类型                           | 默认值               | 说明                               |
+| ---------------- | ------------------------------ | -------------------- | ---------------------------------- |
+| `items`          | `CommandMenuItem[]`            | —（必填）            | 命令列表，组件不会修改原数组       |
+| `modelValue`     | `string \| number`             | —                    | 当前选中项 key，支持 `v-model`     |
+| `placeholder`    | `string`                       | `'搜索命令...'`      | 搜索框占位文本                     |
+| `emptyText`      | `string`                       | `'未找到匹配的命令'` | 空结果提示                         |
+| `autoFocus`      | `boolean`                      | `false`              | 挂载后自动聚焦搜索框               |
+| `filterable`     | `boolean`                      | `true`               | 是否随输入过滤                     |
+| `filter`         | `CommandMenuFilter`            | —                    | 自定义匹配函数，参数为归一化查询词 |
+| `disabled`       | `boolean`                      | `false`              | 禁用搜索、导航与选择               |
+| `escapeBehavior` | `'clear' \| 'close' \| 'none'` | `'clear'`            | Escape 行为                        |
+| `maxHeight`      | `string \| number`             | `360`                | 结果列表最大高度                   |
+| `ariaLabel`      | `string`                       | `'搜索命令'`         | 搜索框与结果列表的无障碍名称       |
+| `clearLabel`     | `string`                       | `'清除搜索'`         | 清除按钮的无障碍名称与提示         |
+| `classes`        | `CommandMenuClasses`           | —                    | 语义化类名，按内部部件注入         |
+| `styles`         | `CommandMenuStyles`            | —                    | 语义化内联样式，按内部部件注入     |
 
 `classes` / `styles` 支持的部件键：`root`、`search`、`input`、`clear`、`list`、`group`、`groupLabel`、`item`、`empty`。例如：
 

@@ -5,10 +5,6 @@ import { formatBytes } from '../core/format'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerUnsupportedRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{

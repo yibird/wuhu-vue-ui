@@ -71,5 +71,4 @@ import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 
 - 交互组件提供键盘操作与清晰的 `focus-visible` 样式。
 - 列表与命令面板使用 `aria-activedescendant`、`aria-selected` 等 ARIA 属性。
-- 动画遵循 `prefers-reduced-motion`。
 - 文本高亮与富文本场景不使用 `v-html`。

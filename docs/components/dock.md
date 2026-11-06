@@ -35,8 +35,7 @@ Tooltip 会根据 `maxScale` 自动外移，避免遮挡放大后的 item。`dis
 以下情况会自动复位：
 
 - 指针离开 Dock；
-- 设置了 `magnification: false`；
-- 系统开启“减少动态效果”（`prefers-reduced-motion: reduce`）。
+- 设置了 `magnification: false`。
 
 ## 激活行为
 
@@ -64,17 +63,17 @@ Tooltip 会根据 `maxScale` 自动外移，避免遮挡放大后的 item。`dis
 
 ### DockItem
 
-| 字段        | 类型                    | 说明                                   |
-| ----------- | ----------------------- | -------------------------------------- |
-| `id`        | `string \| number`      | 稳定标识，用于 DOM 复用；缺省用索引    |
-| `label`     | `string`                | 名称，同时作为 `aria-label` 与 Tooltip |
-| `icon`      | `string \| Component`   | 图片 URL 或图标组件                    |
-| `url`       | `string`                | 激活后跳转的地址                       |
-| `target`    | `string`                | 跳转目标，默认 `_self`                 |
-| `disabled`  | `boolean`               | 禁用项目                               |
-| `separator` | `boolean`               | 渲染为分隔线                           |
-| `command`   | `(item, event) => void` | 自定义激活回调，优先于 `url`           |
-| 其他字段    | `unknown`               | 透传的业务数据                         |
+| 字段        | 类型                      | 说明                                   |
+| ----------- | ------------------------- | -------------------------------------- |
+| `id`        | `string \| number`        | 稳定标识，用于 DOM 复用；缺省用索引    |
+| `label`     | `string`                  | 名称，同时作为 `aria-label` 与 Tooltip |
+| `icon`      | `string \| Component`     | 图片 URL 或图标组件                    |
+| `url`       | `string`                  | 激活后跳转的地址                       |
+| `target`    | `string`                  | 跳转目标，默认 `_self`                 |
+| `disabled`  | `boolean`                 | 禁用项目                               |
+| `separator` | `boolean`                 | 渲染为分隔线                           |
+| `command`   | `(item, event) => void`   | 自定义激活回调，优先于 `url`           |
+| `meta`      | `Record<string, unknown>` | 业务元数据，不影响组件行为             |
 
 ### Emits
 
@@ -123,5 +122,5 @@ Tooltip 会根据 `maxScale` 自动外移，避免遮挡放大后的 item。`dis
 - 采用组件化 `model` 数组与 Vue 插槽，而不是 `MenuItem` 模板；图标支持图片 URL 或组件。
 - 放大基于指针与项目中心的距离并使用 smoothstep 衰减，缩放整个 item 内容，不改变 Dock 的布局宽度；PrimeVue 通过相邻项目缩放实现类似的视觉位移。
 - 激活顺序固定为 `command` → `url` → `select`，且 `disabled` 项不参与激活与放大。
-- 增加了 `prefers-reduced-motion` 自动降级、可访问名称与禁用态支持；不内置键盘导航。
+- 增加了可访问名称与禁用态支持；不内置键盘导航。
 - 不内置定位样式（`fixed` / 弹层），由使用方决定 Dock 在页面中的位置；`position` 仅控制排列方向、放大原点与 Tooltip 方向。

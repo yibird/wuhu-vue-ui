@@ -104,7 +104,7 @@ watch(
         </nav>
 
         <div class="doc-header__actions">
-          <span class="doc-version">v0.1.0</span>
+          <span class="doc-version">v0.0.1</span>
           <button
             type="button"
             class="theme-toggle"

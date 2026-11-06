@@ -103,18 +103,37 @@ describe('OrgTree', () => {
     wrapper.unmount()
   })
 
-  it('renders the expand trigger on the connector, outside the node card', () => {
+  it('renders an accessible expand trigger on the connector, outside the node card', () => {
     const wrapper = mountTree()
 
     expect(card(wrapper, 'root').find('.w-org-tree__toggle').exists()).toBe(false)
-    expect(
-      wrapper
-        .get(`.w-org-tree__node[data-org-key="${dataKey('root')}"] > .w-org-tree__node-head`)
-        .get('.w-org-tree__toggle-wrap')
-        .get('.w-org-tree__toggle')
-        .attributes('aria-hidden'),
-    ).toBe('true')
+    const control = wrapper
+      .get(`.w-org-tree__node[data-org-key="${dataKey('root')}"] > .w-org-tree__node-head`)
+      .get('.w-org-tree__toggle-wrap')
+      .get('.w-org-tree__toggle')
+
+    expect(control.element.tagName).toBe('BUTTON')
+    expect(control.attributes('tabindex')).toBe('-1')
+    expect(control.attributes('aria-expanded')).toBe('true')
+    expect(control.attributes('aria-label')).toBe('收起')
     expect(card(wrapper, 'root').attributes('aria-expanded')).toBe('true')
+
+    wrapper.unmount()
+  })
+
+  it('does not start node dragging from the expand trigger', async () => {
+    const wrapper = mountTree({ nodeDraggable: true })
+    const control = toggle(wrapper, 'root')
+
+    firePointer(control.element, 'pointerdown')
+    firePointer(window, 'pointermove', { clientX: 20, clientY: 20 })
+    firePointer(window, 'pointerup')
+    await nextTick()
+
+    expect(wrapper.emitted('node-drag-start')).toBeUndefined()
+
+    await control.trigger('click')
+    expect(wrapper.emitted('expand')).toHaveLength(1)
 
     wrapper.unmount()
   })
@@ -181,20 +200,93 @@ describe('OrgTree', () => {
     wrapper.unmount()
   })
 
-  it('shows a viewport-clamped context menu and emits menu-click', async () => {
+  it('teleports the viewport-clamped context menu and emits menu-click', async () => {
     const wrapper = mountTree()
 
     await card(wrapper, 'a').trigger('contextmenu', { clientX: 48, clientY: 52 })
+    await nextTick()
 
     expect(wrapper.emitted('node-contextmenu')?.[0]?.[0]).toEqual(createTree()[0]!.children![0])
-    const menu = wrapper.get('.w-org-tree__menu')
-    expect(menu.attributes('style')).toContain('left: 48px')
-    expect(menu.attributes('style')).toContain('top: 52px')
-    expect(wrapper.findAll('.w-org-tree__menu-item')).toHaveLength(3)
+    const menu = document.querySelector<HTMLElement>('.w-org-tree__menu')
+    expect(menu).not.toBeNull()
+    // Teleporting outside the component keeps transformed ancestors from
+    // becoming the fixed-position containing block.
+    expect(wrapper.element.contains(menu)).toBe(false)
+    expect(menu!.style.left).toBe('48px')
+    expect(menu!.style.top).toBe('52px')
+    expect(document.querySelectorAll('.w-org-tree__menu-item')).toHaveLength(3)
 
-    await wrapper.get('.w-org-tree__menu-item').trigger('click')
+    document.querySelector<HTMLButtonElement>('.w-org-tree__menu-item')!.click()
+    await nextTick()
     expect(wrapper.emitted('menu-click')?.[0]).toEqual(['edit', createTree()[0]!.children![0]])
-    expect(wrapper.find('.w-org-tree__menu').exists()).toBe(false)
+    expect(document.querySelector('.w-org-tree__menu')).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('applies semantic classes and styles to internal parts', () => {
+    const wrapper = mountTree({
+      classes: {
+        root: 'custom-root',
+        viewport: 'custom-viewport',
+        canvas: 'custom-canvas',
+        node: 'custom-node',
+        card: 'custom-card',
+        label: 'custom-label',
+        toggle: 'custom-toggle',
+        children: 'custom-children',
+      },
+      styles: {
+        root: { color: 'rgb(1, 2, 3)' },
+        card: { opacity: '0.9' },
+        label: { color: 'red' },
+        toggle: { width: '20px' },
+      },
+    })
+
+    expect(wrapper.classes()).toContain('custom-root')
+    expect(wrapper.get('.w-org-tree__viewport').classes()).toContain('custom-viewport')
+    expect(wrapper.get('.w-org-tree__canvas').classes()).toContain('custom-canvas')
+    expect(wrapper.get('.w-org-tree__node').classes()).toContain('custom-node')
+    expect(wrapper.get('.w-org-tree__node-card').classes()).toContain('custom-card')
+    expect(wrapper.get('.w-org-tree__label').classes()).toContain('custom-label')
+    expect(wrapper.get('.w-org-tree__toggle').classes()).toContain('custom-toggle')
+    expect(wrapper.get('.w-org-tree__children').classes()).toContain('custom-children')
+
+    expect((wrapper.get('.w-org-tree').element as HTMLElement).style.color).toBe('rgb(1, 2, 3)')
+    expect((wrapper.get('.w-org-tree__node-card').element as HTMLElement).style.opacity).toBe('0.9')
+    expect((wrapper.get('.w-org-tree__label').element as HTMLElement).style.color).toBe('red')
+    expect((wrapper.get('.w-org-tree__toggle').element as HTMLElement).style.width).toBe('20px')
+    wrapper.unmount()
+  })
+
+  it('applies semantic classes and styles to the empty state', () => {
+    const wrapper = mountTree({
+      data: [],
+      classes: { empty: 'custom-empty' },
+      styles: { empty: { color: 'red' } },
+    })
+
+    const empty = wrapper.get('.w-org-tree__empty')
+    expect(empty.classes()).toContain('custom-empty')
+    expect((empty.element as HTMLElement).style.color).toBe('red')
+    wrapper.unmount()
+  })
+
+  it('applies semantic classes and styles to the context menu', async () => {
+    const wrapper = mountTree({
+      classes: { menu: 'custom-menu', menuItem: 'custom-menu-item' },
+      styles: { menu: { opacity: '0.9' }, menuItem: { color: 'red' } },
+    })
+
+    await card(wrapper, 'a').trigger('contextmenu', { clientX: 10, clientY: 10 })
+
+    const menu = document.querySelector<HTMLElement>('.w-org-tree__menu')
+    const item = document.querySelector<HTMLElement>('.w-org-tree__menu-item')
+
+    expect(menu?.classList.contains('custom-menu')).toBe(true)
+    expect(menu?.style.opacity).toBe('0.9')
+    expect(item?.classList.contains('custom-menu-item')).toBe(true)
+    expect(item?.style.color).toBe('red')
     wrapper.unmount()
   })
 
@@ -202,8 +294,9 @@ describe('OrgTree', () => {
     const wrapper = mountTree({ contextMenu: false })
 
     await card(wrapper, 'root').trigger('contextmenu', { clientX: 10, clientY: 10 })
+    await nextTick()
 
-    expect(wrapper.find('.w-org-tree__menu').exists()).toBe(false)
+    expect(document.querySelector('.w-org-tree__menu')).toBeNull()
     expect(wrapper.emitted('node-contextmenu')).toBeUndefined()
     wrapper.unmount()
   })
@@ -318,6 +411,24 @@ describe('OrgTree', () => {
     wrapper.unmount()
   })
 
+  it('ignores drops on blank canvas when dropOnEmpty is false', async () => {
+    const data = reactive(createTree())
+    const wrapper = mountTree({ data, nodeDraggable: true, dropOnEmpty: false })
+    const viewport = wrapper.get('.w-org-tree__viewport').element
+
+    firePointer(card(wrapper, 'a').element, 'pointerdown')
+    firePointer(viewport, 'pointermove', { clientX: 20, clientY: 20 })
+    firePointer(viewport, 'pointerup', { clientX: 20, clientY: 20 })
+    await flushPromises()
+
+    expect(data[0]!.children?.[0]?.id).toBe('a')
+    expect(wrapper.emitted('node-drag-end')?.[0]?.[0]).toMatchObject({
+      canceled: true,
+      changed: false,
+    })
+    wrapper.unmount()
+  })
+
   it('cancels drops onto the node itself, its parent or a descendant', async () => {
     const data = reactive(createTree())
     const wrapper = mountTree({ data, nodeDraggable: true })
@@ -404,6 +515,25 @@ describe('OrgTree', () => {
     expect(wrapper.findAll('.w-org-tree__node-card')).toHaveLength(1)
     expect(wrapper.text()).toContain('OK')
     expect(wrapper.text()).not.toContain('Missing id')
+    wrapper.unmount()
+  })
+
+  it('does not wrap arrow navigation at the list ends', async () => {
+    const wrapper = mountTree()
+    const cards = wrapper.findAll('.w-org-tree__node-card')
+    const firstKey = cards[0]!.attributes('data-org-key')
+    const lastKey = cards[cards.length - 1]!.attributes('data-org-key')
+
+    await cards[0]!.trigger('focusin')
+    await cards[0]!.trigger('keydown', { key: 'ArrowUp' })
+    await nextTick()
+    expect((document.activeElement as HTMLElement).dataset.orgKey).toBe(firstKey)
+
+    await cards[cards.length - 1]!.trigger('focusin')
+    await cards[cards.length - 1]!.trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    expect((document.activeElement as HTMLElement).dataset.orgKey).toBe(lastKey)
+
     wrapper.unmount()
   })
 

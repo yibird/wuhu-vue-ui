@@ -175,7 +175,7 @@ function stateToCss(context: RtfContext): string {
   return declarations.join(';')
 }
 
-function flushRun(context: RtfContext): void {
+function flushRun(context: RtfContext) {
   if (!context.pendingText) return
   const escaped = escapeHtml(context.pendingText)
   context.runs.push(
@@ -186,7 +186,7 @@ function flushRun(context: RtfContext): void {
   context.pendingText = ''
 }
 
-function pushText(context: RtfContext, text: string): void {
+function pushText(context: RtfContext, text: string) {
   if (!text || context.state.skip || context.state.hidden) return
   const css = stateToCss(context)
   if (css !== context.pendingCss) {
@@ -196,13 +196,13 @@ function pushText(context: RtfContext, text: string): void {
   context.pendingText += text
 }
 
-function pushHtml(context: RtfContext, html: string): void {
+function pushHtml(context: RtfContext, html: string) {
   if (context.state.skip || context.state.hidden) return
   flushRun(context)
   context.runs.push(html)
 }
 
-function flushParagraph(context: RtfContext): void {
+function flushParagraph(context: RtfContext) {
   flushRun(context)
   if (context.runs.length === 0) {
     if (context.paragraphs.length === 0) {
@@ -232,7 +232,7 @@ function decodeBytes(bytes: number[], codepage: string): string {
   }
 }
 
-function handleControl(context: RtfContext, word: string, parameter: number | undefined): void {
+function handleControl(context: RtfContext, word: string, parameter: number | undefined) {
   const state = context.state
   const off = parameter === 0
 

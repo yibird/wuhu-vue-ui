@@ -2,6 +2,8 @@ import './src/style/index.less'
 
 export { default as OrgTree } from './src/OrgTree.vue'
 export type {
+  OrgTreeClasses,
+  OrgTreeClassValue,
   OrgTreeDragEndEvent,
   OrgTreeDragPosition,
   OrgTreeExpandSlotProps,
@@ -15,6 +17,7 @@ export type {
   OrgTreePanEvent,
   OrgTreeProps,
   OrgTreeReparentEvent,
+  OrgTreeStyles,
   OrgTreeTranslate,
   OrgTreeZoomEvent,
 } from './src/types'

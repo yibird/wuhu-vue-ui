@@ -9,14 +9,21 @@ export type CodeEditorModel = editor.ITextModel
 /** A disposable returned by Monaco event subscriptions. */
 export type CodeEditorDisposable = IDisposable
 
+export interface CodeEditorLabels {
+  loading: string
+  error: string
+  retry: string
+}
+
 export interface CodeEditorProps {
   /** Editor content, used with `v-model`. */
   modelValue?: string
   /** Monaco language identifier, e.g. `typescript` or `json`. */
   language?: string
   /**
-   * Monaco theme identifier, e.g. `vs` or `vs-dark`, or `auto` to follow the
-   * app's `data-w-theme` attribute / `prefers-color-scheme`.
+   * Monaco theme identifier, e.g. `vs` or `vs-dark`, or `auto` to resolve from
+   * the app's `data-w-theme` attribute / `prefers-color-scheme`. `auto` is
+   * resolved when the theme is applied; no theme listeners are registered.
    * Monaco themes are global: changing this value affects every editor instance.
    */
   theme?: string
@@ -35,8 +42,10 @@ export interface CodeEditorProps {
   >
   /** Let Monaco re-layout when the container resizes. */
   automaticLayout?: boolean
-  /** Text shown while Monaco is loading. */
+  /** Text shown while Monaco is loading. Superseded by `labels.loading`. */
   loadingText?: string
+  /** Overrides for loading, error and retry text. */
+  labels?: Partial<CodeEditorLabels>
 }
 
 export interface CodeEditorErrorSlotProps {

@@ -1,6 +1,6 @@
 {
   "name": "@wuhu-vue-ui/playground",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "@wuhu-vue-ui/code-editor": "workspace:*",
     "@wuhu-vue-ui/command-menu": "workspace:*",
+    "@wuhu-vue-ui/context-menu": "workspace:*",
     "@wuhu-vue-ui/copy": "workspace:*",
     "@wuhu-vue-ui/count-down": "workspace:*",
     "@wuhu-vue-ui/cropper": "workspace:*",
@@ -22,7 +23,6 @@
     "@wuhu-vue-ui/gantt": "workspace:*",
     "@wuhu-vue-ui/gradient-text": "workspace:*",
     "@wuhu-vue-ui/highlight": "workspace:*",
-    "@wuhu-vue-ui/icon": "workspace:*",
     "@wuhu-vue-ui/icon-picker": "workspace:*",
     "@wuhu-vue-ui/img-comparison-slider": "workspace:*",
     "@wuhu-vue-ui/json-viewer": "workspace:*",

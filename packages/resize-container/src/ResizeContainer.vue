@@ -5,22 +5,22 @@ import {
   nextTick,
   onBeforeUnmount,
   onMounted,
+  onUpdated,
   reactive,
   ref,
   shallowReadonly,
   useAttrs,
   watch,
-  type ComputedRef,
   type ShallowRef,
 } from 'vue'
 import type {
   ResizeContainerProps,
   ResizeContainerResizeEvent,
+  ResizeContainerSize,
   ResizeContainerSlotProps,
 } from './types'
 
 defineOptions({
-  name: 'WResizeContainer',
   inheritAttrs: false,
 })
 
@@ -83,15 +83,14 @@ const hyphenate = (value: string) => {
 }
 
 function parseStyleString(value: string): Record<string, string> {
+  const style = document.createElement('div').style
+  style.cssText = value
   const result: Record<string, string> = {}
 
-  for (const declaration of value.split(';')) {
-    const separator = declaration.indexOf(':')
-    if (separator <= 0) continue
-
-    const key = declaration.slice(0, separator).trim()
-    const item = declaration.slice(separator + 1).trim()
-    if (key && item) result[key] = item
+  for (let index = 0; index < style.length; index += 1) {
+    const key = style.item(index)
+    const item = style.getPropertyValue(key)
+    result[key] = style.getPropertyPriority(key) ? `${item} !important` : item
   }
 
   return result
@@ -193,6 +192,9 @@ function applyDeclaredStyle() {
   }
 }
 
+// Attribute updates that replace the style binding re-render the component, so
+// re-apply after each update as well as watching nested style-object mutations.
+onUpdated(applyDeclaredStyle)
 watch(() => attrs.style, applyDeclaredStyle, { deep: true })
 
 const size = reactive({ width: 0, height: 0 })
@@ -214,14 +216,17 @@ function createPayload(
   }
 }
 
+let lastPayload: ResizeContainerResizeEvent | null = null
+
 const { width, height, entry, start, stop, measure } = useResize(rootRef, {
   box: () => props.box,
   debounce: () => props.debounce,
-  immediate: () => props.immediate,
+  immediate: props.immediate,
   onResize: (measuredSize, record) => {
     if (!rootRef.value) return
 
     const payload = createPayload(record, measuredSize)
+    lastPayload = payload
     size.width = payload.width
     size.height = payload.height
     emit('resize', payload)
@@ -257,22 +262,32 @@ onBeforeUnmount(() => {
   stop()
 })
 
+/**
+ * Reads the current size synchronously and forces one `resize` event, even if
+ * the size did not change since the last observation.
+ */
+function getSize(): ResizeContainerSize {
+  lastPayload = null
+  measure()
+  return lastPayload ?? { width: size.width, height: size.height, entry: entry.value }
+}
+
 interface ResizeContainerExpose {
-  width: ComputedRef<number>
-  height: ComputedRef<number>
+  width: Readonly<ShallowRef<number>>
+  height: Readonly<ShallowRef<number>>
   entry: Readonly<ShallowRef<ResizeObserverEntry | null>>
   start: () => void
   stop: () => void
-  measure: () => void
+  getSize: () => ResizeContainerSize
 }
 
 defineExpose<ResizeContainerExpose>({
-  width: computed(() => width.value),
-  height: computed(() => height.value),
+  width: shallowReadonly(width),
+  height: shallowReadonly(height),
   entry: shallowReadonly(entry),
   start,
   stop,
-  measure,
+  getSize,
 })
 </script>
 

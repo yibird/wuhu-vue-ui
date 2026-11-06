@@ -53,6 +53,7 @@ describe('CountDown', () => {
     const wrapper = mount(CountDown, { props: { duration: 5_000 } })
     const vm = getVm(wrapper)
 
+    expect(wrapper.element.tagName).toBe('SPAN')
     expect(wrapper.text()).toBe('00:00:05')
     expect(vm.remaining).toBe(5_000)
     expect(vm.running).toBe(true)
@@ -227,6 +228,39 @@ describe('CountDown', () => {
     await nextTick()
 
     expect(remaining.value).toBe(3_000)
+    wrapper.unmount()
+  })
+
+  it('finishes when an externally controlled remaining value becomes zero while paused', async () => {
+    const wrapper = mount(CountDown, { props: { remaining: 5_000, autoStart: false } })
+    const vm = getVm(wrapper)
+
+    vm.start()
+    vm.pause()
+    await wrapper.setProps({ remaining: 0 })
+
+    expect(vm.finished).toBe(true)
+    expect(vm.running).toBe(false)
+    expect(wrapper.emitted('finish')).toHaveLength(1)
+    expect(wrapper.emitted('change')?.at(-1)?.[0]).toMatchObject({ remaining: 0, finished: true })
+
+    await wrapper.setProps({ remaining: 0 })
+    expect(wrapper.emitted('finish')).toHaveLength(1)
+
+    await wrapper.setProps({ remaining: 1_000 })
+    expect(vm.finished).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('finishes when an externally controlled remaining value is zero before starting', async () => {
+    const wrapper = mount(CountDown, { props: { remaining: 1_000, autoStart: false } })
+    const vm = getVm(wrapper)
+
+    await wrapper.setProps({ remaining: 0 })
+
+    expect(vm.finished).toBe(true)
+    expect(vm.running).toBe(false)
+    expect(wrapper.emitted('finish')).toHaveLength(1)
     wrapper.unmount()
   })
 

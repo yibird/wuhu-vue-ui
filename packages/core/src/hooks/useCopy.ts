@@ -1,4 +1,4 @@
-import { computed, getCurrentScope, onScopeDispose, ref } from 'vue'
+import { computed, getCurrentScope, onScopeDispose, readonly, ref } from 'vue'
 import { copyText } from '../utils/copy'
 
 export interface UseCopyOptions {
@@ -110,9 +110,9 @@ export function useCopy(options: UseCopyOptions = {}) {
   }
 
   return {
-    copied,
-    loading,
-    error,
+    copied: readonly(copied),
+    loading: readonly(loading),
+    error: readonly(error),
     isSupported,
     copy,
     reset,

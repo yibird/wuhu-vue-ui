@@ -1,4 +1,41 @@
+import type { StyleValue } from 'vue'
+
 export type OrgTreeId = string | number
+
+export type OrgTreeClassValue =
+  | string
+  | Record<string, boolean>
+  | (string | Record<string, boolean>)[]
+
+/** Semantic class names for the tree's internal parts. */
+export interface OrgTreeClasses {
+  root?: OrgTreeClassValue
+  viewport?: OrgTreeClassValue
+  canvas?: OrgTreeClassValue
+  node?: OrgTreeClassValue
+  card?: OrgTreeClassValue
+  label?: OrgTreeClassValue
+  toggle?: OrgTreeClassValue
+  children?: OrgTreeClassValue
+  menu?: OrgTreeClassValue
+  menuItem?: OrgTreeClassValue
+  empty?: OrgTreeClassValue
+}
+
+/** Semantic inline styles for the tree's internal parts. */
+export interface OrgTreeStyles {
+  root?: StyleValue
+  viewport?: StyleValue
+  canvas?: StyleValue
+  node?: StyleValue
+  card?: StyleValue
+  label?: StyleValue
+  toggle?: StyleValue
+  children?: StyleValue
+  menu?: StyleValue
+  menuItem?: StyleValue
+  empty?: StyleValue
+}
 
 export interface OrgTreeNode {
   id: OrgTreeId
@@ -81,6 +118,11 @@ export interface OrgTreeProps {
   /** Enable dragging nodes onto other nodes to change their parent. */
   nodeDraggable?: boolean
   /**
+   * Allow dropping a node on blank canvas to move it to the root level.
+   * Defaults to `true`; set to `false` to ignore drops outside a node.
+   */
+  dropOnEmpty?: boolean
+  /**
    * Mutate `data` on drag-reparent. Set to `false` for read-only/immutable
    * data and apply the `node-reparent` payload in the parent instead.
    */
@@ -104,11 +146,13 @@ export interface OrgTreeProps {
   beforeDragEnd?: (dragNode: OrgTreeNode, dropNode: OrgTreeNode) => boolean | Promise<boolean>
   /** Menu items, or `false` to disable the context menu entirely. */
   contextMenu?: OrgTreeMenuItem[] | false
-  labelClassName?: string
-  selectedClassName?: string
   emptyText?: string
   /** Root minimum height. Numbers are converted to pixels. */
   minHeight?: string | number
+  /** Semantic class names for internal parts. */
+  classes?: OrgTreeClasses
+  /** Semantic inline styles for internal parts. */
+  styles?: OrgTreeStyles
 }
 
 export interface OrgTreeNodeSlotProps {

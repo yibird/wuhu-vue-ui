@@ -63,6 +63,17 @@ describe('IconPicker', () => {
     wrapper.unmount()
   })
 
+  it('localizes the library heading and result count', () => {
+    const wrapper = mountPicker({
+      libraryLabel: 'Library',
+      countLabel: (count: number) => `${count} icons`,
+    })
+
+    expect(wrapper.get('.w-icon-picker__sidebar-title').text()).toContain('Library')
+    expect(wrapper.get('.w-icon-picker__head-count').text()).toBe('129 icons')
+    wrapper.unmount()
+  })
+
   it('hides the search field when showSearch is false', () => {
     const wrapper = mountPicker({ showSearch: false })
 

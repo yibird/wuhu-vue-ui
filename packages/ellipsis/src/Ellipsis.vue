@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, useId, watch } from 'vue'
 import type { EllipsisActionSlotProps, EllipsisProps, EllipsisTooltipSlotProps } from './types'
-
-defineOptions({
-  name: 'WEllipsis',
-})
 
 const props = withDefaults(defineProps<EllipsisProps>(), {
   text: '',
@@ -29,6 +26,7 @@ defineSlots<{
 }>()
 
 const contentRef = ref<HTMLElement | null>(null)
+const tooltipRef = ref<HTMLElement | null>(null)
 const expanded = ref(props.expanded)
 const overflowed = ref(false)
 const tooltipVisible = ref(false)
@@ -65,6 +63,14 @@ const actionSlotProps = computed<EllipsisActionSlotProps>(() => ({
 const tooltipSlotProps = computed<EllipsisTooltipSlotProps>(() => ({
   text: contentText.value,
 }))
+
+// Floating UI owns tooltip placement, flipping and viewport shifting, so the
+// component does not need to duplicate those rules in CSS.
+const { floatingStyles, placement } = useFloating(contentRef, tooltipRef, {
+  placement: () => props.tooltipPlacement,
+  middleware: [offset(6), flip(), shift({ padding: 8 })],
+  whileElementsMounted: autoUpdate,
+})
 
 /**
  * Reads the intrinsic overflow while the clamp is active. An expanded element
@@ -154,6 +160,10 @@ onMounted(() => {
   measureOverflow()
 })
 
+onUpdated(() => {
+  scheduleMeasure()
+})
+
 onBeforeUnmount(() => {
   unmounted = true
   observer?.disconnect()
@@ -192,9 +202,11 @@ onBeforeUnmount(() => {
 
     <div
       v-if="showTooltip && tooltipVisible"
+      ref="tooltipRef"
       :id="tooltipId"
       class="w-ellipsis__tooltip"
-      :class="`w-ellipsis__tooltip--${tooltipPlacement}`"
+      :class="`w-ellipsis__tooltip--${placement}`"
+      :style="floatingStyles"
       role="tooltip"
     >
       <slot name="tooltip" v-bind="tooltipSlotProps">{{ contentText }}</slot>

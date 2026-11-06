@@ -20,6 +20,21 @@ describe('View', () => {
     wrapper.unmount()
   })
 
+  it('is a flex container even without gap', () => {
+    const horizontal = mount(View, { props: { direction: 'horizontal' } })
+    const horizontalRoot = horizontal.element as HTMLElement
+    expect(horizontalRoot.style.display).toBe('flex')
+    expect(horizontalRoot.style.flexDirection).toBe('row')
+    expect(horizontalRoot.style.gap).toBe('0px')
+    horizontal.unmount()
+
+    const vertical = mount(View)
+    const verticalRoot = vertical.element as HTMLElement
+    expect(verticalRoot.style.display).toBe('flex')
+    expect(verticalRoot.style.flexDirection).toBe('column')
+    vertical.unmount()
+  })
+
   it('can disable full-size mode', () => {
     const wrapper = mount(View, {
       props: { full: false },
@@ -61,7 +76,7 @@ describe('View', () => {
     const header = wrapper.element as HTMLElement
     const trigger = wrapper.get('.w-view-header__trigger-button')
     expect(trigger.attributes('aria-expanded')).toBe('true')
-    expect(wrapper.find('.w-view-header__trigger .w-icon').exists()).toBe(true)
+    expect(wrapper.find('.w-view-header__trigger-icon svg').exists()).toBe(true)
 
     await trigger.trigger('click')
 
@@ -106,6 +121,64 @@ describe('View', () => {
     expect(sider.style.width).toBe('48px')
     expect(sider.className).toContain('w-view-sider-collapsed')
     wrapper.unmount()
+  })
+
+  it('applies semantic classes and styles to the root', () => {
+    const view = mount(View, {
+      props: {
+        classes: { root: 'semantic-root' },
+        styles: { root: { padding: '4px' } },
+      },
+    })
+    expect((view.element as HTMLElement).classList.contains('semantic-root')).toBe(true)
+    expect((view.element as HTMLElement).style.padding).toBe('4px')
+    view.unmount()
+
+    const header = mount(ViewHeader, {
+      props: {
+        collapsible: true,
+        classes: {
+          root: 'header-root',
+          body: 'header-body',
+          content: 'header-content',
+          trigger: 'header-trigger',
+          triggerButton: 'header-button',
+          triggerIcon: 'header-icon',
+        },
+        styles: { content: { padding: '8px' } },
+      },
+    })
+    expect(header.classes()).toContain('header-root')
+    expect(header.get('.w-view-header__body').classes()).toContain('header-body')
+    expect(header.get('.w-view-header__content').classes()).toContain('header-content')
+    expect(header.get('.w-view-header__trigger').classes()).toContain('header-trigger')
+    expect(header.get('.w-view-header__trigger-button').classes()).toContain('header-button')
+    expect(header.get('.w-view-header__trigger-icon').classes()).toContain('header-icon')
+    expect(header.get('.w-view-header__content').attributes('style')).toContain('padding: 8px')
+    header.unmount()
+
+    const sider = mount(ViewSider, {
+      props: {
+        collapsible: true,
+        classes: {
+          root: 'sider-root',
+          body: 'sider-body',
+          content: 'sider-content',
+          trigger: 'sider-trigger',
+          triggerButton: 'sider-button',
+          triggerIcon: 'sider-icon',
+        },
+        styles: { content: { width: '120px' } },
+      },
+    })
+    expect(sider.classes()).toContain('sider-root')
+    expect(sider.get('.w-view-sider__body').classes()).toContain('sider-body')
+    expect(sider.get('.w-view-sider__content').classes()).toContain('sider-content')
+    expect(sider.get('.w-view-sider__trigger').classes()).toContain('sider-trigger')
+    expect(sider.get('.w-view-sider__trigger-button').classes()).toContain('sider-button')
+    expect(sider.get('.w-view-sider__trigger-icon').classes()).toContain('sider-icon')
+    expect((sider.get('.w-view-sider__content').element as HTMLElement).style.width).toBe('120px')
+    sider.unmount()
   })
 
   it('forwards class/style to the header root', () => {

@@ -41,18 +41,19 @@ JSON 查看器已抽离为独立包 `@wuhu-vue-ui/json-viewer`，内部基于 `C
 
 ### Props
 
-| 属性              | 类型                      | 默认值            | 说明                                                                                                                                                            |
-| ----------------- | ------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`      | `string`                  | `''`              | 编辑器内容，配合 `v-model` 使用                                                                                                                                 |
-| `language`        | `string`                  | `'plaintext'`     | Monaco 语言标识，如 `typescript`、`json`                                                                                                                        |
-| `theme`           | `string`                  | `'vs'`            | Monaco 主题标识，如 `vs-dark`、`hc-black`；`auto` 会根据 `data-w-theme` / `prefers-color-scheme` 解析为 `vs` 或 `vs-dark`；主题是全局的，会影响页面上所有编辑器 |
-| `readOnly`        | `boolean`                 | `false`           | 只读模式                                                                                                                                                        |
-| `disabled`        | `boolean`                 | `false`           | 禁用编辑器（隐含只读，并添加禁用样式）                                                                                                                          |
-| `height`          | `string \| number`        | `'320px'`         | 容器高度，数字按像素处理                                                                                                                                        |
-| `width`           | `string \| number`        | `'100%'`          | 容器宽度，数字按像素处理                                                                                                                                        |
-| `options`         | `Record<string, unknown>` | `{}`              | 透传给 `monaco.editor.create` 的选项                                                                                                                            |
-| `automaticLayout` | `boolean`                 | `true`            | 容器尺寸变化时自动重新布局                                                                                                                                      |
-| `loadingText`     | `string`                  | `'编辑器加载中…'` | 加载中的提示文案                                                                                                                                                |
+| 属性              | 类型                        | 默认值            | 说明                                                                                                                                                                                        |
+| ----------------- | --------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `modelValue`      | `string`                    | `''`              | 编辑器内容，配合 `v-model` 使用                                                                                                                                                             |
+| `language`        | `string`                    | `'plaintext'`     | Monaco 语言标识，如 `typescript`、`json`                                                                                                                                                    |
+| `theme`           | `string`                    | `'vs'`            | Monaco 主题标识，如 `vs-dark`、`hc-black`；`auto` 在应用主题时读取 `data-w-theme` / `prefers-color-scheme` 解析为 `vs` 或 `vs-dark`（不注册主题监听）；主题是全局的，会影响页面上所有编辑器 |
+| `readOnly`        | `boolean`                   | `false`           | 只读模式                                                                                                                                                                                    |
+| `disabled`        | `boolean`                   | `false`           | 禁用编辑器（隐含只读，并添加禁用样式）                                                                                                                                                      |
+| `height`          | `string \| number`          | `'320px'`         | 容器高度，数字按像素处理                                                                                                                                                                    |
+| `width`           | `string \| number`          | `'100%'`          | 容器宽度，数字按像素处理                                                                                                                                                                    |
+| `options`         | `Record<string, unknown>`   | `{}`              | 透传给 `monaco.editor.create` 的选项                                                                                                                                                        |
+| `automaticLayout` | `boolean`                   | `true`            | 容器尺寸变化时自动重新布局                                                                                                                                                                  |
+| `loadingText`     | `string`                    | `'编辑器加载中…'` | 加载中的提示文案                                                                                                                                                                            |
+| `labels`          | `Partial<CodeEditorLabels>` | —                 | 覆盖 loading / error / retry 文案                                                                                                                                                           |
 
 ### Emits
 
@@ -90,16 +91,16 @@ const editorRef = ref<CodeEditorExpose | null>(null)
 </template>
 ```
 
-| 方法 / 属性             | 类型                                     | 说明                   |
-| ----------------------- | ---------------------------------------- | ---------------------- |
-| `editor`                | `ShallowRef<CodeEditorInstance \| null>` | 底层 Monaco 编辑器实例 |
-| `getEditor()`           | `() => CodeEditorInstance \| null`       | 获取编辑器实例         |
-| `focus()`               | `() => void`                             | 聚焦编辑器             |
-| `layout()`              | `() => void`                             | 手动触发重新布局       |
-| `getValue()`            | `() => string`                           | 获取当前内容           |
-| `setValue(value)`       | `(value: string) => void`                | 设置内容               |
-| `setLanguage(language)` | `(language: string) => void`             | 切换语言               |
-| `setTheme(theme)`       | `(theme: string) => void`                | 切换主题               |
+| 方法 / 属性             | 类型                                     | 说明                                               |
+| ----------------------- | ---------------------------------------- | -------------------------------------------------- |
+| `editor`                | `ShallowRef<CodeEditorInstance \| null>` | 底层 Monaco 编辑器实例                             |
+| `getEditor()`           | `() => CodeEditorInstance \| null`       | 获取编辑器实例                                     |
+| `focus()`               | `() => void`                             | 聚焦编辑器                                         |
+| `layout()`              | `() => void`                             | 手动触发重新布局                                   |
+| `getValue()`            | `() => string`                           | 获取当前内容                                       |
+| `setValue(value)`       | `(value: string) => void`                | 设置内容                                           |
+| `setLanguage(language)` | `(language: string) => void`             | 切换语言                                           |
+| `setTheme(theme)`       | `(theme: string) => void`                | 切换主题；会覆盖 `auto` 解析直到 `theme` prop 变化 |
 
 ## 说明
 

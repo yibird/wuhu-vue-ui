@@ -2,6 +2,7 @@
 import {
   computed,
   markRaw,
+  nextTick,
   onBeforeUnmount,
   onErrorCaptured,
   onMounted,
@@ -11,12 +12,16 @@ import {
   type CSSProperties,
   type ComponentPublicInstance,
 } from 'vue'
-import { useMediaQuery, useTimeoutFn } from '@wuhu-vue-ui/core'
+import { useTimeoutFn } from '@wuhu-vue-ui/core'
+import FileInfoPanel from './components/FileInfoPanel.vue'
 import Icon from './components/Icon.vue'
+import ViewerStatusBar from './components/ViewerStatusBar.vue'
+import ViewerToolbar from './components/ViewerToolbar.vue'
+import ViewerWatermark from './components/ViewerWatermark.vue'
 import { defaultCapabilities } from './core/capabilities'
 import { detectFormat } from './core/detect'
 import { openInNewTab, triggerDownload } from './core/download'
-import { clamp, formatBytes, formatDateTime, toCssSize, toError } from './core/format'
+import { clamp, toCssSize, toError } from './core/format'
 import { printUrl } from './core/print'
 import { createFileViewerSource } from './core/source'
 import { resolveFileViewerMessages } from './i18n'
@@ -33,12 +38,9 @@ import type {
   FileViewerResolvedTheme,
   FileViewerSource,
   FileViewerStateSlotProps,
+  FileViewerStatusBarSlotProps,
   FileViewerToolbarSlotProps,
 } from './types'
-
-defineOptions({
-  name: 'WFileViewer',
-})
 
 const props = withDefaults(defineProps<FileViewerProps>(), {
   src: '',
@@ -87,13 +89,7 @@ defineSlots<{
   empty?: (props: FileViewerStateSlotProps) => unknown
   error?: (props: FileViewerErrorSlotProps) => unknown
   watermark?: (props: { text: string }) => unknown
-  'status-bar'?: (props: {
-    source: FileViewerSource | null
-    meta: FileViewerMeta | null
-    page: number
-    pageCount: number
-    zoom: number
-  }) => unknown
+  'status-bar'?: (props: FileViewerStatusBarSlotProps) => unknown
 }>()
 
 const rootRef = ref<HTMLElement>()
@@ -111,20 +107,25 @@ const rotation = ref(0)
 const showInfo = ref(false)
 const isFullscreen = ref(false)
 const pseudoFullscreen = ref(false)
-const systemDark = useMediaQuery('(prefers-color-scheme: dark)')
-const appTheme = ref<FileViewerResolvedTheme | null>(readAppTheme())
-const themeOverride = ref<FileViewerResolvedTheme | null>(null)
-let themeObserver: MutationObserver | undefined
-
-/** Read an explicit app-level `data-w-theme` so `theme="auto"` can follow it. */
-function readAppTheme(): FileViewerResolvedTheme | null {
-  if (typeof document === 'undefined') return null
-  const value =
-    document.documentElement.getAttribute('data-w-theme') ??
-    document.body?.getAttribute('data-w-theme') ??
-    null
-  return value === 'light' || value === 'dark' ? value : null
+/**
+ * Resolves `theme="auto"` once from the app selector/OS preference. No
+ * listeners are registered: themes are owned by CSS selectors.
+ */
+function readAutoTheme(): FileViewerResolvedTheme {
+  if (typeof document !== 'undefined') {
+    const explicit =
+      document.documentElement.getAttribute('data-w-theme') ??
+      document.body?.getAttribute('data-w-theme')
+    if (explicit === 'light' || explicit === 'dark') return explicit
+  }
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  }
+  return 'light'
 }
+
+const autoTheme = ref<FileViewerResolvedTheme>(readAutoTheme())
+const themeOverride = ref<FileViewerResolvedTheme | null>(null)
 const notice = ref<{ text: string; error: boolean } | null>(null)
 const noticeTimeout = useTimeoutFn(() => {
   notice.value = null
@@ -141,13 +142,15 @@ const capabilities = ref<FileViewerCapabilities>({
 let loadToken = 0
 let sizeToken = 0
 let dragDepth = 0
+let pendingDisposals: FileViewerSource[] = []
+let disposeScheduled = false
+let isUnmounting = false
 
 const messages = computed(() => resolveFileViewerMessages(props.locale, props.messages))
 const resolvedTheme = computed<FileViewerResolvedTheme>(() => {
   if (themeOverride.value) return themeOverride.value
   if (props.theme === 'light' || props.theme === 'dark') return props.theme
-  if (appTheme.value) return appTheme.value
-  return systemDark.value ? 'dark' : 'light'
+  return autoTheme.value
 })
 
 const meta = computed<FileViewerMeta | null>(() => {
@@ -168,7 +171,6 @@ const meta = computed<FileViewerMeta | null>(() => {
 const displayTitle = computed(
   () => props.title || meta.value?.name || messages.value.viewer.untitled,
 )
-const zoomPercent = computed(() => `${Math.round(zoom.value * 100)}%`)
 const isDark = computed(() => resolvedTheme.value === 'dark')
 const rootClass = computed(() => ({
   'w-file-viewer': true,
@@ -186,16 +188,6 @@ const rootStyle = computed(
       ...props.themeVars,
     }) as CSSProperties,
 )
-const watermarkStyle = computed(() => {
-  const options = props.watermarkOptions
-  const style: Record<string, string> = {
-    '--w-file-viewer-watermark-opacity': String(options.opacity ?? 0.12),
-    '--w-file-viewer-watermark-size': `${options.fontSize ?? 22}px`,
-    '--w-file-viewer-watermark-rotate': `${options.rotate ?? -24}deg`,
-  }
-  if (options.color) style['--w-file-viewer-watermark-color'] = options.color
-  return style as CSSProperties
-})
 const showLoading = computed(() => status.value === 'loading')
 const hasPageControls = computed(() => capabilities.value.paged && pageCount.value > 1)
 
@@ -228,7 +220,15 @@ const stateSlotProps = computed<FileViewerStateSlotProps>(() => ({
   meta: meta.value,
 }))
 
-function showNotice(text: string, isError = false): void {
+const statusBarSlotProps = computed<FileViewerStatusBarSlotProps>(() => ({
+  source: source.value,
+  meta: meta.value,
+  page: page.value,
+  pageCount: pageCount.value,
+  zoom: zoom.value,
+}))
+
+function showNotice(text: string, isError = false) {
   notice.value = { text, error: isError }
   noticeTimeout.stop()
   noticeTimeout.start()
@@ -254,26 +254,26 @@ function hasFilePayload(event: DragEvent): boolean {
   return Array.from(event.dataTransfer?.types ?? []).includes('Files')
 }
 
-function handleDragEnter(event: DragEvent): void {
+function handleDragEnter(event: DragEvent) {
   if (!hasFilePayload(event)) return
   event.preventDefault()
   dragDepth += 1
   isDraggingFile.value = true
 }
 
-function handleDragOver(event: DragEvent): void {
+function handleDragOver(event: DragEvent) {
   if (!hasFilePayload(event)) return
   event.preventDefault()
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy'
   isDraggingFile.value = true
 }
 
-function handleDragLeave(): void {
+function handleDragLeave() {
   dragDepth = Math.max(0, dragDepth - 1)
   if (dragDepth === 0) isDraggingFile.value = false
 }
 
-function handleDrop(event: DragEvent): void {
+function handleDrop(event: DragEvent) {
   event.preventDefault()
   dragDepth = 0
   isDraggingFile.value = false
@@ -281,11 +281,11 @@ function handleDrop(event: DragEvent): void {
   if (file) emit('file-drop', file)
 }
 
-function syncPageInput(): void {
+function syncPageInput() {
   pageInput.value = String(page.value)
 }
 
-function applyPage(next: number, notify: boolean): void {
+function applyPage(next: number, notify: boolean) {
   const maximum = pageCount.value > 0 ? pageCount.value : Math.max(1, next)
   const value = clamp(Math.round(next) || 1, 1, maximum)
   if (value === page.value) return
@@ -294,43 +294,43 @@ function applyPage(next: number, notify: boolean): void {
   if (notify) emit('update:page', value)
 }
 
-function goToPage(next: number): void {
+function goToPage(next: number) {
   if (!capabilities.value.paged) return
   applyPage(next, true)
 }
 
-function previousPage(): void {
+function previousPage() {
   goToPage(page.value - 1)
 }
 
-function nextPage(): void {
+function nextPage() {
   goToPage(page.value + 1)
 }
 
-function commitPageInput(): void {
+function commitPageInput() {
   const parsed = Number.parseInt(pageInput.value, 10)
   if (Number.isFinite(parsed)) goToPage(parsed)
   else syncPageInput()
 }
 
-function setZoom(next: number, notify = true): void {
+function setZoom(next: number, notify = true) {
   const value = clamp(Math.round(next * 100) / 100, props.minZoom, props.maxZoom)
   if (value === zoom.value) return
   zoom.value = value
   if (notify) emit('update:zoom', value)
 }
 
-function zoomIn(): void {
+function zoomIn() {
   if (!capabilities.value.zoom) return
   setZoom(zoom.value + props.zoomStep)
 }
 
-function zoomOut(): void {
+function zoomOut() {
   if (!capabilities.value.zoom) return
   setZoom(zoom.value - props.zoomStep)
 }
 
-function resetZoom(): void {
+function resetZoom() {
   if (!capabilities.value.zoom) return
   setZoom(1)
 }
@@ -339,30 +339,30 @@ function normalizeRotation(value: number): number {
   return ((value % 360) + 360) % 360
 }
 
-function setRotation(next: number, notify = true): void {
+function setRotation(next: number, notify = true) {
   const value = normalizeRotation(next)
   if (value === rotation.value) return
   rotation.value = value
   if (notify) emit('update:rotation', value)
 }
 
-function rotateLeft(): void {
+function rotateLeft() {
   if (!capabilities.value.rotate) return
   setRotation(rotation.value - 90)
 }
 
-function rotateRight(): void {
+function rotateRight() {
   if (!capabilities.value.rotate) return
   setRotation(rotation.value + 90)
 }
 
-function toggleTheme(): void {
+function toggleTheme() {
   const next: FileViewerResolvedTheme = isDark.value ? 'light' : 'dark'
   themeOverride.value = next
   emit('update:theme', next)
 }
 
-function applyRendererReady(payload: FileViewerRendererReadyEvent): void {
+function applyRendererReady(payload: FileViewerRendererReadyEvent) {
   status.value = 'ready'
   pageCount.value = Math.max(0, payload.pageCount || 0)
   capabilities.value = {
@@ -387,14 +387,14 @@ function applyRendererReady(payload: FileViewerRendererReadyEvent): void {
   }
 }
 
-function handleRendererError(cause: unknown): void {
+function handleRendererError(cause: unknown) {
   const normalized = toError(cause)
   status.value = 'error'
   error.value = normalized
   emit('error', normalized)
 }
 
-function handleRendererPageChange(next: number): void {
+function handleRendererPageChange(next: number) {
   applyPage(next, true)
 }
 
@@ -411,7 +411,36 @@ async function loadRenderer(current: FileViewerSource): Promise<void> {
   }
 }
 
-function rebuildSource(): void {
+function flushPendingDisposals() {
+  if (pendingDisposals.length === 0) return
+  const targets = pendingDisposals
+  pendingDisposals = []
+  for (const target of targets) target.dispose()
+}
+
+/**
+ * Release an outgoing object URL only after the next render, so the renderer
+ * still using it has unmounted first. Multiple rapid source changes are
+ * batched into a single deferred flush.
+ */
+function scheduleSourceDispose(target: FileViewerSource) {
+  if (isUnmounting) {
+    target.dispose()
+    return
+  }
+
+  pendingDisposals.push(target)
+  if (disposeScheduled) return
+
+  disposeScheduled = true
+  void nextTick(() => {
+    disposeScheduled = false
+    if (isUnmounting) return
+    flushPendingDisposals()
+  })
+}
+
+function rebuildSource() {
   loadToken += 1
   sizeToken += 1
   remoteSize.value = undefined
@@ -435,7 +464,7 @@ function rebuildSource(): void {
     size: props.size,
   })
   source.value = next
-  previous?.dispose()
+  if (previous) scheduleSourceDispose(previous)
 
   if (!next) {
     status.value = 'empty'
@@ -471,15 +500,16 @@ async function download(): Promise<void> {
     showNotice(messages.value.viewer.downloadStarted)
   } catch {
     if (current.url && openInNewTab(current.url)) {
-      emit('download', current)
-      showNotice(messages.value.viewer.downloadStarted)
+      // The file was opened, not saved: report it as an open action.
+      emit('open', current)
+      showNotice(messages.value.viewer.downloadFallback)
     } else {
       showNotice(messages.value.viewer.downloadFailed, true)
     }
   }
 }
 
-function print(): void {
+function print() {
   const current = source.value
   if (!current) return
   const renderer = rendererRef.value as unknown as { print?: () => boolean | void } | null
@@ -495,7 +525,7 @@ function print(): void {
   emit('print', current)
 }
 
-function openFile(): void {
+function openFile() {
   const current = source.value
   if (!current) return
   if (!openInNewTab(current.url)) {
@@ -505,11 +535,11 @@ function openFile(): void {
   emit('open', current)
 }
 
-function retry(): void {
+function retry() {
   rebuildSource()
 }
 
-function onFullscreenChange(): void {
+function onFullscreenChange() {
   if (typeof document === 'undefined') return
   const active = document.fullscreenElement === rootRef.value
   if (active) {
@@ -556,7 +586,7 @@ async function toggleFullscreen(): Promise<void> {
   emit('fullscreen-change', true)
 }
 
-function handleWheel(event: WheelEvent): void {
+function handleWheel(event: WheelEvent) {
   if (!props.wheelZoom || !props.allowZoom || !capabilities.value.zoom) return
   if (!event.ctrlKey && !event.metaKey) return
   event.preventDefault()
@@ -564,7 +594,7 @@ function handleWheel(event: WheelEvent): void {
   setZoom(zoom.value * factor)
 }
 
-function handleKeydown(event: KeyboardEvent): void {
+function handleKeydown(event: KeyboardEvent) {
   const target = event.target as HTMLElement | null
   if (target?.closest('input, textarea, select, [contenteditable="true"]')) return
 
@@ -649,7 +679,7 @@ function getState() {
   }
 }
 
-function setTheme(theme: FileViewerResolvedTheme): void {
+function setTheme(theme: FileViewerResolvedTheme) {
   themeOverride.value = theme
   emit('update:theme', theme)
 }
@@ -709,6 +739,7 @@ watch(
   () => props.theme,
   () => {
     themeOverride.value = null
+    if (props.theme === 'auto') autoTheme.value = readAutoTheme()
   },
 )
 
@@ -722,28 +753,18 @@ onErrorCaptured((cause) => {
 onMounted(() => {
   if (typeof document !== 'undefined') {
     document.addEventListener('fullscreenchange', onFullscreenChange)
-    appTheme.value = readAppTheme()
-    if (typeof MutationObserver !== 'undefined') {
-      themeObserver = new MutationObserver(() => {
-        appTheme.value = readAppTheme()
-      })
-      themeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['data-w-theme'],
-        subtree: true,
-      })
-    }
   }
 })
 
 onBeforeUnmount(() => {
   loadToken += 1
   sizeToken += 1
-  themeObserver?.disconnect()
+  isUnmounting = true
   if (typeof document !== 'undefined') {
     document.removeEventListener('fullscreenchange', onFullscreenChange)
   }
   noticeTimeout.stop()
+  flushPendingDisposals()
   source.value?.dispose()
 })
 </script>
@@ -766,201 +787,54 @@ onBeforeUnmount(() => {
     @dragleave="handleDragLeave"
     @drop="handleDrop"
   >
-    <header v-if="showToolbar" class="w-file-viewer__toolbar">
-      <slot name="toolbar" v-bind="toolbarSlotProps">
-        <div class="w-file-viewer__toolbar-left">
-          <slot name="toolbar-left" v-bind="toolbarSlotProps">
-            <span class="w-file-viewer__file-icon">
-              <Icon name="file-viewer" :size="17" />
-            </span>
-            <span class="w-file-viewer__title" :title="displayTitle">{{ displayTitle }}</span>
-            <span v-if="meta?.extension" class="w-file-viewer__badge">{{
-              meta.extension.toUpperCase()
-            }}</span>
-          </slot>
-        </div>
-
-        <div class="w-file-viewer__toolbar-center">
-          <div
-            v-if="hasPageControls"
-            class="w-file-viewer__group"
-            role="group"
-            :aria-label="messages.viewer.page"
-          >
-            <button
-              type="button"
-              class="w-file-viewer__icon-button"
-              :disabled="page <= 1"
-              :title="messages.viewer.previousPage"
-              :aria-label="messages.viewer.previousPage"
-              @click="previousPage"
-            >
-              <Icon name="chevron-left" />
-            </button>
-            <div class="w-file-viewer__page-field">
-              <input
-                v-model="pageInput"
-                class="w-file-viewer__page-input"
-                type="number"
-                min="1"
-                :max="pageCount"
-                :aria-label="messages.viewer.pageInput"
-                @change="commitPageInput"
-                @keydown.enter.prevent="commitPageInput"
-              />
-              <span>{{ messages.viewer.pageOf }} {{ pageCount }}</span>
-            </div>
-            <button
-              type="button"
-              class="w-file-viewer__icon-button"
-              :disabled="page >= pageCount"
-              :title="messages.viewer.nextPage"
-              :aria-label="messages.viewer.nextPage"
-              @click="nextPage"
-            >
-              <Icon name="chevron-right" />
-            </button>
-          </div>
-
-          <span
-            v-if="hasPageControls && (capabilities.zoom || capabilities.rotate)"
-            class="w-file-viewer__divider"
-          />
-
-          <div
-            v-if="allowZoom && capabilities.zoom"
-            class="w-file-viewer__group"
-            role="group"
-            :aria-label="messages.viewer.zoomIn"
-          >
-            <button
-              type="button"
-              class="w-file-viewer__icon-button"
-              :title="messages.viewer.zoomOut"
-              :aria-label="messages.viewer.zoomOut"
-              @click="zoomOut"
-            >
-              <Icon name="zoom-out" />
-            </button>
-            <button
-              type="button"
-              class="w-file-viewer__zoom-value"
-              :title="messages.viewer.resetZoom"
-              :aria-label="messages.viewer.resetZoom"
-              @click="resetZoom"
-            >
-              {{ zoomPercent }}
-            </button>
-            <button
-              type="button"
-              class="w-file-viewer__icon-button"
-              :title="messages.viewer.zoomIn"
-              :aria-label="messages.viewer.zoomIn"
-              @click="zoomIn"
-            >
-              <Icon name="zoom-in" />
-            </button>
-          </div>
-
-          <span
-            v-if="capabilities.zoom && allowRotate && capabilities.rotate"
-            class="w-file-viewer__divider"
-          />
-
-          <div
-            v-if="allowRotate && capabilities.rotate"
-            class="w-file-viewer__group"
-            role="group"
-            :aria-label="messages.viewer.rotateRight"
-          >
-            <button
-              type="button"
-              class="w-file-viewer__icon-button"
-              :title="messages.viewer.rotateLeft"
-              :aria-label="messages.viewer.rotateLeft"
-              @click="rotateLeft"
-            >
-              <Icon name="rotate-left" />
-            </button>
-            <button
-              type="button"
-              class="w-file-viewer__icon-button"
-              :title="messages.viewer.rotateRight"
-              :aria-label="messages.viewer.rotateRight"
-              @click="rotateRight"
-            >
-              <Icon name="rotate-right" />
-            </button>
-          </div>
-        </div>
-
-        <div class="w-file-viewer__toolbar-right">
-          <slot name="toolbar-actions" v-bind="toolbarSlotProps" />
-          <button
-            v-if="allowDownload && source"
-            type="button"
-            class="w-file-viewer__icon-button"
-            :title="messages.viewer.download"
-            :aria-label="messages.viewer.download"
-            @click="download"
-          >
-            <Icon name="download" />
-          </button>
-          <button
-            v-if="allowOpen && source"
-            type="button"
-            class="w-file-viewer__icon-button"
-            :title="messages.viewer.openInNewTab"
-            :aria-label="messages.viewer.openInNewTab"
-            @click="openFile"
-          >
-            <Icon name="external" />
-          </button>
-          <button
-            v-if="allowPrint && capabilities.print"
-            type="button"
-            class="w-file-viewer__icon-button"
-            :title="messages.viewer.print"
-            :aria-label="messages.viewer.print"
-            @click="print"
-          >
-            <Icon name="printer" />
-          </button>
-          <button
-            v-if="source && showFileInfo"
-            type="button"
-            class="w-file-viewer__icon-button"
-            :class="{ 'is-active': showInfo }"
-            :title="messages.viewer.fileInfo"
-            :aria-label="messages.viewer.fileInfo"
-            :aria-expanded="showInfo"
-            @click="showInfo = !showInfo"
-          >
-            <Icon name="info" />
-          </button>
-          <button
-            v-if="showThemeToggle"
-            type="button"
-            class="w-file-viewer__icon-button"
-            :title="isDark ? messages.viewer.switchToLight : messages.viewer.switchToDark"
-            :aria-label="isDark ? messages.viewer.switchToLight : messages.viewer.switchToDark"
-            @click="toggleTheme"
-          >
-            <Icon :name="isDark ? 'sun' : 'moon'" />
-          </button>
-          <button
-            v-if="allowFullscreen"
-            type="button"
-            class="w-file-viewer__icon-button"
-            :title="isFullscreen ? messages.viewer.exitFullscreen : messages.viewer.fullscreen"
-            :aria-label="isFullscreen ? messages.viewer.exitFullscreen : messages.viewer.fullscreen"
-            @click="toggleFullscreen"
-          >
-            <Icon :name="isFullscreen ? 'minimize' : 'expand'" />
-          </button>
-        </div>
-      </slot>
-    </header>
+    <ViewerToolbar
+      v-if="showToolbar"
+      v-model:page-input="pageInput"
+      :display-title="displayTitle"
+      :meta="meta"
+      :messages="messages.viewer"
+      :page="page"
+      :page-count="pageCount"
+      :zoom="zoom"
+      :capabilities="capabilities"
+      :is-dark="isDark"
+      :is-fullscreen="isFullscreen"
+      :show-info="showInfo"
+      :show-theme-toggle="showThemeToggle"
+      :show-file-info="showFileInfo"
+      :allow-download="allowDownload"
+      :allow-open="allowOpen"
+      :allow-print="allowPrint"
+      :allow-zoom="allowZoom"
+      :allow-rotate="allowRotate"
+      :allow-fullscreen="allowFullscreen"
+      :has-source="Boolean(source)"
+      :slot-props="toolbarSlotProps"
+      @previous-page="previousPage"
+      @next-page="nextPage"
+      @commit-page="commitPageInput"
+      @zoom-in="zoomIn"
+      @zoom-out="zoomOut"
+      @reset-zoom="resetZoom"
+      @rotate-left="rotateLeft"
+      @rotate-right="rotateRight"
+      @download="download"
+      @open="openFile"
+      @print="print"
+      @toggle-info="showInfo = !showInfo"
+      @toggle-theme="toggleTheme"
+      @toggle-fullscreen="toggleFullscreen"
+    >
+      <template v-if="$slots.toolbar" #toolbar="slotProps">
+        <slot name="toolbar" v-bind="slotProps" />
+      </template>
+      <template v-if="$slots['toolbar-left']" #toolbar-left="slotProps">
+        <slot name="toolbar-left" v-bind="slotProps" />
+      </template>
+      <template v-if="$slots['toolbar-actions']" #toolbar-actions="slotProps">
+        <slot name="toolbar-actions" v-bind="slotProps" />
+      </template>
+    </ViewerToolbar>
 
     <div class="w-file-viewer__content" @wheel="handleWheel">
       <div v-if="status === 'empty'" class="w-file-viewer__state">
@@ -1027,16 +901,11 @@ onBeforeUnmount(() => {
         <span>{{ messages.viewer.dropHint }}</span>
       </div>
 
-      <div
-        v-if="watermark"
-        class="w-file-viewer__watermark"
-        :style="watermarkStyle"
-        aria-hidden="true"
-      >
-        <slot name="watermark" :text="watermark">
-          <span v-for="index in 9" :key="index">{{ watermark }}</span>
-        </slot>
-      </div>
+      <ViewerWatermark v-if="watermark" :text="watermark" :options="watermarkOptions">
+        <template v-if="$slots.watermark" #watermark="slotProps">
+          <slot name="watermark" v-bind="slotProps" />
+        </template>
+      </ViewerWatermark>
 
       <Transition name="w-file-viewer-notice">
         <div
@@ -1051,70 +920,29 @@ onBeforeUnmount(() => {
       </Transition>
     </div>
 
-    <aside
+    <FileInfoPanel
       v-if="showInfo && meta"
-      class="w-file-viewer__info"
-      role="dialog"
-      :aria-label="messages.viewer.fileInfo"
-    >
-      <header>
-        <strong>{{ messages.viewer.fileInfo }}</strong>
-        <button
-          type="button"
-          class="w-file-viewer__icon-button is-small"
-          :title="messages.viewer.close"
-          :aria-label="messages.viewer.close"
-          @click="showInfo = false"
-        >
-          <Icon name="close" :size="15" />
-        </button>
-      </header>
-      <dl>
-        <div>
-          <dt>{{ messages.viewer.name }}</dt>
-          <dd>{{ meta.name }}</dd>
-        </div>
-        <div>
-          <dt>{{ messages.viewer.format }}</dt>
-          <dd>
-            {{ meta.label
-            }}<template v-if="meta.extension"> · {{ meta.extension.toUpperCase() }}</template>
-          </dd>
-        </div>
-        <div>
-          <dt>{{ messages.viewer.type }}</dt>
-          <dd>{{ meta.mime || messages.viewer.unknown }}</dd>
-        </div>
-        <div v-if="meta.size !== undefined">
-          <dt>{{ messages.viewer.size }}</dt>
-          <dd>{{ formatBytes(meta.size, locale) }}</dd>
-        </div>
-        <div v-if="source?.lastModified">
-          <dt>{{ messages.viewer.lastModified }}</dt>
-          <dd>{{ formatDateTime(source.lastModified, locale) }}</dd>
-        </div>
-      </dl>
-    </aside>
+      :meta="meta"
+      :source="source"
+      :messages="messages.viewer"
+      :locale="locale"
+      @close="showInfo = false"
+    />
 
-    <footer v-if="showStatusBar" class="w-file-viewer__status">
-      <slot
-        name="status-bar"
-        :source="source"
-        :meta="meta"
-        :page="page"
-        :pageCount="pageCount"
-        :zoom="zoom"
-      >
-        <span v-if="meta" class="w-file-viewer__status-format">{{ meta.label }}</span>
-        <span v-if="meta?.size !== undefined" class="w-file-viewer__status-item">{{
-          formatBytes(meta.size, locale)
-        }}</span>
-        <span v-if="capabilities.paged && pageCount > 0" class="w-file-viewer__status-item">
-          {{ messages.viewer.page }} {{ page }} / {{ pageCount }}
-        </span>
-        <span v-if="capabilities.zoom" class="w-file-viewer__status-item">{{ zoomPercent }}</span>
-        <span class="w-file-viewer__status-spacer" />
-      </slot>
-    </footer>
+    <ViewerStatusBar
+      v-if="showStatusBar"
+      :messages="messages.viewer"
+      :meta="meta"
+      :locale="locale"
+      :capabilities="capabilities"
+      :page="page"
+      :page-count="pageCount"
+      :zoom="zoom"
+      :slot-props="statusBarSlotProps"
+    >
+      <template v-if="$slots['status-bar']" #status-bar="slotProps">
+        <slot name="status-bar" v-bind="slotProps" />
+      </template>
+    </ViewerStatusBar>
   </div>
 </template>

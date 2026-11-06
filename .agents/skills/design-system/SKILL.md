@@ -87,16 +87,15 @@ docs/.vitepress/theme/tokens.less      # docs 应用级完整令牌
 
 ## 主题
 
-- 每个组件包通过 `src/style/token.less` 提供该组件所需的亮色、暗色与 reduced-motion 令牌；未加载主题文件时仍使用 fallback 独立渲染。
+- 每个组件包通过 `src/style/token.less` 提供该组件所需的亮色、暗色令牌；未加载主题文件时仍使用 fallback 独立渲染。
 - 组件之间不共享 token 文件；playground/docs 使用各自的应用级 `tokens.less`。
 - 不要在组件内直接写死暗色颜色，使用 `[data-w-theme='dark']` / `prefers-color-scheme` 下的 token。
-- 新增令牌时同步亮/暗两套取值，并考虑 `prefers-reduced-motion` 是否覆盖。
+- 新增令牌时同步亮/暗两套取值。
 
 ## 动效
 
 - 只使用 `--w-duration-*` 与 `--w-easing-*`。
 - 只动画 `transform` / `opacity` / 颜色等低成本属性，避免动画布局属性。
-- 必须尊重 `prefers-reduced-motion`；令牌已在减少动效时缩短时长，不要绕过它。
 - 大位移/缩放动画提供清晰的进入与退出状态。
 
 ## 可访问性视觉
@@ -121,5 +120,4 @@ docs/.vitepress/theme/tokens.less      # docs 应用级完整令牌
 - [ ] 每个 `var(--w-*)` 都有 fallback
 - [ ] 亮色与暗色主题均正常
 - [ ] `focus-visible`、hover、active、disabled 状态齐全
-- [ ] 动效遵守 `prefers-reduced-motion`
 - [ ] 对比度满足 WCAG AA

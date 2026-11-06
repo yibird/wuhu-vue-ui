@@ -5,6 +5,7 @@ export type {
   CropperData,
   CropperExpose,
   CropperFileOptions,
+  CropperLabels,
   CropperOutputOptions,
   CropperProps,
   CropperReadyEvent,

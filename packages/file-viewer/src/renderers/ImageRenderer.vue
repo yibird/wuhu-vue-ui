@@ -3,10 +3,6 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerImageRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -61,7 +57,7 @@ const imageStyle = computed(() => ({
   transform: `translate(-50%, -50%) rotate(${props.rotation}deg)`,
 }))
 
-function measure(): void {
+function measure() {
   const element = viewport.value
   if (!element) return
   container.value = {
@@ -70,7 +66,7 @@ function measure(): void {
   }
 }
 
-function emitReady(): void {
+function emitReady() {
   if (readySource === props.source.url) return
   readySource = props.source.url
   emit('ready', {
@@ -79,7 +75,7 @@ function emitReady(): void {
   })
 }
 
-function handleLoad(event: Event): void {
+function handleLoad(event: Event) {
   const target = event.target as HTMLImageElement
   natural.value = {
     width: target.naturalWidth || target.width || 1,
@@ -89,14 +85,14 @@ function handleLoad(event: Event): void {
   emitReady()
 }
 
-function handleError(): void {
+function handleError() {
   emit('error', new Error(props.messages.renderers.image.loadError))
 }
 
 const dragging = ref(false)
 let dragStart = { x: 0, y: 0, left: 0, top: 0 }
 
-function handlePointerDown(event: PointerEvent): void {
+function handlePointerDown(event: PointerEvent) {
   if (event.button !== 0 || !viewport.value) return
   dragging.value = true
   dragStart = {
@@ -108,13 +104,13 @@ function handlePointerDown(event: PointerEvent): void {
   viewport.value.setPointerCapture?.(event.pointerId)
 }
 
-function handlePointerMove(event: PointerEvent): void {
+function handlePointerMove(event: PointerEvent) {
   if (!dragging || !viewport.value) return
   viewport.value.scrollLeft = dragStart.left - (event.clientX - dragStart.x)
   viewport.value.scrollTop = dragStart.top - (event.clientY - dragStart.y)
 }
 
-function handlePointerUp(event: PointerEvent): void {
+function handlePointerUp(event: PointerEvent) {
   dragging.value = false
   viewport.value?.releasePointerCapture?.(event.pointerId)
 }

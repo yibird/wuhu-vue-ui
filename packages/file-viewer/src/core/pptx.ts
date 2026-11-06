@@ -848,6 +848,11 @@ async function readSlidePaths(zip: ZipReaderLike, workbookPath: string): Promise
   return fallback
 }
 
+/**
+ * Parses a PPTX archive on the main thread. Slides are bounded by
+ * `options.maxSlides`; very large presentations can still block rendering.
+ * Worker-based parsing is a possible future optimization.
+ */
 export async function parsePptx(
   zip: ZipReaderLike,
   options: PptxParseOptions,

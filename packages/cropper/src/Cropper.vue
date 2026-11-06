@@ -6,18 +6,25 @@ import type {
   CropperData,
   CropperExpose,
   CropperFileOptions,
+  CropperLabels,
   CropperOutputOptions,
   CropperProps,
   CropperReadyEvent,
   CropperSlotProps,
 } from './types'
 
-defineOptions({
-  name: 'WCropper',
-})
+const defaultLabels: CropperLabels = {
+  actionBar: '图片裁剪操作',
+  zoomIn: '放大',
+  zoomOut: '缩小',
+  rotateLeft: '向左旋转',
+  rotateRight: '向右旋转',
+  reset: '重置',
+  image: '待裁剪图片',
+}
 
 const props = withDefaults(defineProps<CropperProps>(), {
-  alt: 'Image to crop',
+  labels: () => ({}),
   height: 360,
   initialCoverage: 0.5,
   rotatable: true,
@@ -55,6 +62,9 @@ const instanceRef = shallowRef<Cropper | null>(null)
 const imageRef = shallowRef<CropperImage | null>(null)
 const selectionRef = shallowRef<CropperSelection | null>(null)
 const canvasRef = shallowRef<CropperCanvas | null>(null)
+
+const labels = computed<CropperLabels>(() => ({ ...defaultLabels, ...props.labels }))
+const imageAlt = computed(() => props.alt ?? labels.value.image)
 
 let initialized = false
 let initToken = 0
@@ -103,12 +113,12 @@ function readData(): CropperData | null {
   }
 }
 
-function emitCrop(): void {
+function emitCrop() {
   const data = readData()
   if (data) emit('crop', data)
 }
 
-function handleSelectionChange(event: Event): void {
+function handleSelectionChange(event: Event) {
   const detail = (event as CustomEvent<Partial<CropperData>>).detail
   if (
     detail &&
@@ -129,42 +139,42 @@ function handleSelectionChange(event: Event): void {
   emitCrop()
 }
 
-function handleActionStart(event: Event): void {
+function handleActionStart(event: Event) {
   emit('actionstart', event)
 }
 
-function handleActionMove(event: Event): void {
+function handleActionMove(event: Event) {
   emit('actionmove', event)
 }
 
-function handleActionEnd(event: Event): void {
+function handleActionEnd(event: Event) {
   emit('actionend', event)
   const data = readData()
   if (data) emit('cropend', data)
 }
 
-function bindEvents(): void {
+function bindEvents() {
   selectionRef.value?.addEventListener('change', handleSelectionChange)
   canvasRef.value?.addEventListener('actionstart', handleActionStart)
   canvasRef.value?.addEventListener('actionmove', handleActionMove)
   canvasRef.value?.addEventListener('actionend', handleActionEnd)
 }
 
-function unbindEvents(): void {
+function unbindEvents() {
   selectionRef.value?.removeEventListener('change', handleSelectionChange)
   canvasRef.value?.removeEventListener('actionstart', handleActionStart)
   canvasRef.value?.removeEventListener('actionmove', handleActionMove)
   canvasRef.value?.removeEventListener('actionend', handleActionEnd)
 }
 
-function applyKeyboardState(): void {
+function applyKeyboardState() {
   const selection = selectionRef.value
   if (selection) {
     selection.keyboard = props.keyboard && keyboardActive.value && !props.disabled
   }
 }
 
-function applyOptions(): void {
+function applyOptions() {
   const image = imageRef.value
   if (image) {
     image.rotatable = props.rotatable
@@ -187,12 +197,12 @@ function applyOptions(): void {
   }
 }
 
-function handleFocusIn(): void {
+function handleFocusIn() {
   keyboardActive.value = true
   applyKeyboardState()
 }
 
-function handleFocusOut(event: FocusEvent): void {
+function handleFocusOut(event: FocusEvent) {
   const next = event.relatedTarget as Node | null
   if (next && rootRef.value?.contains(next)) return
   keyboardActive.value = false
@@ -252,7 +262,7 @@ async function initialize(): Promise<void> {
   }
 }
 
-function destroy(): void {
+function destroy() {
   initToken += 1
   srcToken += 1
   // CropperSelection registers a document-level keydown listener while enabled.
@@ -287,7 +297,7 @@ function getData(): CropperData | null {
   return readData()
 }
 
-function setData(data: Partial<CropperData>): void {
+function setData(data: Partial<CropperData>) {
   const selection = selectionRef.value
   if (!selection) return
 
@@ -299,7 +309,7 @@ function setData(data: Partial<CropperData>): void {
   )
 }
 
-function setAspectRatio(ratio: number): void {
+function setAspectRatio(ratio: number) {
   if (selectionRef.value) {
     selectionRef.value.aspectRatio = Number.isFinite(ratio) && ratio > 0 ? ratio : Number.NaN
   }
@@ -334,7 +344,7 @@ function getScale(image: CropperImage): number {
   return Math.sqrt(Math.abs(a * d - b * c)) || 1
 }
 
-function zoom(scale: number): void {
+function zoom(scale: number) {
   if (!Number.isFinite(scale)) return
 
   const image = imageRef.value
@@ -371,12 +381,12 @@ function zoom(scale: number): void {
   image.$zoom(ratio > 1 ? ratio - 1 : 1 - 1 / ratio)
 }
 
-function rotate(degrees: number): void {
+function rotate(degrees: number) {
   if (!Number.isFinite(degrees)) return
   imageRef.value?.$rotate((degrees * Math.PI) / 180)
 }
 
-function reset(): void {
+function reset() {
   const image = imageRef.value
   if (image) {
     // `$resetTransform()` restores the identity matrix, which leaves the image
@@ -399,6 +409,13 @@ function reset(): void {
   // Emits a single `change` event, which is forwarded as `crop`. Do not emit
   // again on the next tick: duplicate events make the preview flicker.
   selectionRef.value?.$reset()
+}
+
+/** Retries initialization after a load error when the source stays the same. */
+function retry() {
+  if (ready.value) return
+  destroy()
+  void initialize()
 }
 
 const slotProps = computed<CropperSlotProps>(() => ({
@@ -518,6 +535,7 @@ defineExpose<CropperExpose>({
   zoom,
   rotate,
   reset,
+  retry,
 })
 </script>
 
@@ -528,7 +546,7 @@ defineExpose<CropperExpose>({
     :class="rootClasses"
     :style="rootStyle"
     role="group"
-    :aria-label="alt"
+    :aria-label="imageAlt"
     :aria-disabled="disabled || undefined"
     :tabindex="disabled ? -1 : 0"
     @focusin="handleFocusIn"
@@ -538,7 +556,7 @@ defineExpose<CropperExpose>({
       ref="sourceRef"
       class="w-cropper__source"
       :src="src"
-      :alt="alt"
+      :alt="imageAlt"
       :crossorigin="crossOrigin || undefined"
       aria-hidden="true"
     />
@@ -547,14 +565,14 @@ defineExpose<CropperExpose>({
       v-if="showActionBar"
       class="w-cropper__action-bar"
       role="toolbar"
-      aria-label="图片裁剪操作"
+      :aria-label="labels.actionBar"
     >
       <button
         type="button"
         class="w-cropper__action"
         :disabled="!ready || disabled || !scalable"
-        aria-label="缩小"
-        title="缩小"
+        :aria-label="labels.zoomOut"
+        :title="labels.zoomOut"
         @click="zoom(-0.1)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -565,8 +583,8 @@ defineExpose<CropperExpose>({
         type="button"
         class="w-cropper__action"
         :disabled="!ready || disabled || !scalable"
-        aria-label="放大"
-        title="放大"
+        :aria-label="labels.zoomIn"
+        :title="labels.zoomIn"
         @click="zoom(0.1)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -577,8 +595,8 @@ defineExpose<CropperExpose>({
         type="button"
         class="w-cropper__action"
         :disabled="!ready || disabled || !rotatable"
-        aria-label="向左旋转"
-        title="向左旋转"
+        :aria-label="labels.rotateLeft"
+        :title="labels.rotateLeft"
         @click="rotate(-90)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -590,8 +608,8 @@ defineExpose<CropperExpose>({
         type="button"
         class="w-cropper__action"
         :disabled="!ready || disabled || !rotatable"
-        aria-label="向右旋转"
-        title="向右旋转"
+        :aria-label="labels.rotateRight"
+        :title="labels.rotateRight"
         @click="rotate(90)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -603,8 +621,8 @@ defineExpose<CropperExpose>({
         type="button"
         class="w-cropper__action"
         :disabled="!ready || disabled"
-        aria-label="重置"
-        title="重置"
+        :aria-label="labels.reset"
+        :title="labels.reset"
         @click="reset"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">

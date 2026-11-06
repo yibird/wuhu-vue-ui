@@ -45,7 +45,7 @@ export function usePointerDrag(options: UsePointerDragOptions = {}): UsePointerD
     options.onCancel?.(event)
   }
 
-  function start(event: PointerEvent): void {
+  function start(event: PointerEvent) {
     if (activePointerId !== null || typeof window === 'undefined') return
     activePointerId = event.pointerId
     window.addEventListener('pointermove', handleMove)
@@ -53,7 +53,7 @@ export function usePointerDrag(options: UsePointerDragOptions = {}): UsePointerD
     window.addEventListener('pointercancel', handleCancel)
   }
 
-  function stop(): void {
+  function stop() {
     if (typeof window !== 'undefined') {
       window.removeEventListener('pointermove', handleMove)
       window.removeEventListener('pointerup', handleEnd)

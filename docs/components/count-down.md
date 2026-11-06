@@ -60,7 +60,15 @@
 | `interval`   | `number`                                        | `1000`       | 刷新间隔（毫秒），≤0 时回退到 1000 |
 | `format`     | `string \| ((state: CountDownState) => string)` | `'HH:mm:ss'` | 输出格式                           |
 | `finishText` | `string`                                        | —            | 结束后替代默认文本                 |
-| `tag`        | `string`                                        | `'span'`     | 根元素标签                         |
+
+### 驱动源优先级
+
+- **初始值**：`remaining` > `target` > `duration`。提供 `remaining` 时以它作为起始值；否则有 `target` 时按 `target - now` 计算；两者都没有时取 `duration`。
+- **运行期**：存在 `target` 时每次 tick 都以 `target - now` 为准；否则基于 `duration` 或最近一次 `remaining` 加上单调时间推进。
+- 运行中外部更新 `remaining` 会立即覆盖当前值并重置计时基准；如果同时设置了 `target`，下一次 tick 仍会回到 `target` 推导值。
+- 因此同一倒计时请只使用 `remaining` / `target` / `duration` 中的一个作为驱动源。
+
+根元素固定为 `<span>`。
 
 ### Emits
 

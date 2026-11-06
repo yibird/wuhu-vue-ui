@@ -86,9 +86,15 @@ importers:
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
-      pinyin-pro:
-        specifier: ^3.29.5
-        version: 3.29.5
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.44(typescript@5.9.3)
+
+  packages/context-menu:
+    dependencies:
+      '@wuhu-vue-ui/core':
+        specifier: workspace:*
+        version: link:../core
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -137,6 +143,9 @@ importers:
 
   packages/ellipsis:
     dependencies:
+      '@floating-ui/vue':
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.44(typescript@5.9.3))
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -167,6 +176,9 @@ importers:
 
   packages/gantt:
     dependencies:
+      '@tanstack/vue-virtual':
+        specifier: ^3.13.47
+        version: 3.13.47(vue@3.5.44(typescript@5.9.3))
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
@@ -181,12 +193,6 @@ importers:
         version: 3.5.44(typescript@5.9.3)
 
   packages/highlight:
-    dependencies:
-      vue:
-        specifier: ^3.5.0
-        version: 3.5.44(typescript@5.9.3)
-
-  packages/icon:
     dependencies:
       vue:
         specifier: ^3.5.0
@@ -356,9 +362,6 @@ importers:
 
   packages/view:
     dependencies:
-      '@wuhu-vue-ui/icon':
-        specifier: workspace:*
-        version: link:../icon
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -371,6 +374,9 @@ importers:
       '@wuhu-vue-ui/command-menu':
         specifier: workspace:*
         version: link:../packages/command-menu
+      '@wuhu-vue-ui/context-menu':
+        specifier: workspace:*
+        version: link:../packages/context-menu
       '@wuhu-vue-ui/copy':
         specifier: workspace:*
         version: link:../packages/copy
@@ -404,9 +410,6 @@ importers:
       '@wuhu-vue-ui/highlight':
         specifier: workspace:*
         version: link:../packages/highlight
-      '@wuhu-vue-ui/icon':
-        specifier: workspace:*
-        version: link:../packages/icon
       '@wuhu-vue-ui/icon-picker':
         specifier: workspace:*
         version: link:../packages/icon-picker
@@ -1029,6 +1032,11 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@floating-ui/vue@2.0.1':
+    resolution: {integrity: sha512-043dyEKD9TDSfz080YH2vobubgg+NIo/9Fw4RAl7sEMpD8Am1DNrrSTl/GpMBjyGHoD/FbJY2QLawY+HSQsEIA==}
+    peerDependencies:
+      vue: '>=3.3.0'
 
   '@iconify-json/logos@1.2.17':
     resolution: {integrity: sha512-ruCr6y5h8FW+loXwRJkz+6cJj3njyX5Ccpi+ifMgaWZPbTSCbsCccNyGomZxIdhoyDKNOmNdZuURC3tyBvDr7A==}
@@ -3140,9 +3148,6 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  pinyin-pro@3.29.5:
-    resolution: {integrity: sha512-Fk5YoRmtdHqJWqAuzYVG/NzvzeCbaG+ZEwbY6Nbps3QAIrvQQEtcm49frcyCM8i2b5najnzPDtYqrHRYTTiuwQ==}
-
   pkg-types@1.3.1:
     resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
 
@@ -4156,6 +4161,12 @@ snapshots:
       '@floating-ui/utils': 0.2.12
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@floating-ui/vue@2.0.1(vue@3.5.44(typescript@5.9.3))':
+    dependencies:
+      '@floating-ui/dom': 1.8.0
+      '@floating-ui/utils': 0.2.12
+      vue: 3.5.44(typescript@5.9.3)
 
   '@iconify-json/logos@1.2.17':
     dependencies:
@@ -6212,8 +6223,6 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.7: {}
-
-  pinyin-pro@3.29.5: {}
 
   pkg-types@1.3.1:
     dependencies:

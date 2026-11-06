@@ -36,6 +36,12 @@
 
 数值快速变化时会逐位滚动；跨越位数（如 `9,999 → 10,000`）时会即时调整布局。
 
+> `aria-live` 默认关闭，避免看板中的高频数字持续打断屏幕阅读器。需要播报的实时指标可显式开启：
+
+```vue
+<NumberTicker :value="onlineUsers" aria-live="polite" aria-atomic="true" />
+```
+
 <demo vue="../demos/number-ticker/live.vue" />
 
 ## API

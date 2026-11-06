@@ -8,10 +8,6 @@ import CodeBlock from './CodeBlock.vue'
 import { useCopy } from '@wuhu-vue-ui/core'
 import { useTextSource } from './useTextSource'
 
-defineOptions({
-  name: 'WFileViewerHtmlRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{

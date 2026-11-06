@@ -25,10 +25,6 @@ description: Wuhu Vue UI 的 Vue 3 组件开发规范。新增或修改 SFC、�
 import { computed, onBeforeUnmount, ref } from 'vue'
 import type { FooProps, FooSlotProps } from './types'
 
-defineOptions({
-  name: 'WuFoo', // 必填，必须是 Wu 前缀的组件名
-})
-
 const props = withDefaults(defineProps<FooProps>(), {
   disabled: false,
 })
@@ -58,7 +54,7 @@ defineExpose({
 
 约定：
 
-- 组件名：文件 `PascalCase.vue`，`defineOptions({ name: 'WuXxx' })`。
+- 组件文件使用 `PascalCase.vue`；不需要定义组件名，`defineOptions` 仅用于 `inheritAttrs` 等配置。
 - Props 类型放在同目录 `types.ts`，组件内用 `withDefaults(defineProps<FooProps>(), ...)`。
 - Emits 使用元组语法 `event: [args]`，不要用对象声明。
 - 插槽使用 `defineSlots` 并提供插槽 props 类型。
@@ -87,7 +83,6 @@ defineExpose({
 - 状态变化使用 `aria-live="polite"` 或合适的 ARIA 属性。
 - 必须提供 `:focus-visible` 样式，不能只靠 `:focus`。
 - 键盘可操作：Enter/Space、方向键、Escape 等按组件语义实现。
-- 动画遵循 `prefers-reduced-motion`（通过 `--w-duration-*` 令牌自动生效）。
 
 ## 样式
 

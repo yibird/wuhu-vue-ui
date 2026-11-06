@@ -68,15 +68,5 @@ const customStyle = {
         />
       </p>
     </DemoCard>
-
-    <DemoCard title="自定义标签" description="tag 可替换默认的 mark 元素，例如 span 或 strong。">
-      <p class="highlight-copy">
-        <Highlight
-          text="可访问性、键盘导航与 ARIA 属性都由组件负责。"
-          :keywords="['可访问性', '键盘导航', 'ARIA']"
-          tag="strong"
-        />
-      </p>
-    </DemoCard>
   </div>
 </template>

@@ -9,8 +9,6 @@ export interface HighlightProps {
   caseSensitive?: boolean
   /** Only match full words. Uses Unicode-aware letter/number boundaries. */
   wholeWord?: boolean
-  /** Tag used for matched segments. Defaults to `mark`. */
-  tag?: string
   /** Extra class applied to every matched segment. */
   highlightClass?: string
   /** Inline styles applied to every matched segment. */

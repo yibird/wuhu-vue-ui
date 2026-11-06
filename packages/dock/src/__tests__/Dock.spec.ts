@@ -18,7 +18,7 @@ function rect(left: number, top: number, width: number, height: number): DOMRect
   } as DOMRect
 }
 
-function mockRects(wrapper: ReturnType<typeof mount>, size = 48, gap = 8): void {
+function mockRects(wrapper: ReturnType<typeof mount>, size = 48, gap = 8) {
   wrapper.findAll('.w-dock__item').forEach((item, index) => {
     const offset = index * (size + gap)
     ;(item.element as HTMLElement).getBoundingClientRect = () => rect(offset, 0, size, size)
@@ -264,40 +264,5 @@ describe('Dock', () => {
     expect(wrapper.findAll('.w-dock__separator')).toHaveLength(0)
 
     wrapper.unmount()
-  })
-
-  it('does not magnify when the user prefers reduced motion', async () => {
-    const query = {
-      matches: true,
-      media: '(prefers-reduced-motion: reduce)',
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-
-    vi.stubGlobal(
-      'matchMedia',
-      vi.fn(() => query),
-    )
-
-    try {
-      const wrapper = mount(Dock, {
-        props: { model: [{ label: 'A' }, { label: 'B' }] },
-      })
-      mockRects(wrapper)
-
-      await pointerMove(wrapper.get('.w-dock').element, 48, 24)
-
-      expect(
-        wrapper.findAll('.w-dock__inner').map((tile) => scaleOf(tile.attributes('style'))),
-      ).toEqual([1, 1])
-
-      wrapper.unmount()
-    } finally {
-      vi.unstubAllGlobals()
-    }
   })
 })

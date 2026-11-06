@@ -1,10 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import Scrollbar from '../Scrollbar.vue'
-
-afterEach(() => {
-  vi.unstubAllGlobals()
-})
 
 describe('Scrollbar', () => {
   it('renders content with default structure', () => {
@@ -29,17 +25,36 @@ describe('Scrollbar', () => {
     wrapper.unmount()
   })
 
-  it('uses tag for the view and forwards the id', () => {
+  it('renders a div view', () => {
+    const wrapper = mount(Scrollbar)
+
+    const view = wrapper.get('.w-scrollbar__view')
+    expect(view.element.tagName).toBe('DIV')
+    wrapper.unmount()
+  })
+
+  it('routes semantic attributes to the focusable wrap and keeps data attributes on the root', () => {
     const wrapper = mount(Scrollbar, {
-      props: {
-        tag: 'section',
+      attrs: {
         id: 'scroller',
+        role: 'region',
+        'aria-label': '内容列表',
+        'data-consumer': 'yes',
+        class: 'consumer-scrollbar',
       },
     })
 
-    const view = wrapper.get('.w-scrollbar__view')
-    expect(view.element.tagName).toBe('SECTION')
-    expect(view.attributes('id')).toBe('scroller')
+    const root = wrapper.get('.w-scrollbar')
+    const wrap = wrapper.get('.w-scrollbar__wrap')
+
+    expect(root.classes()).toContain('consumer-scrollbar')
+    expect(root.attributes('id')).toBeUndefined()
+    expect(root.attributes('aria-label')).toBeUndefined()
+    expect(root.attributes('data-consumer')).toBe('yes')
+    expect(wrap.attributes('id')).toBe('scroller')
+    expect(wrap.attributes('role')).toBe('region')
+    expect(wrap.attributes('aria-label')).toBe('内容列表')
+    expect(wrap.attributes('data-consumer')).toBeUndefined()
     wrapper.unmount()
   })
 
@@ -77,32 +92,6 @@ describe('Scrollbar', () => {
     wrapper.unmount()
   })
 
-  it('does not render custom bars when native is enabled', () => {
-    const wrapper = mount(Scrollbar, { props: { native: true } })
-
-    expect(wrapper.find('.w-scrollbar__bar').exists()).toBe(false)
-    expect(wrapper.find('.w-scrollbar__wrap--hidden-default').exists()).toBe(false)
-    wrapper.unmount()
-  })
-
-  it('does not create a ResizeObserver when native is enabled', () => {
-    const created = vi.fn()
-    class MockResizeObserver {
-      constructor() {
-        created()
-      }
-
-      observe = vi.fn()
-      disconnect = vi.fn()
-    }
-    vi.stubGlobal('ResizeObserver', MockResizeObserver)
-
-    const wrapper = mount(Scrollbar, { props: { native: true } })
-
-    expect(created).not.toHaveBeenCalled()
-    wrapper.unmount()
-  })
-
   it('marks both custom bars as decorative', () => {
     const wrapper = mount(Scrollbar)
 
@@ -120,8 +109,8 @@ describe('Scrollbar', () => {
     wrapper.unmount()
   })
 
-  it('emits end once the scroll position reaches the edge', async () => {
-    const wrapper = mount(Scrollbar, { props: { distance: 10 } })
+  it('emits end once each time the scroll position reaches the edge', async () => {
+    const wrapper = mount(Scrollbar)
     const wrap = wrapper.get('.w-scrollbar__wrap').element as HTMLElement
 
     Object.defineProperty(wrap, 'clientHeight', { configurable: true, value: 100 })
@@ -133,8 +122,40 @@ describe('Scrollbar', () => {
     })
 
     await wrapper.get('.w-scrollbar__wrap').trigger('scroll')
-
+    await wrapper.get('.w-scrollbar__wrap').trigger('scroll')
     expect(wrapper.emitted('end')).toEqual([['bottom']])
+
+    // Leaving the edge re-arms it.
+    wrap.scrollTop = 100
+    await wrapper.get('.w-scrollbar__wrap').trigger('scroll')
+    wrap.scrollTop = 300
+    await wrapper.get('.w-scrollbar__wrap').trigger('scroll')
+    expect(wrapper.emitted('end')).toEqual([['bottom'], ['bottom']])
+    wrapper.unmount()
+  })
+
+  it('reports both axes when a diagonal scroll reaches two edges', async () => {
+    const wrapper = mount(Scrollbar)
+    const wrap = wrapper.get('.w-scrollbar__wrap').element as HTMLElement
+
+    Object.defineProperty(wrap, 'clientWidth', { configurable: true, value: 100 })
+    Object.defineProperty(wrap, 'clientHeight', { configurable: true, value: 100 })
+    Object.defineProperty(wrap, 'scrollWidth', { configurable: true, value: 400 })
+    Object.defineProperty(wrap, 'scrollHeight', { configurable: true, value: 400 })
+    Object.defineProperty(wrap, 'scrollTop', {
+      configurable: true,
+      writable: true,
+      value: 300,
+    })
+    Object.defineProperty(wrap, 'scrollLeft', {
+      configurable: true,
+      writable: true,
+      value: 300,
+    })
+
+    await wrapper.get('.w-scrollbar__wrap').trigger('scroll')
+
+    expect(wrapper.emitted('end')).toEqual([['bottom'], ['right']])
     wrapper.unmount()
   })
 
@@ -147,7 +168,7 @@ describe('Scrollbar', () => {
     Object.defineProperty(wrap, 'scrollHeight', { configurable: true, value: 400 })
     Object.defineProperty(wrap, 'scrollWidth', { configurable: true, value: 400 })
 
-    ;(wrapper.vm as unknown as { update: () => void }).update()
+    ;(wrapper.vm as unknown as { updatePosition: () => void }).updatePosition()
     await wrapper.vm.$nextTick()
 
     const verticalThumb = wrapper.get('.w-scrollbar__bar.is-vertical .w-scrollbar__thumb')
@@ -169,7 +190,7 @@ describe('Scrollbar', () => {
     Object.defineProperty(wrap, 'scrollHeight', { configurable: true, value: 400 })
     Object.defineProperty(wrap, 'scrollWidth', { configurable: true, value: 400 })
 
-    ;(wrapper.vm as unknown as { update: () => void }).update()
+    ;(wrapper.vm as unknown as { updatePosition: () => void }).updatePosition()
     await wrapper.vm.$nextTick()
 
     const verticalThumb = wrapper.get('.w-scrollbar__bar.is-vertical .w-scrollbar__thumb')
@@ -193,7 +214,7 @@ describe('Scrollbar', () => {
     Object.defineProperty(wrap, 'scrollHeight', { configurable: true, value: 400 })
     Object.defineProperty(wrap, 'scrollWidth', { configurable: true, value: 400 })
 
-    ;(wrapper.vm as unknown as { update: () => void }).update()
+    ;(wrapper.vm as unknown as { updatePosition: () => void }).updatePosition()
     await wrapper.vm.$nextTick()
 
     const verticalThumb = wrapper.get('.w-scrollbar__bar.is-vertical .w-scrollbar__thumb')

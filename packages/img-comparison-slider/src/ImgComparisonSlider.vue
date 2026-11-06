@@ -3,10 +3,6 @@ import { useControllableState, usePointerDrag } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, reactive, readonly, ref, watch } from 'vue'
 import type { ImgComparisonSliderProps, ImgComparisonSliderSlotProps } from './types'
 
-defineOptions({
-  name: 'WImgComparisonSlider',
-})
-
 const props = withDefaults(defineProps<ImgComparisonSliderProps>(), {
   ariaLabel: '图片对比滑块',
   before: '',
@@ -131,6 +127,17 @@ watch(
   () => props.after,
   () => {
     imageErrors.after = false
+  },
+)
+
+// Disabling mid-drag must release the global pointer listeners immediately and
+// report the gesture exactly once, like a pointer release.
+watch(
+  () => props.disabled,
+  (disabled) => {
+    if (!disabled || !dragging.value) return
+    stopDragging()
+    emit('dragend', position.value)
   },
 )
 

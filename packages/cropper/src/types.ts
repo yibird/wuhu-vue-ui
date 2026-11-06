@@ -23,11 +23,25 @@ export interface CropperFileOptions extends CropperOutputOptions {
   quality?: number
 }
 
+export interface CropperLabels {
+  /** Accessible name of the built-in action bar. */
+  actionBar: string
+  zoomIn: string
+  zoomOut: string
+  rotateLeft: string
+  rotateRight: string
+  reset: string
+  /** Fallback alt text when the `alt` prop is omitted. */
+  image: string
+}
+
 export interface CropperProps {
   /** Image URL to crop. */
   src: string
-  /** Alternative text for the image. */
+  /** Alternative text for the image. Defaults to `labels.image`. */
   alt?: string
+  /** Overrides for the built-in action labels. */
+  labels?: Partial<CropperLabels>
   /** Container height. Numbers are treated as pixels. */
   height?: string | number
   /** Lock the selection to a fixed width / height ratio, e.g. `1` for a square. */
@@ -107,4 +121,6 @@ export interface CropperExpose {
   rotate: (degrees: number) => void
   /** Reset image transforms and the crop selection. */
   reset: () => void
+  /** Retry initialization after a load/initialization error. */
+  retry: () => void
 }

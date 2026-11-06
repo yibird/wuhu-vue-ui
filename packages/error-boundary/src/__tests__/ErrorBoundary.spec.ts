@@ -28,6 +28,7 @@ describe('ErrorBoundary', () => {
     })
     await nextTick()
 
+    expect(wrapper.element.tagName).toBe('DIV')
     expect(wrapper.find('.w-error-boundary__fallback-container').exists()).toBe(true)
     expect(wrapper.get('.w-error-boundary__fallback-container').attributes('role')).toBe('alert')
     expect(wrapper.find('.w-error-boundary__fallback').exists()).toBe(true)

@@ -19,8 +19,8 @@ export interface DockItem {
   separator?: boolean
   /** Custom activation handler. Takes precedence over `url`. */
   command?: (item: DockItem, event: Event) => void
-  /** Allow consumers to attach arbitrary metadata. */
-  [key: string]: unknown
+  /** Business metadata attached by the consumer. */
+  meta?: Record<string, unknown>
 }
 
 export interface DockProps {

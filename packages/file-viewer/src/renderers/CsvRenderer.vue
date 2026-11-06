@@ -8,10 +8,6 @@ import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 import { useTextSource } from './useTextSource'
 
-defineOptions({
-  name: 'WFileViewerCsvRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -87,7 +83,7 @@ function isNumeric(value: string): boolean {
   return /^\s*-?[\d,.]+%?\s*$/.test(value)
 }
 
-function showMore(): void {
+function showMore() {
   rowLimitOverride.value = limit.value + 1000
 }
 

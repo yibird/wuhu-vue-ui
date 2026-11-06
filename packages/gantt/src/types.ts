@@ -24,8 +24,8 @@ export interface GanttTask {
   /** Accessible name for the task bar. Defaults to `name` plus progress. */
   ariaLabel?: string
   assignee?: string
+  /** Business-specific payload. Read it from slot props to render custom content. */
   meta?: Record<string, unknown>
-  [key: string]: unknown
 }
 
 export interface GanttRow {
@@ -62,8 +62,10 @@ export interface GanttProps {
   /** Padding around auto-calculated task dates, in calendar days. */
   rangePadding?: number
   /**
-   * Safety limit for the rendered date range. Prevents accidental multi-year
-   * day-level rendering. Set to 0 to disable the limit.
+   * Safety limit for the rendered date range. Defaults to 730 days (~2 years)
+   * to prevent accidental multi-year day-level rendering. Set to 0 to disable
+   * the limit; prefer the week/month view or a smaller explicit range for long
+   * schedules.
    */
   maxRangeDays?: number
   readonly?: boolean

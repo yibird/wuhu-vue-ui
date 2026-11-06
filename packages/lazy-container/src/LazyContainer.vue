@@ -13,10 +13,6 @@ import {
 } from 'vue'
 import type { LazyContainerChangeEvent, LazyContainerProps, LazyContainerSlotProps } from './types'
 
-defineOptions({
-  name: 'WLazyContainer',
-})
-
 const props = withDefaults(defineProps<LazyContainerProps>(), {
   root: null,
   rootMargin: '0px',

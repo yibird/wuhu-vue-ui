@@ -9,10 +9,6 @@ import { toRendererError } from '../core/errors'
 import { formatFileViewerMessage } from '../i18n'
 import type { FileViewerRendererProps, FileViewerKind } from '../types'
 
-defineOptions({
-  name: 'WFileViewerArchiveRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -95,7 +91,7 @@ async function parse(): Promise<void> {
   }
 }
 
-function clearPreviewUrl(): void {
+function clearPreviewUrl() {
   if (previewUrl.value) {
     URL.revokeObjectURL(previewUrl.value)
     previewUrl.value = ''

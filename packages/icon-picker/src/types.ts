@@ -38,6 +38,10 @@ export interface IconPickerProps {
   allLabel?: string
   /** Heading above the group list. */
   groupsLabel?: string
+  /** Sidebar heading. Defaults to `图标库`. */
+  libraryLabel?: string
+  /** Formats the result count in the header. Defaults to `n 个`. */
+  countLabel?: (count: number) => string
   /** Accessible name of the picker. */
   ariaLabel?: string
   /** Accessible label of the clear-search button. Defaults to `清除搜索`. */

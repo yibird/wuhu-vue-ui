@@ -3,8 +3,6 @@ import type { Editor } from '@tiptap/core'
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { TiptapEditorImageUpload, TiptapEditorLabels } from './types'
 
-defineOptions({ name: 'WTiptapEditorImageForm' })
-
 const props = defineProps<{
   editor: Editor
   labels: TiptapEditorLabels
@@ -24,7 +22,7 @@ const uploading = ref(false)
 const message = ref('')
 let cancelled = false
 
-function insertImage(src: string, alt = ''): void {
+function insertImage(src: string, alt = '') {
   if (cancelled || props.editor.isDestroyed) return
   props.editor.chain().focus().setImage({ src, alt }).run()
 }
@@ -33,11 +31,11 @@ function normalizeUrl(value: string): string {
   return /^(https?:|data:|blob:|\/|\.\/|\.\.\/)/i.test(value) ? value : `https://${value}`
 }
 
-function openFilePicker(): void {
+function openFilePicker() {
   fileInput.value?.click()
 }
 
-async function handleFile(event: Event): Promise<void> {
+async function handleFile(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   input.value = ''
@@ -60,7 +58,7 @@ async function handleFile(event: Event): Promise<void> {
   }
 }
 
-function applyUrl(): void {
+function applyUrl() {
   const value = url.value.trim()
   if (!value) {
     urlInput.value?.focus()
@@ -72,7 +70,7 @@ function applyUrl(): void {
 }
 
 onMounted(() => {
-  void nextTick(() => urlInput.value?.focus())
+  nextTick(() => urlInput.value?.focus())
 })
 
 onBeforeUnmount(() => {

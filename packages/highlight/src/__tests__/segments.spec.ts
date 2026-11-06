@@ -76,6 +76,20 @@ describe('buildSegments', () => {
     ])
   })
 
+  it('treats supplementary Unicode letters as word-boundary characters', () => {
+    expect(buildSegments({ text: '𐐀Vue Vue𐐀', keywords: ['Vue'], wholeWord: true })).toEqual([
+      { text: '𐐀Vue Vue𐐀', matched: false },
+    ])
+  })
+
+  it('does not pair an unpaired low surrogate with a preceding letter', () => {
+    // The character left of `Vue` is the lone low surrogate, not the `a`.
+    expect(buildSegments({ text: 'a\uDC00Vue', keywords: ['Vue'], wholeWord: true })).toEqual([
+      { text: 'a\uDC00', matched: false },
+      { text: 'Vue', matched: true, keyword: 'Vue' },
+    ])
+  })
+
   it('falls back to a shorter keyword when a longer candidate fails the boundary', () => {
     expect(buildSegments({ text: 'ab cx', keywords: ['ab c', 'ab'], wholeWord: true })).toEqual([
       { text: 'ab', matched: true, keyword: 'ab' },
@@ -95,5 +109,19 @@ describe('buildSegments', () => {
       { text: 'a+b', matched: true, keyword: 'a+b' },
       { text: ' a*b', matched: false },
     ])
+  })
+
+  it('reuses cached matchers without leaking lastIndex between calls', () => {
+    const options = { text: 'Vue and Vue', keywords: ['Vue'] }
+
+    expect(buildSegments(options)).toEqual(buildSegments(options))
+    expect(buildSegments(options).filter((segment) => segment.matched)).toHaveLength(2)
+  })
+
+  it('reuses cached whole-word matchers between calls', () => {
+    const options = { text: 'Vue Vuex Vue', keywords: ['Vue'], wholeWord: true }
+
+    expect(buildSegments(options)).toEqual(buildSegments(options))
+    expect(buildSegments(options).filter((segment) => segment.matched)).toHaveLength(2)
   })
 })

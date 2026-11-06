@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { CSSProperties } from 'vue'
-import { useControllableState, useListNavigation } from '@wuhu-vue-ui/core'
+import { useControllableState, useKeyboardNavigation } from '@wuhu-vue-ui/core'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import type { Rect, Virtualizer } from '@tanstack/vue-virtual'
 import IconGlyph from './IconGlyph'
@@ -13,10 +13,6 @@ import type {
   IconPickerSlots,
 } from './types'
 
-defineOptions({
-  name: 'WIconPicker',
-})
-
 const props = withDefaults(defineProps<IconPickerProps>(), {
   modelValue: undefined,
   showSearch: true,
@@ -24,6 +20,8 @@ const props = withDefaults(defineProps<IconPickerProps>(), {
   emptyText: '没有匹配的图标',
   allLabel: '全部图标',
   groupsLabel: '按用途浏览',
+  libraryLabel: '图标库',
+  countLabel: (count: number) => `${count} 个`,
   ariaLabel: '图标选择器',
   clearSearchLabel: '清除搜索',
   columns: undefined,
@@ -93,6 +91,10 @@ const rowCount = computed(() => Math.ceil(filteredItems.value.length / columns.v
 /**
  * Fall back to the configured height when the browser (or a test environment)
  * has not measured the scroll container yet.
+ *
+ * Relies on the `@tanstack/vue-virtual` v3 `VirtualizerOptions.observeElementRect`
+ * contract: receive a rect callback and return an optional cleanup function.
+ * Re-check this adapter when upgrading TanStack Virtual.
  */
 function observeElementRect(
   instance: Virtualizer<HTMLElement, Element>,
@@ -151,7 +153,7 @@ function rowItems(rowIndex: number): IconPickerItem[] {
   return filteredItems.value.slice(start, start + columns.value)
 }
 
-function selectGroup(key: string | null): void {
+function selectGroup(key: string | null) {
   activeGroupKey.value = key
 }
 
@@ -185,19 +187,25 @@ async function waitForItemNode(key: string): Promise<HTMLElement | null> {
   return null
 }
 
+let focusToken = 0
+
 async function focusItemAt(index: number): Promise<void> {
   const items = filteredItems.value
   const target = items[Math.min(Math.max(index, 0), items.length - 1)]
   if (!target) return
 
+  const token = ++focusToken
   focusedKey.value = target.key
   rowVirtualizer.value.scrollToIndex(Math.floor(Math.min(index, items.length - 1) / columns.value))
 
   const node = await waitForItemNode(target.key)
+  // A newer navigation may have started while the virtualizer rendered the
+  // target row; only focus if this call is still the latest one.
+  if (token !== focusToken || focusedKey.value !== target.key) return
   node?.focus({ preventScroll: true })
 }
 
-const listNavigation = useListNavigation<IconPickerItem>({
+const listNavigation = useKeyboardNavigation<IconPickerItem>({
   items: filteredItems,
   columns: () => columns.value,
   loop: false,
@@ -210,11 +218,11 @@ const listNavigation = useListNavigation<IconPickerItem>({
   },
 })
 
-function handleItemKeydown(event: KeyboardEvent): void {
+function handleItemKeydown(event: KeyboardEvent) {
   listNavigation.handleKeydown(event)
 }
 
-function choose(item: IconPickerItem): void {
+function choose(item: IconPickerItem) {
   if (props.disabled) return
 
   focusedKey.value = item.key
@@ -313,7 +321,7 @@ onBeforeUnmount(() => {
     <div class="w-icon-picker__body">
       <aside class="w-icon-picker__sidebar">
         <div class="w-icon-picker__sidebar-title">
-          <span>图标库</span>
+          <span>{{ libraryLabel }}</span>
           <span class="w-icon-picker__count">{{ totalCount }}</span>
         </div>
 
@@ -358,7 +366,7 @@ onBeforeUnmount(() => {
           <span class="w-icon-picker__head-title">
             {{ currentGroup?.label ?? allLabel }}
           </span>
-          <span class="w-icon-picker__head-count">{{ filteredItems.length }} 个</span>
+          <span class="w-icon-picker__head-count">{{ countLabel(filteredItems.length) }}</span>
         </header>
 
         <div ref="scrollRef" class="w-icon-picker__scroll">

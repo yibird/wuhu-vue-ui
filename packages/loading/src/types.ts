@@ -51,8 +51,6 @@ export interface LoadingProps {
   description?: string
   /** Show the fullscreen mask. Defaults to true. */
   mask?: boolean
-  /** Lock body scrolling while a fullscreen loading is visible. Defaults to true. */
-  lockScroll?: boolean
   /** Fullscreen overlay z-index. Defaults to 2000. */
   zIndex?: number
   /** Teleport target used by the fullscreen overlay. Defaults to `body`. */
@@ -88,7 +86,7 @@ export interface LoadingInstance {
 }
 
 export interface UseLoadingReturn {
-  visible: Ref<boolean>
+  visible: Readonly<Ref<boolean>>
   open: () => void
   close: () => void
   toggle: () => void

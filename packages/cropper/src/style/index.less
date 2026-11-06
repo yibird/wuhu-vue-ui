@@ -103,13 +103,3 @@
     transition: opacity var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .w-cropper.is-disabled > cropper-canvas {
-    transition: none;
-  }
-
-  .w-cropper__action {
-    transition: none;
-  }
-}

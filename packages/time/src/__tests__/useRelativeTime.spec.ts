@@ -94,6 +94,27 @@ describe('useRelativeTime', () => {
     expect(onRefresh).toHaveBeenCalledOnce()
   })
 
+  it('shares one ticker between instances with the same interval', () => {
+    const scopeA = effectScope()
+    const scopeB = effectScope()
+    const refreshA = vi.fn()
+    const refreshB = vi.fn()
+
+    scopeA.run(() => useRelativeTime({ time: base, refreshInterval: 1_000, onRefresh: refreshA }))
+    scopeB.run(() => useRelativeTime({ time: base, refreshInterval: 1_000, onRefresh: refreshB }))
+
+    expect(vi.getTimerCount()).toBe(1)
+
+    vi.advanceTimersByTime(1_000)
+    expect(refreshA).toHaveBeenCalledOnce()
+    expect(refreshB).toHaveBeenCalledOnce()
+
+    scopeA.stop()
+    expect(vi.getTimerCount()).toBe(1)
+    scopeB.stop()
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
   it('does not auto refresh while a now source is provided', () => {
     const onRefresh = vi.fn()
     const scope = effectScope()

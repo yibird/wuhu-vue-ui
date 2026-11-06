@@ -1,8 +1,4 @@
-<script setup lang="ts">
-defineOptions({
-  name: 'WLoadingPulse',
-})
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="w-loading__pulse">

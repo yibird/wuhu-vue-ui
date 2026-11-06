@@ -10,5 +10,4 @@ import type { VNode } from 'vue'
 defineSlots<{
   default?: () => VNode | VNode[]
 }>()
-defineOptions({ name: 'ViewFooter' })
 </script>

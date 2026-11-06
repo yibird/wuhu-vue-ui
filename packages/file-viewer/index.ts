@@ -67,6 +67,7 @@ export type {
   FileViewerSource,
   FileViewerStateSlotProps,
   FileViewerStatus,
+  FileViewerStatusBarSlotProps,
   FileViewerTextOptions,
   FileViewerTheme,
   FileViewerThemeVars,

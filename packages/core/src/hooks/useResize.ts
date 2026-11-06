@@ -23,7 +23,7 @@ export interface UseResizeOptions {
   /** Pause observation. */
   disabled?: MaybeRefOrGetter<boolean | undefined>
   /** Measure once when observation starts. Defaults to true. */
-  immediate?: MaybeRefOrGetter<boolean | undefined>
+  immediate?: boolean
   /** Called whenever the measured size changes. */
   onResize?: (size: UseResizeSize, entry: ResizeObserverEntry | null) => void
 }
@@ -229,7 +229,7 @@ export function useResize(
     if (!element || toValue(options.disabled)) return
 
     observe(element)
-    if (toValue(options.immediate) ?? true) update(null)
+    if (options.immediate ?? true) update(null)
   }
 
   function measure() {

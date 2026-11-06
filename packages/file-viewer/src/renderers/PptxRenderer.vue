@@ -10,10 +10,6 @@ import { toRendererError } from '../core/errors'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerPptxRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -59,7 +55,7 @@ const slideStyle = computed(() => ({
   transformOrigin: 'top left',
 }))
 
-function measure(): void {
+function measure() {
   const element = viewport.value
   if (!element) return
   viewportSize.value = { width: element.clientWidth, height: element.clientHeight }

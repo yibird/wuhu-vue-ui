@@ -7,7 +7,7 @@ const content = ref(`
   <h2>发布计划</h2>
   <p>这是一个基于 <strong>Tiptap</strong> 的富文本编辑器，内置常用格式、链接与对齐能力。</p>
   <ul>
-    <li>支持 <em>斜体</em>、<u>下划线</u>、<s>删除线</s>、<code>行内代码</code>、<mark>高亮</mark> 与文字颜色</li>
+    <li>支持 <em>斜体</em>、<u>下划线</u>、<s>删除线</s>、<code>行内代码</code>、<mark>高亮</mark>、<span style="font-family: Georgia, serif">字体</span> 与文字颜色</li>
     <li>支持标题、列表、任务列表、引用、代码块、表格与 <a href="https://tiptap.dev">链接</a></li>
     <li>支持图片上传 / 拖拽 / 粘贴、撤销重做、全屏与清除格式</li>
   </ul>
@@ -25,7 +25,7 @@ const emptyContent = ref('')
   <div class="tiptap-demo">
     <DemoCard
       title="开箱即用"
-      description="内置格式、标题、列表、任务列表、表格、图片、颜色、高亮、链接、对齐、全屏与字数统计，通过 v-model 同步 HTML。"
+      description="内置格式、标题、列表、任务列表、表格、图片、字体、颜色、高亮、链接、对齐、全屏与字数统计，通过 v-model 同步 HTML。"
       wide
     >
       <TiptapEditor v-model="content" placeholder="请输入内容…" />

@@ -99,8 +99,8 @@ function handleFlatClose() {
 <template>
   <div class="demo-grid">
     <DemoCard
-      title="分组 + 拼音搜索"
-      description="支持全拼、首字母、描述与关键词匹配；方向键只移动活动项，Enter 才触发选择。"
+      title="分组 + 搜索"
+      description="默认匹配标签、描述与关键词；方向键只移动活动项，Enter 才触发选择。"
       wide
     >
       <div class="command-demo">
@@ -108,7 +108,7 @@ function handleFlatClose() {
           <CommandMenu
             v-model="selected"
             :items="commandItems"
-            placeholder="搜索命令，支持拼音..."
+            placeholder="搜索命令..."
             aria-label="分组命令菜单"
             @select="handleSelect"
             @search="handleSearch"

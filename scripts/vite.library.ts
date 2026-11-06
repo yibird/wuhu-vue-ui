@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
-import { basename, resolve } from 'node:path'
+import { basename, dirname, resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig, type Plugin } from 'vite'
 import dts from 'vite-plugin-dts'
@@ -56,8 +56,7 @@ function finalizeLibrary(outDir: string): Plugin {
 
       // The declaration plugin can still emit test declarations. They should
       // never be published, so remove them regardless of plugin ordering.
-      const testsDir = resolve(outDir, '__tests__')
-      if (existsSync(testsDir)) rmSync(testsDir, { recursive: true, force: true })
+      removeTestDeclarations(outDir)
 
       // Extensionless relative imports in .d.ts files fail under
       // moduleResolution "node16"/"nodenext". Add explicit .js extensions.
@@ -66,7 +65,14 @@ function finalizeLibrary(outDir: string): Plugin {
         const rewritten = source.replace(
           /((?:from|import)\s*\(?\s*['"])(\.{1,2}\/[^'"]+)(['"])/g,
           (match, prefix: string, specifier: string, suffix: string) => {
-            if (/\.[a-zA-Z0-9]+$/.test(specifier)) return match
+            // Directory barrels (`./hooks`) must become `./hooks/index.js`;
+            // `./hooks.js` cannot be resolved when `hooks` is a directory.
+            const extensionless = specifier.replace(/\.js$/, '')
+            if (existsSync(resolve(dirname(declaration), extensionless, 'index.d.ts'))) {
+              return `${prefix}${extensionless}/index.js${suffix}`
+            }
+
+            if (specifier !== extensionless) return match
             return `${prefix}${specifier}.js${suffix}`
           },
         )
@@ -92,6 +98,18 @@ function readDeclaredExternal(packageDir: string): string[] {
     ...Object.keys(manifest.optionalDependencies ?? {}),
     ...Object.keys(manifest.peerDependencies ?? {}),
   ]
+}
+
+function removeTestDeclarations(directory: string): void {
+  for (const entry of readdirSync(directory)) {
+    const path = resolve(directory, entry)
+    if (!statSync(path).isDirectory()) continue
+    if (entry === '__tests__') {
+      rmSync(path, { recursive: true, force: true })
+      continue
+    }
+    removeTestDeclarations(path)
+  }
 }
 
 function collectDeclarations(directory: string): string[] {

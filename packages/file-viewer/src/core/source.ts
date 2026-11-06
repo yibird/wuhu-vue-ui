@@ -94,7 +94,7 @@ export function createFileViewerSource(
     getBlob,
     getArrayBuffer: () => getBlob().then(blobToArrayBuffer),
     getText: () => getBlob().then(blobToArrayBuffer).then(decodeText),
-    dispose(): void {
+    dispose() {
       if (disposed) return
       disposed = true
       if (isObjectUrl && objectUrl && typeof URL !== 'undefined') {

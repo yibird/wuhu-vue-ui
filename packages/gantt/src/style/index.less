@@ -6,7 +6,7 @@
   --w-gantt-header-bg: var(--w-color-surface, #ffffff);
   --w-gantt-dependency-color: color-mix(
     in srgb,
-    var(--w-color-text-tertiary, #5b6678) 55%,
+    var(--w-color-text-tertiary, #5b6678) 40%,
     transparent
   );
   --w-gantt-task-color: var(--w-color-primary, #4f46e5);
@@ -141,6 +141,7 @@
   }
 
   &__header-row {
+    position: relative;
     display: flex;
     height: 28px;
     overflow: hidden;
@@ -157,10 +158,13 @@
   }
 
   &__header-cell {
+    position: absolute;
+    top: 0;
     display: flex;
     align-items: center;
     flex: none;
     min-width: 0;
+    height: 100%;
     padding: 0 8px;
     overflow: hidden;
     border-right: 1px solid var(--w-color-border-subtle, #f1f5f9);
@@ -229,6 +233,8 @@
   }
 
   &__grid-day {
+    position: absolute;
+    top: 0;
     flex: none;
     height: 100%;
 
@@ -249,10 +255,13 @@
   &__rows {
     position: relative;
     z-index: 5;
+    height: 100%;
   }
 
   &__row {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     display: flex;
     width: 100%;
   }
@@ -494,20 +503,22 @@
       &::before,
       &::after {
         position: absolute;
+        /* Overlap the bar by 2px so the tail stays flush on fractional DPI. */
         bottom: -5px;
         width: 0;
         height: 0;
-        border-top: 5px solid var(--w-gantt-task-color);
+        border-top: 6px solid var(--w-gantt-task-color);
         content: '';
       }
 
+      /* Align the tails with the bar's outer border edges. */
       &::before {
-        left: 0;
+        left: -1px;
         border-right: 5px solid transparent;
       }
 
       &::after {
-        right: 0;
+        right: -1px;
         border-left: 5px solid transparent;
       }
 
@@ -824,24 +835,4 @@
 .w-gantt-context-menu-leave-to {
   opacity: 0;
   transform: scale(0.96) translateY(-4px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-gantt__bar,
-  .w-gantt__milestone-diamond,
-  .w-gantt__resize-handle,
-  .w-gantt__sidebar,
-  .w-gantt__toggle,
-  .w-gantt__toggle svg {
-    transition: none;
-  }
-
-  .w-gantt__spinner {
-    animation: none;
-  }
-
-  .w-gantt-context-menu-enter-active,
-  .w-gantt-context-menu-leave-active {
-    transition: none;
-  }
 }

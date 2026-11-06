@@ -8,6 +8,8 @@
 
 > 从插槽内的交互元素（`a`、`button`、`input`、`select`、`textarea`、`[role="button"]`、`[contenteditable]`）按下指针时，组件不会移动分割线，也不会抢走焦点；其它需要保留自身指针行为的元素可添加 `data-w-comparison-ignore`。
 
+> 在轨道任意位置按下指针会立即把分割线定位到指针处，之后可继续拖拽。
+
 <demo vue="../demos/img-comparison-slider/horizontal.vue" />
 
 ## 纵向对比
@@ -19,6 +21,8 @@
 ## 自定义插槽与受控位置
 
 使用 `handle`、`before-label`、`after-label` 插槽完全自定义外观，并通过 `v-model` 受控同步位置。
+
+> `setPosition()` 与用户拖拽共用 `change` 事件，程序化调用同样会派发；需要区分来源时可自行在调用前后设置标记。
 
 <demo vue="../demos/img-comparison-slider/custom.vue" />
 
@@ -78,11 +82,11 @@
 
 ### 实例方法
 
-| 方法                          | 类型                                        | 说明                           |
-| ----------------------------- | ------------------------------------------- | ------------------------------ |
-| `position`                    | `Readonly<Ref<number>>`                     | 当前分割线位置                 |
-| `setPosition(value, notify?)` | `(value: number, notify?: boolean) => void` | 设置位置；`notify` 默认 `true` |
-| `focus()`                     | `() => void`                                | 聚焦手柄                       |
+| 方法                 | 类型                      | 说明                                  |
+| -------------------- | ------------------------- | ------------------------------------- |
+| `position`           | `Readonly<Ref<number>>`   | 当前分割线位置                        |
+| `setPosition(value)` | `(value: number) => void` | 设置位置；与用户交互一样触发 `change` |
+| `focus()`            | `() => void`              | 聚焦手柄                              |
 
 ### CSS 变量
 

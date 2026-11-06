@@ -6,6 +6,7 @@ export type {
   CodeEditorErrorSlotProps,
   CodeEditorExpose,
   CodeEditorInstance,
+  CodeEditorLabels,
   CodeEditorModel,
   CodeEditorProps,
 } from './src/types'

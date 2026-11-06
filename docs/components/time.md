@@ -4,7 +4,7 @@
 
 ## 相对时间样例
 
-默认每 30 秒刷新一次，也可以传入固定的 `now` 便于预览。
+默认每 30 秒刷新一次，也可以传入固定的 `now` 便于预览。同一页面中 `refreshInterval` 相同的实例共享一个定时器；长列表也可以设置 `refreshInterval=0` 后自行统一刷新。月 / 年按 30 / 365 天近似换算，跨自然月边界时文案可能存在偏差。
 
 <demo vue="../demos/time/relative.vue" />
 
@@ -35,7 +35,7 @@ const { relative, date, now, refresh, stop } = useRelativeTime({
 })
 ```
 
-所有选项都支持 ref 或 getter，返回的 `date`、`now`、`relative` 为只读计算属性；`refresh()` 会立即重新读取当前时间，`stop()` 可手动停止自动刷新。传入固定的 `now` 时不会启动自动刷新；没有组件或 effect scope 时不会自动启动定时器，避免遗漏清理。组件卸载或作用域销毁后定时器会自动清理。
+所有选项都支持 ref 或 getter，返回的 `date`、`now`、`relative` 为只读计算属性；`refresh()` 会立即重新读取当前时间，`stop()` 可手动停止自动刷新。传入固定的 `now` 时不会启动自动刷新；函数型 `now` 只在依赖的响应式数据变化或调用 `refresh()` 时重新求值，普通外部变量的变化不会被监听。没有组件或 effect scope 时不会自动启动定时器，避免遗漏清理；组件卸载或作用域销毁后会自动取消订阅。相同 `refreshInterval` 的实例复用一个共享时钟。
 
 ## API
 
@@ -52,7 +52,6 @@ const { relative, date, now, refresh, stop } = useRelativeTime({
 | `showTitle`       | `boolean`                                       | `true`    | 在 `title` 中显示绝对时间    |
 | `titleFormat`     | `Intl.DateTimeFormatOptions`                    | —         | `title` 绝对时间的格式化选项 |
 | `emptyText`       | `string`                                        | `'--'`    | 无效 / 缺失日期时的文本      |
-| `tag`             | `string`                                        | `'time'`  | 根元素标签                   |
 | `formatter`       | `(date, now, locale) => string`                 | —         | 完全自定义相对时间格式       |
 
 ### Emits

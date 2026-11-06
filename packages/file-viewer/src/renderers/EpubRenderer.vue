@@ -10,10 +10,6 @@ import { toRendererError } from '../core/errors'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerEpubRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -101,7 +97,7 @@ async function loadChapter(index: number): Promise<void> {
   }
 }
 
-function goToChapter(index: number): void {
+function goToChapter(index: number) {
   const page = index + 1
   if (page === currentIndex.value + 1) {
     showContents.value = false
@@ -111,7 +107,7 @@ function goToChapter(index: number): void {
   emit('page-change', page)
 }
 
-function handleContentClick(event: MouseEvent): void {
+function handleContentClick(event: MouseEvent) {
   const target = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-epub-page]')
   if (!target) return
   const page = Number.parseInt(target.dataset.epubPage ?? '', 10)

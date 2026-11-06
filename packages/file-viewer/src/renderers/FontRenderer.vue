@@ -5,10 +5,6 @@ import { printHtml } from '../core/print'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerFontRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{

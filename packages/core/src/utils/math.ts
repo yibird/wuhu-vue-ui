@@ -1,4 +1,3 @@
-/** Clamps a number into the inclusive `[min, max]` range. */
-export function clamp(value: number, min: number, max: number): number {
+export function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }

@@ -61,7 +61,7 @@ export default createLibraryConfig(import.meta.dirname, {
 
 遵循 `vue3-component` skill：
 
-- `<script setup lang="ts">` + `defineOptions({ name: 'WuXxx' })`
+- `<script setup lang="ts">`；不需要定义组件名，`defineOptions` 仅用于 `inheritAttrs` 等配置
 - props 类型放 `types.ts`，`withDefaults`
 - emits 用元组语法，slots 用 `defineSlots`
 - 清理副作用，异步回调加卸载守卫

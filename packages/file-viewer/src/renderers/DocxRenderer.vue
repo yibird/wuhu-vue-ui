@@ -11,10 +11,6 @@ import { toRendererError } from '../core/errors'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerDocxRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -90,7 +86,7 @@ async function parse(): Promise<void> {
   }
 }
 
-function scrollToPage(page: number): void {
+function scrollToPage(page: number) {
   const container = scrollRef.value
   if (!container) return
   const target = container.querySelector<HTMLElement>(`[data-page="${page}"]`)
@@ -136,7 +132,7 @@ function print(): boolean {
   )
 }
 
-function handleScroll(): void {
+function handleScroll() {
   const container = scrollRef.value
   if (!container) return
 

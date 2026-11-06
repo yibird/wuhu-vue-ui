@@ -46,9 +46,9 @@ setExceptionPresets({
 
 ### 全局配置方法
 
-| 方法                  | 类型                                  | 说明                             |
-| --------------------- | ------------------------------------- | -------------------------------- |
-| `setExceptionPresets` | `(presets: ExceptionPresets) => void` | 覆盖各错误类型的图片、标题和描述 |
+| 方法                  | 类型                                  | 说明                                            |
+| --------------------- | ------------------------------------- | ----------------------------------------------- |
+| `setExceptionPresets` | `(presets: ExceptionPresets) => void` | 全量替换（replace）各错误类型的图片、标题和描述 |
 
 `ExceptionPresets` 为 `Partial<Record<ExceptionType, ExceptionPreset>>`，其中 `ExceptionPreset` 包含可选的 `image`、`title`、`description`。
 
@@ -56,17 +56,21 @@ setExceptionPresets({
 
 ### Props
 
-| 属性          | 类型                                                                           | 默认值       | 说明                               |
-| ------------- | ------------------------------------------------------------------------------ | ------------ | ---------------------------------- |
-| `type`        | `'badRequest' \| 'forbidden' \| 'notFound' \| 'serverError' \| 'networkError'` | `'notFound'` | 错误类型，决定默认插图、标题和描述 |
-| `title`       | `string`                                                                       | —            | 覆盖默认标题                       |
-| `description` | `string`                                                                       | —            | 覆盖默认描述                       |
-| `image`       | `string`                                                                       | —            | 自定义 banner 图片 URL / data URI  |
-| `imageAlt`    | `string`                                                                       | `''`         | 自定义图片的替代文本，默认使用标题 |
-| `imageWidth`  | `string \| number`                                                             | `340`        | banner 区域宽度，数字按像素处理    |
-| `showImage`   | `boolean`                                                                      | `true`       | 是否显示插图区域                   |
-| `classes`     | `ExceptionClasses`                                                             | —            | 各语义化部分的类名                 |
-| `styles`      | `ExceptionStyles`                                                              | —            | 各语义化部分的内联样式             |
+| 属性          | 类型                                                                           | 默认值       | 说明                                       |
+| ------------- | ------------------------------------------------------------------------------ | ------------ | ------------------------------------------ |
+| `type`        | `'badRequest' \| 'forbidden' \| 'notFound' \| 'serverError' \| 'networkError'` | `'notFound'` | 错误类型，决定默认插图、标题和描述         |
+| `title`       | `string`                                                                       | —            | 覆盖默认标题                               |
+| `description` | `string`                                                                       | —            | 覆盖默认描述                               |
+| `image`       | `string`                                                                       | —            | 自定义 banner 图片；加载失败时回退内置插图 |
+| `showImage`   | `boolean`                                                                      | `true`       | 是否显示插图区域                           |
+| `classes`     | `ExceptionClasses`                                                             | —            | 各语义化部分的类名                         |
+| `styles`      | `ExceptionStyles`                                                              | —            | 各语义化部分的内联样式                     |
+
+### Emits
+
+| 事件          | 参数                     | 说明                                     |
+| ------------- | ------------------------ | ---------------------------------------- |
+| `image-error` | `(image: string, event)` | 自定义图片加载失败，组件已回退到内置插图 |
 
 ### Slots
 

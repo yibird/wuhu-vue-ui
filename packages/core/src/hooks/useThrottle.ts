@@ -1,5 +1,14 @@
-import { getCurrentScope, onScopeDispose, readonly, ref, watch, type Ref } from 'vue'
-import type { AnyFunction } from '../utils/types'
+import {
+  getCurrentScope,
+  onScopeDispose,
+  readonly,
+  ref,
+  toValue,
+  watch,
+  type MaybeRefOrGetter,
+  type Ref,
+} from 'vue'
+import type { AnyFunction } from '../types'
 import { throttle, type ThrottleOptions, type ThrottledFunction } from '../utils/throttle'
 
 /**
@@ -24,13 +33,17 @@ export function useThrottleFn<T extends AnyFunction>(
  * Returns a readonly ref that mirrors `source` at most once per `wait`
  * milliseconds.
  */
-export function useThrottle<T>(source: Ref<T>, wait = 200) {
-  const result = ref(source.value) as Ref<T>
+export function useThrottle<T>(source: MaybeRefOrGetter<T>, wait = 200) {
+  const result = ref(toValue(source)) as Ref<T>
   const update = useThrottleFn((value: T) => {
     result.value = value
   }, wait)
 
-  watch(source, (value) => update(value), { flush: 'sync' })
+  watch(
+    () => toValue(source),
+    (value) => update(value),
+    { flush: 'sync' },
+  )
 
   return readonly(result)
 }

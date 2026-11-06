@@ -64,7 +64,6 @@ pnpm install
 │  ├─ count-down/
 │  ├─ loading/
 │  ├─ view/
-│  ├─ icon/
 │  ├─ exception/
 │  ├─ gradient-text/        # 视觉表达组件
 │  ├─ number-ticker/
@@ -72,6 +71,7 @@ pnpm install
 │  ├─ img-comparison-slider/
 │  ├─ ripple/
 │  ├─ command-menu/         # 交互增强组件
+│  ├─ context-menu/
 │  ├─ cropper/
 │  ├─ motion-group/
 │  ├─ slider-captcha/
@@ -133,14 +133,14 @@ packages/<name>/
 
 硬性要求：
 
-- **Vue**：`<script setup lang="ts">`；`defineOptions({ name: 'WuXxx' })`；props 类型放 `types.ts`；`defineEmits` 用元组语法；`defineSlots` 声明插槽类型；仅暴露必要 API。
+- **Vue**：`<script setup lang="ts">`；props 类型放 `types.ts`；`defineEmits` 用元组语法；`defineSlots` 声明插槽类型；仅暴露必要 API。不定义组件名，只有其他选项（如 `inheritAttrs`）时才使用 `defineOptions`。
 - **样式**：集中在 `src/style/index.less`，由包根目录 `index.ts` 顶部引入；BEM 命名（`.w-foo__bar.is-active`）；不写 `<style scoped>`。
 - **设计令牌**：颜色、字号、圆角、阴影、动效只使用 `--w-*`，并带 fallback，例如 `var(--w-color-primary, #4f46e5)`。每个组件包在 `src/style/token.less` 中维护自己实际使用的令牌（含亮/暗两套），由 `src/style/index.less` 引入；组件之间不共享 token 文件。新增令牌时，需同步到所有使用它的组件包；playground/docs 各自维护应用级 `tokens.less`。
 - **TypeScript**：`strict` + `verbatimModuleSyntax`；类型导入必须 `import type`；禁止 `any`（用 `unknown` + 收窄）；包内导入必须是相对路径，不要用别名。
 - **导出**：所有公共组件、composables、类型从包根目录 `index.ts` 导出；类型用 `export type`。
 - **依赖**：组件包仅将 `vue` 声明为 `peerDependencies`；额外运行时依赖放 `dependencies` 并在 `vite.library` 中 external（如需要）。
 - **构建产物**：ESM + `.d.ts` + source maps + `style.css`；浏览器入口自动注入样式，`node` 条件提供无 CSS 的 `index.node.js`。不要手动编辑 `dist/`。
-- **可访问性**：语义化元素、图标按钮 `aria-label`、状态 `aria-live`、键盘操作、`:focus-visible`、`prefers-reduced-motion`。
+- **可访问性**：语义化元素、图标按钮 `aria-label`、状态 `aria-live`、键盘操作、`:focus-visible`。
 - **安全**：不使用 `v-html`；高亮等富文本场景通过模板转义实现。
 
 ## 新增组件流程

@@ -66,14 +66,14 @@ const TAG_ATTRIBUTES: Record<string, Set<string>> = {
   colgroup: new Set(['span']),
 }
 
-function unwrap(element: Element): void {
+function unwrap(element: Element) {
   const parent = element.parentNode
   if (!parent) return
   while (element.firstChild) parent.insertBefore(element.firstChild, element)
   parent.removeChild(element)
 }
 
-function cleanAttributes(element: Element, tag: string, options: SanitizeHtmlOptions): void {
+function cleanAttributes(element: Element, tag: string, options: SanitizeHtmlOptions) {
   const tagAttributes = TAG_ATTRIBUTES[tag]
   const extra = new Set((options.allowAttributes ?? []).map((name) => name.toLowerCase()))
 
@@ -132,7 +132,7 @@ export function sanitizeHtml(html: string, options: SanitizeHtmlOptions = {}): s
     'text/html',
   )
 
-  const clean = (node: Node): void => {
+  const clean = (node: Node) => {
     if (node.nodeType === Node.COMMENT_NODE) {
       node.parentNode?.removeChild(node)
       return

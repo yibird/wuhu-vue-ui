@@ -1,6 +1,6 @@
 {
   "name": "@wuhu-vue-ui/ellipsis",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Multi-line text ellipsis with expandable content and tooltip for Vue 3.",
   "keywords": [
     "component",
@@ -9,7 +9,16 @@
     "vue",
     "vue3"
   ],
+  "homepage": "https://github.com/yibird/wuhu-vue-ui#readme",
+  "bugs": {
+    "url": "https://github.com/yibird/wuhu-vue-ui/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yibird/wuhu-vue-ui.git"
+  },
+  "funding": "https://github.com/sponsors/yibird",
   "style": "./dist/style.css",
   "files": [
     "dist"
@@ -37,6 +46,9 @@
   "scripts": {
     "build": "vite build",
     "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "@floating-ui/vue": "^2.0.1"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

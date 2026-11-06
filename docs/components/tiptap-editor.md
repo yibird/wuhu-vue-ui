@@ -61,6 +61,23 @@ async function uploadImage(file: File) {
 - 拖拽或粘贴上传时，编辑区会显示上传中状态；拖拽进入时显示投放遮罩。
 - 未配置 `imageUpload` 时会读取为 Base64，大图片请注意存储体积。
 
+## 字体
+
+工具栏的「字体」菜单内置以下字体栈：
+
+| 选项     | CSS 字体栈                                                         |
+| -------- | ------------------------------------------------------------------ |
+| 默认字体 | 移除字体标记，回到编辑器默认字体                                   |
+| 微软雅黑 | `"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif` |
+| 宋体     | `SimSun, "Songti SC", "Noto Serif SC", serif`                      |
+| 楷体     | `KaiTi, "Kaiti SC", "Noto Serif SC", serif`                        |
+| 仿宋     | `FangSong, "FangSong_GB2312", serif`                               |
+| Arial    | `Arial, Helvetica, sans-serif`                                     |
+| Georgia  | `Georgia, "Times New Roman", serif`                                |
+| 等宽     | `ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`         |
+
+选择字体后写入 `textStyle` 标记，输出为 `<span style="font-family: …">`；选择「默认字体」只移除字体，不影响颜色等其他文本样式。字体栈同时包含 Windows、macOS 与通用回退，未安装选定字体的系统会按顺序降级。可以通过导出的 `TIPTAP_FONT_FAMILIES` 查看或复用这份列表。
+
 ## 表格与任务列表
 
 - 表格按钮提供「插入 3×3 表格」；光标位于表格内时，菜单额外提供插入/删除行、插入/删除列、切换表头行与删除表格。
@@ -96,17 +113,17 @@ async function uploadImage(file: File) {
 
 ## 工具栏能力
 
-| 分组 | 能力                                                 |
-| ---- | ---------------------------------------------------- |
-| 历史 | 撤销、重做                                           |
-| 格式 | 加粗、斜体、下划线、删除线、行内代码、高亮、文字颜色 |
-| 标题 | H1 / H2 / H3                                         |
-| 块级 | 无序列表、有序列表、任务列表、引用、代码块、分割线   |
-| 插入 | 链接、图片（上传 / URL / 拖拽 / 粘贴）、表格         |
-| 对齐 | 左对齐、居中、右对齐                                 |
-| 其他 | 全屏、清除格式                                       |
+| 分组 | 能力                                                       |
+| ---- | ---------------------------------------------------------- |
+| 历史 | 撤销、重做                                                 |
+| 格式 | 加粗、斜体、下划线、删除线、行内代码、字体、高亮、文字颜色 |
+| 标题 | H1 / H2 / H3                                               |
+| 块级 | 无序列表、有序列表、任务列表、引用、代码块、分割线         |
+| 插入 | 链接、图片（上传 / URL / 拖拽 / 粘贴）、表格               |
+| 对齐 | 左对齐、居中、右对齐                                       |
+| 其他 | 全屏、清除格式                                             |
 
-所有按钮都带有 `aria-label`、`title` 与 `aria-pressed`，并遵循 `prefers-reduced-motion`。
+所有按钮都带有 `aria-label`、`title` 与 `aria-pressed`。
 
 ## API
 

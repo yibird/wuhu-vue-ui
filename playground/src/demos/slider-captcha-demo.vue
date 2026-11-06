@@ -4,15 +4,15 @@ import { SliderCaptcha } from '@wuhu-vue-ui/slider-captcha'
 
 const status = ref('拖动滑块完成拼图')
 
-function onSuccess(): void {
+function onSuccess() {
   status.value = '验证通过'
 }
 
-function onFail(): void {
+function onFail() {
   status.value = '验证失败，已刷新'
 }
 
-function onRefresh(): void {
+function onRefresh() {
   status.value = '已生成新的拼图'
 }
 </script>

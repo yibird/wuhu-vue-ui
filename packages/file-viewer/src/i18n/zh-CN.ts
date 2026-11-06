@@ -36,6 +36,7 @@ export const zhCN: FileViewerMessages = {
     switchToDark: '切换到深色主题',
     switchToLight: '切换到浅色主题',
     downloadStarted: '已开始下载',
+    downloadFallback: '文件无法直接保存，已在新标签页中打开。',
     downloadFailed: '文件下载失败。',
     printBlocked: '请允许弹出窗口后再打印。',
     openBlocked: '请允许弹出窗口后再打开文件。',

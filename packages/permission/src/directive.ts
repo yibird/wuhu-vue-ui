@@ -1,4 +1,4 @@
-import { effectScope, watchEffect, type ObjectDirective } from 'vue'
+import { effectScope, shallowRef, watchEffect, type ObjectDirective, type ShallowRef } from 'vue'
 import { PERMISSION_KEY } from './permissions'
 import type {
   PermissionContext,
@@ -8,7 +8,18 @@ import type {
 } from './types'
 
 const originalDisplay = new WeakMap<HTMLElement, string>()
-const reactiveScopes = new WeakMap<HTMLElement, () => void>()
+
+interface AppliedBinding {
+  value: PermissionDirectiveValue
+  instance: unknown
+}
+
+interface DirectiveState {
+  binding: ShallowRef<AppliedBinding>
+  stop: () => void
+}
+
+const directiveStates = new WeakMap<HTMLElement, DirectiveState>()
 
 interface NormalizedDirectiveValue {
   value: PermissionValue
@@ -23,7 +34,7 @@ function normalize(value: PermissionDirectiveValue | undefined): NormalizedDirec
   return { value: value.value, mode: value.mode ?? 'all' }
 }
 
-function apply(el: HTMLElement, binding: { value: PermissionDirectiveValue; instance: unknown }) {
+function apply(el: HTMLElement, binding: AppliedBinding) {
   // `instance.provides` inherits from the app context, so this resolves both
   // `provide()` calls from ancestors and app-level `provide` options.
   const provides = (binding.instance as { $?: { provides?: Record<PropertyKey, unknown> } } | null)
@@ -55,17 +66,32 @@ function apply(el: HTMLElement, binding: { value: PermissionDirectiveValue; inst
 export const vPermission: ObjectDirective<HTMLElement, PermissionDirectiveValue> = {
   mounted(el, binding) {
     // Track reactive permission sources so `display` also updates when the
-    // provided permission set changes without a parent re-render.
+    // provided permission set changes without a parent re-render. The binding
+    // is mutable so the effect always reads the latest directive value.
+    const state: DirectiveState = {
+      binding: shallowRef({ value: binding.value, instance: binding.instance }),
+      stop: () => {},
+    }
+
     const scope = effectScope()
     scope.run(() => {
-      watchEffect(() => apply(el, binding))
+      watchEffect(() => apply(el, state.binding.value))
     })
-    reactiveScopes.set(el, () => scope.stop())
+    state.stop = () => scope.stop()
+    directiveStates.set(el, state)
   },
-  updated: apply,
+  updated(el, binding) {
+    const state = directiveStates.get(el)
+    if (!state) {
+      apply(el, { value: binding.value, instance: binding.instance })
+      return
+    }
+
+    state.binding.value = { value: binding.value, instance: binding.instance }
+  },
   beforeUnmount(el) {
-    reactiveScopes.get(el)?.()
-    reactiveScopes.delete(el)
+    directiveStates.get(el)?.stop()
+    directiveStates.delete(el)
 
     const previous = originalDisplay.get(el)
     if (previous !== undefined) el.style.display = previous

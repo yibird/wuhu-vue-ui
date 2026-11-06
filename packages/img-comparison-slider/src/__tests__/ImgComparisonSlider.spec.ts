@@ -270,6 +270,41 @@ describe('ImgComparisonSlider', () => {
     wrapper.unmount()
   })
 
+  it('stops an active drag once when disabled mid-gesture', async () => {
+    const wrapper = mount(ImgComparisonSlider, {
+      attachTo: document.body,
+    })
+    const root = wrapper.get('.w-img-comparison-slider')
+    ;(root.element as HTMLElement).getBoundingClientRect = () =>
+      ({
+        left: 0,
+        top: 0,
+        width: 100,
+        height: 100,
+        right: 100,
+        bottom: 100,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect
+
+    root.element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([20])
+    const updatesWhileDragging = wrapper.emitted('update:modelValue')?.length
+
+    await wrapper.setProps({ disabled: true })
+    expect(wrapper.emitted('dragend')).toHaveLength(1)
+    expect(wrapper.emitted('dragend')?.[0]).toEqual([20])
+
+    window.dispatchEvent(pointer('pointermove', { clientX: 80 }))
+    window.dispatchEvent(pointer('pointerup', { clientX: 80 }))
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.length).toBe(updatesWhileDragging)
+    expect(wrapper.emitted('dragend')).toHaveLength(1)
+    wrapper.unmount()
+  })
+
   it('fills the container height when aspectRatio is auto', () => {
     const wrapper = mount(ImgComparisonSlider, {
       props: { aspectRatio: 'auto', direction: 'vertical' },

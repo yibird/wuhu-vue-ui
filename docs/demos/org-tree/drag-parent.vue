@@ -38,15 +38,13 @@ function beforeDragEnd(_dragNode: OrgTreeNode, dropNode: OrgTreeNode) {
 }
 
 function handleDragEnd(event: OrgTreeDragEndEvent) {
-  if (event.changed) {
-    feedback.value = event.parent
-      ? `「${event.node.label}」已移动到「${event.parent.label}」下`
-      : `「${event.node.label}」已移动到根层级`
+  if (event.changed && event.parent) {
+    feedback.value = `「${event.node.label}」已移动到「${event.parent.label}」下`
     return
   }
 
   if (event.canceled) {
-    feedback.value = '拖拽已取消：不能移到自身、原父级或后代，或目标节点被锁定'
+    feedback.value = '未拖到有效节点或目标禁止接收，本次拖拽未改变层级'
   }
 }
 
@@ -60,7 +58,7 @@ function reset() {
 <template>
   <div class="org-drag">
     <div class="org-drag__toolbar">
-      <span class="hint">拖动节点到另一个节点上改变父级；拖到空白处移到根层级。</span>
+      <span class="hint">拖动节点到另一个节点上改变父级；拖到空白处不会改变层级。</span>
       <Button @click="reset">重置数据</Button>
     </div>
 
@@ -68,6 +66,7 @@ function reset() {
       v-model:expand-keys="expandKeys"
       :data="data"
       node-draggable
+      :drop-on-empty="false"
       :before-drag-end="beforeDragEnd"
       :context-menu="false"
       :min-height="380"

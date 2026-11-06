@@ -9,7 +9,6 @@ import { lockBodyScroll, unlockBodyScroll } from './hooks/scrollLock'
 import type { LoadingAnimation, LoadingProps, LoadingSlots } from './types'
 
 defineOptions({
-  name: 'WLoading',
   inheritAttrs: false,
 })
 
@@ -23,13 +22,13 @@ const props = withDefaults(defineProps<LoadingProps>(), {
   title: undefined,
   description: undefined,
   mask: true,
-  lockScroll: true,
   zIndex: 2000,
   teleport: 'body',
 })
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
+  'after-leave': []
 }>()
 
 defineSlots<LoadingSlots>()
@@ -49,7 +48,7 @@ const resolvedAnimation = computed<LoadingAnimation>(() =>
 )
 const currentAnimation = computed(() => animations[resolvedAnimation.value] ?? Ring)
 
-const gradientValue = computed(() => {
+const gradientValue = computed<string | undefined>(() => {
   const value = props.gradient
 
   if (!value) return undefined
@@ -69,14 +68,14 @@ const gradientValue = computed(() => {
     ].join(' ')
   }
 
-  if (Array.isArray(value)) {
-    const colors = value.filter(Boolean)
-    if (colors.length === 0) return undefined
-    if (colors.length === 1) return colors[0]
-    return `linear-gradient(135deg, ${colors.join(', ')})`
-  }
+  if (typeof value === 'string') return value
 
-  return value
+  const colors = value.filter(Boolean)
+  if (colors.length === 0) return undefined
+  // A single stop is duplicated so the value stays a real gradient instead
+  // of silently degrading into a solid background color.
+  if (colors.length === 1) return `linear-gradient(135deg, ${colors[0]}, ${colors[0]})`
+  return `linear-gradient(135deg, ${colors.join(', ')})`
 })
 
 const strokeColor = computed(() => props.color ?? 'var(--w-color-primary, #4f46e5)')
@@ -101,8 +100,8 @@ function toCssUnit(value: string | number | undefined): string | undefined {
 
 let scrollLocked = false
 
-function syncScrollLock(): void {
-  const shouldLock = props.full && props.open && props.lockScroll
+function syncScrollLock() {
+  const shouldLock = props.full && props.open
 
   if (shouldLock && !scrollLocked) {
     lockBodyScroll()
@@ -113,7 +112,7 @@ function syncScrollLock(): void {
   }
 }
 
-watch(() => [props.full, props.open, props.lockScroll], syncScrollLock, { immediate: true })
+watch(() => [props.full, props.open], syncScrollLock, { immediate: true })
 
 onBeforeUnmount(() => {
   if (!scrollLocked) return
@@ -121,7 +120,7 @@ onBeforeUnmount(() => {
   scrollLocked = false
 })
 
-function close(): void {
+function close() {
   emit('update:open', false)
 }
 
@@ -132,7 +131,7 @@ defineExpose({
 
 <template>
   <Teleport :to="teleportTarget" :disabled="!full">
-    <Transition name="w-loading-fade">
+    <Transition name="w-loading-fade" @after-leave="emit('after-leave')">
       <div
         v-if="open"
         v-bind="restAttrs"

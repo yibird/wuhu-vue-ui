@@ -222,6 +222,14 @@ export interface FileViewerErrorSlotProps {
   retry: () => void
 }
 
+export interface FileViewerStatusBarSlotProps {
+  source: FileViewerSource | null
+  meta: FileViewerMeta | null
+  page: number
+  pageCount: number
+  zoom: number
+}
+
 export interface FileViewerStateSlotProps {
   source: FileViewerSource | null
   meta: FileViewerMeta | null
@@ -284,7 +292,11 @@ export interface FileViewerProps {
   width?: string | number
   /** CSS height. Defaults to 600px. */
   height?: string | number
-  /** Light, dark, or follow the system theme. Defaults to `auto`. */
+  /**
+   * Light, dark, or `auto`. `auto` is resolved once from `data-w-theme` /
+   * `prefers-color-scheme` when initialized or when the prop is reapplied; no
+   * theme listeners are registered.
+   */
   theme?: FileViewerTheme
   /** Custom CSS variable overrides, e.g. `{ '--w-file-viewer-primary': '#16a34a' }`. */
   themeVars?: Record<string, string>
@@ -387,6 +399,7 @@ export interface FileViewerMessages {
     switchToDark: string
     switchToLight: string
     downloadStarted: string
+    downloadFallback: string
     downloadFailed: string
     printBlocked: string
     openBlocked: string

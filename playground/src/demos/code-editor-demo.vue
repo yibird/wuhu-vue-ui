@@ -18,7 +18,7 @@ const sample = [
   '  const todos = ref<Todo[]>(initial)',
   '  const remaining = computed(() => todos.value.filter((todo) => !todo.done).length)',
   '',
-  '  function toggle(id: number): void {',
+  '  function toggle(id: number){',
   '    const todo = todos.value.find((item) => item.id === id)',
   '    if (todo) todo.done = !todo.done',
   '  }',
@@ -36,42 +36,42 @@ const eventLog = ref('等待编辑器加载…')
 
 const languageOptions = ['typescript', 'javascript', 'json', 'markdown', 'html', 'css', 'python']
 
-function handleReady(editor: CodeEditorInstance): void {
+function handleReady(editor: CodeEditorInstance) {
   const model = editor.getModel()
   eventLog.value = `ready · ${model?.getLanguageId() ?? language.value}`
 }
 
-function handleChange(next: string): void {
+function handleChange(next: string) {
   eventLog.value = `change · ${next.split('\n').length} 行 · ${next.length} 字符`
 }
 
-function handleFocus(): void {
+function handleFocus() {
   eventLog.value = 'focus · 编辑器获得焦点'
 }
 
-function handleBlur(): void {
+function handleBlur() {
   eventLog.value = 'blur · 编辑器失去焦点'
 }
 
-function handleError(error: Error): void {
+function handleError(error: Error) {
   eventLog.value = `error · ${error.message}`
 }
 
-function toggleTheme(): void {
+function toggleTheme() {
   theme.value = theme.value === 'vs' ? 'vs-dark' : 'vs'
 }
 
-function focusEditor(): void {
+function focusEditor() {
   editorRef.value?.focus()
 }
 
-function replaceSample(): void {
+function replaceSample() {
   language.value = 'typescript'
   editorRef.value?.setValue(sample)
   eventLog.value = 'setValue · 已恢复示例代码'
 }
 
-function logValue(): void {
+function logValue() {
   eventLog.value = `getValue · ${editorRef.value?.getValue().length ?? 0} 字符`
 }
 </script>

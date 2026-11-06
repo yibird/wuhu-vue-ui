@@ -17,6 +17,8 @@ export interface TiptapEditorLabels {
   underline: string
   strike: string
   code: string
+  /** Toolbar label of the font family menu. */
+  fontFamily: string
   heading1: string
   heading2: string
   heading3: string

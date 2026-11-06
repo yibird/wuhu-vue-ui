@@ -257,7 +257,7 @@ function readZip64Extra(
   extraOffset: number,
   extraLength: number,
   entry: { size: number; compressedSize: number; localOffset: number },
-): void {
+) {
   let cursor = extraOffset
   const end = extraOffset + extraLength
   while (cursor + 4 <= end) {

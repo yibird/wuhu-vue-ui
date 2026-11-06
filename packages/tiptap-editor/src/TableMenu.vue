@@ -3,8 +3,6 @@ import type { Editor } from '@tiptap/core'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { TiptapEditorLabels } from './types'
 
-defineOptions({ name: 'WTiptapEditorTableMenu' })
-
 const props = defineProps<{
   editor: Editor
   labels: TiptapEditorLabels
@@ -22,7 +20,7 @@ interface TableAction {
   action: () => void
 }
 
-function refresh(): void {
+function refresh() {
   revision.value += 1
 }
 
@@ -34,7 +32,7 @@ function menuItems(): HTMLButtonElement[] {
   )
 }
 
-function onMenuKeydown(event: KeyboardEvent): void {
+function onMenuKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     event.preventDefault()
     emit('close')
@@ -64,7 +62,7 @@ function onMenuKeydown(event: KeyboardEvent): void {
 onMounted(() => {
   props.editor.on('transaction', refresh)
   props.editor.on('selectionUpdate', refresh)
-  void nextTick(() => menuItems()[0]?.focus())
+  nextTick(() => menuItems()[0]?.focus())
 })
 
 onBeforeUnmount(() => {
@@ -72,7 +70,7 @@ onBeforeUnmount(() => {
   props.editor.off('selectionUpdate', refresh)
 })
 
-function run(action: () => boolean): void {
+function run(action: () => boolean) {
   action()
   emit('close')
 }

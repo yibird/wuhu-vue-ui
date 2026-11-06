@@ -4,10 +4,12 @@ import {
   useControllableState,
   useDismissable,
   useIntervalFn,
-  useListNavigation,
+  useKeyboardNavigation,
   usePointerDrag,
   useRaf,
 } from '@wuhu-vue-ui/core'
+import { useVirtualizer } from '@tanstack/vue-virtual'
+import type { Rect, Virtualizer } from '@tanstack/vue-virtual'
 import {
   computed,
   nextTick,
@@ -58,10 +60,6 @@ import {
 } from './utils/date'
 import { resolveTasks, taskKey, type ResolvedTask } from './utils/tasks'
 
-defineOptions({
-  name: 'WGantt',
-})
-
 const props = withDefaults(defineProps<GanttProps>(), {
   view: 'day',
   height: '600px',
@@ -69,7 +67,7 @@ const props = withDefaults(defineProps<GanttProps>(), {
   rowHeight: 44,
   taskHeight: 24,
   rangePadding: 3,
-  maxRangeDays: 3660,
+  maxRangeDays: 730,
   readonly: false,
   draggable: true,
   resizable: true,
@@ -122,6 +120,8 @@ interface HeaderSegment {
   sublabel?: string
   width: number
   count: number
+  /** Index of the first day in `days`, used to window the header cells. */
+  startIndex: number
   startDate: Date
   weekend: boolean
   current: boolean
@@ -179,6 +179,15 @@ interface DependencyLine {
 
 const HEADER_HEIGHT = 56
 const DRAG_THRESHOLD = 4
+const ROW_OVERSCAN = 6
+const COLUMN_OVERSCAN = 2
+/**
+ * Virtualizers need a viewport before they can measure the scroll element.
+ * These bounds only affect the first paint (and unmeasured environments);
+ * real browsers replace them through `observeElementRect`.
+ */
+const FALLBACK_VIEWPORT_WIDTH = 1600
+const FALLBACK_VIEWPORT_HEIGHT = 600
 const DEFAULT_DAY_WIDTH: Record<GanttView, number> = {
   day: 36,
   week: 14,
@@ -282,7 +291,23 @@ function syncCollapsedState() {
   if (changed) collapsedKeys.value = next
 }
 
-watch(() => props.tasks, syncCollapsedState, { immediate: true, deep: true })
+/**
+ * Reuse the resolved task tree instead of deep-watching `props.tasks`. Only
+ * group identity and the explicit `collapsed` flag can affect collapsed state,
+ * so changes to dates, progress or `meta` no longer re-run the sync.
+ */
+const collapsedSignature = computed(() =>
+  JSON.stringify(
+    resolution.value.all
+      .filter((resolved) => resolved.hasChildren)
+      .map((resolved) => [
+        resolved.key,
+        typeof resolved.task.collapsed === 'boolean' ? resolved.task.collapsed : null,
+      ]),
+  ),
+)
+
+watch(collapsedSignature, syncCollapsedState, { immediate: true })
 
 const rows = computed<GanttRow[]>(() => {
   const result: GanttRow[] = []
@@ -313,13 +338,6 @@ const rows = computed<GanttRow[]>(() => {
 })
 
 const bodyHeight = computed(() => rows.value.length * props.rowHeight)
-
-// Roving tabindex: exactly one task bar is reachable with Tab at any time.
-const tabStopKey = computed(() => {
-  const key = activeBarKey.value
-  if (key && rows.value.some((row) => row.key === key)) return key
-  return rows.value[0]?.key ?? null
-})
 
 const range = computed(() => {
   const tasks = resolution.value.all
@@ -395,7 +413,7 @@ const primarySegments = computed<HeaderSegment[]>(() => {
   const formatter = formatters.value
   const isYear = props.view === 'month'
 
-  for (const day of days.value) {
+  for (const [index, day] of days.value.entries()) {
     const key = isYear ? `y-${day.getFullYear()}` : `m-${day.getFullYear()}-${day.getMonth()}`
 
     let segment = segments.get(key)
@@ -405,6 +423,7 @@ const primarySegments = computed<HeaderSegment[]>(() => {
         label: isYear ? formatter.year.format(day) : formatter.monthPrimary.format(day),
         width: 0,
         count: 0,
+        startIndex: index,
         startDate: day,
         weekend: false,
         current: false,
@@ -423,12 +442,13 @@ const secondarySegments = computed<HeaderSegment[]>(() => {
   const formatter = formatters.value
 
   if (props.view === 'day') {
-    return days.value.map((day) => ({
+    return days.value.map((day, index) => ({
       key: `d-${day.getTime()}`,
       label: formatter.day.format(day),
       sublabel: formatter.weekday.format(day),
       width: dayWidth.value,
       count: 1,
+      startIndex: index,
       startDate: day,
       weekend: isWeekend(day),
       current: props.showToday && isSameDay(day, today.value),
@@ -437,7 +457,7 @@ const secondarySegments = computed<HeaderSegment[]>(() => {
 
   const segments = new Map<string, HeaderSegment>()
 
-  for (const day of days.value) {
+  for (const [index, day] of days.value.entries()) {
     const key =
       props.view === 'week'
         ? `w-${startOfWeek(day, weekStartsOn.value).getTime()}`
@@ -451,6 +471,7 @@ const secondarySegments = computed<HeaderSegment[]>(() => {
           props.view === 'week' ? formatter.week.format(day) : formatter.monthShort.format(day),
         width: 0,
         count: 0,
+        startIndex: index,
         startDate: day,
         weekend: false,
         current: false,
@@ -569,6 +590,118 @@ const rowViews = computed<RowView[]>(() =>
     }
   }),
 )
+
+const fallbackViewportHeight = computed(() => {
+  if (typeof props.height === 'number') return Math.max(1, props.height)
+  const px = /^(\d+(?:\.\d+)?)px$/.exec(props.height)
+  return px ? Number(px[1]) : FALLBACK_VIEWPORT_HEIGHT
+})
+
+/**
+ * Measure the scroll container, falling back to a usable viewport when the
+ * environment (SSR, jsdom) reports a zero-sized element.
+ */
+function observeElementRect(
+  instance: Virtualizer<HTMLElement, Element>,
+  callback: (rect: Rect) => void,
+): (() => void) | undefined {
+  const element = instance.scrollElement
+  if (!element) return
+
+  const measure = () => {
+    const rect = element.getBoundingClientRect()
+    callback({
+      width: rect.width || element.clientWidth || FALLBACK_VIEWPORT_WIDTH,
+      height: rect.height || element.clientHeight || fallbackViewportHeight.value,
+    })
+  }
+
+  measure()
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }
+}
+
+const rowVirtualizerOptions = computed(() => ({
+  count: rows.value.length,
+  getScrollElement: () => scrollRef.value ?? null,
+  estimateSize: () => props.rowHeight,
+  overscan: ROW_OVERSCAN,
+  // The sticky header occupies the first rows of the scroll container.
+  paddingStart: HEADER_HEIGHT,
+  observeElementRect,
+  initialRect: { width: FALLBACK_VIEWPORT_WIDTH, height: fallbackViewportHeight.value },
+}))
+
+const rowVirtualizer = useVirtualizer(rowVirtualizerOptions)
+const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
+
+const columnVirtualizerOptions = computed(() => ({
+  count: days.value.length,
+  getScrollElement: () => scrollRef.value ?? null,
+  estimateSize: () => dayWidth.value,
+  overscan: COLUMN_OVERSCAN,
+  horizontal: true,
+  // The sticky sidebar occupies the first columns of the scroll container.
+  paddingStart: props.sidebarWidth,
+  observeElementRect,
+  initialRect: { width: FALLBACK_VIEWPORT_WIDTH, height: fallbackViewportHeight.value },
+}))
+
+const columnVirtualizer = useVirtualizer(columnVirtualizerOptions)
+const virtualColumns = computed(() => columnVirtualizer.value.getVirtualItems())
+
+const virtualRowViews = computed(() =>
+  virtualRows.value.flatMap((item) => {
+    const view = rowViews.value[item.index]
+    return view ? [{ item, view }] : []
+  }),
+)
+
+// Roving tabindex: exactly one *rendered* task bar is reachable with Tab.
+const tabStopKey = computed(() => {
+  const rendered = virtualRowViews.value
+  const key = activeBarKey.value
+  if (key && rendered.some((entry) => entry.view.row.key === key)) return key
+  return rendered[0]?.view.row.key ?? rows.value[0]?.key ?? null
+})
+
+const visibleDayRange = computed(() => {
+  const items = virtualColumns.value
+  if (items.length === 0) return { start: 0, end: days.value.length - 1 }
+  return {
+    start: items[0]?.index ?? 0,
+    end: items[items.length - 1]?.index ?? days.value.length - 1,
+  }
+})
+
+const visibleDayCells = computed(() =>
+  virtualColumns.value.flatMap((item) => {
+    const day = days.value[item.index]
+    return day ? [{ day, index: item.index }] : []
+  }),
+)
+
+function windowSegments(segments: HeaderSegment[]): HeaderSegment[] {
+  const { start, end } = visibleDayRange.value
+  if (end < start) return []
+  return segments.filter(
+    (segment) => segment.startIndex <= end && segment.startIndex + segment.count > start,
+  )
+}
+
+const visiblePrimarySegments = computed(() => windowSegments(primarySegments.value))
+const visibleSecondarySegments = computed(() => windowSegments(secondarySegments.value))
+
+// Re-estimate cached item sizes when density changes (count may stay the same).
+watch(
+  () => props.rowHeight,
+  () => rowVirtualizer.value.measure(),
+)
+watch(dayWidth, () => columnVirtualizer.value.measure())
 
 function barAriaLabel(view: RowView): string {
   const progressShown = props.showProgress && view.row.progress > 0 && view.layout.width > 110
@@ -728,23 +861,41 @@ function keyboardNudge(row: GanttRow, mode: GanttDragMode, deltaDays: number) {
   })
 }
 
-function setActiveBar(row: GanttRow): void {
+function setActiveBar(row: GanttRow) {
   activeBarKey.value = row.key
 }
 
-/** Move focus between visible task bars without creating extra tab stops. */
-function focusBar(row: GanttRow): void {
+function findBar(key: string): HTMLElement | null {
+  const bars = scrollRef.value?.querySelectorAll<HTMLElement>('.w-gantt__bar')
+  if (!bars) return null
+  for (const bar of bars) {
+    if (bar.dataset.rowKey === key) return bar
+  }
+  return null
+}
+
+/**
+ * Move focus between visible task bars without creating extra tab stops.
+ * Rows outside the virtual window are scrolled into range first.
+ */
+function focusBar(row: GanttRow) {
   activeBarKey.value = row.key
-  void nextTick(() => {
-    const bars = scrollRef.value?.querySelectorAll<HTMLElement>('.w-gantt__bar')
-    if (!bars) return
-    for (const bar of bars) {
-      if (bar.dataset.rowKey === row.key) {
+
+  if (!findBar(row.key)) {
+    rowVirtualizer.value.scrollToIndex(row.index, { align: 'auto' })
+  }
+
+  void (async () => {
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      await nextTick()
+      const bar = findBar(row.key)
+      if (bar) {
         bar.focus()
         return
       }
+      await new Promise<void>((resolve) => setTimeout(resolve, 0))
     }
-  })
+  })()
 }
 
 function onBarKeydown(event: KeyboardEvent, row: GanttRow) {
@@ -850,7 +1001,7 @@ function resolveContextMenuItems(task: GanttTask): GanttContextMenuItem[] {
 
 const contextMenuItems = computed(() => contextMenuState.value?.items ?? [])
 
-function onTaskContextMenu(row: GanttRow, event: MouseEvent): void {
+function onTaskContextMenu(row: GanttRow, event: MouseEvent) {
   emit('task-contextmenu', row.task, event)
 
   // Resolve the factory once per right-click and reuse it for rendering.
@@ -872,7 +1023,7 @@ function onTaskContextMenu(row: GanttRow, event: MouseEvent): void {
   })
 }
 
-function closeContextMenu(restoreFocus = false): void {
+function closeContextMenu(restoreFocus = false) {
   const trigger = contextMenuTrigger.value
   contextMenuState.value = null
   contextMenuTrigger.value = null
@@ -881,7 +1032,7 @@ function closeContextMenu(restoreFocus = false): void {
   if (restoreFocus) nextTick(() => trigger?.focus({ preventScroll: true }))
 }
 
-function selectContextMenuItem(item: GanttContextMenuItem): void {
+function selectContextMenuItem(item: GanttContextMenuItem) {
   const state = contextMenuState.value
   if (!state || item.disabled || item.divider) return
 
@@ -889,7 +1040,7 @@ function selectContextMenuItem(item: GanttContextMenuItem): void {
   closeContextMenu(true)
 }
 
-function clampContextMenu(): void {
+function clampContextMenu() {
   const state = contextMenuState.value
   const menu = contextMenuRef.value
   if (!state || !menu) return
@@ -911,7 +1062,7 @@ const enabledContextMenuItems = computed(() =>
   contextMenuItems.value.filter((item) => !item.divider && !item.disabled),
 )
 
-const contextMenuNavigation = useListNavigation({
+const contextMenuNavigation = useKeyboardNavigation({
   items: enabledContextMenuItems,
   activeIndex: () => {
     const buttons = contextMenuButtons()
@@ -929,7 +1080,7 @@ const contextMenuDismiss = useDismissable({
   onDismiss: (reason) => closeContextMenu(reason === 'escape'),
 })
 
-function onContextMenuKeydown(event: KeyboardEvent): void {
+function onContextMenuKeydown(event: KeyboardEvent) {
   if (event.key === 'Tab') {
     closeContextMenu()
     return
@@ -1084,7 +1235,7 @@ function beginTaskDrag(event: PointerEvent, row: GanttRow) {
   window.addEventListener('blur', cancelDrag)
 }
 
-function activateDrag(state: DragState): void {
+function activateDrag(state: DragState) {
   if (state.active) return
 
   dragScrollRect = scrollRef.value?.getBoundingClientRect() ?? null
@@ -1306,11 +1457,11 @@ watch(
 
 const todayInterval = useIntervalFn(refreshToday, 60_000)
 
-function startTodayTimer(): void {
+function startTodayTimer() {
   if (props.showToday) todayInterval.start()
 }
 
-function stopTodayTimer(): void {
+function stopTodayTimer() {
   todayInterval.stop()
 }
 
@@ -1407,10 +1558,13 @@ defineExpose({
           >
             <div class="w-gantt__header-row w-gantt__header-row--primary">
               <div
-                v-for="segment in primarySegments"
+                v-for="segment in visiblePrimarySegments"
                 :key="segment.key"
                 class="w-gantt__header-cell"
-                :style="{ width: `${segment.width}px` }"
+                :style="{
+                  width: `${segment.width}px`,
+                  left: `${segment.startIndex * dayWidth}px`,
+                }"
                 :title="segment.label"
               >
                 {{ segment.label }}
@@ -1418,11 +1572,14 @@ defineExpose({
             </div>
             <div class="w-gantt__header-row w-gantt__header-row--secondary">
               <div
-                v-for="segment in secondarySegments"
+                v-for="segment in visibleSecondarySegments"
                 :key="segment.key"
                 class="w-gantt__header-cell w-gantt__header-cell--secondary"
                 :class="secondaryClass(segment)"
-                :style="{ width: `${segment.width}px` }"
+                :style="{
+                  width: `${segment.width}px`,
+                  left: `${segment.startIndex * dayWidth}px`,
+                }"
               >
                 <span class="w-gantt__header-day">{{ segment.label }}</span>
                 <span v-if="segment.sublabel" class="w-gantt__header-weekday">
@@ -1440,24 +1597,30 @@ defineExpose({
             aria-hidden="true"
           >
             <div
-              v-for="(day, index) in days"
-              :key="index"
+              v-for="cell in visibleDayCells"
+              :key="cell.index"
               class="w-gantt__grid-day"
-              :class="dayClasses(day)"
-              :style="{ width: `${dayWidth}px` }"
+              :class="dayClasses(cell.day)"
+              :style="{
+                width: `${dayWidth}px`,
+                left: `${cell.index * dayWidth}px`,
+              }"
             />
           </div>
 
           <div class="w-gantt__rows">
             <div
-              v-for="view in rowViews"
+              v-for="{ item, view } in virtualRowViews"
               :key="view.row.key"
               class="w-gantt__row"
               :class="{
                 'is-selected': selectedKey === view.row.key,
                 'is-group': view.row.hasChildren,
               }"
-              :style="{ height: `${rowHeight}px` }"
+              :style="{
+                height: `${rowHeight}px`,
+                top: `${item.start - HEADER_HEIGHT}px`,
+              }"
               role="row"
               :aria-rowindex="view.row.index + 2"
               :aria-level="view.row.depth + 1"

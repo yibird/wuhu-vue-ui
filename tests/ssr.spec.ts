@@ -24,7 +24,6 @@ import Permission from '../packages/permission/src/Permission.vue'
 import CountDown from '../packages/count-down/src/CountDown.vue'
 import Loading from '../packages/loading/src/Loading.vue'
 import View from '../packages/view/src/view.vue'
-import Icon from '../packages/icon/src/Icon.vue'
 import Exception from '../packages/exception/src/Exception.vue'
 import Ripple from '../packages/ripple/src/Ripple.vue'
 import CodeEditor from '../packages/code-editor/src/CodeEditor.vue'
@@ -32,6 +31,7 @@ import Dock from '../packages/dock/src/Dock.vue'
 import IconPicker from '../packages/icon-picker/src/IconPicker.vue'
 import OrgTree from '../packages/org-tree/src/OrgTree.vue'
 import JsonViewer from '../packages/json-viewer/src/JsonViewer.vue'
+import ContextMenu from '../packages/context-menu/src/ContextMenu.vue'
 
 interface SsrCase {
   name: string
@@ -62,7 +62,6 @@ const cases: SsrCase[] = [
   { name: 'CountDown', component: CountDown, props: { duration: 1000, autoStart: false } },
   { name: 'Loading', component: Loading, props: { open: true } },
   { name: 'View', component: View, props: {} },
-  { name: 'Icon', component: Icon, props: { name: 'check' } },
   { name: 'Exception', component: Exception, props: {} },
   { name: 'Ripple', component: Ripple, props: {} },
   { name: 'CodeEditor', component: CodeEditor, props: {} },
@@ -70,6 +69,14 @@ const cases: SsrCase[] = [
   { name: 'IconPicker', component: IconPicker, props: { items: [] } },
   { name: 'OrgTree', component: OrgTree, props: { data: [{ id: 'a', label: 'A' }] } },
   { name: 'JsonViewer', component: JsonViewer, props: { value: { a: 1 } } },
+  {
+    name: 'ContextMenu',
+    component: ContextMenu,
+    props: {
+      open: true,
+      items: [{ key: 'a', label: 'A' }],
+    },
+  },
 ]
 
 describe('SSR rendering', () => {

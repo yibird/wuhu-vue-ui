@@ -1,4 +1,4 @@
-export function triggerDownload(blob: Blob, name: string): void {
+export function triggerDownload(blob: Blob, name: string) {
   if (typeof document === 'undefined') return
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')

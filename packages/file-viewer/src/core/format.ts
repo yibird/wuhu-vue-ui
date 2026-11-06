@@ -222,11 +222,11 @@ export function createObjectUrlPool(): ObjectUrlPool {
       urls.add(url)
       return url
     },
-    revoke(url: string): void {
+    revoke(url: string) {
       if (!urls.delete(url)) return
       URL.revokeObjectURL(url)
     },
-    clear(): void {
+    clear() {
       for (const url of urls) URL.revokeObjectURL(url)
       urls.clear()
     },

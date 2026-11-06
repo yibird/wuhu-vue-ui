@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { h, nextTick } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import Copy from '../Copy.vue'
+import type { CopySlotProps } from '../types'
 import { copyToClipboard } from '../useClipboard'
 
 const writeText = vi.fn<() => Promise<void>>()
@@ -32,7 +33,7 @@ describe('Copy', () => {
 
     expect(writeText).toHaveBeenCalledWith('hello wuhu')
     expect(wrapper.emitted('success')?.[0]).toEqual(['hello wuhu'])
-    expect(wrapper.text()).toContain('已复制')
+    expect(wrapper.classes()).toContain('is-copied')
     wrapper.unmount()
   })
 
@@ -110,7 +111,7 @@ describe('Copy', () => {
     wrapper.unmount()
   })
 
-  it('renders the default slot inside the trigger when showIcon is false', async () => {
+  it('renders the default slot inside a focusable trigger when showIcon is false', async () => {
     mockClipboard()
     writeText.mockResolvedValue(undefined)
 
@@ -123,11 +124,48 @@ describe('Copy', () => {
 
     expect(wrapper.find('.w-copy__icon').exists()).toBe(false)
     const trigger = wrapper.get('.w-copy__trigger')
+    expect(trigger.element.tagName).toBe('SPAN')
+    expect(trigger.attributes('role')).toBe('button')
+    expect(trigger.attributes('tabindex')).toBe('0')
     expect(trigger.text()).toBe('自定义复制')
 
     await trigger.trigger('click')
     await flushPromises()
     expect(writeText).toHaveBeenCalledWith('text-trigger')
+    wrapper.unmount()
+  })
+
+  it('supports keyboard activation for the non-icon trigger', async () => {
+    mockClipboard()
+    writeText.mockResolvedValue(undefined)
+
+    const wrapper = mount(Copy, {
+      props: { text: () => 'keyboard-trigger', showIcon: false },
+      slots: { default: () => h('span', '复制') },
+    })
+    const trigger = wrapper.get('.w-copy__trigger')
+
+    await trigger.trigger('keydown', { key: 'Enter' })
+    await flushPromises()
+    expect(writeText).toHaveBeenCalledWith('keyboard-trigger')
+
+    writeText.mockClear()
+    await trigger.trigger('keydown', { key: ' ' })
+    await flushPromises()
+    expect(writeText).toHaveBeenCalledWith('keyboard-trigger')
+
+    wrapper.unmount()
+  })
+
+  it('marks the non-icon trigger as disabled', () => {
+    const wrapper = mount(Copy, {
+      props: { text: () => 'disabled-trigger', showIcon: false, disabled: true },
+      slots: { default: () => h('span', '复制') },
+    })
+    const trigger = wrapper.get('.w-copy__trigger')
+
+    expect(trigger.attributes('tabindex')).toBe('-1')
+    expect(trigger.attributes('aria-disabled')).toBe('true')
     wrapper.unmount()
   })
 
@@ -194,36 +232,13 @@ describe('Copy', () => {
     await flushPromises()
 
     expect(wrapper.classes()).toContain('is-copied')
-    expect(wrapper.text()).toContain('已复制')
 
     await wrapper.get('.w-copy__trigger').trigger('click')
     await flushPromises()
 
     expect(wrapper.emitted('error')).toHaveLength(1)
     expect(wrapper.classes()).not.toContain('is-copied')
-    expect(wrapper.text()).not.toContain('已复制')
-    expect(wrapper.get('.w-copy__live').text()).toBe('复制失败')
     wrapper.unmount()
-  })
-
-  it('announces clipboard failures in the live region', async () => {
-    mockClipboard()
-    writeText.mockRejectedValue(new Error('denied'))
-    Object.defineProperty(document, 'execCommand', {
-      configurable: true,
-      value: vi.fn(() => false),
-    })
-
-    const wrapper = mount(Copy, { props: { text: () => 'cannot-copy' } })
-
-    await wrapper.get('.w-copy__trigger').trigger('click')
-    await flushPromises()
-
-    expect(wrapper.emitted('error')).toHaveLength(1)
-    expect(wrapper.get('.w-copy__live').text()).toBe('复制失败')
-
-    wrapper.unmount()
-    Reflect.deleteProperty(document, 'execCommand')
   })
 
   it('reset cancels a pending async text function', async () => {
@@ -292,6 +307,38 @@ describe('Copy', () => {
     expect(writeText).not.toHaveBeenCalled()
     expect(wrapper.emitted('success')).toBeUndefined()
     expect(wrapper.emitted('error')).toBeUndefined()
+  })
+
+  it('exposes clipboard support to the default slot and the copy event', async () => {
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined })
+    Object.defineProperty(window, 'isSecureContext', { configurable: true, value: false })
+    Reflect.deleteProperty(document, 'execCommand')
+
+    let slotProps: CopySlotProps | undefined
+    const unsupported = mount(Copy, {
+      props: { text: () => 'support' },
+      slots: {
+        default: (props: CopySlotProps) => {
+          slotProps = props
+          return h('span')
+        },
+      },
+    })
+
+    expect(slotProps?.isSupported).toBe(false)
+    await unsupported.get('.w-copy__trigger').trigger('click')
+    await flushPromises()
+    expect(unsupported.emitted('copy')).toEqual([[false]])
+    unsupported.unmount()
+
+    mockClipboard()
+    writeText.mockResolvedValue(undefined)
+
+    const supported = mount(Copy, { props: { text: () => 'support' } })
+    await supported.get('.w-copy__trigger').trigger('click')
+    await flushPromises()
+    expect(supported.emitted('copy')).toEqual([[true]])
+    supported.unmount()
   })
 
   it('falls back to execCommand when the Clipboard API is unavailable', async () => {

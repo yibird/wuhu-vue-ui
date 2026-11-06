@@ -3,8 +3,8 @@
  * `undefined`, `null` and empty strings resolve to `undefined` so callers can
  * omit the style entry entirely.
  */
-export function toCssUnit(value: string | number | null | undefined): string | undefined {
-  if (value === undefined || value === null || value === '') return undefined
+export function toCssUnit(value: string | number | null | undefined) {
+  if (value === undefined || value === null || value === '') return
   return typeof value === 'number' ? `${value}px` : value
 }
 

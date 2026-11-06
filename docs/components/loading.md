@@ -20,7 +20,7 @@
 
 - `true`：左上角径向高光 + 158deg 线性渐变，以主题面底色为基底并混入少量主色，亮/暗主题自动适配且尺寸自适应容器
 - CSS 字符串：例如 `linear-gradient(90deg, #4f46e5, #0ea5e9)`
-- 颜色数组：自动生成 `135deg` 线性渐变，例如 `['#4f46e5', '#c026d3']`
+- 颜色数组：自动生成 `135deg` 线性渐变，例如 `['#4f46e5', '#c026d3']`；单色数组会复制为两个相同色标，仍输出渐变
 
 动画图形仍使用 `color` 或主题主色。
 
@@ -54,12 +54,12 @@ loading.destroy()
 
 命令式实例默认 `full: true`，返回：
 
-| 成员        | 类型                                         | 说明                   |
-| ----------- | -------------------------------------------- | ---------------------- |
-| `id`        | `number`                                     | 实例 ID                |
-| `close()`   | `() => void`                                 | 隐藏并在过渡结束后销毁 |
-| `update()`  | `(options: Partial<LoadingOptions>) => void` | 动态更新内容与配置     |
-| `destroy()` | `() => void`                                 | 立即卸载               |
+| 成员        | 类型                                         | 说明                                             |
+| ----------- | -------------------------------------------- | ------------------------------------------------ |
+| `id`        | `number`                                     | 实例 ID                                          |
+| `close()`   | `() => void`                                 | 隐藏并在过渡结束后销毁；从未打开过的实例立即销毁 |
+| `update()`  | `(options: Partial<LoadingOptions>) => void` | 动态更新内容与配置                               |
+| `destroy()` | `() => void`                                 | 立即卸载                                         |
 
 还可以使用：
 
@@ -71,6 +71,8 @@ destroyAllLoadings()
 
 const { visible, open, close, toggle } = useLoading()
 ```
+
+`visible` 为只读 ref，状态只能通过 `open()`、`close()`、`toggle()` 改变。
 
 <demo vue="../demos/loading/imperative.vue" />
 
@@ -89,7 +91,6 @@ const { visible, open, close, toggle } = useLoading()
 | `title`       | `string`                                             | —        | 标题                              |
 | `description` | `string`                                             | —        | 描述                              |
 | `mask`        | `boolean`                                            | `true`   | 全屏模式是否显示遮罩背景          |
-| `lockScroll`  | `boolean`                                            | `true`   | 全屏显示时锁定 body 滚动          |
 | `zIndex`      | `number`                                             | `2000`   | 全屏层级                          |
 | `teleport`    | `string \| HTMLElement`                              | `'body'` | 全屏 Teleport 目标                |
 | `classes`     | `LoadingClasses`                                     | —        | 语义化类名，按内部部件注入        |
@@ -105,6 +106,13 @@ const { visible, open, close, toggle } = useLoading()
 ```
 
 全屏遮罩默认使用主题表面色（亮色主题下为白色），并通过滚动条宽度补偿避免打开时页面横向抖动。
+
+### 事件
+
+| 事件          | 参数            | 说明                                       |
+| ------------- | --------------- | ------------------------------------------ |
+| `update:open` | `open: boolean` | `close()` 或内部逻辑请求关闭               |
+| `after-leave` | —               | 离场过渡结束；命令式实例在此之后才会被销毁 |
 
 ### Slots
 
@@ -136,5 +144,3 @@ const { visible, open, close, toggle } = useLoading()
 | `--w-loading-ring-duration`       | `780ms`  | ring 旋转一周时长      |
 | `--w-loading-ring-core-duration`  | `1100ms` | ring 中心脉冲时长      |
 | `--w-loading-spinner-duration`    | `1100ms` | spinner 旋转一周时长   |
-
-组件会自动遵循 `prefers-reduced-motion: reduce`，关闭持续动画。

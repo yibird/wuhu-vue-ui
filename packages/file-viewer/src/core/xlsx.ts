@@ -987,6 +987,11 @@ async function parseSheetHtml(
   }
 }
 
+/**
+ * Parses an XLSX archive on the main thread. Rows and columns are bounded by
+ * `options.maxRows` / `options.maxColumns`; very large sheets can still block
+ * rendering. Worker-based parsing is a possible future optimization.
+ */
 export async function parseXlsx(
   zip: ZipReaderLike,
   options: XlsxParseOptions = {},

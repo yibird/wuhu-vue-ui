@@ -971,6 +971,11 @@ async function renderBodyChildren(
   flush()
 }
 
+/**
+ * Parses a DOCX archive on the main thread. Output is bounded by
+ * `options.maxPages`; very large documents can still block rendering.
+ * Worker-based parsing is a possible future optimization.
+ */
 export async function parseDocx(
   zip: ZipReaderLike,
   options: DocxParseOptions,

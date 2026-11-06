@@ -208,6 +208,44 @@ describe('vPermission', () => {
     wrapper.unmount()
   })
 
+  it('uses the latest directive value after the permission source changes', async () => {
+    const granted = ref<string[]>(['a'])
+    const required = ref<'a' | 'b'>('a')
+
+    const Child = defineComponent({
+      setup() {
+        return () =>
+          withDirectives(h('div', { class: 'latest-target' }, '内容'), [
+            [vPermission, required.value],
+          ])
+      },
+    })
+
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          providePermissions(granted)
+          return () => h(Child)
+        },
+      }),
+    )
+
+    const target = wrapper.get('.latest-target').element as HTMLElement
+    expect(target.style.display).not.toBe('none')
+
+    required.value = 'b'
+    await nextTick()
+    expect(target.style.display).toBe('none')
+
+    // The reactive effect created on mount must use the updated binding, not
+    // the old 'a' value captured when the directive was mounted.
+    granted.value = ['b']
+    await nextTick()
+    expect(target.style.display).not.toBe('none')
+
+    wrapper.unmount()
+  })
+
   it('hides denied elements and restores the original display when allowed', async () => {
     const allowed = ref(false)
 

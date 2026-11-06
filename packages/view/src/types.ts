@@ -1,4 +1,35 @@
-import type { HTMLAttributes, VNode } from 'vue'
+import type { HTMLAttributes, StyleValue, VNode } from 'vue'
+
+/** Class value accepted by the semantic `classes` APIs. */
+export type ViewClassValue = string | Record<string, boolean> | (string | Record<string, boolean>)[]
+
+export interface ViewClasses {
+  /** Root layout element. */
+  root?: ViewClassValue
+}
+
+export interface ViewStyles {
+  /** Root layout element. */
+  root?: StyleValue
+}
+
+export interface ViewCollapsibleClasses {
+  root?: ViewClassValue
+  body?: ViewClassValue
+  content?: ViewClassValue
+  trigger?: ViewClassValue
+  triggerButton?: ViewClassValue
+  triggerIcon?: ViewClassValue
+}
+
+export interface ViewCollapsibleStyles {
+  root?: StyleValue
+  body?: StyleValue
+  content?: StyleValue
+  trigger?: StyleValue
+  triggerButton?: StyleValue
+  triggerIcon?: StyleValue
+}
 
 /**
  * View 组件尺寸，数字按像素处理
@@ -16,14 +47,18 @@ export interface ViewProps extends /* @vue-ignore */ HTMLAttributes {
    */
   full?: boolean
   /**
-   * @desc 子元素之间的间距。设置后 View 会作为 flex 容器使用。
+   * @desc 子元素之间的间距，默认 0。View 始终作为 flex 容器。
    */
   gap?: ViewSize
   /**
-   * @desc 设置 gap 布局的方向。
+   * @desc 子元素排列方向。
    * @default 'vertical'
    */
   direction?: ViewDirection
+  /** Semantic class names. */
+  classes?: ViewClasses
+  /** Semantic inline styles. */
+  styles?: ViewStyles
 }
 
 export interface ViewSlots {
@@ -56,14 +91,6 @@ export interface ViewCollapsibleProps {
    */
   trigger?: boolean
   /**
-   * @desc 内置 trigger 收起时的无障碍标签
-   */
-  collapseLabel?: string
-  /**
-   * @desc 内置 trigger 展开时的无障碍标签
-   */
-  expandLabel?: string
-  /**
    * @desc 当前是否处于收起状态
    * @default false
    */
@@ -80,9 +107,18 @@ export interface ViewSiderProps extends /* @vue-ignore */ HTMLAttributes, ViewCo
    * @default 0
    */
   collapsedWidth?: ViewSize
+  /** Semantic class names. */
+  classes?: ViewCollapsibleClasses
+  /** Semantic inline styles. */
+  styles?: ViewCollapsibleStyles
 }
 
-export interface ViewHeaderProps extends /* @vue-ignore */ HTMLAttributes, ViewCollapsibleProps {}
+export interface ViewHeaderProps extends /* @vue-ignore */ HTMLAttributes, ViewCollapsibleProps {
+  /** Semantic class names. */
+  classes?: ViewCollapsibleClasses
+  /** Semantic inline styles. */
+  styles?: ViewCollapsibleStyles
+}
 
 /**
  * ViewContent 属性类型，继承原生 HTML 属性

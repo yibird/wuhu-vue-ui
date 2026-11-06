@@ -1,6 +1,6 @@
 # Highlight 文本高亮
 
-安全的多关键词高亮，支持大小写敏感、整词匹配与自定义标签。
+安全的多关键词高亮，支持大小写敏感与整词匹配。
 
 ## 交互式关键词高亮
 
@@ -14,25 +14,18 @@
 
 <demo vue="../demos/highlight/custom-style.vue" />
 
-## 自定义标签
-
-通过 `tag` 替换默认的 `<mark>`，例如使用 `<strong>` 表达强调语义。
-
-<demo vue="../demos/highlight/custom-tag.vue" />
-
 ## API
 
 ### Props
 
-| 属性             | 类型                               | 默认值   | 说明                              |
-| ---------------- | ---------------------------------- | -------- | --------------------------------- |
-| `text`           | `string`                           | `''`     | 待高亮的纯文本                    |
-| `keywords`       | `string \| string[]`               | `[]`     | 一个或多个关键词，重叠时长者优先  |
-| `caseSensitive`  | `boolean`                          | `false`  | 是否区分大小写                    |
-| `wholeWord`      | `boolean`                          | `false`  | 是否仅匹配完整单词（含 CJK 边界） |
-| `tag`            | `string`                           | `'mark'` | 匹配片段使用的标签                |
-| `highlightClass` | `string`                           | —        | 追加到匹配片段的类名              |
-| `highlightStyle` | `CSSProperties \| CSSProperties[]` | —        | 匹配片段的内联样式                |
+| 属性             | 类型                               | 默认值  | 说明                              |
+| ---------------- | ---------------------------------- | ------- | --------------------------------- |
+| `text`           | `string`                           | `''`    | 待高亮的纯文本                    |
+| `keywords`       | `string \| string[]`               | `[]`    | 一个或多个关键词，重叠时长者优先  |
+| `caseSensitive`  | `boolean`                          | `false` | 是否区分大小写                    |
+| `wholeWord`      | `boolean`                          | `false` | 是否仅匹配完整单词（含 CJK 边界） |
+| `highlightClass` | `string`                           | —       | 追加到匹配片段的类名              |
+| `highlightStyle` | `CSSProperties \| CSSProperties[]` | —       | 匹配片段的内联样式                |
 
 ### Emits
 
@@ -60,7 +53,7 @@
 
 ### 类名
 
-| 类名                 | 说明                         |
-| -------------------- | ---------------------------- |
-| `.w-highlight`       | 根元素                       |
-| `.w-highlight__mark` | 匹配片段（默认 `mark` 标签） |
+| 类名                 | 说明                    |
+| -------------------- | ----------------------- |
+| `.w-highlight`       | 根元素                  |
+| `.w-highlight__mark` | 匹配片段（`mark` 元素） |

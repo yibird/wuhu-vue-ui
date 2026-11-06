@@ -59,6 +59,22 @@ describe('useResize', () => {
     scope.stop()
   })
 
+  it('skips the initial measurement when immediate is false', () => {
+    const element = createElement(120, 80)
+    const onResize = vi.fn()
+    const scope = effectScope()
+    const { width, measure } = scope.run(() => useResize(element, { immediate: false, onResize }))!
+
+    expect(width.value).toBe(0)
+    expect(onResize).not.toHaveBeenCalled()
+
+    measure()
+    expect(width.value).toBe(120)
+    expect(onResize).toHaveBeenCalledOnce()
+
+    scope.stop()
+  })
+
   it('updates width and height from ResizeObserver entries', () => {
     const element = createElement(120, 80)
     const onResize = vi.fn()

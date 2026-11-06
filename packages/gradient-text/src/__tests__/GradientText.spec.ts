@@ -34,6 +34,21 @@ describe('GradientText', () => {
     wrapper.unmount()
   })
 
+  it.each(['linear', 'radial', 'conic'] as const)(
+    'duplicates a single color into a valid %s gradient',
+    (type) => {
+      const wrapper = mount(GradientText, {
+        props: { colors: ['#4f46e5'], type },
+      })
+
+      const style = wrapper.attributes('style') ?? ''
+      // jsdom normalizes the color to rgb(); two stops prove the single color
+      // was duplicated into a valid gradient.
+      expect(style.match(/rgb\(79, 70, 229\)/g)).toHaveLength(2)
+      wrapper.unmount()
+    },
+  )
+
   it('supports a raw background image', () => {
     const wrapper = mount(GradientText, {
       props: { gradient: 'conic-gradient(red, blue)' },

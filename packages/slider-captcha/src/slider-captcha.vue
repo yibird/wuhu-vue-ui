@@ -8,10 +8,6 @@ import type {
   SliderCaptchaTarget,
 } from './types'
 
-defineOptions({
-  name: 'WSliderCaptcha',
-})
-
 const props = withDefaults(defineProps<SliderCaptchaProps>(), {
   src: '',
   width: 320,
@@ -58,6 +54,7 @@ let loadToken = 0
 let startedAt = 0
 let dragStartX = 0
 let dragStartOffset = 0
+const failedSources = new Set<string>()
 
 const actualPieceSize = computed(() => {
   const size = Math.min(
@@ -260,12 +257,14 @@ function pickTarget() {
 function pickSource(): string {
   const { src } = props
 
-  if (typeof src === 'string') return src
-  if (src.length === 0) return ''
-  if (src.length === 1) return src[0] ?? ''
+  if (typeof src === 'string') return failedSources.has(src) ? '' : src
 
-  const candidates = src.filter((candidate) => candidate !== loadedSrc)
-  const pool = candidates.length > 0 ? candidates : src
+  const available = src.filter((candidate) => !failedSources.has(candidate))
+  if (available.length === 0) return ''
+  if (available.length === 1) return available[0] ?? ''
+
+  const candidates = available.filter((candidate) => candidate !== loadedSrc)
+  const pool = candidates.length > 0 ? candidates : available
   return pool[Math.floor(Math.random() * pool.length)] ?? ''
 }
 
@@ -279,6 +278,7 @@ function loadImage(src: string, token: number) {
       if (!mounted || token !== loadToken) return
       image = img
       loadedSrc = src
+      failedSources.delete(src)
       loading.value = false
       pickTarget()
       nextTick(render)
@@ -292,6 +292,7 @@ function loadImage(src: string, token: number) {
       if (!mounted || token !== loadToken) return
       image = null
       loadedSrc = ''
+      failedSources.add(src)
       loading.value = false
       emit('error', new Error(`Failed to load captcha image: ${src}`))
       pickTarget()
@@ -461,6 +462,7 @@ function reset() {
 watch(
   () => props.src,
   () => {
+    failedSources.clear()
     if (mounted) prepare(false)
   },
 )
@@ -469,6 +471,19 @@ watch(
   () => [props.width, props.height, props.pieceSize],
   () => {
     if (mounted) prepare(false)
+  },
+)
+
+// Disabling mid-gesture must stop the pointer listeners and drop the partial
+// drag instead of letting the slider keep following the pointer.
+watch(
+  () => props.disabled,
+  (disabled) => {
+    if (!disabled || !dragging.value) return
+    drag.stop()
+    dragging.value = false
+    offset.value = 0
+    startedAt = 0
   },
 )
 

@@ -10,10 +10,6 @@ import {
 } from './format'
 import type { CountDownProps, CountDownState } from './types'
 
-defineOptions({
-  name: 'WCountDown',
-})
-
 const props = withDefaults(defineProps<CountDownProps>(), {
   target: undefined,
   duration: 0,
@@ -22,7 +18,6 @@ const props = withDefaults(defineProps<CountDownProps>(), {
   interval: 1000,
   format: 'HH:mm:ss',
   finishText: undefined,
-  tag: 'span',
 })
 
 const emit = defineEmits<{
@@ -237,7 +232,7 @@ watch(
     }
     if (next > 0) finished.value = false
 
-    if (next <= 0 && running.value) {
+    if (next <= 0) {
       finish()
       return
     }
@@ -275,8 +270,7 @@ defineExpose({
 </script>
 
 <template>
-  <component
-    :is="tag"
+  <span
     class="w-count-down"
     :class="{ 'is-running': state.running, 'is-finished': state.finished }"
   >
@@ -287,5 +281,5 @@ defineExpose({
       </slot>
     </template>
     <slot v-else v-bind="state">{{ formatted }}</slot>
-  </component>
+  </span>
 </template>

@@ -19,5 +19,7 @@ export interface CopySlotProps {
   copied: boolean
   loading: boolean
   error: Error | null
+  /** Whether the current environment can copy to the clipboard. */
+  isSupported: boolean
   copy: () => Promise<boolean>
 }

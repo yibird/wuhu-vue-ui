@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { getExceptionPreset } from './config'
 import Illustration from './Illustration.vue'
 import type { ExceptionProps, ExceptionSlotProps, ExceptionType } from './types'
 
-defineOptions({
-  name: 'WException',
-})
-
 const props = withDefaults(defineProps<ExceptionProps>(), {
   type: 'notFound',
-  imageAlt: '',
-  imageWidth: 340,
   showImage: true,
 })
+
+const emit = defineEmits<{
+  'image-error': [image: string, event: Event]
+}>()
 
 defineSlots<{
   image?: (props: ExceptionSlotProps) => unknown
@@ -49,7 +47,7 @@ const titleId = useId()
 // Resolve the runtime type once so class names, illustrations and presets all
 // agree even when an out-of-range value is passed from untyped templates.
 const resolvedType = computed<ExceptionType>(() =>
-  props.type in presets ? props.type : 'notFound',
+  Object.prototype.hasOwnProperty.call(presets, props.type) ? props.type : 'notFound',
 )
 const preset = computed(() => presets[resolvedType.value] ?? presets.notFound)
 const globalPreset = computed(() => getExceptionPreset(resolvedType.value))
@@ -58,12 +56,17 @@ const description = computed(
   () => props.description ?? globalPreset.value?.description ?? preset.value.description,
 )
 const image = computed(() => props.image ?? globalPreset.value?.image)
-const alt = computed(() => props.imageAlt || title.value)
+const imageFailed = ref(false)
 
-const mediaStyle = computed(() => ({
-  '--w-exception-image-width':
-    typeof props.imageWidth === 'number' ? `${props.imageWidth}px` : props.imageWidth,
-}))
+watch(image, () => {
+  imageFailed.value = false
+})
+
+function handleImageError(event: Event) {
+  const src = image.value
+  imageFailed.value = true
+  if (src) emit('image-error', src, event)
+}
 
 const slotProps = computed<ExceptionSlotProps>(() => ({
   type: resolvedType.value,
@@ -79,20 +82,16 @@ const slotProps = computed<ExceptionSlotProps>(() => ({
     :style="styles?.root"
     :aria-labelledby="titleId"
   >
-    <div
-      v-if="showImage"
-      class="w-exception__media"
-      :class="classes?.media"
-      :style="[mediaStyle, styles?.media]"
-    >
+    <div v-if="showImage" class="w-exception__media" :class="classes?.media" :style="styles?.media">
       <slot name="image" v-bind="slotProps">
         <img
-          v-if="image"
+          v-if="image && !imageFailed"
           class="w-exception__image"
           :class="classes?.image"
           :style="styles?.image"
           :src="image"
-          :alt="alt"
+          :alt="title"
+          @error="handleImageError"
         />
         <Illustration
           v-else

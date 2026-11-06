@@ -71,11 +71,11 @@ import CodeEditor from '../packages/code-editor/src/CodeEditor.vue'
 import OrgTree from '../packages/org-tree/src/OrgTree.vue'
 import Dock from '../packages/dock/src/Dock.vue'
 import Loading from '../packages/loading/src/Loading.vue'
-import Icon from '../packages/icon/src/Icon.vue'
 import View from '../packages/view/src/view.vue'
 import SliderCaptcha from '../packages/slider-captcha/src/slider-captcha.vue'
 import IconPicker from '../packages/icon-picker/src/IconPicker.vue'
 import JsonViewer from '../packages/json-viewer/src/JsonViewer.vue'
+import ContextMenu from '../packages/context-menu/src/ContextMenu.vue'
 
 interface AttrCase {
   name: string
@@ -132,11 +132,18 @@ const components: AttrCase[] = [
   },
   { name: 'Dock', component: Dock, props: { model: [{ label: 'Home' }] } },
   { name: 'Loading', component: Loading },
-  { name: 'Icon', component: Icon, props: { name: 'check' } },
   { name: 'View', component: View, props: { full: false } },
   { name: 'SliderCaptcha', component: SliderCaptcha },
   { name: 'IconPicker', component: IconPicker, props: { items: [] } },
   { name: 'JsonViewer', component: JsonViewer, props: { value: { a: 1 } } },
+  {
+    name: 'ContextMenu',
+    component: ContextMenu,
+    props: {
+      open: true,
+      items: [{ key: 'a', label: 'A' }],
+    },
+  },
 ]
 
 describe('class / style pass-through contract', () => {
@@ -160,14 +167,15 @@ describe('class / style pass-through contract', () => {
       // icon components expose an SVGElement. Fall back to the first rendered
       // semantic element for the Teleport case.
       const loading = wrapper.find('.w-loading')
+      // ContextMenu teleports its panel to body, so it is outside the wrapper tree.
+      const contextMenu = document.querySelector<HTMLElement>('.w-context-menu')
       const first = wrapper.find('*')
-      const root = (
-        wrapper.element instanceof Element
+      const root = (contextMenu ??
+        (wrapper.element instanceof Element
           ? wrapper.element
           : loading.exists()
             ? loading.element
-            : first.element
-      ) as HTMLElement
+            : first.element)) as HTMLElement
       const classes = Array.from(root.classList)
 
       expect(classes).toContain('consumer-class')
@@ -179,47 +187,28 @@ describe('class / style pass-through contract', () => {
     },
   )
 
-  it('WuScrollbar applies `tag` to its inner view, not the root wrapper', async () => {
+  it('WuScrollbar keeps class/style on the root and routes aria attributes to the wrap', async () => {
     const wrapper = mount(WuScrollbar, {
-      props: { tag: 'section' },
       slots: defaultSlot,
-      attrs: { class: 'consumer-class', style: 'color: rgb(1, 2, 3)' },
+      attrs: {
+        class: 'consumer-class',
+        style: 'color: rgb(1, 2, 3)',
+        'aria-label': '内容区域',
+      },
     })
 
     await nextTick()
 
     const root = wrapper.element as HTMLElement
     const view = wrapper.get('.w-scrollbar__view').element as HTMLElement
+    const wrap = wrapper.get('.w-scrollbar__wrap')
+
     expect(root.tagName).toBe('DIV')
     expect(root.classList.contains('consumer-class')).toBe(true)
     expect(root.style.color).toBe('rgb(1, 2, 3)')
-    expect(view.tagName).toBe('SECTION')
-
-    wrapper.unmount()
-  })
-
-  it.each([
-    { name: 'WuTime', component: WuTime, props: { time: Date.now() } },
-    { name: 'WuErrorBoundary', component: WuErrorBoundary },
-  ])('$name applies class/style to the element rendered by `tag`', async (item) => {
-    const wrapper = mount(item.component, {
-      props: { ...item.props, tag: 'section' },
-      slots: defaultSlot,
-      attrs: {
-        class: 'consumer-class',
-        style: 'color: rgb(1, 2, 3)',
-        'data-consumer': 'yes',
-      },
-    })
-
-    await flushPromises()
-    await nextTick()
-
-    const root = wrapper.element as HTMLElement
-    expect(root.tagName).toBe('SECTION')
-    expect(root.classList.contains('consumer-class')).toBe(true)
-    expect(root.style.color).toBe('rgb(1, 2, 3)')
-    expect(root.dataset.consumer).toBe('yes')
+    expect(root.getAttribute('aria-label')).toBeNull()
+    expect(wrap.attributes('aria-label')).toBe('内容区域')
+    expect(view.tagName).toBe('DIV')
 
     wrapper.unmount()
   })

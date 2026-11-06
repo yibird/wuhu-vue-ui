@@ -679,7 +679,7 @@ const NUMBER_PATTERN =
 const CSS_COLOR_PATTERN = /^#[\da-fA-F]{3,8}\b/
 const CSS_AT_RULE_PATTERN = /^@[\w-]+/
 
-function pushToken(tokens: CodeToken[], text: string, type: CodeTokenType): void {
+function pushToken(tokens: CodeToken[], text: string, type: CodeTokenType) {
   if (!text) return
   const last = tokens[tokens.length - 1]
   if (last && last.type === type) last.text += text

@@ -11,7 +11,11 @@ export interface TimeProps {
   formatStyle?: Intl.RelativeTimeFormatStyle
   /** Refresh interval in milliseconds. Set to 0 to disable auto refresh. */
   refreshInterval?: number
-  /** Override the "now" source. Useful for tests and previews. */
+  /**
+   * Override the "now" source. Useful for tests and previews. A function is
+   * only re-read when its reactive dependencies change or `refresh()` is
+   * called; plain external variables are not observed.
+   */
   now?: TimeInput | (() => TimeInput)
   /** Show an absolute date/time in the native title tooltip. */
   showTitle?: boolean
@@ -19,8 +23,6 @@ export interface TimeProps {
   titleFormat?: Intl.DateTimeFormatOptions
   /** Text rendered for invalid or missing dates. */
   emptyText?: string
-  /** Root element tag. Defaults to the semantic `time` element. */
-  tag?: string
   /** Fully custom relative formatter. */
   formatter?: (date: Date, now: Date, locale: string) => string
 }

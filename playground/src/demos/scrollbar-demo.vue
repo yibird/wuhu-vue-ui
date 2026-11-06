@@ -59,23 +59,6 @@ function handleScroll(event: ScrollbarScrollEvent) {
     </DemoCard>
 
     <DemoCard
-      title="原生滚动"
-      description="通过 native 切换为浏览器原生滚动条，行为与系统保持一致。"
-    >
-      <Scrollbar native height="220px" class="demo-scrollbar">
-        <div class="scroll-list">
-          <div v-for="(item, index) in items" :key="item.title" class="scroll-list__item">
-            <span class="scroll-list__index">{{ String(index + 1).padStart(2, '0') }}</span>
-            <div>
-              <strong>{{ item.title }}</strong>
-              <span>{{ item.desc }}</span>
-            </div>
-          </div>
-        </div>
-      </Scrollbar>
-    </DemoCard>
-
-    <DemoCard
       title="横向滚动"
       description="内容宽度超出容器时自动出现横向滚动条，适合标签、流程与看板。"
       wide

@@ -17,11 +17,11 @@ export function useMediaQuery(query: MaybeRefOrGetter<string>): Readonly<Ref<boo
   const matches = ref(false)
   let mediaQuery: MediaQueryList | undefined
 
-  const handleChange = (event: MediaQueryListEvent): void => {
+  const handleChange = (event: MediaQueryListEvent) => {
     matches.value = event.matches
   }
 
-  function stop(): void {
+  function stop() {
     if (!mediaQuery) return
     if (typeof mediaQuery.removeEventListener === 'function') {
       mediaQuery.removeEventListener('change', handleChange)
@@ -31,7 +31,7 @@ export function useMediaQuery(query: MaybeRefOrGetter<string>): Readonly<Ref<boo
     mediaQuery = undefined
   }
 
-  function start(): void {
+  function start() {
     stop()
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
       matches.value = false

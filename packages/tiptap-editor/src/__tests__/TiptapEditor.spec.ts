@@ -169,6 +169,42 @@ describe('TiptapEditor', () => {
     wrapper.unmount()
   })
 
+  it('applies and clears a built-in font family from the toolbar', async () => {
+    const wrapper = mountEditor()
+    await waitForEditor(wrapper)
+
+    const editor = exposed(wrapper).editor!
+    editor.commands.selectAll()
+    await nextTick()
+
+    await wrapper.get('[aria-label="字体"]').trigger('click')
+    const menu = wrapper.get('.w-tiptap-editor__menu')
+    expect(menu.find('.w-tiptap-editor__menu-group').exists()).toBe(true)
+    expect(menu.findAll('.w-tiptap-editor__menu-item')).toHaveLength(8)
+
+    const arial = menu
+      .findAll('.w-tiptap-editor__menu-item')
+      .find((item) => item.text() === 'Arial')
+    await arial!.trigger('click')
+    await flushPromises()
+
+    expect(editor.getAttributes('textStyle').fontFamily).toContain('Arial')
+    expect(exposed(wrapper).getHTML()).toContain('font-family')
+
+    editor.commands.selectAll()
+    await nextTick()
+    await wrapper.get('[aria-label="字体"]').trigger('click')
+    const reset = wrapper
+      .findAll('.w-tiptap-editor__menu-item')
+      .find((item) => item.text() === '默认字体')
+    await reset!.trigger('click')
+    await flushPromises()
+
+    expect(editor.getAttributes('textStyle').fontFamily).toBeUndefined()
+    expect(exposed(wrapper).getHTML()).not.toContain('font-family')
+    wrapper.unmount()
+  })
+
   it('toggles task lists and highlights from the toolbar', async () => {
     const wrapper = mountEditor()
     await waitForEditor(wrapper)

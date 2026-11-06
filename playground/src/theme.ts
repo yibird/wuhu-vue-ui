@@ -13,13 +13,13 @@ if (typeof document !== 'undefined') {
   document.documentElement.dataset.wTheme = theme.value
 }
 
-export function setTheme(next: DocsTheme): void {
+export function setTheme(next: DocsTheme) {
   theme.value = next
   if (typeof document !== 'undefined') {
     document.documentElement.dataset.wTheme = next
   }
 }
 
-export function toggleTheme(): void {
+export function toggleTheme() {
   setTheme(theme.value === 'light' ? 'dark' : 'light')
 }

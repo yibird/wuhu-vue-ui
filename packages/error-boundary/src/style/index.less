@@ -73,7 +73,11 @@
     overflow: auto;
     border: 1px solid var(--w-color-border, #e2e8f0);
     border-radius: var(--w-radius-sm, 6px);
-    background: var(--w-color-surface-hover, #f1f5f9);
+    background: color-mix(
+      in srgb,
+      var(--w-color-surface-hover, #f1f5f9) 45%,
+      var(--w-color-surface, #ffffff)
+    );
     color: var(--w-color-text-secondary, #475569);
     font-family: var(--w-font-family-mono, monospace);
     font-size: var(--w-font-size-xs, 12px);
@@ -86,10 +90,10 @@
   &__reset {
     margin-top: 4px;
     padding: 7px 16px;
-    border: 1px solid var(--w-color-border, #e2e8f0);
+    border: 1px solid var(--w-color-primary, #4f46e5);
     border-radius: var(--w-radius-sm, 6px);
     background: var(--w-color-surface, #fff);
-    color: var(--w-color-text, #0f172a);
+    color: var(--w-color-primary, #4f46e5);
     font: inherit;
     font-size: var(--w-font-size-sm, 13px);
     font-weight: var(--w-font-weight-medium, 500);
@@ -99,8 +103,8 @@
       border-color var(--w-duration-fast, 120ms) ease;
 
     &:hover {
-      background: var(--w-color-surface-hover, #f1f5f9);
-      border-color: var(--w-color-border-strong, #cbd5e1);
+      background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+      border-color: var(--w-color-primary, #4f46e5);
     }
 
     &:focus-visible {

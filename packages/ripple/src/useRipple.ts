@@ -4,16 +4,6 @@ import type { RippleOptions } from './types'
 const DEFAULT_DURATION = 600
 const FALLBACK_DELAY = 100
 
-function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
-
-  try {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  } catch {
-    return false
-  }
-}
-
 function resolveDuration(duration?: number): number {
   const value = duration ?? DEFAULT_DURATION
   return Number.isFinite(value) && value >= 0 ? Math.floor(value) : DEFAULT_DURATION
@@ -23,18 +13,28 @@ function isKeyboardActivation(event: Event): boolean {
   return event.type === 'click' && (event as MouseEvent).detail === 0
 }
 
+interface RippleHandle {
+  wave: HTMLElement
+  dispose: () => void
+}
+
 /**
- * Creates a ripple wave inside `element` and removes it after the animation.
- *
- * Returns the created wave, or `null` when the ripple is disabled.
+ * Creates a ripple wave and returns a handle whose `dispose()` releases the
+ * node, its listener and its fallback timer. `onDispose` runs for every path
+ * (animation end, fallback timeout or manual disposal).
  */
-export function createRipple(
+function spawnRipple(
   element: HTMLElement,
-  event?: Event,
-  options: RippleOptions = {},
-): HTMLElement | null {
+  event: Event | undefined,
+  options: RippleOptions,
+  onDispose?: () => void,
+): RippleHandle | null {
   if (options.disabled) return null
   if (!element || typeof element.ownerDocument === 'undefined') return null
+
+  const duration = resolveDuration(options.duration)
+  // A zero-duration wave has no visible animation; skip creating any DOM.
+  if (duration <= 0) return null
 
   const doc = element.ownerDocument
   const rect = element.getBoundingClientRect()
@@ -62,25 +62,41 @@ export function createRipple(
   wave.style.top = `${originY - radius}px`
   wave.style.setProperty('--w-ripple-color', options.color ?? 'currentColor')
 
-  const duration = prefersReducedMotion() ? 0 : resolveDuration(options.duration)
   wave.style.setProperty('--w-ripple-duration', `${duration}ms`)
 
   let fallback: ReturnType<typeof setTimeout> | undefined
+  let disposed = false
 
   const remove = () => {
+    if (disposed) return
+    disposed = true
     if (fallback !== undefined) {
       clearTimeout(fallback)
       fallback = undefined
     }
     wave.removeEventListener('animationend', remove)
     wave.remove()
+    onDispose?.()
   }
 
   wave.addEventListener('animationend', remove)
   fallback = setTimeout(remove, duration + FALLBACK_DELAY)
   element.appendChild(wave)
 
-  return wave
+  return { wave, dispose: remove }
+}
+
+/**
+ * Creates a ripple wave inside `element` and removes it after the animation.
+ *
+ * Returns the created wave, or `null` when the ripple is disabled.
+ */
+export function createRipple(
+  element: HTMLElement,
+  event?: Event,
+  options: RippleOptions = {},
+): HTMLElement | null {
+  return spawnRipple(element, event, options)?.wave ?? null
 }
 
 export interface UseRippleReturn {
@@ -88,21 +104,26 @@ export interface UseRippleReturn {
 }
 
 export function useRipple(): UseRippleReturn {
-  const waves = new Set<HTMLElement>()
+  const disposers = new Set<() => void>()
 
   function ripple(element: HTMLElement, event?: Event, options: RippleOptions = {}) {
-    const wave = createRipple(element, event, options)
-    if (!wave) return null
+    let dispose: (() => void) | undefined
+    const handle = spawnRipple(element, event, options, () => {
+      if (dispose) disposers.delete(dispose)
+    })
+    if (!handle) return null
 
-    waves.add(wave)
-    wave.addEventListener('animationend', () => waves.delete(wave), { once: true })
-    return wave
+    dispose = handle.dispose
+    disposers.add(dispose)
+    return handle.wave
   }
 
   if (getCurrentScope()) {
     onScopeDispose(() => {
-      for (const wave of waves) wave.remove()
-      waves.clear()
+      // `dispose` removes the node, listener and timer, then deletes itself
+      // from the set through the callback.
+      for (const dispose of Array.from(disposers)) dispose()
+      disposers.clear()
     })
   }
 

@@ -1,6 +1,15 @@
-import { getCurrentScope, onScopeDispose, readonly, ref, watch, type Ref } from 'vue'
+import {
+  getCurrentScope,
+  onScopeDispose,
+  readonly,
+  ref,
+  toValue,
+  watch,
+  type MaybeRefOrGetter,
+  type Ref,
+} from 'vue'
 import { debounce, type DebounceOptions, type DebouncedFunction } from '../utils/debounce'
-import type { AnyFunction } from '../utils/types'
+import type { AnyFunction } from '../types'
 
 /**
  * Wraps a function with `debounce` and cancels the pending call when the
@@ -24,13 +33,17 @@ export function useDebounceFn<T extends AnyFunction>(
  * Returns a readonly ref that mirrors `source` after `wait` milliseconds
  * without changes.
  */
-export function useDebounce<T>(source: Ref<T>, wait = 200) {
-  const result = ref(source.value) as Ref<T>
+export function useDebounce<T>(source: MaybeRefOrGetter<T>, wait = 200) {
+  const result = ref(toValue(source)) as Ref<T>
   const update = useDebounceFn((value: T) => {
     result.value = value
   }, wait)
 
-  watch(source, (value) => update(value), { flush: 'sync' })
+  watch(
+    () => toValue(source),
+    (value) => update(value),
+    { flush: 'sync' },
+  )
 
   return readonly(result)
 }

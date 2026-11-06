@@ -38,10 +38,6 @@ const props = withDefaults(defineProps<SlidingHighlightProps>(), {
   inset: 20,
 })
 
-defineOptions({
-  name: 'WSlidingHighlight',
-})
-
 defineSlots<SlidingHighlightSlots>()
 
 const PILL_SELECTOR = '[data-w-sliding-highlight-pill]'
@@ -56,6 +52,7 @@ const rect = shallowRef<SlidingHighlightRect>({
 })
 
 let resizeObserver: ResizeObserver | undefined
+let mutationObserver: MutationObserver | undefined
 
 /**
  * ul 容器内的高亮块必须渲染为 li，避免产生非法子元素
@@ -144,17 +141,45 @@ const scheduleMeasure = () => {
   measureRaf.schedule()
 }
 
-const observe = (element: HTMLElement | null) => {
+/**
+ * While a pill is visible, observe the root and every direct item so changes
+ * to a sibling's size still reposition the pill even when neither the root nor
+ * the active item changes size. Otherwise only the root is observed.
+ */
+const syncObservers = () => {
   if (!resizeObserver) return
   resizeObserver.disconnect()
 
-  if (rootRef.value) {
-    resizeObserver.observe(rootRef.value)
-  }
+  const root = rootRef.value
+  if (!root) return
+  resizeObserver.observe(root)
 
-  if (element) {
-    resizeObserver.observe(element)
+  if (!hoveredElement.value) return
+  for (const child of Array.from(root.children)) {
+    if (child instanceof HTMLElement && !child.matches(PILL_SELECTOR)) {
+      resizeObserver.observe(child)
+    }
   }
+}
+
+// Comments are the transition's placeholder for the pill, and the pill itself
+// is positioned from the measured rect: neither affects item layout.
+const isPillNode = (node: Node) =>
+  node.nodeType === Node.COMMENT_NODE || (node instanceof Element && node.matches(PILL_SELECTOR))
+
+/**
+ * Direct-child insertions/removals and reorders change item positions without
+ * necessarily changing any observed box size. The pill's own mutations are
+ * ignored to avoid a measure/render feedback loop.
+ */
+const handleMutations = (records: MutationRecord[]) => {
+  const relevant = records.some((record) =>
+    [...record.addedNodes, ...record.removedNodes].some((node) => !isPillNode(node)),
+  )
+  if (!relevant) return
+
+  syncObservers()
+  scheduleMeasure()
 }
 
 const highlight = (element: HTMLElement) => {
@@ -163,7 +188,7 @@ const highlight = (element: HTMLElement) => {
 
   if (element !== hoveredElement.value) {
     hoveredElement.value = element
-    observe(element)
+    syncObservers()
   }
 
   measure()
@@ -173,7 +198,7 @@ const clear = () => {
   if (hoveredElement.value === null) return
 
   hoveredElement.value = null
-  observe(null)
+  syncObservers()
 }
 
 const onPointerover = (event: PointerEvent) => {
@@ -194,9 +219,13 @@ defineExpose<SlidingHighlightInstance>({ highlight, clear })
 onMounted(() => {
   if (typeof ResizeObserver !== 'undefined') {
     resizeObserver = new ResizeObserver(scheduleMeasure)
-    if (rootRef.value) {
-      resizeObserver.observe(rootRef.value)
-    }
+    syncObservers()
+  }
+
+  const root = rootRef.value
+  if (root && typeof MutationObserver !== 'undefined') {
+    mutationObserver = new MutationObserver(handleMutations)
+    mutationObserver.observe(root, { childList: true })
   }
 
   window.addEventListener('resize', scheduleMeasure, { passive: true })
@@ -217,6 +246,8 @@ watch(
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
+  mutationObserver?.disconnect()
+  mutationObserver = undefined
   window.removeEventListener('resize', scheduleMeasure)
   window.removeEventListener('scroll', scheduleMeasure, true)
   measureRaf.cancel()

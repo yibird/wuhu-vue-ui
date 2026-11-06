@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import SlidingHighlight from '../SlidingHighlight.vue'
 import type { SlidingHighlightInstance } from '../types'
@@ -27,6 +27,24 @@ const slots = {
   default:
     '<button id="a" type="button">Overview</button><button id="b" type="button">Components</button>',
 }
+
+const resizeObservers: MockResizeObserver[] = []
+
+class MockResizeObserver {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+
+  constructor(callback: ResizeObserverCallback) {
+    void callback
+    resizeObservers.push(this)
+  }
+}
+
+afterEach(() => {
+  resizeObservers.length = 0
+  vi.unstubAllGlobals()
+})
 
 describe('SlidingHighlight', () => {
   it('renders slot content and tracks pointer hover', async () => {
@@ -223,6 +241,68 @@ describe('SlidingHighlight', () => {
     expect(style.width).toBe('80px')
     expect(style.height).toBe('32px')
 
+    wrapper.unmount()
+  })
+
+  it('observes every item while a highlight is active', async () => {
+    vi.stubGlobal('ResizeObserver', MockResizeObserver)
+    const wrapper = mount(SlidingHighlight, { slots })
+    const instance = wrapper.vm as unknown as SlidingHighlightInstance
+    const root = wrapper.get('.w-sliding-highlight')
+    const a = wrapper.get('#a').element as HTMLElement
+    const b = wrapper.get('#b').element as HTMLElement
+
+    root.element.getBoundingClientRect = () => rect(0, 0, 200, 40)
+    a.getBoundingClientRect = () => rect(0, 0, 80, 40)
+    b.getBoundingClientRect = () => rect(100, 0, 80, 40)
+
+    const observer = resizeObservers[0]!
+    expect(observer.observe).toHaveBeenCalledWith(root.element)
+
+    instance.highlight(a)
+    await nextTick()
+    expect(observer.observe).toHaveBeenCalledWith(a)
+    expect(observer.observe).toHaveBeenCalledWith(b)
+
+    instance.clear()
+    await nextTick()
+    const calls = observer.observe.mock.calls
+    expect(calls.at(-1)?.[0]).toBe(root.element)
+
+    wrapper.unmount()
+  })
+
+  it('re-measures after the item order changes', async () => {
+    const raf = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback: FrameRequestCallback) => {
+        callback(0)
+        return 1
+      })
+
+    const wrapper = mount(SlidingHighlight, { props: { inset: 0 }, slots })
+    const root = wrapper.get('.w-sliding-highlight')
+    const a = wrapper.get('#a')
+    const b = wrapper.get('#b').element as HTMLElement
+
+    root.element.getBoundingClientRect = () => rect(0, 0, 200, 40)
+    let aLeft = 0
+    ;(a.element as HTMLElement).getBoundingClientRect = () => rect(aLeft, 0, 80, 40)
+    b.getBoundingClientRect = () => rect(100, 0, 80, 40)
+
+    await a.trigger('pointerover')
+    await nextTick()
+    const style = (wrapper.get('.w-sliding-highlight__container').element as HTMLElement).style
+    expect(style.transform).toBe('translate3d(0px, 0px, 0)')
+
+    // Move the hovered item after its sibling without changing any box size.
+    aLeft = 100
+    root.element.insertBefore(b, a.element as HTMLElement)
+    await nextTick()
+    await nextTick()
+
+    expect(style.transform).toBe('translate3d(100px, 0px, 0)')
+    raf.mockRestore()
     wrapper.unmount()
   })
 

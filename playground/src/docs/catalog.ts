@@ -12,6 +12,7 @@ import SlidingHighlightDemo from '../demos/sliding-highlight-demo.vue'
 import ImgComparisonDemo from '../demos/img-comparison-demo.vue'
 import SliderCaptchaDemo from '../demos/slider-captcha-demo.vue'
 import CommandMenuDemo from '../demos/command-menu-demo.vue'
+import ContextMenuDemo from '../demos/context-menu-demo.vue'
 import CropperDemo from '../demos/cropper-demo.vue'
 import MotionGroupDemo from '../demos/motion-group-demo.vue'
 import GanttDemo from '../demos/gantt-demo.vue'
@@ -21,7 +22,6 @@ import PermissionDemo from '../demos/permission-demo.vue'
 import CountDownDemo from '../demos/count-down-demo.vue'
 import LoadingDemo from '../demos/loading-demo.vue'
 import ViewDemo from '../demos/view-demo.vue'
-import IconDemo from '../demos/icon-demo.vue'
 import ExceptionDemo from '../demos/exception-demo.vue'
 import RippleDemo from '../demos/ripple-demo.vue'
 import CodeEditorDemo from '../demos/code-editor-demo.vue'
@@ -53,6 +53,7 @@ const demos: Record<string, Component> = {
   'img-comparison-slider': ImgComparisonDemo,
   'slider-captcha': SliderCaptchaDemo,
   'command-menu': CommandMenuDemo,
+  'context-menu': ContextMenuDemo,
   cropper: CropperDemo,
   'tiptap-editor': TiptapEditorDemo,
   'motion-group': MotionGroupDemo,
@@ -63,7 +64,6 @@ const demos: Record<string, Component> = {
   'count-down': CountDownDemo,
   loading: LoadingDemo,
   view: ViewDemo,
-  icon: IconDemo,
   exception: ExceptionDemo,
   ripple: RippleDemo,
   'code-editor': CodeEditorDemo,

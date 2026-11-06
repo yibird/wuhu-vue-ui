@@ -24,7 +24,7 @@ features:
   - title: 设计令牌驱动
     details: 统一的 --w-* 令牌与亮 / 暗主题，可通过任意祖先节点覆盖品牌样式。
   - title: 可访问性内建
-    details: 键盘导航、ARIA 关系、焦点管理与 prefers-reduced-motion 均在组件内处理。
+    details: 键盘导航、ARIA 关系与焦点管理均在组件内处理。
   - title: 组合式 API
     details: 全部基于 script setup 与 Composition API，逻辑清晰、易于组合与扩展。
   - title: 轻量运行时
@@ -62,7 +62,5 @@ bun add @wuhu-vue-ui/scrollbar
 ```ts [main.ts]
 import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 ```
-
-组件样式内置 `var(--w-*, fallback)` 默认令牌，无需额外引入令牌包；主题与品牌色可在应用入口通过 CSS 变量统一覆盖。
 
 </div>

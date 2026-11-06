@@ -3,10 +3,6 @@ import { onBeforeUnmount, ref } from 'vue'
 import type { RippleOptions, RippleProps } from './types'
 import { createRipple } from './useRipple'
 
-defineOptions({
-  name: 'WRipple',
-})
-
 const props = withDefaults(defineProps<RippleProps>(), {
   color: 'currentColor',
   duration: 600,

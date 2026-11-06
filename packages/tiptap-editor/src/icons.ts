@@ -1,6 +1,7 @@
 export type ToolbarIconName =
   | 'undo'
   | 'redo'
+  | 'font'
   | 'bullet-list'
   | 'ordered-list'
   | 'task-list'
@@ -20,6 +21,7 @@ export type ToolbarIconName =
 export const TOOLBAR_ICON_PATHS: Record<ToolbarIconName, string[]> = {
   undo: ['M3 7v6h6', 'M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13'],
   redo: ['M21 7v6h-6', 'M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13'],
+  font: ['M4 7V4h16v3', 'M9 20h6', 'M12 4v16'],
   'bullet-list': ['M8 6h13', 'M8 12h13', 'M8 18h13', 'M3 6h.01', 'M3 12h.01', 'M3 18h.01'],
   'ordered-list': [
     'M10 6h11',

@@ -13,7 +13,7 @@ import './style.less'
 
 function getAntTokens(isDark: boolean) {
   return {
-    colorPrimary: isDark ? '#818cf8' : '#4f46e5',
+    colorPrimary: isDark ? '#8b86fb' : '#5a54f9',
     borderRadius: 10,
     controlHeight: 36,
     fontFamily: 'var(--w-font-family)',

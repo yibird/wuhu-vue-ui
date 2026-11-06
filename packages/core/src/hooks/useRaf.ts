@@ -16,13 +16,13 @@ export interface UseRafReturn {
 export function useRaf(callback: (time: number) => void): UseRafReturn {
   let frame = 0
 
-  function cancel(): void {
+  function cancel() {
     if (!frame) return
     if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(frame)
     frame = 0
   }
 
-  function schedule(): void {
+  function schedule() {
     if (frame || typeof requestAnimationFrame !== 'function') return
     frame = requestAnimationFrame((time) => {
       frame = 0

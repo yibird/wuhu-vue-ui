@@ -1,4 +1,4 @@
-import { effectScope, ref } from 'vue'
+import { effectScope, isReadonly, ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { useCopy, useDebounce, useDebounceFn, useThrottle, useThrottleFn } from '../../index'
 
@@ -46,6 +46,18 @@ describe('useDebounce', () => {
     scope.stop()
   })
 
+  it('accepts a getter source', () => {
+    const source = ref('a')
+    const scope = effectScope()
+    const value = scope.run(() => useDebounce(() => source.value, 100))!
+
+    source.value = 'b'
+    vi.advanceTimersByTime(100)
+
+    expect(value.value).toBe('b')
+    scope.stop()
+  })
+
   it('cancels a pending call when the scope stops', () => {
     const fn = vi.fn()
     const scope = effectScope()
@@ -77,6 +89,17 @@ describe('useThrottle', () => {
     scope.stop()
   })
 
+  it('accepts a getter source', () => {
+    const source = ref(0)
+    const scope = effectScope()
+    const value = scope.run(() => useThrottle(() => source.value, 100))!
+
+    source.value = 1
+
+    expect(value.value).toBe(1)
+    scope.stop()
+  })
+
   it('cancels a pending call when the scope stops', () => {
     const fn = vi.fn()
     const scope = effectScope()
@@ -101,6 +124,10 @@ describe('useCopy', () => {
     const onSuccess = vi.fn()
     const scope = effectScope()
     const { copied, error, loading, copy } = scope.run(() => useCopy({ duration: 50, onSuccess }))!
+
+    expect(isReadonly(copied)).toBe(true)
+    expect(isReadonly(loading)).toBe(true)
+    expect(isReadonly(error)).toBe(true)
 
     const promise = copy('hello')
     expect(loading.value).toBe(true)

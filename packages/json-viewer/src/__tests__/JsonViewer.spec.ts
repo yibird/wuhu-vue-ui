@@ -60,6 +60,17 @@ describe('formatJsonValue', () => {
     circular.self = circular
     expect(formatJsonValue(circular)).toBe('{\n  "self": "[Circular]"\n}')
   })
+
+  it('keeps shared non-circular references instead of marking them circular', () => {
+    const shared = { id: 1 }
+    expect(formatJsonValue({ first: shared, second: shared })).toBe(
+      '{\n  "first": {\n    "id": 1\n  },\n  "second": {\n    "id": 1\n  }\n}',
+    )
+  })
+
+  it('renders BigInt values instead of failing the whole document', () => {
+    expect(formatJsonValue({ total: BigInt(42) })).toBe('{\n  "total": "42"\n}')
+  })
 })
 
 describe('JsonViewer', () => {

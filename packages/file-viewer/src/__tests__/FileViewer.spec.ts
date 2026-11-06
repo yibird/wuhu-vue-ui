@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test'
-import { defineComponent, h, onMounted } from 'vue'
+import { defineComponent, h, nextTick, onMounted } from 'vue'
 import { FileViewer, fileViewerDarkTheme, fileViewerLightTheme } from '../../index'
 
 beforeAll(() => {
@@ -113,6 +113,69 @@ describe('FileViewer', () => {
     document.documentElement.removeAttribute('data-w-theme')
   })
 
+  it('re-resolves auto when the theme prop is applied again', async () => {
+    document.documentElement.setAttribute('data-w-theme', 'dark')
+    const wrapper = mount(FileViewer, { props: { theme: 'light' } })
+    await flushPromises()
+    expect(wrapper.classes()).toContain('is-light')
+
+    await wrapper.setProps({ theme: 'auto' })
+    await flushPromises()
+    expect(wrapper.classes()).toContain('is-dark')
+
+    wrapper.unmount()
+    document.documentElement.removeAttribute('data-w-theme')
+  })
+
+  it('defers the previous object URL revocation until after the next tick', async () => {
+    let sequence = 0
+    const createObjectURL = vi
+      .spyOn(URL, 'createObjectURL')
+      .mockImplementation(() => `blob:revoke-${++sequence}`)
+    const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+
+    const file = new File(['revoke'], 'revoke.txt', { type: 'text/plain' })
+    const wrapper = mount(FileViewer, { props: { file } })
+    await waitForText('revoke', wrapper)
+    await flushPromises()
+
+    const firstUrl = 'blob:revoke-1'
+    revokeObjectURL.mockClear()
+
+    ;(wrapper.vm as unknown as { reload: () => void }).reload()
+    expect(revokeObjectURL).not.toHaveBeenCalled()
+
+    await nextTick()
+    expect(revokeObjectURL).toHaveBeenCalledWith(firstUrl)
+
+    wrapper.unmount()
+    createObjectURL.mockRestore()
+    revokeObjectURL.mockRestore()
+  })
+
+  it('flushes pending object URL revocations when unmounted', async () => {
+    let sequence = 0
+    const createObjectURL = vi
+      .spyOn(URL, 'createObjectURL')
+      .mockImplementation(() => `blob:unmount-${++sequence}`)
+    const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+
+    const file = new File(['unmount'], 'unmount.txt', { type: 'text/plain' })
+    const wrapper = mount(FileViewer, { props: { file } })
+    await waitForText('unmount', wrapper)
+    await flushPromises()
+
+    const firstUrl = 'blob:unmount-1'
+    revokeObjectURL.mockClear()
+
+    ;(wrapper.vm as unknown as { reload: () => void }).reload()
+    wrapper.unmount()
+
+    expect(revokeObjectURL).toHaveBeenCalledWith(firstUrl)
+    createObjectURL.mockRestore()
+    revokeObjectURL.mockRestore()
+  })
+
   it('shows the empty state without a source', () => {
     const wrapper = mount(FileViewer)
     expect(wrapper.text()).toContain('No file selected')
@@ -165,6 +228,69 @@ describe('FileViewer', () => {
     expect(wrapper.emitted('print')).toHaveLength(1)
     expect(wrapper.find('.w-file-viewer__toast').exists()).toBe(false)
     wrapper.unmount()
+  })
+
+  it('emits download only when the file is saved', async () => {
+    const file = new File(['save'], 'save.txt', { type: 'text/plain' })
+    const wrapper = mount(FileViewer, { props: { file } })
+    await waitForText('save', wrapper)
+
+    await wrapper.find('[aria-label="Download"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.emitted('download')).toHaveLength(1)
+    expect(wrapper.emitted('open')).toBeFalsy()
+    expect(wrapper.find('.w-file-viewer__toast').text()).toContain('Download started')
+
+    wrapper.unmount()
+  })
+
+  it('reports an open action when download falls back to a new tab', async () => {
+    const file = new File(['fallback'], 'fallback.txt', { type: 'text/plain' })
+    const wrapper = mount(FileViewer, { props: { file } })
+    await waitForText('fallback', wrapper)
+
+    const createObjectURL = vi.spyOn(URL, 'createObjectURL').mockImplementation(() => {
+      throw new Error('download blocked')
+    })
+    const open = vi.spyOn(window, 'open').mockReturnValue({} as Window)
+
+    await wrapper.find('[aria-label="Download"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.emitted('download')).toBeFalsy()
+    expect(wrapper.emitted('open')).toHaveLength(1)
+    expect(wrapper.find('.w-file-viewer__toast').text()).toContain(
+      'The file could not be saved directly',
+    )
+
+    wrapper.unmount()
+    createObjectURL.mockRestore()
+    open.mockRestore()
+  })
+
+  it('reports a failure when neither saving nor opening works', async () => {
+    const file = new File(['blocked'], 'blocked.txt', { type: 'text/plain' })
+    const wrapper = mount(FileViewer, { props: { file } })
+    await waitForText('blocked', wrapper)
+
+    const createObjectURL = vi.spyOn(URL, 'createObjectURL').mockImplementation(() => {
+      throw new Error('download blocked')
+    })
+    const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
+    await wrapper.find('[aria-label="Download"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.emitted('download')).toBeFalsy()
+    expect(wrapper.emitted('open')).toBeFalsy()
+    expect(wrapper.find('.w-file-viewer__toast').text()).toContain(
+      'The file could not be downloaded.',
+    )
+
+    wrapper.unmount()
+    createObjectURL.mockRestore()
+    open.mockRestore()
   })
 
   it('labels the reset zoom button for assistive technology', async () => {

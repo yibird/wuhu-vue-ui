@@ -44,14 +44,16 @@
 
 ### 实例方法
 
-| 方法        | 类型                                                | 说明                   |
-| ----------- | --------------------------------------------------- | ---------------------- |
-| `width`     | `ComputedRef<number>`                               | 当前测量宽度           |
-| `height`    | `ComputedRef<number>`                               | 当前测量高度           |
-| `entry`     | `Readonly<ShallowRef<ResizeObserverEntry \| null>>` | 最近一次观察记录       |
-| `start()`   | `() => void`                                        | 开始观察               |
-| `stop()`    | `() => void`                                        | 停止观察并清理定时器   |
-| `measure()` | `() => void`                                        | 立即强制测量并触发事件 |
+| 方法        | 类型                                                | 说明                                           |
+| ----------- | --------------------------------------------------- | ---------------------------------------------- |
+| `width`     | `Readonly<ShallowRef<number>>`                      | 当前测量宽度                                   |
+| `height`    | `Readonly<ShallowRef<number>>`                      | 当前测量高度                                   |
+| `entry`     | `Readonly<ShallowRef<ResizeObserverEntry \| null>>` | 最近一次观察记录                               |
+| `start()`   | `() => void`                                        | 开始观察                                       |
+| `stop()`    | `() => void`                                        | 停止观察并清理定时器                           |
+| `getSize()` | `() => ResizeContainerSize`                         | 同步返回最新尺寸，并强制触发一次 `resize` 事件 |
+
+`getSize()` 每次调用都会重新读取尺寸并派发一次 `resize` 事件，即使尺寸与上次相同；返回值与本次事件使用同一份 payload（强制测量时 `entry` 为 `null`）。
 
 ### CSS 变量
 

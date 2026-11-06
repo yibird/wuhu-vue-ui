@@ -44,10 +44,6 @@ export interface ExceptionProps {
    * illustration for `type` is rendered.
    */
   image?: string
-  /** Alternative text for the custom image. Defaults to the title. */
-  imageAlt?: string
-  /** Width of the banner area. Numbers are converted to pixels. */
-  imageWidth?: number | string
   /** Hide the illustration / image area. */
   showImage?: boolean
   /** Semantic class names for the component parts. */

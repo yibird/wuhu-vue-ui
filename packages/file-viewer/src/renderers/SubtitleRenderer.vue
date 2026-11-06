@@ -7,10 +7,6 @@ import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 import { useTextSource } from './useTextSource'
 
-defineOptions({
-  name: 'WFileViewerSubtitleRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{

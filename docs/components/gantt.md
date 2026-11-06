@@ -2,6 +2,12 @@
 
 层级任务、依赖连线、进度、里程碑与日 / 周 / 月视图，支持拖拽排期。
 
+## 基础用法
+
+只需传入 `tasks` 即可渲染；未指定 `startDate` / `endDate` 时会根据任务自动推导时间范围。
+
+<demo vue="../demos/gantt/basic.vue" />
+
 ## 完整交互
 
 层级任务、依赖箭头、进度与里程碑；拖动任务条或两端即可调整排期。
@@ -30,6 +36,14 @@
 
 <demo vue="../demos/gantt/readonly.vue" />
 
+## 性能边界
+
+`maxRangeDays` 默认 `730` 天（约 2 年），自动推导或显式传入的超大范围会被截断到该上限。组件已对任务行与日期列做虚拟化，只渲染可视区域和少量 overscan；但超大范围仍建议切换到 `week` / `month` 视图，或缩小 `startDate` / `endDate`，避免生成过多日期与表格列。
+
+## 扩展字段
+
+任务上的业务扩展字段请放入 `meta?: Record<string, unknown>`。组件不会解析 `meta`，可从插槽参数中的 `task.meta` 读取；请勿依赖任意字段透传。
+
 ## API
 
 ### Props
@@ -45,7 +59,7 @@
 | `taskHeight`            | `number`                     | `24`         | 任务条高度                       |
 | `dayWidth`              | `number`                     | 按视图回退   | 每日像素宽度                     |
 | `rangePadding`          | `number`                     | `3`          | 自动范围前后留白天数             |
-| `maxRangeDays`          | `number`                     | `3660`       | 渲染范围安全上限，`0` 关闭       |
+| `maxRangeDays`          | `number`                     | `730`        | 渲染范围安全上限，`0` 关闭       |
 | `readonly`              | `boolean`                    | `false`      | 只读                             |
 | `draggable`             | `boolean`                    | `true`       | 允许拖动任务条                   |
 | `resizable`             | `boolean`                    | `true`       | 允许拖动两端调整工期             |
@@ -108,17 +122,17 @@
 
 ### CSS 变量
 
-| 变量                                        | 默认值                                               | 说明       |
-| ------------------------------------------- | ---------------------------------------------------- | ---------- |
-| `--w-gantt-grid-line`                       | `var(--w-color-border-subtle, #f1f5f9)`              | 网格线     |
-| `--w-gantt-weekend-bg`                      | `var(--w-color-weekend, rgba(100, 116, 139, 0.045))` | 周末背景   |
-| `--w-gantt-header-bg`                       | `var(--w-color-surface, #ffffff)`                    | 表头背景   |
-| `--w-gantt-dependency-color`                | `var(--w-color-text-tertiary, #5b6678)`              | 依赖线颜色 |
-| `--w-gantt-task-color`                      | `var(--w-color-primary, #4f46e5)`                    | 任务主色   |
-| `--w-gantt-task-soft`                       | 由任务色计算的浅色底                                 | 任务条背景 |
-| `--w-gantt-task-border`                     | 由任务色计算的边框色                                 | 任务条边框 |
-| `--w-gantt-tooltip-bg` / `-text` / `-muted` | 深色提示框配色                                       | 悬停提示   |
-| `--w-gantt-header-height`                   | `56px`                                               | 表头高度   |
+| 变量                                        | 默认值                                                                       | 说明       |
+| ------------------------------------------- | ---------------------------------------------------------------------------- | ---------- |
+| `--w-gantt-grid-line`                       | `var(--w-color-border-subtle, #f1f5f9)`                                      | 网格线     |
+| `--w-gantt-weekend-bg`                      | `var(--w-color-weekend, rgba(100, 116, 139, 0.045))`                         | 周末背景   |
+| `--w-gantt-header-bg`                       | `var(--w-color-surface, #ffffff)`                                            | 表头背景   |
+| `--w-gantt-dependency-color`                | `color-mix(in srgb, var(--w-color-text-tertiary, #5b6678) 40%, transparent)` | 依赖线颜色 |
+| `--w-gantt-task-color`                      | `var(--w-color-primary, #4f46e5)`                                            | 任务主色   |
+| `--w-gantt-task-soft`                       | 由任务色计算的浅色底                                                         | 任务条背景 |
+| `--w-gantt-task-border`                     | 由任务色计算的边框色                                                         | 任务条边框 |
+| `--w-gantt-tooltip-bg` / `-text` / `-muted` | 深色提示框配色                                                               | 悬停提示   |
+| `--w-gantt-header-height`                   | `56px`                                                                       | 表头高度   |
 
 ### 类名
 

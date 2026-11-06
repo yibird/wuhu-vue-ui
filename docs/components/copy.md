@@ -22,7 +22,9 @@
 
 ## 自定义触发器
 
-设置 `showIcon=false` 后，默认插槽会成为触发按钮的内容，可以完全接管 UI。插槽暴露 `copied`、`loading`、`error` 与 `copy`。
+设置 `showIcon=false` 后，默认插槽会渲染在可聚焦的 `role="button"` 容器中，可以完全接管 UI。插槽暴露 `copied`、`loading`、`error`、`isSupported` 与 `copy`。该容器内部建议只放置文本与图标；如需嵌入链接或按钮，请自行处理其焦点与事件，避免与复制触发产生冲突。
+
+不支持剪贴板时组件不会自动禁用触发区，可通过插槽的 `isSupported` 或 `@copy` 事件自行决定降级行为。
 
 <demo vue="../demos/copy/custom.vue" />
 
@@ -46,28 +48,30 @@
 
 ### Emits
 
-| 事件      | 参数           | 说明                     |
-| --------- | -------------- | ------------------------ |
-| `success` | `text: string` | 复制成功                 |
-| `error`   | `error: Error` | 获取文本或写入剪贴板失败 |
+| 事件      | 参数                   | 说明                                       |
+| --------- | ---------------------- | ------------------------------------------ |
+| `copy`    | `isSupported: boolean` | 触发复制前调用，暴露当前环境是否支持剪贴板 |
+| `success` | `text: string`         | 复制成功                                   |
+| `error`   | `error: Error`         | 获取文本或写入剪贴板失败                   |
 
 ### Slots
 
-| 插槽      | 参数                               | 说明                                                                |
-| --------- | ---------------------------------- | ------------------------------------------------------------------- |
-| `prefix`  | —                                  | 图标左侧内容，不暴露复制状态                                        |
-| `suffix`  | —                                  | 图标右侧内容；未提供时回退到默认插槽                                |
-| `default` | `{ copied, loading, error, copy }` | `showIcon=true` 时作为图标右侧内容；`showIcon=false` 时作为按钮内容 |
+| 插槽      | 参数                                            | 说明                                                                  |
+| --------- | ----------------------------------------------- | --------------------------------------------------------------------- |
+| `prefix`  | —                                               | 图标左侧内容，不暴露复制状态                                          |
+| `suffix`  | —                                               | 图标右侧内容；未提供时回退到默认插槽                                  |
+| `default` | `{ copied, loading, error, isSupported, copy }` | `showIcon=true` 时作为图标右侧内容；`showIcon=false` 时作为触发区内容 |
 
 ### 实例方法
 
-| 方法      | 类型                           | 说明                       |
-| --------- | ------------------------------ | -------------------------- |
-| `copied`  | `Readonly<Ref<boolean>>`       | 是否处于已复制状态         |
-| `loading` | `Readonly<Ref<boolean>>`       | 是否正在获取或写入         |
-| `error`   | `Readonly<Ref<Error \| null>>` | 最近一次错误               |
-| `copy()`  | `() => Promise<boolean>`       | 执行复制                   |
-| `reset()` | `() => void`                   | 重置状态并取消进行中的请求 |
+| 方法          | 类型                           | 说明                       |
+| ------------- | ------------------------------ | -------------------------- |
+| `copied`      | `Readonly<Ref<boolean>>`       | 是否处于已复制状态         |
+| `loading`     | `Readonly<Ref<boolean>>`       | 是否正在获取或写入         |
+| `error`       | `Readonly<Ref<Error \| null>>` | 最近一次错误               |
+| `isSupported` | `ComputedRef<boolean>`         | 当前环境是否支持剪贴板     |
+| `copy()`      | `() => Promise<boolean>`       | 执行复制                   |
+| `reset()`     | `() => void`                   | 重置状态并取消进行中的请求 |
 
 ### CSS 变量
 
@@ -75,14 +79,13 @@
 
 ### 类名
 
-| 类名                     | 说明                                                       |
-| ------------------------ | ---------------------------------------------------------- |
-| `.w-copy`                | 根容器，配合 `.is-copied` / `.is-loading` / `.is-disabled` |
-| `.w-copy__trigger`       | 复制触发点，两种模式均为原生 `<button type="button">`      |
-| `.w-copy__trigger--icon` | 图标触发区（无按钮外壳），`showIcon=true` 时使用           |
-| `.w-copy__icon`          | 图标容器                                                   |
-| `.w-copy__spinner`       | 加载图标                                                   |
-| `.w-copy__live`          | 无障碍实时播报区，播报“已复制”或“复制失败”                 |
+| 类名                     | 说明                                                                 |
+| ------------------------ | -------------------------------------------------------------------- |
+| `.w-copy`                | 根容器，配合 `.is-copied` / `.is-loading` / `.is-disabled`           |
+| `.w-copy__trigger`       | 复制触发点；图标模式为 `<button>`，非图标模式为 `role="button"` 容器 |
+| `.w-copy__trigger--icon` | 图标触发区（无按钮外壳），`showIcon=true` 时使用                     |
+| `.w-copy__icon`          | 图标容器                                                             |
+| `.w-copy__spinner`       | 加载图标                                                             |
 
 ### 导出工具
 

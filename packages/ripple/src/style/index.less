@@ -35,15 +35,3 @@
     transform: scale(1);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .w-ripple__wave {
-    animation: none;
-  }
-
-  /* Keep a subtle press affordance when the wave is disabled. */
-  .w-ripple:active,
-  .w-ripple-host:active {
-    background-color: color-mix(in srgb, currentcolor 8%, transparent);
-  }
-}

@@ -420,4 +420,48 @@ describe('Gantt', () => {
     expect(wrapper.findAll('.w-gantt__header-cell--secondary')).toHaveLength(30)
     wrapper.unmount()
   })
+
+  it('virtualizes task rows to the viewport plus overscan', () => {
+    const manyTasks: GanttTask[] = Array.from({ length: 60 }, (_, index) => ({
+      id: `task-${index}`,
+      name: `Task ${index}`,
+      start: '2026-10-01',
+      end: '2026-10-02',
+    }))
+
+    const wrapper = mount(Gantt, {
+      props: {
+        tasks: manyTasks,
+        startDate: '2026-10-01',
+        endDate: '2026-10-31',
+        height: '200px',
+      },
+      attachTo: document.body,
+    })
+
+    const rendered = wrapper.findAll('.w-gantt__row').length
+    expect(rendered).toBeGreaterThan(0)
+    expect(rendered).toBeLessThan(manyTasks.length)
+    // Rendered rows keep their full logical index for accessibility.
+    expect(wrapper.findAll('.w-gantt__row')[0]?.attributes('aria-rowindex')).toBe('2')
+    wrapper.unmount()
+  })
+
+  it('virtualizes date columns to the viewport plus overscan', () => {
+    const wrapper = mount(Gantt, {
+      props: {
+        tasks: [{ id: 'a', name: 'A', start: '2020-02-01', end: '2020-02-02' }],
+        startDate: '2020-01-01',
+        endDate: '2020-12-31',
+        view: 'day',
+        dayWidth: 36,
+      },
+    })
+
+    const cells = wrapper.findAll('.w-gantt__grid-day').length
+    expect(cells).toBeGreaterThan(0)
+    expect(cells).toBeLessThan(366)
+    expect(wrapper.findAll('.w-gantt__header-cell--secondary').length).toBeLessThan(366)
+    wrapper.unmount()
+  })
 })

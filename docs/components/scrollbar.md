@@ -1,6 +1,6 @@
 # Scrollbar 滚动容器
 
-模拟原生滚动行为并自定义滚动条，支持纵向、横向与原生模式切换。
+模拟原生滚动行为并自定义滚动条，支持纵向与横向滚动。
 
 ## 纵向滚动
 
@@ -14,12 +14,6 @@
 
 <demo vue="../demos/scrollbar/always.vue" />
 
-## 原生滚动
-
-通过 `native` 切换为浏览器原生滚动条，行为与系统保持一致。
-
-<demo vue="../demos/scrollbar/native.vue" />
-
 ## 横向滚动
 
 内容宽度超出容器时自动出现横向滚动条，适合标签、流程与看板。
@@ -28,9 +22,13 @@
 
 ## 滚动到指定位置
 
-通过实例方法 `scrollTo()` 传入 `ScrollToOptions` 可以平滑滚动到指定距离；`setScrollLeft()` 则用于无动画地直接跳转。
+实例方法提供三种滚动方式：
 
-<demo vue="../demos/scrollbar/scroll-to.vue" />
+- `scrollTo(options)`：传入 `ScrollToOptions`，支持 `top`、`left` 与 `behavior: 'smooth'`。
+- `scrollTo(x, y)`：传入横、纵坐标，无动画直接跳转。
+- `setScrollTop(value)` / `setScrollLeft(value)`：无动画地设置单轴滚动位置。
+
+<demo vue="../demos/scrollbar/methods.vue" />
 
 ## 自定义样式
 
@@ -62,15 +60,14 @@
 | ----------- | ------------------ | ------- | ----------------------------------------------------- |
 | `height`    | `string \| number` | `''`    | 视口高度，数字按 px 处理                              |
 | `maxHeight` | `string \| number` | `''`    | 视口最大高度，内容超出时才显示滚动条                  |
-| `native`    | `boolean`          | `false` | 使用浏览器原生滚动条                                  |
 | `always`    | `boolean`          | `false` | 始终显示自定义滚动条                                  |
-| `minSize`   | `number`           | `20`    | 滑块最小像素长度                                      |
-| `distance`  | `number`           | `0`     | 距边缘多少像素时触发 `end`                            |
-| `noresize`  | `boolean`          | `false` | 关闭自动尺寸监听，仍可手动调用 `update()`             |
-| `tag`       | `string`           | `'div'` | 内容容器标签                                          |
-| `id`        | `string`           | —       | 内容容器 id                                           |
+| `noresize`  | `boolean`          | `false` | 关闭自动尺寸监听，仍可手动调用 `updatePosition()`     |
 | `classes`   | `ScrollbarClasses` | —       | 语义化类名：`wrap`、`view`、`thumb`（横向与纵向共用） |
 | `styles`    | `ScrollbarStyles`  | —       | 语义化内联样式，键名与 `classes` 一致                 |
+
+`class`、`style` 与 `data-*` 属性作用于组件根节点；`id`、`role`、`title` 与 `aria-*` 会转发到内部可聚焦的滚动容器，便于为滚动区域提供无障碍名称。
+
+`end` 事件按轴独立判断，一次同时改变横纵位置的滚动可以同时触发两个方向的 `end`。
 
 ### Emits
 
@@ -87,24 +84,25 @@
 
 ### 实例方法
 
-| 方法              | 类型                                                                      | 说明                   |
-| ----------------- | ------------------------------------------------------------------------- | ---------------------- |
-| `wrapRef`         | `Ref<HTMLDivElement \| undefined>`                                        | 可滚动容器元素引用     |
-| `update()`        | `() => void`                                                              | 重新计算滑块尺寸与位置 |
-| `scrollTo()`      | `(x: number, y?: number) => void` 或 `(options: ScrollToOptions) => void` | 滚动到指定坐标或配置   |
-| `setScrollTop()`  | `(value: number) => void`                                                 | 设置纵向滚动位置       |
-| `setScrollLeft()` | `(value: number) => void`                                                 | 设置横向滚动位置       |
-| `handleScroll()`  | `() => void`                                                              | 同步滚动状态与滚动条   |
+| 方法               | 类型                                                                      | 说明                   |
+| ------------------ | ------------------------------------------------------------------------- | ---------------------- |
+| `wrapRef`          | `Ref<HTMLDivElement \| undefined>`                                        | 可滚动容器元素引用     |
+| `updatePosition()` | `() => void`                                                              | 重新计算滑块尺寸与位置 |
+| `scrollTo()`       | `(x: number, y?: number) => void` 或 `(options: ScrollToOptions) => void` | 滚动到指定坐标或配置   |
+| `setScrollTop()`   | `(value: number) => void`                                                 | 设置纵向滚动位置       |
+| `setScrollLeft()`  | `(value: number) => void`                                                 | 设置横向滚动位置       |
+| `handleScroll()`   | `() => void`                                                              | 同步滚动状态与滚动条   |
 
 ### CSS 变量
 
-| 变量                          | 默认值                      | 说明           |
-| ----------------------------- | --------------------------- | -------------- |
-| `--w-scrollbar-size`          | `6px`                       | 滚动条粗细     |
-| `--w-scrollbar-thumb`         | `rgba(100, 116, 139, 0.38)` | 滑块颜色       |
-| `--w-scrollbar-thumb-hover`   | `rgba(100, 116, 139, 0.62)` | 滑块悬停颜色   |
-| `--w-scrollbar-opacity`       | `0.3`                       | 滑块默认透明度 |
-| `--w-scrollbar-hover-opacity` | `0.5`                       | 滑块悬停透明度 |
+| 变量                          | 默认值    | 说明           |
+| ----------------------------- | --------- | -------------- |
+| `--w-scrollbar-size`          | `6px`     | 滚动条粗细     |
+| `--w-scrollbar-thumb`         | `#c9cacd` | 滑块颜色       |
+| `--w-scrollbar-thumb-hover`   | `#b1b2b4` | 滑块悬停颜色   |
+| `--w-scrollbar-thumb-active`  | `#b1b2b4` | 滑块按下颜色   |
+| `--w-scrollbar-opacity`       | `1`       | 滑块默认透明度 |
+| `--w-scrollbar-hover-opacity` | `1`       | 滑块悬停透明度 |
 
 ### 可访问性
 

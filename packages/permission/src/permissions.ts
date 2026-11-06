@@ -1,4 +1,4 @@
-import { inject, provide, toValue } from 'vue'
+import { computed, inject, provide, toValue } from 'vue'
 import type { InjectionKey, MaybeRefOrGetter } from 'vue'
 import type { PermissionContext, PermissionMode, PermissionValue } from './types'
 
@@ -33,12 +33,15 @@ export function checkPermission(
  * Provide a reactive permission source to descendants.
  * Array, ref, getter and `Set` sources are supported.
  */
-export function providePermissions(source: MaybeRefOrGetter<string[] | Set<string>>): void {
+export function providePermissions(source: MaybeRefOrGetter<string[] | Set<string>>) {
+  const granted = computed<ReadonlySet<string>>(() => {
+    const resolved = toValue(source)
+    return resolved instanceof Set ? resolved : new Set(resolved)
+  })
+
   const context: PermissionContext = {
     has(value, mode = 'all') {
-      const resolved = toValue(source)
-      const granted = resolved instanceof Set ? resolved : new Set(resolved)
-      return checkPermission(value, granted, mode)
+      return checkPermission(value, granted.value, mode)
     },
   }
 

@@ -10,10 +10,6 @@ import { toRendererError } from '../core/errors'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerXlsxRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -72,7 +68,7 @@ async function parse(): Promise<void> {
   }
 }
 
-function selectSheet(index: number): void {
+function selectSheet(index: number) {
   if (index === activeIndex.value) return
   emit('page-change', index + 1)
 }

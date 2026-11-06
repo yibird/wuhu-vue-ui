@@ -5,7 +5,7 @@ import type { LoadingInstance } from '@wuhu-vue-ui/loading'
 
 const instance = ref<LoadingInstance | null>(null)
 
-function show(): void {
+function show() {
   instance.value?.destroy()
   instance.value = createLoading({
     animation: 'spinner',
@@ -15,7 +15,7 @@ function show(): void {
   window.setTimeout(() => instance.value?.close(), 1600)
 }
 
-function destroy(): void {
+function destroy() {
   if (instance.value) destroyLoading(instance.value)
   instance.value = null
 }

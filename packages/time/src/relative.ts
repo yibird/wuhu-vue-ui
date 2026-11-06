@@ -43,7 +43,9 @@ export function toDate(value: TimeInput): Date | null {
       const year = Number(dateOnly[1])
       const month = Number(dateOnly[2])
       const day = Number(dateOnly[3])
-      const date = new Date(year, month - 1, day)
+      const date = new Date(0)
+      date.setHours(0, 0, 0, 0)
+      date.setFullYear(year, month - 1, day)
       if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
         return null
       }

@@ -11,7 +11,10 @@ export interface EllipsisProps {
   expanded?: boolean
   /** Show the full text in a tooltip while collapsed and overflowing. */
   tooltip?: boolean
-  /** Tooltip placement relative to the content. */
+  /**
+   * Preferred tooltip placement relative to the content. Floating UI flips and
+   * shifts it when there is not enough room.
+   */
   tooltipPlacement?: EllipsisTooltipPlacement
   /** Root element tag. Defaults to `div`. */
   tag?: string

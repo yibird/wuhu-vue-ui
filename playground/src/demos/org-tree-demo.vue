@@ -207,14 +207,6 @@ function handleSelect(key: OrgTreeId | null) {
                   </template>
                 </small>
               </span>
-              <button
-                type="button"
-                class="org-node__action"
-                :aria-label="`查看 ${node.label}`"
-                @click.stop="feedback = `快捷操作：${node.label}`"
-              >
-                ⋯
-              </button>
             </span>
           </template>
         </OrgTree>
@@ -224,7 +216,7 @@ function handleSelect(key: OrgTreeId | null) {
             当前选中
             <strong>{{ selectedKey === null ? '无' : nodeOf(selectedKey)?.label }}</strong>
           </span>
-          <span class="hint"> 右键节点打开菜单；点击节点内的按钮不会触发拖拽或选中。 </span>
+          <span class="hint">右键节点打开菜单；拖动节点可调整父级。</span>
         </div>
       </div>
     </DemoCard>
@@ -332,30 +324,5 @@ function handleSelect(key: OrgTreeId | null) {
   color: var(--w-color-text-tertiary);
   font-size: 10px;
   line-height: 1.2;
-}
-
-.org-node__action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  flex: none;
-  padding: 0;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--w-color-text-tertiary);
-  cursor: pointer;
-}
-
-.org-node__action:hover {
-  background: var(--w-color-surface-hover);
-  color: var(--w-color-text);
-}
-
-.org-node__action:focus-visible {
-  outline: 2px solid var(--w-color-primary);
-  outline-offset: 1px;
 }
 </style>

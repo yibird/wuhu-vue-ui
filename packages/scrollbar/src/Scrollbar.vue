@@ -6,24 +6,52 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  useAttrs,
   watch,
   type CSSProperties,
 } from 'vue'
 import type { ScrollbarDirection, ScrollbarProps, ScrollbarScrollEvent } from './types'
 
-defineOptions({
-  name: 'WScrollbar',
-})
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<ScrollbarProps>(), {
   height: '',
   maxHeight: '',
-  native: false,
   noresize: false,
-  tag: 'div',
   always: false,
-  minSize: 20,
-  distance: 0,
+})
+
+const attrs = useAttrs()
+
+/**
+ * Attributes that describe the focusable scroll region belong on the inner
+ * wrap, not on the outer presentational root. Class/style and data attributes
+ * stay on the root so consumer styling and test hooks keep working.
+ */
+function isWrapAttribute(key: string): boolean {
+  return (
+    key === 'id' ||
+    key === 'role' ||
+    key === 'tabindex' ||
+    key === 'title' ||
+    key.startsWith('aria-')
+  )
+}
+
+const rootAttrs = computed(() => {
+  const result: Record<string, unknown> = {}
+  for (const key in attrs) {
+    if (!isWrapAttribute(key)) result[key] = attrs[key]
+  }
+  return result
+})
+
+const wrapAttrs = computed(() => {
+  const result: Record<string, unknown> = {}
+  for (const key in attrs) {
+    if (isWrapAttribute(key)) result[key] = attrs[key]
+  }
+  return result
 })
 
 const emit = defineEmits<{
@@ -33,6 +61,10 @@ const emit = defineEmits<{
 
 /** Distance between the bar edge and the thumb, in pixels. */
 const GAP = 4
+/** Minimum thumb length in pixels. */
+const MIN_THUMB_SIZE = 20
+/** Gap between the two bars where they meet at the corner, in pixels. */
+const CORNER_GAP = 2
 
 interface BarInfo {
   offset: 'offsetWidth' | 'offsetHeight'
@@ -74,6 +106,7 @@ const ratioX = ref(1)
 const ratioY = ref(1)
 const visibleX = ref(false)
 const visibleY = ref(false)
+const hasBothAxes = ref(false)
 const dragging = ref<'X' | 'Y' | null>(null)
 
 let cursorDown = false
@@ -87,12 +120,44 @@ const thumbState: Partial<Record<'X' | 'Y', number>> = {}
 let resizeObserver: ResizeObserver | undefined
 let wrapScrollTop = 0
 let wrapScrollLeft = 0
-let direction: ScrollbarDirection | undefined
-const distanceScrollState: Record<ScrollbarDirection, boolean> = {
+let barRaf = 0
+
+/**
+ * Scroll events can fire more than once per frame. Coalesce the visual bar
+ * position into one update per frame while keeping `scroll`/`end` events
+ * synchronous.
+ */
+function scheduleBarScroll() {
+  if (typeof requestAnimationFrame !== 'function') {
+    if (wrapRef.value) handleBarScroll(wrapRef.value)
+    return
+  }
+  if (barRaf) return
+  barRaf = requestAnimationFrame(() => {
+    barRaf = 0
+    if (wrapRef.value) handleBarScroll(wrapRef.value)
+  })
+}
+
+function cancelBarScroll() {
+  if (!barRaf) return
+  if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(barRaf)
+  barRaf = 0
+}
+
+/** Tracks which edge already reported `end` so one visit emits once. */
+const endState: Record<ScrollbarDirection, boolean> = {
   bottom: false,
   top: false,
   right: false,
   left: false,
+}
+
+const OPPOSITE_DIRECTION: Record<ScrollbarDirection, ScrollbarDirection> = {
+  top: 'bottom',
+  bottom: 'top',
+  left: 'right',
+  right: 'left',
 }
 
 const addUnit = (value: string | number | undefined) => {
@@ -112,7 +177,7 @@ const mergedWrapStyle = computed(() => {
 const mergedWrapClass = computed(() => [
   props.classes?.wrap,
   'w-scrollbar__wrap',
-  { 'w-scrollbar__wrap--hidden-default': !props.native },
+  'w-scrollbar__wrap--hidden-default',
 ])
 
 const verticalThumbStyle = computed<CSSProperties>(() => ({
@@ -141,32 +206,55 @@ function ratio(axis: 'X' | 'Y') {
   return axis === 'X' ? ratioX.value : ratioY.value
 }
 
-function handleBarScroll(wrap: HTMLDivElement) {
-  const offsetHeight = wrap.offsetHeight - GAP
-  const offsetWidth = wrap.offsetWidth - GAP
+/**
+ * Usable track length. When both axes scroll, each bar is shortened at the
+ * corner so the two bars do not overlap; the thumb math must use the same
+ * length or the thumb would run past the rounded bar end.
+ */
+function trackLength(axis: 'X' | 'Y') {
+  const wrap = wrapRef.value
+  if (!wrap) return 0
 
-  moveY.value = offsetHeight ? ((wrap.scrollTop * 100) / offsetHeight) * ratioY.value : 0
-  moveX.value = offsetWidth ? ((wrap.scrollLeft * 100) / offsetWidth) * ratioX.value : 0
+  const vertical = axis === 'Y'
+  const base = (vertical ? wrap.offsetHeight : wrap.offsetWidth) - GAP
+  if (!hasBothAxes.value) return base
+
+  const perpendicular = vertical ? horizontalBarRef.value : verticalBarRef.value
+  const thickness = perpendicular
+    ? vertical
+      ? perpendicular.offsetHeight
+      : perpendicular.offsetWidth
+    : 0
+  return Math.max(0, base - thickness - CORNER_GAP)
+}
+
+function handleBarScroll(wrap: HTMLDivElement) {
+  const trackHeight = trackLength('Y')
+  const trackWidth = trackLength('X')
+
+  moveY.value = trackHeight ? ((wrap.scrollTop * 100) / trackHeight) * ratioY.value : 0
+  moveX.value = trackWidth ? ((wrap.scrollLeft * 100) / trackWidth) * ratioX.value : 0
 }
 
 function updateBar() {
   const wrap = wrapRef.value
-  if (!wrap || props.native) return
+  if (!wrap) return
 
-  const offsetHeight = wrap.offsetHeight - GAP
-  const offsetWidth = wrap.offsetWidth - GAP
+  hasBothAxes.value = wrap.scrollWidth > wrap.clientWidth && wrap.scrollHeight > wrap.clientHeight
 
-  const originalHeight = offsetHeight ** 2 / wrap.scrollHeight
-  const originalWidth = offsetWidth ** 2 / wrap.scrollWidth
-  const height = Math.max(originalHeight, props.minSize)
-  const width = Math.max(originalWidth, props.minSize)
+  const trackHeight = trackLength('Y')
+  const trackWidth = trackLength('X')
 
-  ratioY.value =
-    originalHeight / (offsetHeight - originalHeight) / (height / (offsetHeight - height))
-  ratioX.value = originalWidth / (offsetWidth - originalWidth) / (width / (offsetWidth - width))
+  const originalHeight = trackHeight ** 2 / wrap.scrollHeight
+  const originalWidth = trackWidth ** 2 / wrap.scrollWidth
+  const height = Math.max(originalHeight, MIN_THUMB_SIZE)
+  const width = Math.max(originalWidth, MIN_THUMB_SIZE)
 
-  sizeHeight.value = height + GAP < offsetHeight ? `${height}px` : ''
-  sizeWidth.value = width + GAP < offsetWidth ? `${width}px` : ''
+  ratioY.value = originalHeight / (trackHeight - originalHeight) / (height / (trackHeight - height))
+  ratioX.value = originalWidth / (trackWidth - originalWidth) / (width / (trackWidth - width))
+
+  sizeHeight.value = height + GAP < trackHeight ? `${height}px` : ''
+  sizeWidth.value = width + GAP < trackWidth ? `${width}px` : ''
 
   if (cursorInside) syncBarVisibility()
 }
@@ -176,38 +264,30 @@ function syncBarVisibility() {
   visibleY.value = cursorInside && !!sizeHeight.value
 }
 
-function update() {
+function updatePosition() {
   updateBar()
   if (wrapRef.value) handleBarScroll(wrapRef.value)
-  if (direction) distanceScrollState[direction] = false
 }
 
-function updateTriggerStatus(arrivedStates: Record<ScrollbarDirection, boolean>) {
-  if (!direction) return
+/** Emits `end` at most once per edge visit, independently per axis. */
+function reportEdge(
+  direction: ScrollbarDirection,
+  arrivedStates: Record<ScrollbarDirection, boolean>,
+) {
+  const opposite = OPPOSITE_DIRECTION[direction]
 
-  const oppositeDirection: Record<ScrollbarDirection, ScrollbarDirection> = {
-    top: 'bottom',
-    bottom: 'top',
-    left: 'right',
-    right: 'left',
+  if (arrivedStates[direction] && !endState[direction]) {
+    endState[direction] = true
+    emit('end', direction)
   }
-  const opposite = oppositeDirection[direction]
-  const arrived = arrivedStates[direction]
-
-  if (arrived && !distanceScrollState[direction]) {
-    distanceScrollState[direction] = true
-  }
-
-  if (!arrivedStates[opposite] && distanceScrollState[opposite]) {
-    distanceScrollState[opposite] = false
-  }
+  if (!arrivedStates[opposite]) endState[opposite] = false
 }
 
 function handleScroll() {
   const wrap = wrapRef.value
   if (!wrap) return
 
-  handleBarScroll(wrap)
+  scheduleBarScroll()
 
   const prevTop = wrapScrollTop
   const prevLeft = wrapScrollLeft
@@ -215,12 +295,10 @@ function handleScroll() {
   wrapScrollLeft = wrap.scrollLeft
 
   const arrivedStates: Record<ScrollbarDirection, boolean> = {
-    bottom: !(wrap.scrollHeight - props.distance > wrap.clientHeight + wrapScrollTop),
-    top: wrapScrollTop <= props.distance && prevTop !== 0,
-    right:
-      !(wrap.scrollWidth - props.distance > wrap.clientWidth + wrapScrollLeft) &&
-      prevLeft !== wrapScrollLeft,
-    left: wrapScrollLeft <= props.distance && prevLeft !== 0,
+    bottom: wrapScrollTop + wrap.clientHeight >= wrap.scrollHeight,
+    top: wrapScrollTop <= 0 && prevTop !== 0,
+    right: wrapScrollLeft + wrap.clientWidth >= wrap.scrollWidth && prevLeft !== wrapScrollLeft,
+    left: wrapScrollLeft <= 0 && prevLeft !== 0,
   }
 
   emit('scroll', {
@@ -228,19 +306,14 @@ function handleScroll() {
     scrollLeft: wrapScrollLeft,
   })
 
+  // Each axis is evaluated on its own; a diagonal scroll can reach two edges
+  // in one event and must report both.
   if (prevTop !== wrapScrollTop) {
-    direction = wrapScrollTop > prevTop ? 'bottom' : 'top'
+    reportEdge(wrapScrollTop > prevTop ? 'bottom' : 'top', arrivedStates)
   }
   if (prevLeft !== wrapScrollLeft) {
-    direction = wrapScrollLeft > prevLeft ? 'right' : 'left'
+    reportEdge(wrapScrollLeft > prevLeft ? 'right' : 'left', arrivedStates)
   }
-
-  if (props.distance > 0) {
-    if (!direction || distanceScrollState[direction]) return
-    updateTriggerStatus(arrivedStates)
-  }
-
-  if (direction && arrivedStates[direction]) emit('end', direction)
 }
 
 function scrollTo(xCord: number, yCord?: number): void
@@ -311,9 +384,6 @@ function startDrag(axis: 'X' | 'Y') {
   document.addEventListener('mousemove', handleDocumentMouseMove)
   document.addEventListener('mouseup', handleDocumentMouseUp)
   document.addEventListener('selectstart', preventSelection)
-  // A drag can end outside the document (window blur) or while the tab is
-  // hidden; without these the mousemove/mouseup listeners would leak and the
-  // thumb would stay in the dragging state.
   window.addEventListener('blur', handleDocumentMouseUp)
   document.addEventListener('visibilitychange', handleVisibilityChange)
 }
@@ -386,45 +456,41 @@ function handleRootMouseLeave() {
 function stopResizeObservers() {
   resizeObserver?.disconnect()
   resizeObserver = undefined
-  if (typeof window !== 'undefined') window.removeEventListener('resize', update)
+  if (typeof window !== 'undefined') window.removeEventListener('resize', updatePosition)
 }
 
 function startResizeObservers() {
   if (typeof window === 'undefined') return
   stopResizeObservers()
-  // Native scrollbars and `noresize` do not need any measurement.
-  if (props.native || props.noresize) return
+  if (props.noresize) return
 
   if (typeof ResizeObserver !== 'undefined') {
-    resizeObserver = new ResizeObserver(update)
+    resizeObserver = new ResizeObserver(updatePosition)
     // One observer can watch both nodes; the scrollbar depends on the viewport
     // and the content size, and either can change independently.
     if (viewRef.value) resizeObserver.observe(viewRef.value)
     if (wrapRef.value) resizeObserver.observe(wrapRef.value)
   } else {
     // Only fall back to window resize when ResizeObserver is unavailable.
-    window.addEventListener('resize', update)
+    window.addEventListener('resize', updatePosition)
   }
 }
 
 watch(
-  () => [props.native, props.noresize],
+  () => props.noresize,
   () => {
     startResizeObservers()
-    if (!props.native) nextTick(update)
+    nextTick(updatePosition)
   },
 )
 
-watch(
-  () => [props.height, props.maxHeight],
-  () => {
-    if (!props.native) nextTick(update)
-  },
-)
+watch([() => props.height, () => props.maxHeight], () => {
+  nextTick(updatePosition)
+})
 
 onMounted(() => {
   startResizeObservers()
-  if (!props.native) nextTick(update)
+  nextTick(updatePosition)
 })
 
 onActivated(() => {
@@ -436,6 +502,7 @@ onActivated(() => {
 
 onBeforeUnmount(() => {
   stopResizeObservers()
+  cancelBarScroll()
   document.removeEventListener('mousemove', handleDocumentMouseMove)
   document.removeEventListener('mouseup', handleDocumentMouseUp)
   document.removeEventListener('selectstart', preventSelection)
@@ -447,7 +514,7 @@ defineExpose({
   /** The scrollable wrapper element. */
   wrapRef,
   /** Recalculate thumb sizes and positions. */
-  update,
+  updatePosition,
   /** Scroll to coordinates or a ScrollToOptions object. */
   scrollTo,
   /** Set the vertical scroll position. */
@@ -460,62 +527,65 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-scrollbar" @mouseenter="handleRootMouseEnter" @mouseleave="handleRootMouseLeave">
+  <div
+    class="w-scrollbar"
+    :class="{ 'is-both-axes': hasBothAxes }"
+    v-bind="rootAttrs"
+    @mouseenter="handleRootMouseEnter"
+    @mouseleave="handleRootMouseLeave"
+  >
     <div
       ref="wrapRef"
       :class="mergedWrapClass"
       :style="mergedWrapStyle"
       tabindex="0"
+      v-bind="wrapAttrs"
       @scroll="handleScroll"
     >
-      <component
-        :is="tag"
-        :id="props.id"
+      <div
         ref="viewRef"
         class="w-scrollbar__view"
         :class="props.classes?.view"
         :style="props.styles?.view"
       >
         <slot />
-      </component>
+      </div>
     </div>
 
-    <template v-if="!props.native">
+    <div
+      ref="horizontalBarRef"
+      class="w-scrollbar__bar is-horizontal"
+      aria-hidden="true"
+      @mousedown="handleTrackMouseDown('X', $event)"
+    >
       <div
-        ref="horizontalBarRef"
-        class="w-scrollbar__bar is-horizontal"
+        v-show="props.always || visibleX"
+        ref="horizontalThumbRef"
+        class="w-scrollbar__thumb"
         aria-hidden="true"
-        @mousedown="handleTrackMouseDown('X', $event)"
-      >
-        <div
-          v-show="props.always || visibleX"
-          ref="horizontalThumbRef"
-          class="w-scrollbar__thumb"
-          aria-hidden="true"
-          :class="[props.classes?.thumb, { 'is-dragging': dragging === 'X' }]"
-          :style="[horizontalThumbStyle, props.styles?.thumb]"
-          @mousedown="handleThumbMouseDown('X', $event)"
-          @click.stop
-        />
-      </div>
+        :class="[props.classes?.thumb, { 'is-dragging': dragging === 'X' }]"
+        :style="[horizontalThumbStyle, props.styles?.thumb]"
+        @mousedown="handleThumbMouseDown('X', $event)"
+        @click.stop
+      />
+    </div>
 
+    <div
+      ref="verticalBarRef"
+      class="w-scrollbar__bar is-vertical"
+      aria-hidden="true"
+      @mousedown="handleTrackMouseDown('Y', $event)"
+    >
       <div
-        ref="verticalBarRef"
-        class="w-scrollbar__bar is-vertical"
+        v-show="props.always || visibleY"
+        ref="verticalThumbRef"
+        class="w-scrollbar__thumb"
         aria-hidden="true"
-        @mousedown="handleTrackMouseDown('Y', $event)"
-      >
-        <div
-          v-show="props.always || visibleY"
-          ref="verticalThumbRef"
-          class="w-scrollbar__thumb"
-          aria-hidden="true"
-          :class="[props.classes?.thumb, { 'is-dragging': dragging === 'Y' }]"
-          :style="[verticalThumbStyle, props.styles?.thumb]"
-          @mousedown="handleThumbMouseDown('Y', $event)"
-          @click.stop
-        />
-      </div>
-    </template>
+        :class="[props.classes?.thumb, { 'is-dragging': dragging === 'Y' }]"
+        :style="[verticalThumbStyle, props.styles?.thumb]"
+        @mousedown="handleThumbMouseDown('Y', $event)"
+        @click.stop
+      />
+    </div>
   </div>
 </template>

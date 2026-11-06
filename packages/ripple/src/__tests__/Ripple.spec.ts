@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { defineComponent, h, withDirectives } from 'vue'
+import { defineComponent, effectScope, h, withDirectives } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import Ripple from '../Ripple.vue'
 import { vRipple } from '../directive'
@@ -269,6 +269,56 @@ describe('useRipple', () => {
     expect(element.querySelector('.w-ripple__wave')).toBe(wave)
 
     wave?.dispatchEvent(new Event('animationend'))
+    expect(element.querySelector('.w-ripple__wave')).toBeNull()
+
+    element.remove()
+  })
+
+  it('skips DOM creation when the duration is zero', () => {
+    const { createRipple } = useRipple()
+    const element = document.createElement('button')
+    mockRect(element)
+    document.body.appendChild(element)
+
+    expect(createRipple(element, undefined, { duration: 0 })).toBeNull()
+    expect(element.querySelector('.w-ripple__wave')).toBeNull()
+
+    element.remove()
+  })
+
+  it('removes waves through the fallback timer', () => {
+    const { createRipple } = useRipple()
+    const element = document.createElement('button')
+    mockRect(element)
+    document.body.appendChild(element)
+
+    const wave = createRipple(element, undefined, { duration: 50 })
+    expect(wave?.isConnected).toBe(true)
+
+    vi.advanceTimersByTime(150)
+    expect(wave?.isConnected).toBe(false)
+    expect(element.querySelector('.w-ripple__wave')).toBeNull()
+
+    element.remove()
+  })
+
+  it('disposes waves when the owning scope stops', () => {
+    const scope = effectScope()
+    const element = document.createElement('button')
+    mockRect(element)
+    document.body.appendChild(element)
+    let wave: HTMLElement | null = null
+
+    scope.run(() => {
+      const { createRipple } = useRipple()
+      wave = createRipple(element)
+    })
+
+    expect(wave).not.toBeNull()
+    expect(wave!.isConnected).toBe(true)
+
+    scope.stop()
+    expect(wave!.isConnected).toBe(false)
     expect(element.querySelector('.w-ripple__wave')).toBeNull()
 
     element.remove()

@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 import type { UseLoadingReturn } from '../types'
 
 /**
@@ -8,7 +8,7 @@ export function useLoading(initial = false): UseLoadingReturn {
   const visible = ref(initial)
 
   return {
-    visible,
+    visible: readonly(visible),
     open: () => {
       visible.value = true
     },

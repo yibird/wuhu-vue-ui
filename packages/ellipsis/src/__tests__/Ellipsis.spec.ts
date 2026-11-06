@@ -1,7 +1,7 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import type { VueWrapper } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { h, nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import Ellipsis from '../Ellipsis.vue'
 import type { EllipsisActionSlotProps } from '../types'
 
@@ -234,6 +234,33 @@ describe('Ellipsis', () => {
     await wrapper.get('.w-ellipsis__content').trigger('mouseenter')
 
     expect(wrapper.find('.w-ellipsis__tooltip').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('re-measures when the slot content changes without a resize notification', async () => {
+    const text = ref('short')
+    const Host = defineComponent({
+      setup() {
+        return () => h(Ellipsis, { expandable: true }, () => h('span', text.value))
+      },
+    })
+    const wrapper = mount(Host)
+    const content = wrapper.get('.w-ellipsis__content').element as HTMLElement
+
+    Object.defineProperty(content, 'clientHeight', { configurable: true, value: 20 })
+    Object.defineProperty(content, 'scrollHeight', { configurable: true, value: 20 })
+    await nextTick()
+    expect(wrapper.find('.w-ellipsis__action').exists()).toBe(false)
+
+    // New content overflows, but the observed box size never changes and no
+    // ResizeObserver callback is emitted.
+    Object.defineProperty(content, 'scrollHeight', { configurable: true, value: 80 })
+    text.value = 'much longer content'
+    await nextTick()
+    await flushPromises()
+
+    expect(wrapper.classes()).toContain('is-overflowed')
+    expect(wrapper.find('.w-ellipsis__action').exists()).toBe(true)
     wrapper.unmount()
   })
 

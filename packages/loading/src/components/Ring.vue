@@ -1,8 +1,4 @@
-<script setup lang="ts">
-defineOptions({
-  name: 'WLoadingRing',
-})
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="w-loading__ring">

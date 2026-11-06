@@ -5,9 +5,9 @@ import { vi } from 'vite-plus/test'
  * they need to assert observe/disconnect calls.
  */
 class ResizeObserverMock implements ResizeObserver {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
+  observe() {}
+  unobserve() {}
+  disconnect() {}
 }
 
 if (typeof globalThis.ResizeObserver === 'undefined') {

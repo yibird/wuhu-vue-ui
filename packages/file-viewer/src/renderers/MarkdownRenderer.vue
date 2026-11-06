@@ -10,10 +10,6 @@ import CodeBlock from './CodeBlock.vue'
 import { useCopy } from '@wuhu-vue-ui/core'
 import { useTextSource } from './useTextSource'
 
-defineOptions({
-  name: 'WFileViewerMarkdownRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{

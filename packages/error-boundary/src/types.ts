@@ -1,8 +1,6 @@
 import type { ComponentPublicInstance } from 'vue'
 
 export interface ErrorBoundaryProps {
-  /** Root element tag. */
-  tag?: string
   /** Title used by the default fallback. */
   title?: string
   /** Custom description used by the default fallback. */

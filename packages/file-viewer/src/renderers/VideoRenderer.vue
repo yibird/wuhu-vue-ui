@@ -3,10 +3,6 @@ import { onMounted } from 'vue'
 import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerVideoRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 const emit = defineEmits<{
@@ -21,7 +17,7 @@ const emit = defineEmits<{
 
 let ready = false
 
-function announceReady(): void {
+function announceReady() {
   if (ready) return
   ready = true
   emit('ready', {
@@ -30,7 +26,7 @@ function announceReady(): void {
   })
 }
 
-function handleError(): void {
+function handleError() {
   emit('error', new Error(props.messages.renderers.video.loadError))
 }
 

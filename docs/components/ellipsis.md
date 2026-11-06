@@ -26,7 +26,7 @@
 
 ## 自定义插槽
 
-`action` 插槽接收 `expanded`、`toggle`、`overflowed`；`tooltip` 插槽接收完整 `text`。默认插槽用于替换 `text` 展示的内容。
+`action` 插槽接收 `expanded`、`toggle`、`overflowed`；`tooltip` 插槽接收完整 `text`。默认插槽用于替换 `text` 展示的内容。提示框定位由 Floating UI 负责，会自动翻转并避免超出视口。
 
 ```vue
 <Ellipsis :text="text" expandable tooltip>
@@ -43,15 +43,15 @@
 
 ### Props
 
-| 属性               | 类型                                     | 默认值  | 说明                              |
-| ------------------ | ---------------------------------------- | ------- | --------------------------------- |
-| `text`             | `string`                                 | `''`    | 文本内容；默认插槽优先            |
-| `lines`            | `number`                                 | `1`     | 折叠时显示的行数                  |
-| `expandable`       | `boolean`                                | `false` | 溢出时显示展开 / 收起按钮         |
-| `expanded`         | `boolean`                                | `false` | 是否展开，支持 `v-model:expanded` |
-| `tooltip`          | `boolean`                                | `false` | 折叠且溢出时显示完整文本          |
-| `tooltipPlacement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | 提示框位置                        |
-| `tag`              | `string`                                 | `'div'` | 根元素标签                        |
+| 属性               | 类型                                     | 默认值  | 说明                               |
+| ------------------ | ---------------------------------------- | ------- | ---------------------------------- |
+| `text`             | `string`                                 | `''`    | 文本内容；默认插槽优先             |
+| `lines`            | `number`                                 | `1`     | 折叠时显示的行数                   |
+| `expandable`       | `boolean`                                | `false` | 溢出时显示展开 / 收起按钮          |
+| `expanded`         | `boolean`                                | `false` | 是否展开，支持 `v-model:expanded`  |
+| `tooltip`          | `boolean`                                | `false` | 折叠且溢出时显示完整文本           |
+| `tooltipPlacement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | 提示框首选位置，空间不足时自动翻转 |
+| `tag`              | `string`                                 | `'div'` | 根元素标签                         |
 
 ### Emits
 
@@ -77,10 +77,9 @@
 | `.w-ellipsis__content`         | 文本容器，折叠时应用行数限制                  |
 | `.w-ellipsis__action`          | 展开 / 收起按钮                               |
 | `.w-ellipsis__tooltip`         | 完整文本提示框                                |
-| `.w-ellipsis__tooltip--top` 等 | 提示框方位                                    |
+| `.w-ellipsis__tooltip--top` 等 | 提示框实际方位（由 Floating UI 计算）         |
 
 ### 可访问性
 
 - 操作按钮使用原生 `<button>`，并通过 `aria-expanded` 反映当前状态。
 - 可用提示时文本容器可获得焦点，并通过 `aria-describedby` 关联提示框。
-- `prefers-reduced-motion: reduce` 下关闭过渡动画。

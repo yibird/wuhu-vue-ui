@@ -62,7 +62,7 @@ afterEach(() => {
 })
 
 describe('CommandMenu', () => {
-  it('filters by label, description, keywords and pinyin', async () => {
+  it('filters by label, description and keywords', async () => {
     const wrapper = mountMenu()
     const input = getInput(wrapper)
 
@@ -78,16 +78,24 @@ describe('CommandMenu', () => {
     await input.setValue('添加')
     expect(getLabels(wrapper)).toEqual(['新建用户'])
 
-    await input.setValue('gzt')
-    expect(getLabels(wrapper)).toEqual(['工作台'])
-
-    await input.setValue('gongzuotai')
-    expect(getLabels(wrapper)).toEqual(['工作台'])
-
     await input.setValue('不存在')
     expect(getOptions(wrapper)).toHaveLength(0)
     expect(wrapper.get('.w-command-menu__empty').text()).toBe('未找到匹配的命令')
     expect(wrapper.emitted('search')?.at(-1)).toEqual(['不存在'])
+  })
+
+  it('supports a custom filter for pinyin or other matching', async () => {
+    const wrapper = mountMenu({
+      filter: (item: CommandMenuItem, search: string) =>
+        search === 'gzt' ? item.key === 'dashboard' : item.label.includes(search),
+    })
+    const input = getInput(wrapper)
+
+    await input.setValue('gzt')
+    expect(getLabels(wrapper)).toEqual(['工作台'])
+
+    await input.setValue('用户')
+    expect(getLabels(wrapper)).toEqual(['用户管理', '新建用户'])
   })
 
   it('reflects whether the listbox has results in aria-expanded', async () => {

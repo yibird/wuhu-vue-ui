@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { h, nextTick } from 'vue'
 import { afterEach, describe, expect, it } from 'vite-plus/test'
 import Exception from '../Exception.vue'
+import Illustration from '../Illustration.vue'
 import { setExceptionPresets } from '../config'
 
 afterEach(() => {
@@ -42,9 +43,22 @@ describe('Exception', () => {
     expect(wrapper.classes()).toContain('w-exception--notFound')
     expect(wrapper.classes()).not.toContain('w-exception--unknown')
     expect(wrapper.get('.w-exception__title').text()).toBe('页面不存在')
-    expect(wrapper.findComponent({ name: 'WExceptionIllustration' }).props('type')).toBe('notFound')
+    expect(wrapper.findComponent(Illustration).props('type')).toBe('notFound')
     wrapper.unmount()
   })
+
+  it.each(['constructor', 'toString', 'hasOwnProperty'])(
+    'treats the inherited Object key %s as an unknown type',
+    (type) => {
+      const wrapper = mount(Exception, {
+        props: { type: type as never },
+      })
+
+      expect(wrapper.classes()).toContain('w-exception--notFound')
+      expect(wrapper.get('.w-exception__title').text()).toBe('页面不存在')
+      wrapper.unmount()
+    },
+  )
 
   it('allows title and description overrides', () => {
     const wrapper = mount(Exception, {
@@ -65,18 +79,29 @@ describe('Exception', () => {
       props: {
         type: 'forbidden',
         image: '/error-banner.png',
-        imageAlt: '无权限插图',
-        imageWidth: 280,
       },
     })
 
     const image = wrapper.get('.w-exception__image')
     expect(image.attributes('src')).toBe('/error-banner.png')
-    expect(image.attributes('alt')).toBe('无权限插图')
+    expect(image.attributes('alt')).toBe('无访问权限')
     expect(wrapper.find('.w-exception-illustration').exists()).toBe(false)
-    expect(wrapper.get('.w-exception__media').attributes('style')).toContain(
-      '--w-exception-image-width: 280px',
-    )
+    wrapper.unmount()
+  })
+
+  it('falls back to the illustration and emits image-error when the image fails', async () => {
+    const wrapper = mount(Exception, {
+      props: { type: 'serverError', image: '/broken.png' },
+    })
+
+    await wrapper.get('.w-exception__image').trigger('error')
+
+    expect(wrapper.emitted('image-error')?.[0]?.[0]).toBe('/broken.png')
+    expect(wrapper.find('.w-exception__image').exists()).toBe(false)
+    expect(wrapper.find('.w-exception-illustration').exists()).toBe(true)
+
+    await wrapper.setProps({ image: '/recovered.png' })
+    expect(wrapper.get('.w-exception__image').attributes('src')).toBe('/recovered.png')
     wrapper.unmount()
   })
 

@@ -41,7 +41,7 @@ export function useControllableState<T>(
     return options.normalize ? options.normalize(controlled) : controlled
   })
 
-  function setValue(next: T): void {
+  function setValue(next: T) {
     const normalized = options.normalize ? options.normalize(next) : next
     if (normalized === value.value) return
 

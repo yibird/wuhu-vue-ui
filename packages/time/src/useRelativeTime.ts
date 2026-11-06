@@ -1,4 +1,3 @@
-import { useIntervalFn } from '@wuhu-vue-ui/core'
 import {
   computed,
   getCurrentInstance,
@@ -13,6 +12,7 @@ import {
 import type { ComputedRef, MaybeRef, MaybeRefOrGetter } from 'vue'
 import { formatRelativeTime, toDate } from './relative'
 import type { TimeInput } from './relative'
+import { subscribeTick } from './tick'
 
 export interface UseRelativeTimeOptions {
   /** The date to display. Accepts Date, ISO string, timestamp in ms, or null. */
@@ -23,7 +23,12 @@ export interface UseRelativeTimeOptions {
   numeric?: MaybeRefOrGetter<Intl.RelativeTimeFormatNumeric | undefined>
   /** Relative format length. */
   style?: MaybeRefOrGetter<Intl.RelativeTimeFormatStyle | undefined>
-  /** Override the "now" source. Auto refresh is disabled while it yields a value. */
+  /**
+   * Override the "now" source. Auto refresh is disabled while it yields a
+   * value. A function is only re-read when its reactive dependencies change
+   * or `refresh()` is called; mutations to plain external variables are not
+   * observed.
+   */
   now?: MaybeRefOrGetter<TimeInput | (() => TimeInput)>
   /** Refresh interval in milliseconds. Set to 0 to disable auto refresh. */
   refreshInterval?: MaybeRefOrGetter<number | undefined>
@@ -100,13 +105,11 @@ export function useRelativeTime(options: UseRelativeTimeOptions): UseRelativeTim
     options.onRefresh?.(new Date(nowMs.value))
   }
 
-  const intervalFn = useIntervalFn(
-    refresh,
-    () => toValue(options.refreshInterval) ?? DEFAULT_REFRESH_INTERVAL,
-  )
+  let unsubscribeTick: (() => void) | undefined
 
   function stopTimer() {
-    intervalFn.stop()
+    unsubscribeTick?.()
+    unsubscribeTick = undefined
   }
 
   function startTimer() {
@@ -116,7 +119,11 @@ export function useRelativeTime(options: UseRelativeTimeOptions): UseRelativeTim
     if (interval <= 0 || typeof window === 'undefined') return
     if (options.now !== undefined && resolveNowSource() !== undefined) return
 
-    intervalFn.start()
+    // All instances sharing an interval reuse one timer from `subscribeTick`.
+    unsubscribeTick = subscribeTick(interval, (value) => {
+      nowMs.value = value
+      options.onRefresh?.(new Date(value))
+    })
   }
 
   const hasScope = Boolean(getCurrentScope())

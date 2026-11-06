@@ -5,10 +5,6 @@ import { printUrl } from '../core/print'
 import { toRendererError } from '../core/errors'
 import type { FileViewerRendererProps } from '../types'
 
-defineOptions({
-  name: 'WFileViewerPdfRenderer',
-})
-
 const props = defineProps<FileViewerRendererProps>()
 
 /**
@@ -135,7 +131,7 @@ function emitReady(
     paged: boolean
     print: boolean
   },
-): void {
+) {
   readyEmitted = true
   emit('ready', { pageCount: pageTotal, capabilities })
 }
@@ -251,6 +247,11 @@ async function renderTextLayer(
   container.appendChild(fragment)
 }
 
+/**
+ * Renders one PDF page at a time on the main thread. Only the active page is
+ * decoded/drawn, so cost scales with page complexity rather than total page
+ * count. Worker parsing remains a future optimization.
+ */
 async function renderPage(): Promise<void> {
   const document = pdfDocument.value
   if (!document || nativeMode.value || passwordRequired.value) return
@@ -304,7 +305,7 @@ async function renderPage(): Promise<void> {
   }
 }
 
-function submitPassword(): void {
+function submitPassword() {
   passwordIncorrect.value = false
   void load()
 }

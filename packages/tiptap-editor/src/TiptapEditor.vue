@@ -5,6 +5,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import EditorToolbar from './EditorToolbar.vue'
 import { createTiptapExtensions } from './extensions'
 import { defaultTiptapEditorLabels } from './labels'
+import { lockBodyScroll, unlockBodyScroll } from './scrollLock'
 import type {
   TiptapEditorEmits,
   TiptapEditorExpose,
@@ -12,8 +13,6 @@ import type {
   TiptapEditorSize,
   TiptapEditorSlots,
 } from './types'
-
-defineOptions({ name: 'WTiptapEditor' })
 
 const props = withDefaults(defineProps<TiptapEditorProps>(), {
   modelValue: '',
@@ -44,8 +43,7 @@ const stats = ref({ characters: 0, words: 0 })
 const uploadingCount = ref(0)
 const dragging = ref(false)
 
-let previousBodyOverflow = ''
-let bodyOverflowLocked = false
+let bodyLocked = false
 let disposed = false
 let statsTimer: ReturnType<typeof setTimeout> | undefined
 let wordSegmenter: Intl.Segmenter | null = null
@@ -135,14 +133,35 @@ function imageFilesFrom(
   return list.filter((file) => file.type.startsWith('image/'))
 }
 
+interface PositionMapping {
+  map: (position: number, assoc?: number) => number
+}
+
 async function insertImageFiles(files: File[], position?: number): Promise<void> {
   if (!files.length) return
 
+  const instance = editor.value
+  const mappings: PositionMapping[] = []
+  const trackPosition = typeof position === 'number' && instance
+  const onTransaction = ({
+    transaction,
+  }: {
+    transaction: { docChanged: boolean; mapping: PositionMapping }
+  }) => {
+    if (transaction.docChanged) mappings.push(transaction.mapping)
+  }
+
+  if (trackPosition) instance.on('transaction', onTransaction)
+
   const results: PromiseSettledResult<string>[] = []
-  // Keep uploads bounded so dropping a large batch does not saturate the network.
-  for (let index = 0; index < files.length; index += 3) {
-    const batch = files.slice(index, index + 3)
-    results.push(...(await Promise.allSettled(batch.map((file) => runUpload(file)))))
+  try {
+    // Keep uploads bounded so dropping a large batch does not saturate the network.
+    for (let index = 0; index < files.length; index += 3) {
+      const batch = files.slice(index, index + 3)
+      results.push(...(await Promise.allSettled(batch.map((file) => runUpload(file)))))
+    }
+  } finally {
+    if (trackPosition) instance.off('transaction', onTransaction)
   }
   if (disposed) return
 
@@ -156,18 +175,22 @@ async function insertImageFiles(files: File[], position?: number): Promise<void>
     }
   })
 
-  const instance = editor.value
   if (!instance || instance.isDestroyed || !nodes.length) return
 
   const content = nodes.length === 1 ? nodes[0]! : nodes
   if (typeof position === 'number') {
-    instance.chain().focus().insertContentAt(position, content).run()
+    // Map the original paste/drop position through every edit made while the
+    // uploads were running instead of inserting at a stale offset.
+    let target = position
+    for (const mapping of mappings) target = mapping.map(target, 1)
+    target = Math.min(Math.max(target, 0), instance.state.doc.content.size)
+    instance.chain().focus().insertContentAt(target, content).run()
   } else {
     instance.chain().focus().insertContent(content).run()
   }
 }
 
-function handleImageError(error: Error, file: File | null): void {
+function handleImageError(error: Error, file: File | null) {
   if (file) emit('image-upload-error', error, file)
 }
 
@@ -183,13 +206,13 @@ function countWords(text: string): number {
   }
 }
 
-function updateStats(instance: CoreEditor | undefined = editor.value): void {
+function updateStats(instance: CoreEditor | undefined = editor.value) {
   if (!instance) return
   const text = instance.getText({ blockSeparator: '\n' })
   stats.value = { characters: text.length, words: countWords(text) }
 }
 
-function scheduleStats(instance: CoreEditor): void {
+function scheduleStats(instance: CoreEditor) {
   if (statsTimer) clearTimeout(statsTimer)
   statsTimer = setTimeout(() => {
     statsTimer = undefined
@@ -197,18 +220,18 @@ function scheduleStats(instance: CoreEditor): void {
   }, 120)
 }
 
-function syncAria(): void {
+function syncAria() {
   const dom = editor.value?.view.dom
   if (!dom) return
   dom.setAttribute('aria-disabled', String(props.disabled))
   dom.setAttribute('aria-readonly', String(!props.editable))
 }
 
-function toggleFullscreen(): void {
+function toggleFullscreen() {
   fullscreen.value = !fullscreen.value
 }
 
-function handleWindowKeydown(event: KeyboardEvent): void {
+function handleWindowKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape' && fullscreen.value) {
     fullscreen.value = false
   }
@@ -218,25 +241,25 @@ function hasImageFiles(event: DragEvent): boolean {
   return Array.from(event.dataTransfer?.types ?? []).includes('Files')
 }
 
-function onDragEnter(event: DragEvent): void {
+function onDragEnter(event: DragEvent) {
   if (!editable.value || !hasImageFiles(event)) return
   event.preventDefault()
   dragging.value = true
 }
 
-function onDragOver(event: DragEvent): void {
+function onDragOver(event: DragEvent) {
   if (!editable.value || !hasImageFiles(event)) return
   event.preventDefault()
   dragging.value = true
 }
 
-function onDragLeave(event: DragEvent): void {
+function onDragLeave(event: DragEvent) {
   const current = event.currentTarget as HTMLElement | null
   const next = event.relatedTarget as Node | null
   if (!current || !next || !current.contains(next)) dragging.value = false
 }
 
-function onDropEnd(): void {
+function onDropEnd() {
   dragging.value = false
 }
 
@@ -256,7 +279,7 @@ const editor = useEditor({
       if (!files.length) return false
 
       event.preventDefault()
-      void insertImageFiles(files, view.state.selection.from)
+      insertImageFiles(files, view.state.selection.from)
       return true
     },
     handleDrop(view, event, _slice, moved) {
@@ -267,7 +290,7 @@ const editor = useEditor({
 
       event.preventDefault()
       const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
-      void insertImageFiles(files, coordinates?.pos)
+      insertImageFiles(files, coordinates?.pos)
       return true
     },
   },
@@ -316,17 +339,13 @@ watch(ariaLabel, (value) => {
 watch(fullscreen, (value) => {
   if (typeof document === 'undefined') return
 
-  if (value) {
-    if (bodyOverflowLocked) return
-    previousBodyOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    bodyOverflowLocked = true
-    return
+  if (value && !bodyLocked) {
+    lockBodyScroll()
+    bodyLocked = true
+  } else if (!value && bodyLocked) {
+    unlockBodyScroll()
+    bodyLocked = false
   }
-
-  if (!bodyOverflowLocked) return
-  document.body.style.overflow = previousBodyOverflow
-  bodyOverflowLocked = false
 })
 
 onMounted(() => {
@@ -339,9 +358,9 @@ onBeforeUnmount(() => {
   if (statsTimer) clearTimeout(statsTimer)
   statsTimer = undefined
   window.removeEventListener('keydown', handleWindowKeydown)
-  if (typeof document !== 'undefined' && bodyOverflowLocked) {
-    document.body.style.overflow = previousBodyOverflow
-    bodyOverflowLocked = false
+  if (bodyLocked) {
+    unlockBodyScroll()
+    bodyLocked = false
   }
 })
 

@@ -26,14 +26,14 @@ const animationLabels: Record<LoadingAnimation, string> = {
   spinner: 'Spinner',
 }
 
-function showFull(): void {
+function showFull() {
   fullOpen.value = true
   window.setTimeout(() => {
     fullOpen.value = false
   }, 1600)
 }
 
-function showImperative(): void {
+function showImperative() {
   imperative.value?.destroy()
   imperative.value = createLoading({
     animation: animation.value,
@@ -43,7 +43,7 @@ function showImperative(): void {
   window.setTimeout(() => imperative.value?.close(), 1600)
 }
 
-function destroyImperative(): void {
+function destroyImperative() {
   imperative.value?.destroy()
   imperative.value = null
 }

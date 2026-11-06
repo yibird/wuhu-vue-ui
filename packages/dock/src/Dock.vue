@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { usePrefersReducedMotion, useRaf } from '@wuhu-vue-ui/core'
+import { useRaf } from '@wuhu-vue-ui/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
 import type { DockItem, DockProps, DockSlots } from './types'
-
-defineOptions({
-  name: 'WDock',
-})
 
 const props = withDefaults(defineProps<DockProps>(), {
   position: 'bottom',
@@ -23,10 +19,17 @@ const emit = defineEmits<{
 
 defineSlots<DockSlots>()
 
+const rootRef = ref<HTMLElement>()
 const itemRefs = ref<(HTMLElement | null)[]>([])
 const scales = ref<number[]>([])
 const activeIndex = ref(-1)
-const reducedMotion = usePrefersReducedMotion()
+
+/**
+ * Item centers relative to the dock root. Cached because pointer frames only
+ * need the root rect plus these numbers; items themselves are not re-measured.
+ */
+let itemCenters: number[] | null = null
+let resizeObserver: ResizeObserver | undefined
 
 const items = computed(() => props.model ?? [])
 const isHorizontal = computed(() => props.position === 'bottom' || props.position === 'top')
@@ -60,11 +63,11 @@ function componentIcon(item: DockItem): DockItem['icon'] {
   return typeof item.icon === 'string' ? undefined : item.icon
 }
 
-function setItemRef(el: Element | ComponentPublicInstance | null, index: number): void {
+function setItemRef(el: Element | ComponentPublicInstance | null, index: number) {
   itemRefs.value[index] = el instanceof HTMLElement ? el : null
 }
 
-function resetScales(): void {
+function resetScales() {
   scales.value = items.value.map(() => 1)
 }
 
@@ -74,8 +77,8 @@ const pointerRaf = useRaf(() => {
   if (pendingPointer) applyPointer(pendingPointer.x, pendingPointer.y)
 })
 
-function onPointerMove(event: PointerEvent): void {
-  if (!props.magnification || reducedMotion.value) return
+function onPointerMove(event: PointerEvent) {
+  if (!props.magnification) return
 
   pendingPointer = { x: event.clientX, y: event.clientY }
 
@@ -87,20 +90,47 @@ function onPointerMove(event: PointerEvent): void {
   pointerRaf.schedule()
 }
 
-function applyPointer(clientX: number, clientY: number): void {
+function invalidateItemCenters() {
+  itemCenters = null
+}
+
+function measureItemCenters(): number[] | null {
+  const root = rootRef.value
+  if (!root) return null
+
+  const rootRect = root.getBoundingClientRect()
   const horizontal = isHorizontal.value
-  const pointer = horizontal ? clientX : clientY
+
+  itemCenters = items.value.map((_, index) => {
+    const element = itemRefs.value[index]
+    if (!element) return Number.NaN
+    const rect = element.getBoundingClientRect()
+    return horizontal
+      ? rect.left - rootRect.left + rect.width / 2
+      : rect.top - rootRect.top + rect.height / 2
+  })
+  return itemCenters
+}
+
+function applyPointer(clientX: number, clientY: number) {
+  const root = rootRef.value
+  if (!root) return
+
+  const centers = itemCenters ?? measureItemCenters()
+  if (!centers) return
+
+  const horizontal = isHorizontal.value
+  const rootRect = root.getBoundingClientRect()
+  const pointer = horizontal ? clientX - rootRect.left : clientY - rootRect.top
   // Influence radius: neighbouring items start growing before the pointer reaches them.
   const radius = Math.max(props.baseSize * 2.5, 1)
   const next = items.value.map(() => 1)
 
   items.value.forEach((item, index) => {
     if (item.separator || item.disabled) return
-    const element = itemRefs.value[index]
-    if (!element) return
+    const center = centers[index]
+    if (!Number.isFinite(center)) return
 
-    const rect = element.getBoundingClientRect()
-    const center = horizontal ? rect.left + rect.width / 2 : rect.top + rect.height / 2
     const distance = Math.abs(pointer - center)
     const ratio = Math.max(0, 1 - distance / radius)
     // Smoothstep keeps the falloff soft around the edges.
@@ -113,19 +143,19 @@ function applyPointer(clientX: number, clientY: number): void {
   }
 }
 
-function onPointerLeave(): void {
+function onPointerLeave() {
   pointerRaf.cancel()
   pendingPointer = null
   resetScales()
   activeIndex.value = -1
 }
 
-function navigate(item: DockItem): void {
+function navigate(item: DockItem) {
   if (!item.url || typeof window === 'undefined') return
   window.open(item.url, item.target ?? '_self', 'noopener,noreferrer')
 }
 
-function activate(item: DockItem | undefined, index: number, event: Event): void {
+function activate(item: DockItem | undefined, index: number, event: Event) {
   if (!item || item.disabled || item.separator) return
 
   activeIndex.value = index
@@ -139,26 +169,41 @@ function activate(item: DockItem | undefined, index: number, event: Event): void
   emit('select', item, event)
 }
 
-watch(reducedMotion, (value) => {
-  if (value) resetScales()
-})
+watch(
+  () => [props.model, props.position, props.baseSize, props.gap],
+  () => invalidateItemCenters(),
+)
 
 onMounted(() => {
   resetScales()
+
+  if (typeof ResizeObserver !== 'undefined' && rootRef.value) {
+    resizeObserver = new ResizeObserver(invalidateItemCenters)
+    resizeObserver.observe(rootRef.value)
+  } else if (typeof window !== 'undefined') {
+    window.addEventListener('resize', invalidateItemCenters)
+  }
 })
 
 onBeforeUnmount(() => {
   pointerRaf.cancel()
   pendingPointer = null
+  resizeObserver?.disconnect()
+  resizeObserver = undefined
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', invalidateItemCenters)
+  }
 })
 </script>
 
 <template>
   <ul
+    ref="rootRef"
     class="w-dock"
     :class="`w-dock--${position}`"
     :aria-label="ariaLabel"
     :style="rootStyle"
+    @pointerenter="invalidateItemCenters"
     @pointermove="onPointerMove"
     @pointerleave="onPointerLeave"
   >

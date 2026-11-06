@@ -61,6 +61,9 @@ export interface CommandMenuItem {
   disabled?: boolean
 }
 
+/** Custom matcher invoked with the normalized (trimmed, lowercased) query. */
+export type CommandMenuFilter = (item: CommandMenuItem, query: string) => boolean
+
 export interface CommandMenuProps {
   /** Commands to display. The array is never mutated. */
   items: CommandMenuItem[]
@@ -74,6 +77,12 @@ export interface CommandMenuProps {
   autoFocus?: boolean
   /** Filter items as the user types. When false, every item stays visible. */
   filterable?: boolean
+  /**
+   * Custom matcher for the normalized (trimmed, lowercased) query. Return
+   * `true` to keep the item. When omitted, the label, description and keywords
+   * are matched with case-insensitive substring search.
+   */
+  filter?: CommandMenuFilter
   /** Disable search, navigation and selection. */
   disabled?: boolean
   /**

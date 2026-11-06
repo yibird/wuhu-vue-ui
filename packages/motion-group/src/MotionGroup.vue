@@ -3,7 +3,6 @@ import { computed, useAttrs } from 'vue'
 import type { MotionGroupProps } from './types'
 
 defineOptions({
-  name: 'WMotionGroup',
   inheritAttrs: false,
 })
 
@@ -65,12 +64,20 @@ const savedLeaveStyles = new WeakMap<HTMLElement, SavedInlineStyle>()
 /**
  * Finds the element that establishes the containing block for an absolutely
  * positioned child: a non-static position, or a transform/filter/perspective
- * or paint containment.
+ * or paint containment. Results are cached per parent so removing many items
+ * at once does not repeat the ancestor style scan for every sibling.
  */
+const containingBlockCache = new WeakMap<HTMLElement, HTMLElement>()
+
 function getContainingBlock(element: HTMLElement): HTMLElement {
   const doc = element.ownerDocument
-  let parent = element.parentElement
+  const start = element.parentElement
+  if (!start) return doc.documentElement
 
+  const cached = containingBlockCache.get(start)
+  if (cached) return cached
+
+  let parent: HTMLElement | null = start
   while (parent && parent !== doc.documentElement) {
     const style = getComputedStyle(parent)
     if (
@@ -80,11 +87,13 @@ function getContainingBlock(element: HTMLElement): HTMLElement {
       style.perspective !== 'none' ||
       (style.contain !== '' && style.contain !== 'none')
     ) {
+      containingBlockCache.set(start, parent)
       return parent
     }
     parent = parent.parentElement
   }
 
+  containingBlockCache.set(start, doc.documentElement)
   return doc.documentElement
 }
 
@@ -99,7 +108,7 @@ function toPixels(value: string): number {
  * `top` (vertical lists) or width (grids), so every leaving item stacks at the
  * origin / stretches across the whole list.
  */
-function handleBeforeLeave(element: Element): void {
+function handleBeforeLeave(element: Element) {
   if (!props.absoluteLeave || props.disabled || !(element instanceof HTMLElement)) {
     return
   }
@@ -144,7 +153,7 @@ function handleBeforeLeave(element: Element): void {
  * Restores any inline positioning if a leave transition is cancelled because
  * the item is re-inserted before it finished leaving.
  */
-function handleBeforeEnter(element: Element): void {
+function handleBeforeEnter(element: Element) {
   if (!(element instanceof HTMLElement)) return
 
   const saved = savedLeaveStyles.get(element)

@@ -29,6 +29,7 @@ const routes = [
   'img-comparison-slider',
   'slider-captcha',
   'command-menu',
+  'context-menu',
   'cropper',
   'motion-group',
   'gantt',

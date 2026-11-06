@@ -9,10 +9,6 @@ import type {
 import { formatJsonValue } from './json'
 import type { JsonViewerErrorSlotProps, JsonViewerExpose, JsonViewerProps } from './types'
 
-defineOptions({
-  name: 'WJsonViewer',
-})
-
 const props = withDefaults(defineProps<JsonViewerProps>(), {
   height: '320px',
   width: '100%',

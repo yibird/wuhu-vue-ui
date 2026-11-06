@@ -19,8 +19,10 @@ export interface ResizeContainerResizeEvent {
   entry: ResizeObserverEntry | null
 }
 
-export interface ResizeContainerSlotProps {
+export interface ResizeContainerSize {
   width: number
   height: number
   entry: ResizeObserverEntry | null
 }
+
+export type ResizeContainerSlotProps = ResizeContainerSize

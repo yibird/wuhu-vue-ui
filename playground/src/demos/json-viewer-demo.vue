@@ -7,7 +7,7 @@ import DemoCard from '../components/demo-card.vue'
 const value = ref({
   id: 'wuhu-001',
   name: 'Wuhu Vue UI',
-  version: '0.1.0',
+  version: '0.0.1',
   features: ['scrollbar', 'command-menu', 'gantt', 'json-viewer'],
   meta: {
     stars: 1286,
@@ -20,11 +20,11 @@ const theme = ref('vs')
 const indent = ref(2)
 const jsonString = '{"service":"gateway","healthy":true}'
 
-function toggleTheme(): void {
+function toggleTheme() {
   theme.value = theme.value === 'vs' ? 'vs-dark' : 'vs'
 }
 
-function refresh(): void {
+function refresh() {
   value.value = {
     ...value.value,
     meta: {

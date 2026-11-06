@@ -12,11 +12,13 @@
 
 实时切换动画开关、时长与方向，观察背景流动效果的变化。
 
+> 渐变流动通过 `background-position` 实现，会持续触发重绘。普通标题场景开销可接受；大量实例同时动画时建议关闭 `animate` 或减少动画元素数量。
+
 <demo vue="../demos/gradient-text/animation.vue" />
 
 ## 径向渐变
 
-`type="radial"`，适合强调数字、状态或徽章。
+`type="radial"`，适合强调数字、状态或徽章。径向渐变不使用 `angle`。
 
 <demo vue="../demos/gradient-text/radial.vue" />
 

@@ -1,9 +1,15 @@
-import { flushPromises, mount } from '@vue/test-utils'
-import { h, nextTick } from 'vue'
+import { config, flushPromises, mount } from '@vue/test-utils'
+import { h, isReadonly, nextTick } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import Loading from '../Loading.vue'
 import { createLoading, destroyAllLoadings, destroyLoading } from '../hooks/createLoading'
 import { useLoading } from '../hooks/useLoading'
+
+// Keep real transitions: the default transition stub never emits `after-leave`,
+// which is the hook the imperative instances rely on for teardown. The stubbing
+// transformer is installed globally by test-utils and would also apply to the
+// apps created by `createLoading`.
+config.global.stubs = { transition: false }
 
 afterEach(() => {
   destroyAllLoadings()
@@ -103,6 +109,16 @@ describe('Loading', () => {
     )
     expect(root.style.getPropertyValue('--w-loading-primary')).toBe(
       'var(--w-color-primary, #4f46e5)',
+    )
+    wrapper.unmount()
+  })
+
+  it('keeps a single color stop as a real gradient', () => {
+    const wrapper = mount(Loading, { props: { gradient: ['#111111'] } })
+    const root = wrapper.get('.w-loading').element as HTMLElement
+
+    expect(root.style.getPropertyValue('--w-loading-gradient')).toBe(
+      'linear-gradient(135deg, #111111, #111111)',
     )
     wrapper.unmount()
   })
@@ -211,6 +227,7 @@ describe('useLoading', () => {
   it('opens, closes and toggles visibility', () => {
     const { visible, open, close, toggle } = useLoading()
 
+    expect(isReadonly(visible)).toBe(true)
     expect(visible.value).toBe(false)
     open()
     expect(visible.value).toBe(true)
@@ -223,10 +240,29 @@ describe('useLoading', () => {
   })
 })
 
+/**
+ * Renders the closed state, runs Vue's double-rAF leave transition and flushes
+ * the teardown tick. jsdom's own rAF clock is not driven by fake timers, so the
+ * frame callbacks are bridged onto the fake timer queue.
+ */
+async function settleTransition() {
+  vi.useFakeTimers()
+  const raf = vi
+    .spyOn(window, 'requestAnimationFrame')
+    .mockImplementation((callback: FrameRequestCallback) => {
+      setTimeout(() => callback(0), 0)
+      return 1
+    })
+  await nextTick()
+  vi.advanceTimersByTime(500)
+  raf.mockRestore()
+  vi.useRealTimers()
+  await nextTick()
+  await flushPromises()
+}
+
 describe('imperative loading', () => {
   it('creates, updates and closes an instance', async () => {
-    vi.useFakeTimers()
-
     const instance = createLoading({ title: '正在保存' })
     await nextTick()
     await flushPromises()
@@ -238,12 +274,63 @@ describe('imperative loading', () => {
     expect(document.body.querySelector('.w-loading__title')?.textContent).toBe('即将完成')
 
     instance.close()
-    await nextTick()
-    vi.advanceTimersByTime(250)
-    await flushPromises()
+    await settleTransition()
 
     expect(document.body.querySelector('[data-w-loading]')).toBeNull()
     expect(document.body.querySelector('.w-loading')).toBeNull()
+  })
+
+  it('cancels pending destruction when reopened', async () => {
+    const instance = createLoading({ title: '再打开' })
+    await nextTick()
+    instance.close()
+    instance.update({ open: true })
+    await settleTransition()
+
+    expect(document.body.querySelector('[data-w-loading]')).not.toBeNull()
+    expect(document.body.querySelector('.w-loading')).not.toBeNull()
+
+    instance.close()
+    await settleTransition()
+    expect(document.body.querySelector('[data-w-loading]')).toBeNull()
+  })
+
+  it('destroys even when onClose throws', async () => {
+    const instance = createLoading({
+      onClose: () => {
+        throw new Error('close failed')
+      },
+    })
+    await nextTick()
+
+    expect(() => instance.close()).toThrow('close failed')
+    await settleTransition()
+    expect(document.body.querySelector('[data-w-loading]')).toBeNull()
+  })
+
+  it('closes and destroys an instance that never opened', async () => {
+    const instance = createLoading({ open: false })
+    await nextTick()
+    expect(document.body.querySelector('.w-loading')).toBeNull()
+
+    instance.close()
+    await settleTransition()
+
+    expect(document.body.querySelector('[data-w-loading]')).toBeNull()
+    expect(() => instance.update({ title: 'ignored' })).not.toThrow()
+  })
+
+  it('makes destroy idempotent', async () => {
+    const instance = createLoading()
+    await nextTick()
+
+    instance.destroy()
+    instance.destroy()
+    instance.close()
+    instance.update({ title: 'ignored' })
+    await settleTransition()
+
+    expect(document.body.querySelector('[data-w-loading]')).toBeNull()
   })
 
   it('destroys a specific instance and all instances', async () => {

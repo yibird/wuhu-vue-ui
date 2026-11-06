@@ -75,34 +75,4 @@
     overflow-wrap: anywhere;
     pointer-events: none;
   }
-
-  &__tooltip--top {
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &__tooltip--bottom {
-    top: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &__tooltip--left {
-    top: 50%;
-    right: calc(100% + 6px);
-    transform: translateY(-50%);
-  }
-
-  &__tooltip--right {
-    top: 50%;
-    left: calc(100% + 6px);
-    transform: translateY(-50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-ellipsis__action {
-    transition: none;
-  }
 }

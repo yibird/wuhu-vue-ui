@@ -4,10 +4,6 @@ import { formatDateTime } from './relative'
 import { useRelativeTime } from './useRelativeTime'
 import type { TimeProps, TimeSlotProps } from './types'
 
-defineOptions({
-  name: 'WTime',
-})
-
 const props = withDefaults(defineProps<TimeProps>(), {
   locale: 'zh-CN',
   numeric: 'auto',
@@ -15,7 +11,6 @@ const props = withDefaults(defineProps<TimeProps>(), {
   refreshInterval: 30_000,
   showTitle: true,
   emptyText: '--',
-  tag: 'time',
 })
 
 const emit = defineEmits<{
@@ -67,13 +62,7 @@ defineExpose({
 </script>
 
 <template>
-  <component
-    :is="tag"
-    class="w-time"
-    :class="{ 'is-empty': !date }"
-    :datetime="tag === 'time' ? datetime : undefined"
-    :title="title"
-  >
+  <time class="w-time" :class="{ 'is-empty': !date }" :datetime="datetime" :title="title">
     <slot v-bind="slotProps">{{ relative }}</slot>
-  </component>
+  </time>
 </template>

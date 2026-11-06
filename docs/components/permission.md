@@ -2,6 +2,10 @@
 
 基于 provide / inject 的权限守卫，支持 `all` / `any` 校验、显式权限列表与指令式隐藏。
 
+::: warning 只控制界面，不是鉴权
+`Permission` 与 `v-permission` 只决定客户端是否渲染或显示元素，属于 UI 层控制。用户仍可以直接调用接口或修改本地状态，因此服务端必须对每个受保护操作独立做权限校验。
+:::
+
 ## 基础用法
 
 `Permission` 仅在具备所需权限时渲染默认插槽，否则渲染 `fallback` 插槽。组件默认 fail-closed：没有注入上下文且未传 `permissions` 时拒绝渲染。
@@ -25,6 +29,10 @@ providePermissions(permissions)
 - `mode="all"`（默认）：`value` 中的所有权限都必须具备。
 - `mode="any"`：具备任意一个权限即可。
 - `value` 为空数组时按集合语义处理：`all` 模式空列表视为全部满足（渲染默认插槽），`any` 模式视为无匹配（渲染 `fallback`）。没有提供者时始终拒绝。
+
+::: tip 空列表不是“无权限”
+`all` 的空列表满足是集合论上的“空真”，用于让动态生成的权限列表在为空时保持可用。如果业务要求“未声明权限就拒绝”，请在调用前显式判断 `value.length > 0`，或始终传入至少一个权限。
+:::
 
 ```vue
 <Permission :value="['user:read', 'user:write']">

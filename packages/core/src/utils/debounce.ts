@@ -1,4 +1,4 @@
-import type { AnyFunction } from './types'
+import type { AnyFunction } from '../types'
 
 export interface DebounceOptions {
   /** Invoke on the leading edge of the wait period. Defaults to false. */
@@ -60,8 +60,6 @@ export function debounce<T extends AnyFunction>(
   }
 
   function leadingEdge() {
-    // Create the timer before invoking so that reentrant calls made from the
-    // callback observe an active debounce window.
     timer = setTimeout(timerExpired, wait)
     return leading ? invokeFunc() : result
   }

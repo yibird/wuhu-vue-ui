@@ -5,5 +5,6 @@ export type {
   ResizeBox,
   ResizeContainerProps,
   ResizeContainerResizeEvent,
+  ResizeContainerSize,
   ResizeContainerSlotProps,
 } from './src/types'

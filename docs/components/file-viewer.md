@@ -18,7 +18,7 @@ Office、PDF、EPUB、图片、音视频、Markdown、代码与压缩包统一�
 
 `themeVars` 可在实例级覆盖品牌色与圆角。
 
-`theme="auto"`（默认）会优先跟随应用根节点显式设置的 `data-w-theme="light" | "dark"`，未设置时回退到 `prefers-color-scheme`。组件同时支持 `.is-dark`、`[data-w-theme='dark']` 与系统深色三种暗色令牌入口。
+`theme="auto"`（默认）会在初始化或 `theme` prop 重新应用时读取应用根节点的 `data-w-theme="light" | "dark"`，未设置时回退到 `prefers-color-scheme`；组件不监听后续主题变化。暗色样式同时支持 `.is-dark` 与 `[data-w-theme='dark']` 选择器。
 
 <demo vue="../demos/file-viewer/theme.vue" />
 
@@ -45,6 +45,17 @@ PDF 使用 pdf.js 渲染，支持文本层、页码、缩放与旋转；也可�
 Word、Excel、PowerPoint 在浏览器内解析，`options.office` 可控制纸张、页数上限、网格与工作表标签。
 
 <demo vue="../demos/file-viewer/office.vue" />
+
+### 大文件与主线程
+
+docx / xlsx / pptx 以及 PDF 页面解析目前都在**主线程**完成，没有独立的 Web Worker。解析成本受以下选项约束：
+
+- `options.office.maxPages`：限制生成的文档页、幻灯片与工作表数量（默认 300）。
+- `options.office.maxRows` / `maxColumns`：限制表格解析的行数与列数（默认 5000 / 200）。
+- `options.pdf.documentOptions` 与渲染器的分页逻辑：每次只渲染当前页，避免一次性绘制全部页面。
+- `options.text.maxBytes`、`options.csv.maxBytes`：文本类内容按字节截断。
+
+大文件仍可能造成可感知的卡顿或长时间占用主线程。对体积不可控的文件，建议在业务侧先做大小校验、降低上限，或在预览前提示用户。基于 Worker 的异步解析是后续优化方向，目前未实现。
 
 ## 文本、代码、CSV 与字幕
 
@@ -80,61 +91,65 @@ ZIP、TAR 会展示目录结构，文本和图片条目可以直接在组件内�
 
 ### Props
 
-| 属性               | 类型                                                           | 默认值    | 说明                                                  |
-| ------------------ | -------------------------------------------------------------- | --------- | ----------------------------------------------------- |
-| `src`              | `string`                                                       | `''`      | 远程 URL 或 data URL                                  |
-| `file`             | `File \| Blob \| null`                                         | `null`    | 本地文件 / Blob，优先于 `src`                         |
-| `name`             | `string`                                                       | `''`      | 覆盖显示名与格式检测名                                |
-| `type`             | `string`                                                       | `''`      | 覆盖 MIME 类型                                        |
-| `size`             | `number`                                                       | —         | 覆盖文件字节大小                                      |
-| `options`          | `FileViewerOptions`                                            | `{}`      | PDF / Office / 文本 / CSV / 图片 / 压缩包等渲染器选项 |
-| `locale`           | `string`                                                       | `'en'`    | UI 语言，内置 `en`、`zh-CN`                           |
-| `messages`         | `FileViewerMessagesInput`                                      | `{}`      | 语言文案深度局部覆盖                                  |
-| `title`            | `string`                                                       | `''`      | 工具栏标题，默认文件名                                |
-| `width`            | `string \| number`                                             | `'100%'`  | 组件宽度                                              |
-| `height`           | `string \| number`                                             | `'600px'` | 组件高度                                              |
-| `theme`            | `'light' \| 'dark' \| 'auto'`                                  | `'auto'`  | 主题；`auto` 跟随应用 `data-w-theme` 或系统偏好       |
-| `themeVars`        | `Record<string, string>`                                       | `{}`      | CSS 变量覆盖                                          |
-| `showToolbar`      | `boolean`                                                      | `true`    | 显示工具栏                                            |
-| `showStatusBar`    | `boolean`                                                      | `true`    | 显示底部状态栏                                        |
-| `showFileInfo`     | `boolean`                                                      | `true`    | 显示文件信息                                          |
-| `showThemeToggle`  | `boolean`                                                      | `true`    | 显示主题切换按钮                                      |
-| `allowDownload`    | `boolean`                                                      | `true`    | 允许下载                                              |
-| `allowPrint`       | `boolean`                                                      | `true`    | 允许打印                                              |
-| `allowOpen`        | `boolean`                                                      | `true`    | 允许新标签页打开                                      |
-| `allowFullscreen`  | `boolean`                                                      | `true`    | 允许全屏                                              |
-| `allowZoom`        | `boolean`                                                      | `true`    | 允许缩放（渲染器支持时）                              |
-| `allowRotate`      | `boolean`                                                      | `true`    | 允许旋转（渲染器支持时）                              |
-| `watermark`        | `string`                                                       | `''`      | 水印文本                                              |
-| `watermarkOptions` | `FileViewerWatermarkOptions`                                   | `{}`      | 水印透明度、字号、颜色与旋转角                        |
-| `page`             | `number`                                                       | —         | 受控当前页                                            |
-| `initialPage`      | `number`                                                       | `1`       | 非受控初始页                                          |
-| `zoom`             | `number`                                                       | —         | 受控缩放，`1` = 100%                                  |
-| `initialZoom`      | `number`                                                       | `1`       | 非受控初始缩放                                        |
-| `rotation`         | `number`                                                       | —         | 受控旋转角度                                          |
-| `initialRotation`  | `number`                                                       | `0`       | 非受控初始旋转                                        |
-| `minZoom`          | `number`                                                       | `0.25`    | 最小缩放                                              |
-| `maxZoom`          | `number`                                                       | `4`       | 最大缩放                                              |
-| `zoomStep`         | `number`                                                       | `0.25`    | 缩放步长                                              |
-| `renderers`        | `Partial<Record<FileViewerKind, FileViewerRendererComponent>>` | `{}`      | 覆盖或扩展渲染器                                      |
-| `keyboard`         | `boolean`                                                      | `true`    | 启用键盘快捷键                                        |
-| `wheelZoom`        | `boolean`                                                      | `true`    | Ctrl / Cmd + 滚轮缩放                                 |
-| `ariaLabel`        | `string`                                                       | `''`      | 区域无障碍名称，默认使用标题                          |
+| 属性               | 类型                                                           | 默认值    | 说明                                                                |
+| ------------------ | -------------------------------------------------------------- | --------- | ------------------------------------------------------------------- |
+| `src`              | `string`                                                       | `''`      | 远程 URL 或 data URL                                                |
+| `file`             | `File \| Blob \| null`                                         | `null`    | 本地文件 / Blob，优先于 `src`                                       |
+| `name`             | `string`                                                       | `''`      | 覆盖显示名与格式检测名                                              |
+| `type`             | `string`                                                       | `''`      | 覆盖 MIME 类型                                                      |
+| `size`             | `number`                                                       | —         | 覆盖文件字节大小                                                    |
+| `options`          | `FileViewerOptions`                                            | `{}`      | PDF / Office / 文本 / CSV / 图片 / 压缩包等渲染器选项               |
+| `locale`           | `string`                                                       | `'en'`    | UI 语言，内置 `en`、`zh-CN`                                         |
+| `messages`         | `FileViewerMessagesInput`                                      | `{}`      | 语言文案深度局部覆盖                                                |
+| `title`            | `string`                                                       | `''`      | 工具栏标题，默认文件名                                              |
+| `width`            | `string \| number`                                             | `'100%'`  | 组件宽度                                                            |
+| `height`           | `string \| number`                                             | `'600px'` | 组件高度                                                            |
+| `theme`            | `'light' \| 'dark' \| 'auto'`                                  | `'auto'`  | 主题；`auto` 初始化时解析 `data-w-theme` 或系统偏好，不监听后续变化 |
+| `themeVars`        | `Record<string, string>`                                       | `{}`      | CSS 变量覆盖                                                        |
+| `showToolbar`      | `boolean`                                                      | `true`    | 显示工具栏                                                          |
+| `showStatusBar`    | `boolean`                                                      | `true`    | 显示底部状态栏                                                      |
+| `showFileInfo`     | `boolean`                                                      | `true`    | 显示文件信息                                                        |
+| `showThemeToggle`  | `boolean`                                                      | `true`    | 显示主题切换按钮                                                    |
+| `allowDownload`    | `boolean`                                                      | `true`    | 允许下载                                                            |
+| `allowPrint`       | `boolean`                                                      | `true`    | 允许打印                                                            |
+| `allowOpen`        | `boolean`                                                      | `true`    | 允许新标签页打开                                                    |
+| `allowFullscreen`  | `boolean`                                                      | `true`    | 允许全屏                                                            |
+| `allowZoom`        | `boolean`                                                      | `true`    | 允许缩放（渲染器支持时）                                            |
+| `allowRotate`      | `boolean`                                                      | `true`    | 允许旋转（渲染器支持时）                                            |
+| `watermark`        | `string`                                                       | `''`      | 水印文本                                                            |
+| `watermarkOptions` | `FileViewerWatermarkOptions`                                   | `{}`      | 水印透明度、字号、颜色与旋转角                                      |
+| `page`             | `number`                                                       | —         | 受控当前页                                                          |
+| `initialPage`      | `number`                                                       | `1`       | 非受控初始页                                                        |
+| `zoom`             | `number`                                                       | —         | 受控缩放，`1` = 100%                                                |
+| `initialZoom`      | `number`                                                       | `1`       | 非受控初始缩放                                                      |
+| `rotation`         | `number`                                                       | —         | 受控旋转角度                                                        |
+| `initialRotation`  | `number`                                                       | `0`       | 非受控初始旋转                                                      |
+| `minZoom`          | `number`                                                       | `0.25`    | 最小缩放                                                            |
+| `maxZoom`          | `number`                                                       | `4`       | 最大缩放                                                            |
+| `zoomStep`         | `number`                                                       | `0.25`    | 缩放步长                                                            |
+| `renderers`        | `Partial<Record<FileViewerKind, FileViewerRendererComponent>>` | `{}`      | 覆盖或扩展渲染器                                                    |
+| `keyboard`         | `boolean`                                                      | `true`    | 启用键盘快捷键                                                      |
+| `wheelZoom`        | `boolean`                                                      | `true`    | Ctrl / Cmd + 滚轮缩放                                               |
+| `ariaLabel`        | `string`                                                       | `''`      | 区域无障碍名称，默认使用标题                                        |
 
 ### Emits
 
-| 事件                          | 参数                                        | 说明                   |
-| ----------------------------- | ------------------------------------------- | ---------------------- |
-| `load`                        | `{ source, meta }`                          | 源文件创建并开始加载   |
-| `ready`                       | `{ source, meta, pageCount, capabilities }` | 渲染器就绪             |
-| `error`                       | `Error`                                     | 加载、解析或渲染错误   |
-| `update:page`                 | `page: number`                              | 当前页变化             |
-| `update:zoom`                 | `zoom: number`                              | 缩放变化               |
-| `update:rotation`             | `rotation: number`                          | 旋转变化               |
-| `update:theme`                | `light \| dark`                             | 主题变化               |
-| `fullscreen-change`           | `fullscreen: boolean`                       | 全屏状态变化           |
-| `download` / `print` / `open` | `source: FileViewerSource`                  | 下载、打印、新窗口打开 |
-| `file-drop`                   | `file: File`                                | 拖入文件               |
+| 事件                | 参数                                        | 说明                 |
+| ------------------- | ------------------------------------------- | -------------------- |
+| `load`              | `{ source, meta }`                          | 源文件创建并开始加载 |
+| `ready`             | `{ source, meta, pageCount, capabilities }` | 渲染器就绪           |
+| `error`             | `Error`                                     | 加载、解析或渲染错误 |
+| `update:page`       | `page: number`                              | 当前页变化           |
+| `update:zoom`       | `zoom: number`                              | 缩放变化             |
+| `update:rotation`   | `rotation: number`                          | 旋转变化             |
+| `update:theme`      | `light \| dark`                             | 主题变化             |
+| `fullscreen-change` | `fullscreen: boolean`                       | 全屏状态变化         |
+| `download`          | `source: FileViewerSource`                  | 文件已实际触发保存   |
+| `open`              | `source: FileViewerSource`                  | 在新标签页打开文件   |
+| `print`             | `source: FileViewerSource`                  | 打印文件             |
+| `file-drop`         | `file: File`                                | 拖入文件             |
+
+`download` 只在浏览器实际触发保存时派发。若保存失败并回退为在新标签页打开，则改为派发 `open`，并显示单独的提示文案，避免把“打开”误报为“下载”。
 
 ### Slots
 

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { defineComponent, h, nextTick, reactive } from 'vue'
+import { defineComponent, h, nextTick, reactive, ref } from 'vue'
 import ResizeContainer from '../ResizeContainer.vue'
 
 let callback: ResizeObserverCallback | undefined
@@ -124,6 +124,32 @@ describe('ResizeContainer', () => {
     wrapper.unmount()
   })
 
+  it('parses string styles with quoted semicolons and removes stale declarations', async () => {
+    const style = ref('width: 200px; font-family: "A;B", sans-serif')
+    const Host = defineComponent({
+      setup() {
+        return () => h(ResizeContainer, { style: style.value, immediate: false })
+      },
+    })
+
+    const wrapper = mount(Host)
+    await nextTick()
+    await nextTick()
+    const element = wrapper.get('.w-resize-container').element as HTMLElement
+    expect(element.style.width).toBe('200px')
+    expect(element.style.fontFamily).toContain('A;B')
+
+    style.value = 'height: 60px'
+    await nextTick()
+    await nextTick()
+
+    expect(element.style.width).toBe('')
+    expect(element.style.fontFamily).toBe('')
+    expect(element.style.height).toBe('60px')
+
+    wrapper.unmount()
+  })
+
   it('normalizes vendor-prefixed style keys', async () => {
     const wrapper = mount(ResizeContainer, {
       props: { immediate: false },
@@ -144,8 +170,8 @@ describe('ResizeContainer', () => {
     wrapper.unmount()
   })
 
-  it('measure() always reports even when the size did not change', async () => {
-    const wrapper = mount(ResizeContainer, { props: { immediate: false } })
+  it('getSize() returns the current size and reports once per call', async () => {
+    const wrapper = mount(ResizeContainer, { props: { box: 'border-box', immediate: false } })
 
     callback?.([createEntry()], instance as unknown as ResizeObserver)
     await nextTick()
@@ -156,14 +182,37 @@ describe('ResizeContainer', () => {
     await nextTick()
     expect(wrapper.emitted('resize')).toHaveLength(1)
 
-    const vm = wrapper.vm as unknown as { measure: () => void }
-    vm.measure()
-    await nextTick()
-    expect(wrapper.emitted('resize')).toHaveLength(2)
+    const element = wrapper.element as HTMLElement
+    element.getBoundingClientRect = () =>
+      ({
+        width: 150,
+        height: 90,
+        top: 0,
+        left: 0,
+        right: 150,
+        bottom: 90,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect
 
-    // A manual measurement is explicit: it must report again.
-    vm.measure()
-    await nextTick()
+    const vm = wrapper.vm as unknown as {
+      getSize: () => { width: number; height: number; entry: ResizeObserverEntry | null }
+    }
+
+    const measured = vm.getSize()
+    expect(measured).toMatchObject({ width: 150, height: 90 })
+    expect(wrapper.emitted('resize')).toHaveLength(2)
+    expect(wrapper.emitted('resize')?.[1]?.[0]).toMatchObject({ width: 150, height: 90 })
+
+    // The returned entry is the same payload as the emitted event, not the
+    // stale observer record.
+    const emitted = wrapper.emitted('resize')?.[1]?.[0] as { entry: unknown }
+    expect(measured.entry).toBeNull()
+    expect(measured.entry).toBe(emitted.entry)
+
+    // An explicit getSize() reports even when the size is unchanged.
+    expect(vm.getSize()).toMatchObject({ width: 150, height: 90 })
     expect(wrapper.emitted('resize')).toHaveLength(3)
 
     wrapper.unmount()

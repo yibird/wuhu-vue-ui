@@ -20,7 +20,7 @@ const globalPresets = shallowReactive<ExceptionPresets>({})
  * Each call replaces the previous global configuration; omitted types fall
  * back to the built-in presets. Per-instance props and slots still win.
  */
-export function setExceptionPresets(presets: ExceptionPresets): void {
+export function setExceptionPresets(presets: ExceptionPresets) {
   for (const type of Object.keys(globalPresets) as ExceptionType[]) {
     delete globalPresets[type]
   }

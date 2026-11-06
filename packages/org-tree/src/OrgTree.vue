@@ -5,7 +5,7 @@ import {
   toCssUnit,
   useControllableState,
   useDismissable,
-  useListNavigation,
+  useKeyboardNavigation,
   usePointerDrag,
 } from '@wuhu-vue-ui/core'
 import {
@@ -19,6 +19,14 @@ import {
   type CSSProperties,
 } from 'vue'
 import OrgTreeNodeComponent from './OrgTreeNode.vue'
+import {
+  isUsableOrgTreeNode,
+  nodeChildren,
+  nodeId,
+  nodeKey,
+  normalizeKeys,
+  orgTreeIdKey,
+} from './utils'
 import type {
   OrgTreeDragEndEvent,
   OrgTreeDragPosition,
@@ -31,18 +39,6 @@ import type {
   OrgTreeReparentEvent,
   OrgTreeZoomEvent,
 } from './types'
-import {
-  isUsableOrgTreeNode,
-  nodeChildren,
-  nodeId,
-  nodeKey,
-  normalizeKeys,
-  orgTreeIdKey,
-} from './utils'
-
-defineOptions({
-  name: 'WOrgTree',
-})
 
 const props = withDefaults(defineProps<OrgTreeProps>(), {
   keys: () => ({}),
@@ -54,6 +50,7 @@ const props = withDefaults(defineProps<OrgTreeProps>(), {
   scalable: true,
   wheelZoom: 'always',
   nodeDraggable: false,
+  dropOnEmpty: true,
   mutateData: true,
   disabled: false,
   ariaLabel: '组织架构图',
@@ -70,8 +67,6 @@ const props = withDefaults(defineProps<OrgTreeProps>(), {
     { label: '新增子节点', command: 'add' },
     { label: '删除节点', command: 'delete' },
   ],
-  labelClassName: '',
-  selectedClassName: '',
   emptyText: '暂无数据',
   minHeight: 400,
 })
@@ -732,7 +727,7 @@ function detachNode(node: OrgTreeNode, key: string): boolean {
   return true
 }
 
-function ensureParentExpanded(parent: OrgTreeNode): void {
+function ensureParentExpanded(parent: OrgTreeNode) {
   const parentEntry = indexState.value.byKey.get(nodeKey(parent, keys.value))
   if (parentEntry?.hasChildren && !expandKeysSet.value.has(parentEntry.key)) {
     const next = new Set(expandKeysSet.value)
@@ -784,7 +779,7 @@ async function finishNodeDrag(
         canceled = true
       }
     }
-  } else if (!rootDrop) {
+  } else if (!rootDrop || !props.dropOnEmpty) {
     canceled = true
   }
 
@@ -860,7 +855,7 @@ function handleDoubleClick(event: MouseEvent) {
   if (entry) emit('node-dblclick', entry.node, event)
 }
 
-function focusEntry(entry: NodeEntry | undefined): void {
+function focusEntry(entry: NodeEntry | undefined) {
   if (!entry) return
   const cards = viewportRef.value?.querySelectorAll<HTMLElement>('.w-org-tree__node-card')
   const card = cards
@@ -891,7 +886,8 @@ function handleKeydown(event: KeyboardEvent) {
     event.preventDefault()
     if (entries.length === 0) return
     const delta = event.key === 'ArrowDown' ? 1 : -1
-    focusEntry(entries[(index + delta + entries.length) % entries.length])
+    const nextIndex = Math.min(Math.max(index + delta, 0), entries.length - 1)
+    focusEntry(entries[nextIndex])
     return
   }
 
@@ -942,7 +938,7 @@ function closeMenu() {
   }
 }
 
-function handleFocusIn(event: FocusEvent): void {
+function handleFocusIn(event: FocusEvent) {
   const target = event.target as Element | null
   const key = target?.closest('.w-org-tree__node-card')?.getAttribute('data-org-key')
   if (key) focusedKey.value = key
@@ -955,7 +951,7 @@ function menuButtons(): HTMLButtonElement[] {
   )
 }
 
-const menuNavigation = useListNavigation({
+const menuNavigation = useKeyboardNavigation({
   items: () => menuItems(),
   activeIndex: () => {
     const buttons = menuButtons()
@@ -971,7 +967,7 @@ const menuDismiss = useDismissable({
   onDismiss: () => closeMenu(),
 })
 
-function handleMenuKeydown(event: KeyboardEvent): void {
+function handleMenuKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     closeMenu()
     return
@@ -1119,10 +1115,12 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-org-tree" :class="rootClasses" :style="rootStyle">
+  <div class="w-org-tree" :class="[rootClasses, classes?.root]" :style="[rootStyle, styles?.root]">
     <div
       ref="viewportRef"
       class="w-org-tree__viewport"
+      :class="classes?.viewport"
+      :style="styles?.viewport"
       @pointerdown="handlePointerDown"
       @wheel="handleWheel"
       @click="handleClick"
@@ -1132,7 +1130,12 @@ defineExpose({
       @focusin="handleFocusIn"
       @dragstart.prevent
     >
-      <div ref="canvasRef" class="w-org-tree__canvas" :style="canvasStyle">
+      <div
+        ref="canvasRef"
+        class="w-org-tree__canvas"
+        :class="classes?.canvas"
+        :style="[canvasStyle, styles?.canvas]"
+      >
         <div
           v-if="visibleRootNodes.length > 0"
           class="w-org-tree__roots"
@@ -1155,8 +1158,8 @@ defineExpose({
             :dragging-key="draggingKey"
             :drop-key="dropKey"
             :duplicate-nodes="indexState.duplicates"
-            :label-class-name="labelClassName"
-            :selected-class-name="selectedClassName"
+            :classes="classes"
+            :styles="styles"
             @toggle="toggleNode"
           >
             <template v-if="$slots.node" #node="scope">
@@ -1172,36 +1175,45 @@ defineExpose({
         </div>
       </div>
 
-      <div v-if="visibleRootNodes.length === 0" class="w-org-tree__empty">
+      <div
+        v-if="visibleRootNodes.length === 0"
+        class="w-org-tree__empty"
+        :class="classes?.empty"
+        :style="styles?.empty"
+      >
         <slot name="empty">
           <span>{{ emptyText }}</span>
         </slot>
       </div>
     </div>
 
-    <div
-      v-if="menu.visible"
-      ref="menuRef"
-      class="w-org-tree__menu"
-      role="menu"
-      :style="menuStyle"
-      data-org-no-drag
-      @pointerdown.stop
-      @click.stop
-      @contextmenu.prevent
-      @keydown="handleMenuKeydown"
-    >
-      <button
-        v-for="item in menuItems()"
-        :key="item.command"
-        type="button"
-        class="w-org-tree__menu-item"
-        role="menuitem"
-        :disabled="item.disabled"
-        @click="handleMenuItem(item)"
+    <Teleport v-if="menu.visible" to="body">
+      <div
+        ref="menuRef"
+        class="w-org-tree__menu"
+        :class="classes?.menu"
+        role="menu"
+        :style="[menuStyle, styles?.menu]"
+        data-org-no-drag
+        @pointerdown.stop
+        @click.stop
+        @contextmenu.prevent
+        @keydown="handleMenuKeydown"
       >
-        {{ item.label }}
-      </button>
-    </div>
+        <button
+          v-for="item in menuItems()"
+          :key="item.command"
+          type="button"
+          class="w-org-tree__menu-item"
+          :class="classes?.menuItem"
+          :style="styles?.menuItem"
+          role="menuitem"
+          :disabled="item.disabled"
+          @click="handleMenuItem(item)"
+        >
+          {{ item.label }}
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>

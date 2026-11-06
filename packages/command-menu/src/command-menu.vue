@@ -11,8 +11,7 @@ import {
   type CSSProperties,
   type VNodeChild,
 } from 'vue'
-import { toCssUnit, useListNavigation } from '@wuhu-vue-ui/core'
-import { pinyin } from 'pinyin-pro'
+import { toCssUnit, useKeyboardNavigation } from '@wuhu-vue-ui/core'
 import type {
   CommandMenuEmptySlotProps,
   CommandMenuItem,
@@ -20,10 +19,6 @@ import type {
   CommandMenuKey,
   CommandMenuProps,
 } from './types'
-
-defineOptions({
-  name: 'WCommandMenu',
-})
 
 const props = withDefaults(defineProps<CommandMenuProps>(), {
   modelValue: undefined,
@@ -59,7 +54,6 @@ interface DisplayGroup {
   items: CommandMenuItem[]
 }
 
-const CJK_CHARACTER = /[\u3400-\u9fff\uf900-\ufaff]/
 const UNGROUPED_GROUP_KEY = '__w-command-menu-ungrouped__'
 const ALL_ITEMS_GROUP_KEY = '__w-command-menu-all__'
 
@@ -79,69 +73,28 @@ const inputRef = ref<HTMLInputElement>()
 const listRef = ref<HTMLElement>()
 const optionRefs = new Map<CommandMenuKey, HTMLElement>()
 
-/**
- * Pinyin matching is derived once per item rather than on every keystroke.
- * The full pinyin and the initials are both indexed, so "gongzuotai" and
- * "gzt" can find "工作台". Descriptions and keywords are indexed as well.
- */
-function buildHaystack(item: CommandMenuItem): string {
-  const sources = [item.label, item.description, ...(item.keywords ?? [])]
-  const segments: string[] = []
-
-  for (const source of sources) {
-    if (!source) continue
-
-    segments.push(source.toLowerCase())
-
-    if (!CJK_CHARACTER.test(source)) continue
-
-    segments.push(
-      pinyin(source, {
-        toneType: 'none',
-        pattern: 'pinyin',
-        type: 'array',
-        nonZh: 'consecutive',
-      })
-        .join('')
-        .toLowerCase(),
-    )
-    segments.push(
-      pinyin(source, {
-        toneType: 'none',
-        pattern: 'first',
-        type: 'array',
-        nonZh: 'consecutive',
-      })
-        .join('')
-        .toLowerCase(),
-    )
-  }
-
-  return segments.join('\n')
-}
-
-const haystackCache = new WeakMap<CommandMenuItem, string>()
-
-function haystackFor(item: CommandMenuItem): string {
-  const cached = haystackCache.get(item)
-  if (cached !== undefined) return cached
-
-  const value = buildHaystack(item)
-  haystackCache.set(item, value)
-  return value
+function itemSources(item: CommandMenuItem): string[] {
+  return [item.label, item.description, ...(item.keywords ?? [])].filter(
+    (source): source is string => Boolean(source),
+  )
 }
 
 const normalizedQuery = computed(() => query.value.trim().toLowerCase())
 
+/**
+ * Default matching: every whitespace-separated token must appear somewhere in
+ * the label, description or keywords (case-insensitive).
+ */
+function defaultFilter(item: CommandMenuItem, search: string): boolean {
+  const haystack = itemSources(item).join('\n').toLowerCase()
+  return search.split(/\s+/).every((token) => haystack.includes(token))
+}
+
 const filteredItems = computed<CommandMenuItem[]>(() => {
-  // Lazy indexing: avoid running pinyin passes until a query exists.
   if (!props.filterable || !normalizedQuery.value) return props.items
 
-  const tokens = normalizedQuery.value.split(/\s+/).filter(Boolean)
-  return props.items.filter((item) => {
-    const haystack = haystackFor(item)
-    return tokens.every((token) => haystack.includes(token))
-  })
+  const filter = props.filter ?? defaultFilter
+  return props.items.filter((item) => filter(item, normalizedQuery.value))
 })
 
 /**
@@ -237,15 +190,15 @@ function isItemDisabled(item: CommandMenuItem): boolean {
   return props.disabled || Boolean(item.disabled)
 }
 
-function focus(): void {
+function focus() {
   inputRef.value?.focus({ preventScroll: true })
 }
 
-function clearSearch(): void {
+function clearSearch() {
   updateQuery('')
 }
 
-function handleClear(): void {
+function handleClear() {
   clearSearch()
   focus()
 }
@@ -256,7 +209,7 @@ function handleClear(): void {
  * after pointer interaction unless the user intentionally focused something
  * inside the list (for example a custom item action).
  */
-function handleListMouseUp(): void {
+function handleListMouseUp() {
   if (props.disabled) return
 
   const active = document.activeElement
@@ -265,27 +218,27 @@ function handleListMouseUp(): void {
   focus()
 }
 
-function updateQuery(value: string): void {
+function updateQuery(value: string) {
   if (query.value === value) return
   query.value = value
   emit('search', value)
 }
 
-function handleInput(event: Event): void {
+function handleInput(event: Event) {
   updateQuery((event.target as HTMLInputElement).value)
 }
 
-function handleCompositionStart(): void {
+function handleCompositionStart() {
   composing.value = true
 }
 
-function handleCompositionEnd(event: CompositionEvent): void {
+function handleCompositionEnd(event: CompositionEvent) {
   composing.value = false
   // Safari/Firefox may order the final input event differently; resync once.
   updateQuery((event.target as HTMLInputElement).value)
 }
 
-function handleKeydown(event: KeyboardEvent): void {
+function handleKeydown(event: KeyboardEvent) {
   if (props.disabled) return
 
   // Ignore Enter/arrows while an IME candidate list is open.
@@ -302,7 +255,7 @@ function handleKeydown(event: KeyboardEvent): void {
   }
 }
 
-function setHighlightIndex(index: number | null): void {
+function setHighlightIndex(index: number | null) {
   const length = enabledItems.value.length
   highlightIndex.value = index === null || index < 0 || index >= length ? null : index
   // The pointer may still rest over another row; drop that stale hover state so
@@ -310,7 +263,7 @@ function setHighlightIndex(index: number | null): void {
   hoveredKey.value = null
 }
 
-const listNavigation = useListNavigation<CommandMenuItem>({
+const listNavigation = useKeyboardNavigation<CommandMenuItem>({
   items: enabledItems,
   activeIndex: () => {
     if (highlightIndex.value !== null) return highlightIndex.value
@@ -322,7 +275,7 @@ const listNavigation = useListNavigation<CommandMenuItem>({
   isComposing: () => composing.value,
 })
 
-function handleEscape(event: KeyboardEvent): void {
+function handleEscape(event: KeyboardEvent) {
   emit('escape', event)
 
   if (props.escapeBehavior === 'close') {
@@ -337,14 +290,14 @@ function handleEscape(event: KeyboardEvent): void {
   }
 }
 
-function selectItem(item: CommandMenuItem): void {
+function selectItem(item: CommandMenuItem) {
   if (isItemDisabled(item)) return
 
   emit('update:modelValue', item.key)
   emit('select', item)
 }
 
-function handleItemHover(item: CommandMenuItem): void {
+function handleItemHover(item: CommandMenuItem) {
   if (isItemDisabled(item)) {
     hoveredKey.value = null
     return
@@ -356,15 +309,15 @@ function handleItemHover(item: CommandMenuItem): void {
   if (index >= 0) highlightIndex.value = index
 }
 
-function clearHover(): void {
+function clearHover() {
   hoveredKey.value = null
 }
 
-function handleListMouseOver(event: MouseEvent): void {
+function handleListMouseOver(event: MouseEvent) {
   if (event.target === event.currentTarget) clearHover()
 }
 
-function setOptionRef(el: Element | ComponentPublicInstance | null, key: CommandMenuKey): void {
+function setOptionRef(el: Element | ComponentPublicInstance | null, key: CommandMenuKey) {
   if (el instanceof HTMLElement) {
     optionRefs.set(key, el)
   } else {
@@ -372,7 +325,7 @@ function setOptionRef(el: Element | ComponentPublicInstance | null, key: Command
   }
 }
 
-function scrollActiveIntoView(): void {
+function scrollActiveIntoView() {
   const list = listRef.value
   const key = highlightKey.value
 

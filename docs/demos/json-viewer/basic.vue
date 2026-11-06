@@ -10,7 +10,7 @@ const theme = computed(() => (isDark.value ? 'vs-dark' : 'vs'))
 const value = {
   id: 'wuhu-001',
   name: 'Wuhu Vue UI',
-  version: '0.1.0',
+  version: '0.0.1',
   features: ['scrollbar', 'command-menu', 'gantt', 'code-editor'],
   author: {
     name: 'Wuhu',

@@ -67,7 +67,7 @@ const positions: { label: string; value: DockPosition }[] = [
 const position = ref<DockPosition>('bottom')
 const lastAction = ref('尚未点击任何项目')
 
-function handleSelect(item: DockItem): void {
+function handleSelect(item: DockItem) {
   lastAction.value = `已选择「${item.label}」`
 }
 

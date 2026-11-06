@@ -2,8 +2,8 @@
 
 一套面向复杂业务场景的 Vue 3 组件库。采用 pnpm monorepo 组织，一个组件一个独立包，使用 TypeScript、Less、设计令牌（Design Tokens）、Vite+ 与 Husky 构建。
 
-- 31 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、图标、异常页、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、富文本编辑、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
-- 每个包只将 `vue` 作为 peer dependency；`@wuhu-vue-ui/command-menu` 额外使用 `pinyin-pro` 提供拼音搜索，`@wuhu-vue-ui/cropper` 使用 `cropperjs` 提供裁剪能力，`@wuhu-vue-ui/icon-picker` 使用 `@tanstack/vue-virtual` 提供虚拟滚动，`@wuhu-vue-ui/tiptap-editor` 使用 Tiptap 提供富文本能力，`@wuhu-vue-ui/code-editor` 将 `monaco-editor` 作为可选 peer dependency。
+- 31 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、异常页、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、右键菜单、富文本编辑、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
+- 每个包只将 `vue` 作为 peer dependency；`@wuhu-vue-ui/cropper` 使用 `cropperjs` 提供裁剪能力，`@wuhu-vue-ui/icon-picker` 与 `@wuhu-vue-ui/gantt` 使用 `@tanstack/vue-virtual` 提供虚拟滚动，`@wuhu-vue-ui/tiptap-editor` 使用 Tiptap 提供富文本能力，`@wuhu-vue-ui/code-editor` 将 `monaco-editor` 作为可选 peer dependency。拼音等自定义搜索由使用方通过 `CommandMenu` 的 `filter` 注入。
 - 样式基于 `--w-*` CSS 变量，内置亮色 / 暗色主题，可按项目品牌覆盖。
 - 单包构建自动注入自身样式，无需手动引入组件 CSS。
 - 完整的 TypeScript 类型、组合式函数导出、可访问性支持与单元测试。
@@ -24,7 +24,6 @@
 | `@wuhu-vue-ui/count-down`            | `CountDown`           | 目标时间或时长倒计时，支持暂停、重置、格式化与完成插槽               |
 | `@wuhu-vue-ui/loading`               | `Loading`             | 5 种内置加载动画，支持全屏遮罩、插槽与命令式创建 / 销毁              |
 | `@wuhu-vue-ui/view`                  | `View`                | 可组合的 Header / Sider / Content / Footer 页面布局，支持折叠        |
-| `@wuhu-vue-ui/icon`                  | `Icon`                | 轻量级内联 SVG 图标，内置 Lucide 路径并支持自定义注册                |
 | `@wuhu-vue-ui/exception`             | `Exception`           | 400 / 403 / 404 / 500 异常页，支持插图、插槽与自定义操作             |
 | `@wuhu-vue-ui/img-comparison-slider` | `ImgComparisonSlider` | 可拖拽、触摸与键盘操作的图片对比滑块                                 |
 | `@wuhu-vue-ui/ripple`                | `Ripple`              | Material 风格水波纹，提供组件、指令与组合式函数三种用法              |
@@ -34,7 +33,8 @@
 | `@wuhu-vue-ui/gradient-text`         | `GradientText`        | 线性 / 径向 / 锥形渐变文字，支持背景流动动画                         |
 | `@wuhu-vue-ui/number-ticker`         | `NumberTicker`        | 逐位滚动的数字动画，支持千分位、前缀与小数                           |
 | `@wuhu-vue-ui/sliding-highlight`     | `SlidingHighlight`    | 跟随悬浮 / 焦点的滑块高亮容器，支持任意直接子项与自定义样式          |
-| `@wuhu-vue-ui/command-menu`          | `CommandMenu`         | 命令面板：中文 / 拼音搜索、分组、键盘导航与悬浮优先高亮              |
+| `@wuhu-vue-ui/command-menu`          | `CommandMenu`         | 命令面板：自定义过滤、分组、键盘导航与悬浮优先高亮                   |
+| `@wuhu-vue-ui/context-menu`          | `ContextMenu`         | 命令式右键菜单：分组、快捷键、键盘导航与视口内自动定位               |
 | `@wuhu-vue-ui/tiptap-editor`         | `TiptapEditor`        | 基于 Tiptap 的富文本编辑器，内置图片上传、表格、任务列表、颜色与全屏 |
 | `@wuhu-vue-ui/code-editor`           | `CodeEditor`          | 基于 Monaco 的代码编辑器，支持 v-model、语言 / 主题切换与只读模式    |
 | `@wuhu-vue-ui/json-viewer`           | `JsonViewer`          | 基于 CodeEditor 的只读 JSON 查看器，自动格式化对象与 JSON 字符串     |
@@ -97,7 +97,7 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 
 ```text
 .
-├─ packages/                   # 31 个 workspace 包：core + 30 个组件包
+├─ packages/                   # 32 个 workspace 包：core + 31 个组件包
 │  ├─ core/                    # 公共工具函数、composables 与 DOM 基础设施
 │  ├─ scrollbar/               # 基础能力组件
 │  ├─ copy/
@@ -111,7 +111,6 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 │  ├─ count-down/
 │  ├─ loading/
 │  ├─ view/
-│  ├─ icon/
 │  ├─ exception/
 │  ├─ gradient-text/           # 视觉表达组件
 │  ├─ number-ticker/
@@ -119,6 +118,7 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 │  ├─ img-comparison-slider/
 │  ├─ ripple/
 │  ├─ command-menu/            # 交互增强组件
+│  ├─ context-menu/
 │  ├─ cropper/
 │  ├─ motion-group/
 │  ├─ slider-captcha/
@@ -278,7 +278,7 @@ import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 </script>
 
 <template>
-  <Scrollbar height="320px" always :min-size="28" @scroll="console.log">
+  <Scrollbar height="320px" always @scroll="console.log">
     <YourLongContent />
   </Scrollbar>
 </template>
@@ -290,19 +290,14 @@ import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 | ----------- | ------------------ | ------- | ---------------------------------------- |
 | `height`    | `string \| number` | —       | 视口高度                                 |
 | `maxHeight` | `string \| number` | —       | 视口最大高度，内容超出时才显示滚动条     |
-| `native`    | `boolean`          | `false` | 使用浏览器原生滚动条                     |
 | `always`    | `boolean`          | `false` | 始终显示自定义滚动条                     |
-| `minSize`   | `number`           | `20`    | 滑块最小像素长度                         |
 | `noresize`  | `boolean`          | `false` | 关闭自动尺寸监听                         |
-| `distance`  | `number`           | `0`     | 距离边缘多少像素时触发 `end`             |
-| `tag`       | `string`           | `div`   | 内容容器的标签                           |
-| `id`        | `string`           | —       | 内容容器的 id                            |
 | `classes`   | `{ wrap?, view? }` | —       | 语义化类名，分别作用于滚动容器与内容视图 |
 | `styles`    | `{ wrap?, view? }` | —       | 语义化样式，分别作用于滚动容器与内容视图 |
 
-事件：`scroll`（`{ scrollTop, scrollLeft }`）；`end`（`top` / `bottom` / `left` / `right`，需设置 `distance`）。
+事件：`scroll`（`{ scrollTop, scrollLeft }`）；`end`（`top` / `bottom` / `left` / `right`，每次到达边缘触发一次）。
 
-组件实例方法：`update()`、`handleScroll()`、`scrollTo()`、`setScrollTop()`、`setScrollLeft()`，以及 `wrapRef`。
+组件实例方法：`updatePosition()`、`handleScroll()`、`scrollTo()`、`setScrollTop()`、`setScrollLeft()`，以及 `wrapRef`。
 
 不设置 `height` 时，可以直接把 `flex: 1` 加在 `Scrollbar` 上填入 flex / grid 的剩余空间；父级需要有确定高度。若再包一层 `div` 并把 `flex: 1` 加在包装层，包装层需要同时设置 `min-height: 0`。
 
@@ -321,7 +316,7 @@ const fetchText = async () => 'content from api'
 </template>
 ```
 
-默认插槽可拿到 `{ copied, loading, error, copy }` 自定义触发器内容。也可以在任意组件中使用 `useClipboard()` 获取 `copied`、`loading`、`error`、`copy(text)` 和 `reset()`。当 Clipboard API 不可用或失败时，会自动尝试 `document.execCommand('copy')` 降级。
+默认插槽可拿到 `{ copied, loading, error, isSupported, copy }` 自定义触发器内容；非图标模式渲染为可聚焦的 `role="button"` 容器。也可以在任意组件中使用 `useClipboard()` 获取 `copied`、`loading`、`error`、`isSupported`、`copy(text)` 和 `reset()`。当 Clipboard API 不可用或失败时，会自动尝试 `document.execCommand('copy')` 降级；不支持剪贴板时组件不会自动禁用触发区，可通过 `@copy` 事件自行处理。
 
 ### Highlight
 
@@ -342,7 +337,7 @@ const keywords = ['Vue', '组件']
 </template>
 ```
 
-支持 `keywords: string | string[]`、`caseSensitive`、`wholeWord`、`tag`（默认 `mark`）、`highlightClass` 与 `highlightStyle`。`#highlight` 作用域插槽可完全自定义命中片段：
+支持 `keywords: string | string[]`、`caseSensitive`、`wholeWord`、`highlightClass` 与 `highlightStyle`，匹配片段固定渲染为 `<mark>`。`#highlight` 作用域插槽可完全自定义命中片段：
 
 ```vue
 <Highlight :text="text" :keywords="keywords">
@@ -374,6 +369,8 @@ const keywords = ['Vue', '组件']
 - 首次进入视口后才渲染默认插槽，内容一旦渲染会保持挂载。
 - `enter` / `leave` / `change` 事件会持续触发。
 - `once` 为 `true` 时首次进入后断开观察。
+- 默认占位元素通过 `--w-lazy-container-placeholder-height` 保留 48px 高度。
+- 重建观察器或调用 `observe()` 时 `isVisible` 会重置，但不会补发 `leave` / `change`。
 - 不支持 IntersectionObserver 的环境会直接标记为可见。
 
 ### Resize Container
@@ -386,7 +383,7 @@ const keywords = ['Vue', '组件']
 </ResizeContainer>
 ```
 
-事件参数包含 `width`、`height`、`contentRect`、`borderBoxSize`、`contentBoxSize`、`devicePixelContentBoxSize` 与原始 `entry`。实例方法：`start()`、`stop()`、`measure()`。
+事件参数包含 `width`、`height`、`contentRect`、`borderBoxSize`、`contentBoxSize`、`devicePixelContentBoxSize` 与原始 `entry`。实例方法：`start()`、`stop()`、`getSize()`；`getSize()` 同步返回最新尺寸并强制触发一次 `resize` 事件，返回值与本次事件使用同一份 payload。
 
 ### Error Boundary
 
@@ -411,7 +408,8 @@ import { Time, formatRelativeTime } from '@wuhu-vue-ui/time'
 ```
 
 - `time` 支持 `Date`、ISO 字符串、毫秒时间戳。
-- 默认每 30 秒刷新，`refreshInterval=0` 可关闭。
+- 默认每 30 秒刷新，`refreshInterval=0` 可关闭；相同间隔的实例共享一个定时器。
+- 月 / 年按 30 / 365 天近似换算，跨自然月边界时文案可能存在偏差。
 - `numeric="auto"` 时，中文环境会输出“昨天”“上个月”等自然语言。
 - `#default="{ relative, date, now, title, datetime, refresh }"` 可自定义输出。
 - 纯函数 `formatRelativeTime(value, now, options)` 可在非组件场景复用。
@@ -523,7 +521,6 @@ const cards = ref([
 - `direction` 控制 `slide` 的进入方向；`duration` / `moveDuration` 分别控制进入退出与 FLIP 位移时长。
 - `absoluteLeave`（默认开启）让离场项脱离文档流，剩余项可以立即滑动补位；`disabled` 可整体关闭动画。
 - 列表项必须提供稳定的 `:key`，这是 TransitionGroup 计算 FLIP 位移的前提；支持全部 TransitionGroup 钩子事件与属性透传。
-- 所有动画在 `prefers-reduced-motion: reduce` 下自动降为 1ms。
 
 ### Gradient Text
 
@@ -542,7 +539,7 @@ const cards = ref([
 - `type`：`linear | radial | conic`。
 - `gradient` 可直接传入任意 CSS `background-image` 值。
 - `animationDirection` 与 `duration`（毫秒，与其他组件的 duration 语义一致）控制动画。
-- 支持 `prefers-reduced-motion` 与 forced-colors。
+- 支持 forced-colors。
 
 ### Number Ticker
 
@@ -605,7 +602,7 @@ function handleFocusin(event: FocusEvent) {
 - `inset`：高亮块相对子项的横向外扩距离（px），默认为 `20`。
 - `classes` / `styles`：仅包含 `pill` 与 `container` 两个语义化部件；也可覆盖 `--w-sliding-highlight-bg` 和 `--w-sliding-highlight-radius`。
 - 暴露 `highlight(element)` 与 `clear()`，可用于键盘聚焦等非指针场景。
-- 自动响应容器与子项的尺寸变化，并尊重 `prefers-reduced-motion`。
+- 自动响应容器与子项的尺寸变化。
 
 ### Command Menu
 
@@ -683,6 +680,7 @@ const file = ref<File | null>(null)
 - 受控页面、缩放、旋转与主题通过 `page` / `zoom` / `rotation` / `theme` 配合 `update:*` 使用；`reload()`、`getState()`、`download()`、`print()`、`open()` 等方法通过组件实例暴露。
 - 主题默认使用组件自带亮 / 暗颜色，不受宿主 `--w-color-*` 亮色变量影响；可通过 `themeVars` 或 `.w-file-viewer` 的 `--w-file-viewer-*` 变量定制。
 - 大文件文本 / CSV / Markdown 会按 `options.*.maxBytes` 截断；压缩包默认限制为 10000 个条目、单条 64 MiB，且提供缓存上限。
+- docx / xlsx / pptx 与 PDF 页面解析在主线程完成，分别受 `options.office.maxPages`、`maxRows`、`maxColumns` 等上限约束；大文件请谨慎处理，基于 Worker 的解析尚未实现。
 
 主要 Props：`src` / `file`、`name`、`type`、`locale`、`theme`、`themeVars`、`options`、`width`、`height`、`watermark`、`allow*`、`show*`、`initialPage`、`initialZoom`、`initialRotation`、`minZoom`、`maxZoom`、`zoomStep`、`keyboard`、`wheelZoom`、`renderers`。
 
@@ -711,7 +709,7 @@ preloadFileViewerRenderer('pdf')
 />
 ```
 
-内置 `fileViewerLightTheme` / `fileViewerDarkTheme`，也可以用 `createFileViewerTheme('dark', overrides)` 生成完整主题对象。`theme="auto"` 时跟随系统；组件内切换主题会触发 `update:theme`。
+内置 `fileViewerLightTheme` / `fileViewerDarkTheme`，也可以用 `createFileViewerTheme('dark', overrides)` 生成完整主题对象。`theme="auto"` 在初始化时解析应用主题或系统偏好（不监听后续变化）；组件内切换主题会触发 `update:theme`。
 
 ### 国际化
 
@@ -730,7 +728,7 @@ registerFileViewerLocale('ja', japaneseMessages)
 
 ### 事件、插槽与实例方法
 
-- 事件：`load`、`ready`、`error`、`update:page`、`update:zoom`、`update:rotation`、`update:theme`、`fullscreen-change`、`download`、`print`、`open`、`file-drop`（拖放文件时返回第一个 `File`）。
+- 事件：`load`、`ready`、`error`、`update:page`、`update:zoom`、`update:rotation`、`update:theme`、`fullscreen-change`、`download`、`print`、`open`、`file-drop`（拖放文件时返回第一个 `File`）。`download` 仅在浏览器实际触发保存时派发；保存失败并回退为新标签页打开时改为派发 `open`。
 - 插槽：`toolbar`、`toolbar-left`、`toolbar-actions`、`loading`、`empty`、`error`、`watermark`、`status-bar`。
 - 实例方法：`reload()`、`zoomIn()`、`zoomOut()`、`resetZoom()`、`rotateLeft()`、`rotateRight()`、`goToPage()`、`download()`、`print()`、`open()`、`toggleFullscreen()`、`setTheme()`、`getState()`。
 
@@ -797,7 +795,7 @@ const tasks: GanttTask[] = [
 - `dependencies` 填写前置任务 ID，组件自动绘制依赖箭头。
 - `milestone` 渲染为菱形节点。
 - `disabled` 可禁用单任务拖拽。
-- 其他业务字段可直接附加并被插槽读取。
+- 业务扩展字段放入 `meta`（`Record<string, unknown>`），可从插槽参数中的 `task.meta` 读取。
 
 ### 使用
 
@@ -847,7 +845,7 @@ function handleUpdate(event: GanttTaskUpdateEvent) {
 | `taskHeight`            | `number`                     | `24`      | 任务条高度                        |
 | `dayWidth`              | `number`                     | 随视图    | 每天对应像素宽度                  |
 | `rangePadding`          | `number`                     | `3`       | 自动时间范围的前后留白天数        |
-| `maxRangeDays`          | `number`                     | `3660`    | 渲染范围安全上限，0 表示不限制    |
+| `maxRangeDays`          | `number`                     | `730`     | 渲染范围安全上限，0 表示不限制    |
 | `readonly`              | `boolean`                    | `false`   | 禁止拖拽与缩放                    |
 | `draggable`             | `boolean`                    | `true`    | 是否允许移动任务                  |
 | `resizable`             | `boolean`                    | `true`    | 是否允许调整工期                  |
@@ -882,7 +880,7 @@ function handleUpdate(event: GanttTaskUpdateEvent) {
 - `task.id` 必须唯一；重复 ID 会抛出明确错误，避免选择与依赖指向错误任务。
 - 提供 `selected` 时选择状态为受控模式，组件只触发 `update:selected`，由父级回写；传入 `undefined` 时为非受控模式。
 - 任务日期按自然日历日解析；`2026-10-01T23:00:00Z`、`2026-10-01 12:00` 都归入 `2026-10-01`。
-- 自动推导的范围超过 `maxRangeDays` 时会抛出 `RangeError`，避免意外的多年日视图导致渲染量失控。
+- 自动推导或显式传入的范围超过 `maxRangeDays`（默认 730 天）时会被截断到该上限。组件对任务行与日期列做了虚拟化，仅渲染可视区域；大范围排期仍建议使用 `week` / `month` 视图或缩小 `startDate` / `endDate`。
 
 ### 插槽
 
@@ -908,7 +906,6 @@ ganttRef.value?.getTaskById('task-id')
 - 拖动靠近视口边缘时自动横向滚动。
 - `Esc` 取消拖拽；取消或无位移的拖拽不会触发 `task-update`。
 - 甘特图使用 `role="treegrid"`：表头为 `columnheader`，任务行包含 `rowheader` 与 `gridcell`，分组行通过 `aria-level` / `aria-expanded` 表达层级；任务条支持 Enter / Space 选择，`←/→` 按天移动，`Shift + ←/→` 调整结束日期，`Alt + ←/→` 调整开始日期。
-- `prefers-reduced-motion` 下禁用非必要动画。
 
 ## 可访问性
 
@@ -918,7 +915,7 @@ ganttRef.value?.getTaskById('task-id')
 - 时间组件输出语义化 `<time datetime>`。
 - 数字滚动组件向辅助技术暴露最终值，而不是逐帧数字。
 - 滚动容器可通过 `focusable` 开启键盘滚动；甘特图支持受控选择与键盘日期调整。
-- 支持 `prefers-reduced-motion`；渐变文字额外提供 forced-colors 回退。
+- 渐变文字额外提供 forced-colors 回退。
 
 ## 开发与发布
 

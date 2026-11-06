@@ -30,13 +30,13 @@ export function useIntervalFn(
   const active = ref(false)
   let timer: ReturnType<typeof setInterval> | undefined
 
-  function stop(): void {
+  function stop() {
     if (timer !== undefined) clearInterval(timer)
     timer = undefined
     active.value = false
   }
 
-  function start(): void {
+  function start() {
     stop()
     const delay = toValue(interval)
     if (!Number.isFinite(delay) || delay <= 0) return
@@ -46,7 +46,7 @@ export function useIntervalFn(
     active.value = true
   }
 
-  function restart(): void {
+  function restart() {
     start()
   }
 
@@ -76,13 +76,13 @@ export function useTimeoutFn(
   const pending = ref(false)
   let timer: ReturnType<typeof setTimeout> | undefined
 
-  function stop(): void {
+  function stop() {
     if (timer !== undefined) clearTimeout(timer)
     timer = undefined
     pending.value = false
   }
 
-  function start(): void {
+  function start() {
     stop()
     const wait = toValue(delay)
     if (!Number.isFinite(wait) || wait < 0) return

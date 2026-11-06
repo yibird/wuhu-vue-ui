@@ -51,6 +51,18 @@
     }
   }
 
+  /* Leave a small gap at the bottom-right corner instead of letting the two
+     bars overlap when both axes scroll. `CORNER_GAP` in the component is 2px. */
+  &.is-both-axes {
+    .w-scrollbar__bar.is-vertical {
+      bottom: calc(2px + var(--w-scrollbar-size, 6px) + 2px);
+    }
+
+    .w-scrollbar__bar.is-horizontal {
+      right: calc(2px + var(--w-scrollbar-size, 6px) + 2px);
+    }
+  }
+
   &__thumb {
     position: relative;
     display: block;
@@ -58,28 +70,22 @@
     height: 0;
     cursor: pointer;
     border-radius: inherit;
-    background-color: var(--w-scrollbar-thumb, rgba(100, 116, 139, 0.38));
-    opacity: var(--w-scrollbar-opacity, 0.3);
+    background-color: var(--w-scrollbar-thumb, #c9cacd);
+    opacity: var(--w-scrollbar-opacity, 1);
     transition:
       background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
       opacity var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
     &:hover,
     &.is-dragging {
-      background-color: var(--w-scrollbar-thumb-hover, rgba(100, 116, 139, 0.62));
-      opacity: var(--w-scrollbar-hover-opacity, 0.5);
+      background-color: var(--w-scrollbar-thumb-hover, #b1b2b4);
+      opacity: var(--w-scrollbar-hover-opacity, 1);
     }
 
     &.is-dragging {
-      background-color: var(--w-scrollbar-thumb-active, rgba(100, 116, 139, 0.6));
-      opacity: 0.62;
+      background-color: var(--w-scrollbar-thumb-active, #b1b2b4);
+      opacity: 1;
       transition: none;
     }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-scrollbar__thumb {
-    transition: none;
   }
 }

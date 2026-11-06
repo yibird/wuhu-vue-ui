@@ -3,7 +3,8 @@
  *
  * - JSON strings are parsed and re-indented when valid.
  * - Invalid JSON strings are rendered as-is.
- * - Circular references are replaced with a readable `"[Circular]"` marker.
+ * - Only true cycles are replaced with `"[Circular]"`; shared references are
+ *   preserved in full.
  */
 export function formatJsonValue(value: unknown, indent = 2): string {
   if (value === undefined) return ''
@@ -19,18 +20,26 @@ export function formatJsonValue(value: unknown, indent = 2): string {
     }
   }
 
-  const spaces = Math.min(10, Math.max(0, Math.trunc(indent)))
-  const seen = new WeakSet<object>()
+  const spaces = Number.isFinite(indent) ? Math.min(10, Math.max(0, Math.trunc(indent))) : 2
+
+  // Track the current ancestor chain, not every visited object: a value shared
+  // by two sibling properties is valid JSON and must not become `[Circular]`.
+  const ancestors: object[] = []
 
   try {
     return (
       JSON.stringify(
         target,
-        (_key, item: unknown) => {
-          if (item !== null && typeof item === 'object') {
-            if (seen.has(item)) return '[Circular]'
-            seen.add(item)
+        function (this: unknown, _key, item: unknown) {
+          if (typeof item === 'bigint') return item.toString()
+          if (item === null || typeof item !== 'object') return item
+
+          while (ancestors.length > 0 && ancestors[ancestors.length - 1] !== this) {
+            ancestors.pop()
           }
+          if (ancestors.includes(item)) return '[Circular]'
+
+          ancestors.push(item)
           return item
         },
         spaces,

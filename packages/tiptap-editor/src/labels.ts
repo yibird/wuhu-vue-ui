@@ -10,6 +10,7 @@ export const defaultTiptapEditorLabels: TiptapEditorLabels = {
   underline: '下划线',
   strike: '删除线',
   code: '行内代码',
+  fontFamily: '字体',
   heading1: '一级标题',
   heading2: '二级标题',
   heading3: '三级标题',

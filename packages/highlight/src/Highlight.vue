@@ -3,16 +3,11 @@ import { computed } from 'vue'
 import { buildSegments } from './segments'
 import type { HighlightProps, HighlightSegment, HighlightSlotProps } from './types'
 
-defineOptions({
-  name: 'WHighlight',
-})
-
 const props = withDefaults(defineProps<HighlightProps>(), {
   text: '',
   keywords: () => [],
   caseSensitive: false,
   wholeWord: false,
-  tag: 'mark',
 })
 
 defineSlots<{
@@ -33,7 +28,7 @@ defineExpose({ segments })
 
 <template>
   <span class="w-highlight">
-    <template v-for="(segment, index) in segments" :key="`${index}-${segment.text}`">
+    <template v-for="(segment, index) in segments" :key="index">
       <slot
         v-if="segment.matched"
         name="highlight"
@@ -42,14 +37,9 @@ defineExpose({ segments })
         :index="index"
         :segment="segment"
       >
-        <component
-          :is="tag"
-          class="w-highlight__mark"
-          :class="highlightClass"
-          :style="highlightStyle"
-        >
+        <mark class="w-highlight__mark" :class="highlightClass" :style="highlightStyle">
           {{ segment.text }}
-        </component>
+        </mark>
       </slot>
       <template v-else>{{ segment.text }}</template>
     </template>

@@ -47,26 +47,26 @@ export function useDismissable(options: UseDismissableOptions): UseDismissableRe
     return ignoredElements(toValue(options.ignore)).some((element) => element.contains(target))
   }
 
-  const handlePointer = (event: PointerEvent): void => {
+  const handlePointer = (event: PointerEvent) => {
     if (isIgnored(event.target)) return
     options.onDismiss('pointer', event)
   }
 
-  const handleKeydown = (event: KeyboardEvent): void => {
+  const handleKeydown = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return
     options.onDismiss('escape', event)
   }
 
-  const handleResize = (event: Event): void => {
+  const handleResize = (event: Event) => {
     options.onDismiss('resize', event)
   }
 
-  const handleScroll = (event: Event): void => {
+  const handleScroll = (event: Event) => {
     if (isIgnored(event.target)) return
     options.onDismiss('scroll', event)
   }
 
-  function start(): void {
+  function start() {
     if (active || typeof window === 'undefined') return
     active = true
     const capture = options.capture ?? true
@@ -85,7 +85,7 @@ export function useDismissable(options: UseDismissableOptions): UseDismissableRe
     }
   }
 
-  function stop(): void {
+  function stop() {
     if (!active || typeof window === 'undefined') return
     active = false
     const capture = options.capture ?? true

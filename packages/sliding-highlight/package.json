@@ -1,6 +1,6 @@
 {
   "name": "@wuhu-vue-ui/sliding-highlight",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Animated sliding indicator navigation for Vue 3.",
   "keywords": [
     "component",
@@ -8,7 +8,16 @@
     "vue",
     "vue3"
   ],
+  "homepage": "https://github.com/yibird/wuhu-vue-ui#readme",
+  "bugs": {
+    "url": "https://github.com/yibird/wuhu-vue-ui/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yibird/wuhu-vue-ui.git"
+  },
+  "funding": "https://github.com/sponsors/yibird",
   "style": "./dist/style.css",
   "files": [
     "dist"

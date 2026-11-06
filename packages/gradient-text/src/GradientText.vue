@@ -3,10 +3,6 @@ import { computed } from 'vue'
 import { DEFAULT_GRADIENT_COLORS } from './constants'
 import type { GradientTextProps, GradientTextSlotProps } from './types'
 
-defineOptions({
-  name: 'WGradientText',
-})
-
 const props = withDefaults(defineProps<GradientTextProps>(), {
   colors: () => [...DEFAULT_GRADIENT_COLORS],
   gradient: '',
@@ -25,7 +21,11 @@ const backgroundImage = computed(() => {
   if (props.gradient) return props.gradient
 
   const colors = props.colors.length > 0 ? props.colors : DEFAULT_GRADIENT_COLORS
-  const stops = colors.join(', ')
+  // A single stop is invalid CSS and would leave transparent text. Repeating
+  // the color produces a solid fill for every gradient type.
+  const single = colors[0]
+  const stops =
+    colors.length === 1 && single !== undefined ? `${single}, ${single}` : colors.join(', ')
 
   if (props.type === 'radial') {
     return `radial-gradient(circle at 50% 50%, ${stops})`

@@ -3,10 +3,6 @@ import { computed, onBeforeUnmount, readonly, ref } from 'vue'
 import type { CopyProps, CopySlotProps } from './types'
 import { useClipboard } from './useClipboard'
 
-defineOptions({
-  name: 'WCopy',
-})
-
 const props = withDefaults(defineProps<CopyProps>(), {
   disabled: false,
   ariaLabel: '复制',
@@ -15,6 +11,7 @@ const props = withDefaults(defineProps<CopyProps>(), {
 })
 
 const emit = defineEmits<{
+  copy: [isSupported: boolean]
   success: [text: string]
   error: [error: Error]
 }>()
@@ -28,7 +25,8 @@ defineSlots<{
 const {
   copied,
   loading: clipboardLoading,
-  error,
+  error: clipboardError,
+  isSupported,
   copy,
   reset,
 } = useClipboard({
@@ -37,17 +35,17 @@ const {
   onError: (cause) => emit('error', cause),
 })
 
+// Errors raised while resolving the `text` getter are owned by this component;
+// clipboard failures come from the composable. Both surface through `error`.
+const localError = ref<Error | null>(null)
+const error = computed(() => localError.value ?? clipboardError.value)
+
 const resolving = ref(false)
 let unmounted = false
 // Bumped whenever the current attempt should be abandoned (reset or unmount).
 let requestId = 0
 const loading = computed(() => resolving.value || clipboardLoading.value)
 const isDisabled = computed(() => props.disabled || loading.value)
-const liveMessage = computed(() => {
-  if (copied.value) return '已复制'
-  if (error.value) return '复制失败'
-  return ''
-})
 const rootClasses = computed(() => ({
   'is-copied': copied.value,
   'is-loading': loading.value,
@@ -58,11 +56,14 @@ const rootClasses = computed(() => ({
 function resetState() {
   requestId += 1
   resolving.value = false
+  localError.value = null
   reset()
 }
 
 async function handleCopy(): Promise<boolean> {
   if (props.disabled || loading.value) return false
+
+  emit('copy', isSupported.value)
 
   const currentRequest = ++requestId
   let text: string | undefined
@@ -76,7 +77,7 @@ async function handleCopy(): Promise<boolean> {
     // pending timer before reporting the error.
     resetState()
     const nextError = cause instanceof Error ? cause : new Error(String(cause))
-    error.value = nextError
+    localError.value = nextError
     emit('error', nextError)
     return false
   } finally {
@@ -88,18 +89,26 @@ async function handleCopy(): Promise<boolean> {
   if (typeof text !== 'string') {
     resetState()
     const nextError = new Error('Copy requires a `text` function that returns a string')
-    error.value = nextError
+    localError.value = nextError
     emit('error', nextError)
     return false
   }
 
+  localError.value = null
   return copy(text)
+}
+
+function handleTriggerKeydown(event: KeyboardEvent): void {
+  if (event.key !== 'Enter' && event.key !== ' ') return
+  event.preventDefault()
+  void handleCopy()
 }
 
 const slotProps = computed<CopySlotProps>(() => ({
   copied: copied.value,
   loading: loading.value,
   error: error.value,
+  isSupported: isSupported.value,
   copy: handleCopy,
 }))
 
@@ -113,6 +122,7 @@ defineExpose({
   copied: readonly(copied),
   loading: readonly(loading),
   error: readonly(error),
+  isSupported,
   copy: handleCopy,
   reset: resetState,
 })
@@ -169,9 +179,21 @@ defineExpose({
       </span>
     </button>
 
-    <button v-else type="button" class="w-copy__trigger" :disabled="isDisabled" @click="handleCopy">
+    <!--
+      Non-icon mode accepts arbitrary slot content, so it renders a focusable
+      container instead of nesting everything inside a <button>.
+    -->
+    <span
+      v-else
+      class="w-copy__trigger"
+      role="button"
+      :tabindex="isDisabled ? -1 : 0"
+      :aria-disabled="isDisabled || undefined"
+      @click="handleCopy"
+      @keydown="handleTriggerKeydown"
+    >
       <slot v-bind="slotProps" />
-    </button>
+    </span>
 
     <template v-if="showIcon">
       <slot name="suffix">
@@ -179,7 +201,5 @@ defineExpose({
       </slot>
     </template>
     <slot v-else name="suffix" />
-
-    <span class="w-copy__live" aria-live="polite">{{ liveMessage }}</span>
   </span>
 </template>

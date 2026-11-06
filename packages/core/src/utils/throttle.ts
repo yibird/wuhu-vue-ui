@@ -1,4 +1,4 @@
-import type { AnyFunction } from './types'
+import type { AnyFunction } from '../types'
 
 export interface ThrottleOptions {
   /** Invoke on the leading edge of the wait period. Defaults to true. */

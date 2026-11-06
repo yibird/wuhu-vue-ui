@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type {
+  OrgTreeClasses,
   OrgTreeExpandSlotProps,
   OrgTreeKeys,
   OrgTreeNode,
   OrgTreeNodeSlotProps,
+  OrgTreeStyles,
 } from './types'
 import { nodeChildren, nodeKey, nodeLabel } from './utils'
-
-defineOptions({
-  name: 'WOrgTreeNode',
-})
 
 const props = defineProps<{
   node: OrgTreeNode
@@ -26,8 +24,8 @@ const props = defineProps<{
   draggingKey: string | null
   dropKey: string | null
   duplicateNodes: WeakSet<OrgTreeNode>
-  labelClassName: string
-  selectedClassName: string
+  classes?: OrgTreeClasses
+  styles?: OrgTreeStyles
 }>()
 
 const emit = defineEmits<{
@@ -63,14 +61,21 @@ function toggle() {
 </script>
 
 <template>
-  <div class="w-org-tree__node" :class="nodeClasses" :data-org-key="key" role="none">
+  <div
+    class="w-org-tree__node"
+    :class="[nodeClasses, classes?.node]"
+    :style="styles?.node"
+    :data-org-key="key"
+    role="none"
+  >
     <div class="w-org-tree__node-head" role="none">
       <div
         class="w-org-tree__node-card"
         :class="[
-          selectedClassName,
+          classes?.card,
           { 'is-selected': selected, 'is-disabled': disabled || node.disabled },
         ]"
+        :style="styles?.card"
         role="treeitem"
         :aria-level="depth + 1"
         :aria-expanded="hasChildren ? expanded : undefined"
@@ -79,7 +84,7 @@ function toggle() {
         :data-org-key="key"
         :tabindex="disabled || node.disabled || focusKey !== key ? -1 : 0"
       >
-        <span class="w-org-tree__label" :class="labelClassName">
+        <span class="w-org-tree__label" :class="classes?.label" :style="styles?.label">
           <slot name="node" :node="node" :depth="depth" :expanded="expanded" :toggle="toggle">
             {{ label }}
           </slot>
@@ -94,11 +99,17 @@ function toggle() {
           :has-children="hasChildren"
           :toggle="toggle"
         >
-          <span
+          <button
             v-if="collapsable"
+            type="button"
             class="w-org-tree__toggle"
-            aria-hidden="true"
+            :class="classes?.toggle"
+            :style="styles?.toggle"
+            tabindex="-1"
+            :aria-label="expanded ? collapseLabel : expandLabel"
+            :aria-expanded="expanded"
             :title="expanded ? collapseLabel : expandLabel"
+            @pointerdown.stop
             @click.stop="toggle"
           >
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -111,12 +122,18 @@ function toggle() {
                 stroke-linecap="round"
               />
             </svg>
-          </span>
+          </button>
         </slot>
       </span>
     </div>
 
-    <div v-if="hasChildren && expanded" class="w-org-tree__children" role="group">
+    <div
+      v-if="hasChildren && expanded"
+      class="w-org-tree__children"
+      :class="classes?.children"
+      :style="styles?.children"
+      role="group"
+    >
       <OrgTreeNode
         v-for="child in children"
         :key="nodeKey(child, keys)"
@@ -133,8 +150,8 @@ function toggle() {
         :dragging-key="draggingKey"
         :drop-key="dropKey"
         :duplicate-nodes="duplicateNodes"
-        :label-class-name="labelClassName"
-        :selected-class-name="selectedClassName"
+        :classes="classes"
+        :styles="styles"
         @toggle="emit('toggle', $event)"
       >
         <template v-if="$slots.node" #node="scope">

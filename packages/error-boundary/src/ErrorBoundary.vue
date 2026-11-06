@@ -3,12 +3,7 @@ import { computed, nextTick, onErrorCaptured, readonly, ref, shallowRef, watch }
 import type { ComponentPublicInstance } from 'vue'
 import type { ErrorBoundaryErrorEvent, ErrorBoundaryProps, ErrorBoundarySlotProps } from './types'
 
-defineOptions({
-  name: 'WErrorBoundary',
-})
-
 const props = withDefaults(defineProps<ErrorBoundaryProps>(), {
-  tag: 'div',
   title: '页面组件运行出错',
   description: '你可以重试，或联系管理员查看错误详情。',
   showDetails: false,
@@ -105,7 +100,7 @@ defineExpose({
 </script>
 
 <template>
-  <component :is="tag" class="w-error-boundary">
+  <div class="w-error-boundary">
     <div
       v-if="failed"
       key="w-error-boundary-fallback"
@@ -145,5 +140,5 @@ defineExpose({
     >
       <slot />
     </div>
-  </component>
+  </div>
 </template>

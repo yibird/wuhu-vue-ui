@@ -1,3 +1,20 @@
+/* VitePress brand: rgb(90, 84, 249) */
+:root {
+  --vp-c-brand-1: #5a54f9;
+  --vp-c-brand-2: #4a44e6;
+  --vp-c-brand-3: #403ac9;
+  --vp-c-brand-soft: rgba(90, 84, 249, 0.14);
+  --vp-c-brand: var(--vp-c-brand-1);
+}
+
+.dark {
+  --vp-c-brand-1: #8b86fb;
+  --vp-c-brand-2: #736dfa;
+  --vp-c-brand-3: #5a54f9;
+  --vp-c-brand-soft: rgba(139, 134, 251, 0.16);
+  --vp-c-brand: var(--vp-c-brand-1);
+}
+
 body {
   margin: 0;
   background: var(--vp-c-bg);
@@ -10,6 +27,94 @@ body {
 a {
   color: var(--vp-c-brand-1);
   text-decoration: none;
+}
+
+/* Home hero logo: rotating spectrum aura + 3D tilt on hover. */
+.VPHero .image-container {
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 14%;
+    z-index: -1;
+    pointer-events: none;
+    background: conic-gradient(
+      from 0deg,
+      #22d3ee,
+      #3b82f6,
+      #5a54f9,
+      #a78bfa,
+      #ec4899,
+      #f97316,
+      #22d3ee
+    );
+    border-radius: 38%;
+    opacity: 0;
+    filter: blur(34px);
+    transform: scale(0.82) rotate(0deg);
+    transition:
+      opacity 0.45s ease,
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .image-bg {
+    transition:
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.55s ease;
+  }
+
+  .image-src {
+    transform-origin: 50% 50%;
+    will-change: transform;
+    transition:
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.55s ease;
+  }
+
+  &:hover::before {
+    opacity: 0.52;
+    animation: wuhu-hero-aura-spin 7s linear infinite;
+  }
+
+  &:hover .image-src {
+    transform: translate(-50%, -50%) perspective(900px) rotateX(5deg) rotateY(-10deg) scale(1.06);
+    animation: wuhu-hero-neon-pulse 2.4s ease-in-out infinite;
+  }
+
+  &:hover .image-bg {
+    transform: translate(-50%, -50%) scale(1.16);
+    filter: var(--vp-home-hero-image-filter) saturate(1.25);
+  }
+}
+
+.dark .VPHero .image-container:hover::before {
+  opacity: 0.42;
+}
+
+@keyframes wuhu-hero-aura-spin {
+  from {
+    transform: scale(1.05) rotate(0deg);
+  }
+
+  to {
+    transform: scale(1.05) rotate(360deg);
+  }
+}
+
+@keyframes wuhu-hero-neon-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(90, 84, 249, 0.55))
+      drop-shadow(0 0 20px rgba(34, 211, 238, 0.25))
+      drop-shadow(0 14px 28px rgba(90, 84, 249, 0.28));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 12px rgba(90, 84, 249, 0.8))
+      drop-shadow(0 0 28px rgba(255, 107, 61, 0.35))
+      drop-shadow(0 18px 34px rgba(244, 114, 182, 0.3));
+  }
 }
 
 /* VitePress scopes its max-width rule with a data-v attribute. */

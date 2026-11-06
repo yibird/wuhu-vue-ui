@@ -52,4 +52,11 @@ describe('formatRelativeTime', () => {
     expect(date?.getMonth()).toBe(9)
     expect(date?.getDate()).toBe(19)
   })
+
+  it('parses years from 0001 through 0099 and rejects invalid calendar dates', () => {
+    expect(toDate('0001-01-01')?.getFullYear()).toBe(1)
+    expect(toDate('0099-12-31')?.getFullYear()).toBe(99)
+    expect(toDate('0099-02-29')).toBeNull()
+    expect(toDate('2024-02-29')?.getDate()).toBe(29)
+  })
 })

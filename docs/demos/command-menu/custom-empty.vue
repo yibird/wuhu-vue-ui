@@ -73,9 +73,7 @@ function handleSearch(value: string) {
             </span>
 
             <strong>没有找到「{{ query }}」</strong>
-            <span class="command-slot-empty__desc">
-              试试更短的关键词、完整拼音或首字母，例如 gzt → 工作台。
-            </span>
+            <span class="command-slot-empty__desc"> 试试更短的关键词，例如「工作」。 </span>
             <span class="command-slot-empty__hint">empty 插槽接收当前 query</span>
           </span>
         </template>

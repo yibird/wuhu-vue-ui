@@ -31,7 +31,7 @@ const features = [
   {
     index: '06',
     title: '轻量运行时',
-    description: '仅 Command Menu 为拼音搜索引入 pinyin-pro，其余组件不依赖额外运行时。',
+    description: '可选能力按需安装，拼音、虚拟列表等依赖不会被打进组件本体。',
   },
 ]
 

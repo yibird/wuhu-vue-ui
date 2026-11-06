@@ -79,6 +79,8 @@ const selected = ref<string | null>(null)
 | `emptyText`    | `string`            | `'没有匹配的图标'` | 空结果文本                               |
 | `allLabel`     | `string`            | `'全部图标'`       | 侧边栏「全部图标」文案                   |
 | `groupsLabel`  | `string`            | `'按用途浏览'`     | 侧边栏分组区域标题                       |
+| `libraryLabel` | `string`            | `'图标库'`         | 侧边栏标题                               |
+| `countLabel`   | `(count) => string` | `n 个`             | 主区域结果数量文案                       |
 | `ariaLabel`    | `string`            | `'图标选择器'`     | 根元素无障碍名称                         |
 | `columns`      | `number`            | —                  | 固定列数；未传时按 `itemMinWidth` 自适应 |
 | `itemMinWidth` | `number`            | `72`               | 自动计算列数时的最小单元格宽度           |

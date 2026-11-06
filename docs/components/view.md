@@ -33,7 +33,7 @@ const collapsed = ref(false)
 
 ## 自定义间距
 
-通过 `gap` 控制子元素间距；设置后 `View` 会启用 flex 布局。下面的示例可以切换不同的间距值。
+`View` 始终作为 flex 容器，`gap` 只控制子元素间距（默认 `0`），`direction` 可以直接使用，不依赖是否设置 `gap`。下面的示例可以切换间距值与排列方向。
 
 <demo vue="../demos/view/gap.vue" />
 
@@ -74,11 +74,11 @@ const collapsed = ref(false)
 
 ### View Props
 
-| 属性        | 类型                         | 默认值       | 说明                             |
-| ----------- | ---------------------------- | ------------ | -------------------------------- |
-| `full`      | `boolean`                    | `true`       | 是否绝对定位铺满最近的定位祖先   |
-| `gap`       | `string \| number`           | —            | 子元素间距；设置后启用 flex 布局 |
-| `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | flex 布局方向                    |
+| 属性        | 类型                         | 默认值       | 说明                                    |
+| ----------- | ---------------------------- | ------------ | --------------------------------------- |
+| `full`      | `boolean`                    | `true`       | 是否绝对定位铺满最近的定位祖先          |
+| `gap`       | `string \| number`           | `0`          | 子元素间距（数字按像素处理）            |
+| `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | 子元素排列方向；`View` 始终为 flex 容器 |
 
 ### ViewHeader / ViewSider Props
 
@@ -86,11 +86,30 @@ const collapsed = ref(false)
 | ---------------- | ------------------ | ------- | ---------------------- |
 | `collapsible`    | `boolean`          | `false` | 是否允许折叠           |
 | `trigger`        | `boolean`          | `true`  | 是否显示内置触发器     |
-| `collapseLabel`  | `string`           | —       | 收起时的无障碍标签     |
-| `expandLabel`    | `string`           | —       | 展开时的无障碍标签     |
 | `collapsed`      | `boolean`          | `false` | 折叠状态（`v-model`）  |
 | `width`          | `string \| number` | `240`   | 仅 Sider：展开宽度     |
 | `collapsedWidth` | `string \| number` | `0`     | 仅 Sider：收起后的宽度 |
+
+### 语义化样式
+
+`View`、`ViewHeader` 与 `ViewSider` 都支持 `classes` 与 `styles`，用于向内部结构注入类名与内联样式。`View` 只有 `root` 一个键；`ViewHeader` / `ViewSider` 支持以下键：
+
+| 键              | 对应元素                     |
+| --------------- | ---------------------------- |
+| `root`          | 组件根节点                   |
+| `body`          | 内容外层容器                 |
+| `content`       | 内容容器（折叠时收缩的元素） |
+| `trigger`       | 触发器外层容器               |
+| `triggerButton` | 内置触发器按钮               |
+| `triggerIcon`   | 内置触发器图标               |
+
+```vue
+<ViewHeader
+  collapsible
+  :classes="{ triggerButton: 'my-trigger-button' }"
+  :styles="{ content: { padding: '8px 12px' } }"
+/>
+```
 
 ### 事件
 

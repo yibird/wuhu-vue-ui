@@ -18,6 +18,11 @@ export type {
   ViewCollapsibleProps,
   ViewDirection,
   ViewSize,
+  ViewClassValue,
+  ViewClasses,
+  ViewStyles,
+  ViewCollapsibleClasses,
+  ViewCollapsibleStyles,
 } from './src/types'
 
 const View = ViewRoot as typeof ViewRoot & {

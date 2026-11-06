@@ -2,7 +2,7 @@ let lockCount = 0
 let previousOverflow = ''
 let previousPaddingRight = ''
 
-export function lockBodyScroll(): void {
+export function lockBodyScroll() {
   if (typeof document === 'undefined' || typeof window === 'undefined') return
 
   if (lockCount === 0) {
@@ -23,7 +23,7 @@ export function lockBodyScroll(): void {
   lockCount += 1
 }
 
-export function unlockBodyScroll(): void {
+export function unlockBodyScroll() {
   if (typeof document === 'undefined' || lockCount === 0) return
 
   lockCount -= 1

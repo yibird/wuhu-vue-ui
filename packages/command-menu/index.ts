@@ -6,6 +6,7 @@ export type {
   CommandMenuClassValue,
   CommandMenuEmptySlotProps,
   CommandMenuEscapeBehavior,
+  CommandMenuFilter,
   CommandMenuIcon,
   CommandMenuItem,
   CommandMenuItemSlotProps,

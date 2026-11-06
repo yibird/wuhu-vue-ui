@@ -203,8 +203,7 @@
     height: 5px;
     flex: none;
     border-radius: var(--w-radius-full, 9999px);
-    background: currentcolor;
-    opacity: 0.45;
+    background: var(--w-color-primary, #4f46e5);
   }
 
   &__count {
@@ -362,13 +361,5 @@
 @media (max-width: 640px) {
   .w-icon-picker__sidebar {
     display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-icon-picker__item,
-  .w-icon-picker__group,
-  .w-icon-picker__search {
-    transition: none;
   }
 }

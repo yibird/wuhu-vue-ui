@@ -4,13 +4,10 @@ import type { editor as MonacoEditor, IDisposable } from 'monaco-editor'
 import type {
   CodeEditorErrorSlotProps,
   CodeEditorExpose,
+  CodeEditorLabels,
   CodeEditorModel,
   CodeEditorProps,
 } from './types'
-
-defineOptions({
-  name: 'WCodeEditor',
-})
 
 const props = withDefaults(defineProps<CodeEditorProps>(), {
   modelValue: '',
@@ -23,7 +20,15 @@ const props = withDefaults(defineProps<CodeEditorProps>(), {
   options: () => ({}),
   automaticLayout: true,
   loadingText: '编辑器加载中…',
+  labels: () => ({}),
 })
+
+const labels = computed<CodeEditorLabels>(() => ({
+  loading: props.loadingText,
+  error: '编辑器加载失败',
+  retry: '重试',
+  ...props.labels,
+}))
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
@@ -68,11 +73,9 @@ const rootStyle = computed(() => ({
   height: toCssSize(props.height),
 }))
 
-const errorMessage = computed(() => loadError.value?.message || '编辑器加载失败')
+const errorMessage = computed(() => loadError.value?.message || labels.value.error)
 
-const THEME_MEDIA_QUERY = '(prefers-color-scheme: dark)'
-let themeMediaQuery: MediaQueryList | null = null
-let themeObserver: MutationObserver | null = null
+let themeOverride: string | null = null
 
 function toCssSize(value: string | number): string {
   return typeof value === 'number' ? `${value}px` : value
@@ -93,46 +96,25 @@ function resolveTheme(theme: string): string {
   }
 
   if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-    return window.matchMedia(THEME_MEDIA_QUERY).matches ? 'vs-dark' : 'vs'
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs'
   }
 
   return 'vs'
 }
 
-function applyTheme(): void {
-  monacoApi?.editor.setTheme(resolveTheme(props.theme))
+function resolvedTheme(): string {
+  return themeOverride ?? resolveTheme(props.theme)
 }
 
-function teardownThemeWatchers(): void {
-  themeMediaQuery?.removeEventListener('change', applyTheme)
-  themeMediaQuery = null
-  themeObserver?.disconnect()
-  themeObserver = null
-}
-
-function setupThemeWatchers(): void {
-  teardownThemeWatchers()
-  if (props.theme !== 'auto' || typeof window === 'undefined') return
-
-  if (typeof window.matchMedia === 'function') {
-    themeMediaQuery = window.matchMedia(THEME_MEDIA_QUERY)
-    themeMediaQuery.addEventListener('change', applyTheme)
-  }
-
-  if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') {
-    themeObserver = new MutationObserver(applyTheme)
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-w-theme', 'class'],
-    })
-  }
+function applyTheme() {
+  monacoApi?.editor.setTheme(resolvedTheme())
 }
 
 function toError(cause: unknown): Error {
   return cause instanceof Error ? cause : new Error(String(cause))
 }
 
-function createEditor(api: MonacoApi): void {
+function createEditor(api: MonacoApi) {
   const container = containerRef.value
   if (!container) throw new Error('Code editor container is not available.')
 
@@ -145,7 +127,7 @@ function createEditor(api: MonacoApi): void {
     instance = api.editor.create(container, {
       ...props.options,
       model: textModel,
-      theme: resolveTheme(props.theme),
+      theme: resolvedTheme(),
       readOnly: readOnlyState.value,
       automaticLayout: props.automaticLayout,
     })
@@ -157,6 +139,7 @@ function createEditor(api: MonacoApi): void {
   }
 
   editor.value = instance
+  appliedOptions = { ...props.options, readOnly: readOnlyState.value }
 
   disposables = [
     instance.onDidChangeModelContent(handleContentChange),
@@ -164,7 +147,6 @@ function createEditor(api: MonacoApi): void {
     instance.onDidBlurEditorText(() => emit('blur')),
   ]
 
-  setupThemeWatchers()
   emit('ready', instance)
 }
 
@@ -206,14 +188,14 @@ async function load(): Promise<void> {
   }
 }
 
-function handleContentChange(): void {
+function handleContentChange() {
   if (syncingFromProps) return
   const value = editor.value?.getValue() ?? ''
   emit('update:modelValue', value)
   emit('change', value)
 }
 
-function disposeInstance(): void {
+function disposeInstance() {
   for (const disposable of disposables) disposable.dispose()
   disposables = []
 
@@ -225,7 +207,7 @@ function disposeInstance(): void {
   createdModel = false
 }
 
-function retry(): void {
+function retry() {
   loadError.value = null
   void load()
 }
@@ -234,11 +216,11 @@ function getEditor(): MonacoEditor.IStandaloneCodeEditor | null {
   return editor.value
 }
 
-function focus(): void {
+function focus() {
   editor.value?.focus()
 }
 
-function layout(): void {
+function layout() {
   editor.value?.layout()
 }
 
@@ -246,19 +228,22 @@ function getValue(): string {
   return editor.value?.getValue() ?? props.modelValue ?? ''
 }
 
-function setValue(value: string): void {
+function setValue(value: string) {
   const instance = editor.value
   if (!instance || instance.getValue() === value) return
   instance.setValue(value)
 }
 
-function setLanguage(language: string): void {
+function setLanguage(language: string) {
   if (!monacoApi || !model.value) return
   monacoApi.editor.setModelLanguage(model.value, language)
 }
 
-function setTheme(theme: string): void {
-  monacoApi?.editor.setTheme(resolveTheme(theme))
+function setTheme(theme: string) {
+  // Explicit overrides survive `theme="auto"` watcher updates until the
+  // `theme` prop itself changes.
+  themeOverride = theme
+  applyTheme()
 }
 
 watch(
@@ -286,26 +271,36 @@ watch(
 
 watch(
   () => props.theme,
-  (theme) => {
-    setTheme(theme)
-    setupThemeWatchers()
-  },
-)
-
-watch(readOnlyState, (readOnly) => {
-  editor.value?.updateOptions({ readOnly })
-})
-
-watch(
-  () => props.options,
   () => {
-    editor.value?.updateOptions({
-      ...props.options,
-      readOnly: readOnlyState.value,
-    })
+    themeOverride = null
+    applyTheme()
   },
-  { deep: true },
 )
+
+let appliedOptions: Record<string, unknown> = {}
+
+/** Sends only the option keys that actually changed to Monaco. */
+function syncOptions() {
+  const instance = editor.value
+  if (!instance) return
+
+  const next = { ...props.options, readOnly: readOnlyState.value } as Record<string, unknown>
+  const changed: Record<string, unknown> = {}
+  for (const key in next) {
+    if (next[key] !== appliedOptions[key]) changed[key] = next[key]
+  }
+  for (const key in appliedOptions) {
+    if (!(key in next)) changed[key] = undefined
+  }
+  appliedOptions = next
+  if (!Object.keys(changed).length) return
+
+  type UpdateOptions = Parameters<MonacoEditor.IStandaloneCodeEditor['updateOptions']>[0]
+  instance.updateOptions(changed as unknown as UpdateOptions)
+}
+
+watch(readOnlyState, syncOptions)
+watch(() => props.options, syncOptions, { deep: true })
 
 watch(
   () => props.automaticLayout,
@@ -321,7 +316,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   destroyed = true
   loadToken += 1
-  teardownThemeWatchers()
   disposeInstance()
   monacoApi = null
 })
@@ -353,14 +347,16 @@ defineExpose<CodeEditorExpose>({
     <div v-if="loading" class="w-code-editor__loading" role="status" aria-live="polite">
       <slot name="loading">
         <span class="w-code-editor__spinner" aria-hidden="true" />
-        <span>{{ loadingText }}</span>
+        <span>{{ labels.loading }}</span>
       </slot>
     </div>
 
     <div v-else-if="loadError" class="w-code-editor__error" role="alert">
       <slot name="error" :error="loadError" :retry="retry">
         <span class="w-code-editor__error-text">{{ errorMessage }}</span>
-        <button type="button" class="w-code-editor__retry" @click="retry">重试</button>
+        <button type="button" class="w-code-editor__retry" @click="retry">
+          {{ labels.retry }}
+        </button>
       </slot>
     </div>
   </div>

@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import type { ExceptionType } from './types'
 
-defineOptions({
-  name: 'WExceptionIllustration',
-})
-
 defineProps<{
   type: ExceptionType
 }>()
@@ -22,22 +18,34 @@ defineProps<{
     <circle cx="120" cy="90" r="72" fill="var(--w-exception-soft)" />
 
     <template v-if="type === 'notFound'">
-      <circle
-        cx="111"
-        cy="85"
-        r="36"
+      <rect
+        x="66"
+        y="44"
+        width="108"
+        height="92"
+        rx="10"
         fill="var(--w-exception-surface)"
         stroke="currentColor"
         stroke-width="2.4"
       />
+      <path d="M66 68h108" stroke="currentColor" stroke-width="2.2" opacity="0.55" />
+      <circle cx="82" cy="56" r="3" fill="currentColor" />
+      <circle cx="94" cy="56" r="3" fill="currentColor" opacity="0.65" />
+      <circle cx="106" cy="56" r="3" fill="currentColor" opacity="0.4" />
       <path
-        d="M104 78.5a7 7 0 0 1 14 0c0 3.7-2.4 5.3-4.1 6.6-1.3 1-1.9 1.9-1.9 3.6"
+        d="M113 96a7 7 0 0 1 14 0c0 3.7-2.4 5.3-4.1 6.6-1.3 1-1.9 1.9-1.9 3.6"
         stroke="currentColor"
         stroke-width="2.6"
         stroke-linecap="round"
       />
-      <circle cx="112" cy="93.5" r="2.2" fill="currentColor" />
-      <path d="m138 112 25 25" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
+      <circle cx="121" cy="110" r="2.2" fill="currentColor" />
+      <path
+        d="M100 124h40"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        opacity="0.35"
+      />
       <path
         d="M64 54h-8M196 94h8M70 140h-8"
         stroke="currentColor"

@@ -36,6 +36,7 @@ export const en: FileViewerMessages = {
     switchToDark: 'Switch to dark theme',
     switchToLight: 'Switch to light theme',
     downloadStarted: 'Download started',
+    downloadFallback: 'The file could not be saved directly — opened it in a new tab instead.',
     downloadFailed: 'The file could not be downloaded.',
     printBlocked: 'Allow pop-ups to print this file.',
     openBlocked: 'Allow pop-ups to open this file.',

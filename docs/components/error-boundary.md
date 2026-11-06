@@ -14,13 +14,20 @@
 
 <demo vue="../demos/error-boundary/custom.vue" />
 
+## 自动重置
+
+`resetOn` 用于在外部状态变化时自动清空错误并重新渲染。该 prop 以 `deep: true` 深度监听：
+
+- 对象/数组内部任意属性变化都会触发重置；组件处于健康状态（未捕获错误）时不会重置，也不会产生额外渲染。
+- 监听大对象或高频变化的数据源会带来遍历开销。推荐传入标量“版本号”或只包含关键字段的浅对象，例如 `:reset-on="route.fullPath"`、`:reset-on="retryKey"`。
+- 需要手动控制时调用实例方法 `reset()`，或通过 `fallback` 插槽拿到 `reset`。
+
 ## API
 
 ### Props
 
 | 属性          | 类型      | 默认值                                     | 说明               |
 | ------------- | --------- | ------------------------------------------ | ------------------ |
-| `tag`         | `string`  | `'div'`                                    | 根元素标签         |
 | `title`       | `string`  | `'页面组件运行出错'`                       | 默认回退标题       |
 | `description` | `string`  | `'你可以重试，或联系管理员查看错误详情。'` | 默认回退描述       |
 | `showDetails` | `boolean` | `false`                                    | 显示原始错误信息   |
@@ -54,7 +61,7 @@
 
 ### CSS 变量
 
-无组件专属变量，使用全局设计令牌（如 `--w-color-danger-soft`、`--w-radius-lg`）。
+无组件专属变量，使用全局设计令牌（如 `--w-color-danger-soft`、`--w-color-primary`、`--w-radius-lg`）。
 
 ### 类名
 

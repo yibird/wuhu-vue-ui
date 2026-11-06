@@ -3,10 +3,6 @@ import { useRaf } from '@wuhu-vue-ui/core'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { NumberTickerCharacter, NumberTickerProps } from './types'
 
-defineOptions({
-  name: 'WNumberTicker',
-})
-
 const props = withDefaults(defineProps<NumberTickerProps>(), {
   startValue: 0,
   duration: 800,

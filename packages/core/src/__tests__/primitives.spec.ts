@@ -2,7 +2,7 @@ import { effectScope, ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { useControllableState } from '../hooks/useControllableState'
 import { useDismissable } from '../hooks/useDismissable'
-import { useListNavigation } from '../hooks/useListNavigation'
+import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation'
 import { useMediaQuery, usePrefersReducedMotion } from '../hooks/useMediaQuery'
 import { useRaf } from '../hooks/useRaf'
 import { useIntervalFn, useTimeoutFn } from '../hooks/useTimer'
@@ -97,7 +97,7 @@ describe('useControllableState', () => {
   })
 })
 
-describe('useListNavigation', () => {
+describe('useKeyboardNavigation', () => {
   function keyEvent(key: string, composing = false): KeyboardEvent {
     return { key, isComposing: composing, preventDefault: vi.fn() } as unknown as KeyboardEvent
   }
@@ -106,7 +106,7 @@ describe('useListNavigation', () => {
     const items = ['a', 'b', 'c']
     const active = ref<number | null>(null)
     const activated = vi.fn()
-    const nav = useListNavigation({
+    const nav = useKeyboardNavigation({
       items,
       activeIndex: active,
       onHighlight: (index) => (active.value = index),
@@ -124,7 +124,7 @@ describe('useListNavigation', () => {
   it('supports grid movement and clamping when loop is disabled', () => {
     const items = ['0', '1', '2', '3', '4', '5']
     const active = ref(0)
-    const nav = useListNavigation({
+    const nav = useKeyboardNavigation({
       items,
       columns: 3,
       loop: false,
@@ -141,7 +141,7 @@ describe('useListNavigation', () => {
   })
 
   it('ignores keys while composing', () => {
-    const nav = useListNavigation({
+    const nav = useKeyboardNavigation({
       items: ['a'],
       activeIndex: 0,
       onHighlight: vi.fn(),

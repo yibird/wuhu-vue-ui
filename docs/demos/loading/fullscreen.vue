@@ -4,7 +4,7 @@ import { Loading } from '@wuhu-vue-ui/loading'
 
 const open = ref(false)
 
-function show(): void {
+function show() {
   open.value = true
   window.setTimeout(() => {
     open.value = false

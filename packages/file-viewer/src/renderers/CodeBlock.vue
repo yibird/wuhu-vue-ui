@@ -2,10 +2,6 @@
 import { computed } from 'vue'
 import { codeTokenClass, tokenizeCode, tokensToLines } from '../core/code'
 
-defineOptions({
-  name: 'WFileViewerCodeBlock',
-})
-
 const props = withDefaults(
   defineProps<{
     code: string

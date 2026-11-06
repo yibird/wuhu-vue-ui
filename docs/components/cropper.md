@@ -51,7 +51,8 @@
 | 属性              | 类型                                     | 默认值              | 说明                                           |
 | ----------------- | ---------------------------------------- | ------------------- | ---------------------------------------------- |
 | `src`             | `string`                                 | —（必填）           | 待裁剪图片 URL                                 |
-| `alt`             | `string`                                 | `'Image to crop'`   | 图片替代文本                                   |
+| `alt`             | `string`                                 | 取自 `labels.image` | 图片替代文本                                   |
+| `labels`          | `Partial<CropperLabels>`                 | —                   | 操作栏、缩放、旋转、重置与默认 alt 文案        |
 | `height`          | `string \| number`                       | `360`               | 容器高度                                       |
 | `aspectRatio`     | `number`                                 | —                   | 锁定选区宽高比                                 |
 | `initialCoverage` | `number`                                 | `0.5`               | 选区覆盖比例（0–1），变化时重置选区            |
@@ -100,6 +101,7 @@
 | `zoom(scale)`                                   | `(scale: number) => void`                  | 放大 / 缩小（0.1–10 倍） |
 | `rotate(degrees)`                               | `(degrees: number) => void`                | 旋转图片                 |
 | `reset()`                                       | `() => void`                               | 重置变换与选区           |
+| `retry()`                                       | `() => void`                               | 初始化失败后重试         |
 
 ### CSS 变量
 

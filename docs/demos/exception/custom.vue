@@ -19,7 +19,6 @@ function retry() {
       type="serverError"
       title="保存失败了"
       description="服务暂时不可用，请稍后重试。如果问题持续存在，请联系管理员。"
-      :image-width="300"
     >
       <template #image>
         <svg viewBox="0 0 240 180" fill="none" aria-hidden="true">

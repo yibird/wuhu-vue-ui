@@ -110,4 +110,4 @@ function handlePointerDown(event: PointerEvent) {
 | `.w-ripple-host`  | 指令添加到宿主元素上的裁剪类   |
 | `.w-ripple__wave` | 单个波纹节点（组件与指令共用） |
 
-动画关键帧为 `w-ripple-spread`。当用户开启 `prefers-reduced-motion` 时，动画会被压缩到极短时长。
+动画关键帧为 `w-ripple-spread`。

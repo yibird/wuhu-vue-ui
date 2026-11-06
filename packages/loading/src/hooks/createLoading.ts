@@ -1,6 +1,7 @@
 import {
   createApp,
   h,
+  nextTick,
   shallowReactive,
   shallowRef,
   type App,
@@ -8,7 +9,6 @@ import {
   type VNode,
 } from 'vue'
 import Loading from '../Loading.vue'
-import { LOADING_TRANSITION_DURATION } from '../constants'
 import type { LoadingInstance, LoadingOptions, LoadingProps, LoadingSlots } from '../types'
 
 interface InternalInstance {
@@ -46,22 +46,38 @@ export function createLoading(options: LoadingOptions = {}): LoadingInstance {
 
   let closeCallback = onClose
   const currentSlots = shallowRef<LoadingSlots | undefined>(slots)
-  let timer: ReturnType<typeof setTimeout> | undefined
   let app: App<Element>
+  let closing = false
+  let destroyed = false
 
   const container = document.createElement('div')
   container.setAttribute('data-w-loading', String(id))
   document.body.appendChild(container)
 
-  const destroy = (): void => {
-    if (timer !== undefined) {
-      clearTimeout(timer)
-      timer = undefined
-    }
-
+  const destroy = () => {
+    if (destroyed) return
+    destroyed = true
+    instances.delete(id)
     app?.unmount()
     container.remove()
-    instances.delete(id)
+    // A manual destroy can run while the leave transition is still pending, in
+    // which case Vue leaves the teleported overlay in the DOM. The instance id
+    // attribute lets us remove it without touching other instances.
+    document.querySelectorAll(`[data-w-loading-instance="${id}"]`).forEach((node) => node.remove())
+  }
+
+  /**
+   * The leave transition drives teardown, so a synchronous `destroy()` (or a
+   * reopen that cancels the leave) can never race a fixed timer. Teardown is
+   * deferred one tick so unmounting never happens in the middle of a render
+   * flush and a reopen scheduled in the same tick still wins.
+   */
+  const handleAfterLeave = () => {
+    if (destroyed || state.open) return
+    closing = false
+    nextTick(() => {
+      if (!destroyed && !state.open) destroy()
+    })
   }
 
   const internal: InternalInstance = { id, state, destroy }
@@ -72,7 +88,7 @@ export function createLoading(options: LoadingOptions = {}): LoadingInstance {
       return () =>
         h(
           Loading as Component,
-          state,
+          { ...state, 'data-w-loading-instance': String(id), onAfterLeave: handleAfterLeave },
           currentSlots.value as unknown as Record<string, () => VNode[]> | undefined,
         )
     },
@@ -81,36 +97,45 @@ export function createLoading(options: LoadingOptions = {}): LoadingInstance {
   app.mount(container)
   instances.set(id, internal)
 
-  const close = (): void => {
-    if (!instances.has(id)) return
-    if (timer !== undefined) return
+  const close = () => {
+    if (destroyed || closing) return
+    // The instance never rendered, so there is no leave transition to wait for.
+    if (!state.open) {
+      destroy()
+      return
+    }
+
+    closing = true
     state.open = false
     closeCallback?.()
-    timer = setTimeout(() => {
-      timer = undefined
-      destroy()
-    }, LOADING_TRANSITION_DURATION)
+  }
+
+  const reopen = () => {
+    if (destroyed) return
+    closing = false
+    state.open = true
   }
 
   return {
     id,
     close,
     update: (next: Partial<LoadingOptions>) => {
-      const { onClose: nextOnClose, slots: nextSlots, ...nextProps } = next
-      if (nextProps.open === false) {
-        close()
-        return
-      }
-      Object.assign(state, nextProps)
+      if (destroyed) return
+
+      const { onClose: nextOnClose, slots: nextSlots, open: nextOpen, ...nextProps } = next
       if (nextOnClose) closeCallback = nextOnClose
       if (nextSlots) currentSlots.value = nextSlots
+      Object.assign(state, nextProps)
+
+      if (nextOpen === false) close()
+      else if (nextOpen === true) reopen()
     },
     destroy,
   }
 }
 
 /** Destroys a specific loading instance, or all instances when omitted. */
-export function destroyLoading(target?: LoadingInstance | number): void {
+export function destroyLoading(target?: LoadingInstance | number) {
   if (target === undefined) {
     destroyAllLoadings()
     return
@@ -121,6 +146,6 @@ export function destroyLoading(target?: LoadingInstance | number): void {
 }
 
 /** Destroys every imperative loading instance. */
-export function destroyAllLoadings(): void {
+export function destroyAllLoadings() {
   for (const instance of Array.from(instances.values())) instance.destroy()
 }

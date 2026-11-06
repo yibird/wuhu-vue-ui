@@ -3,10 +3,6 @@ import { computed, inject } from 'vue'
 import { PERMISSION_KEY, checkPermission } from './permissions'
 import type { PermissionProps } from './types'
 
-defineOptions({
-  name: 'WPermission',
-})
-
 const props = withDefaults(defineProps<PermissionProps>(), {
   mode: 'all',
 })
@@ -18,9 +14,11 @@ defineSlots<{
 
 const context = inject(PERMISSION_KEY, null)
 
+const explicitPermissions = computed<ReadonlySet<string>>(() => new Set(props.permissions ?? []))
+
 const allowed = computed(() => {
   if (props.permissions !== undefined) {
-    return checkPermission(props.value, new Set(props.permissions), props.mode)
+    return checkPermission(props.value, explicitPermissions.value, props.mode)
   }
 
   // No provider and no explicit list: deny by default (fail-closed).

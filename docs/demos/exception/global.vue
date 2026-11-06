@@ -39,11 +39,11 @@ onBeforeUnmount(() => {
   <div class="exception-global">
     <div class="exception-global__item">
       <span class="exception-global__label">notFound</span>
-      <Exception type="notFound" :image-width="260" />
+      <Exception type="notFound" />
     </div>
     <div class="exception-global__item">
       <span class="exception-global__label">serverError</span>
-      <Exception type="serverError" :image-width="260" />
+      <Exception type="serverError" />
     </div>
   </div>
 </template>

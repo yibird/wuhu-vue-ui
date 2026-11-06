@@ -337,33 +337,3 @@
     transform: rotate(360deg);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .w-loading-fade-enter-active,
-  .w-loading-fade-leave-active {
-    transition: none;
-  }
-
-  .w-loading__bars span,
-  .w-loading__beat::before,
-  .w-loading__beat::after,
-  .w-loading__pulse span,
-  .w-loading__ring::after,
-  .w-loading__ring span,
-  .w-loading__spinner {
-    animation: none !important;
-  }
-
-  .w-loading__pulse span {
-    opacity: 0.55;
-    transform: scale(0.72);
-  }
-
-  .w-loading__pulse span:not(:first-child) {
-    display: none;
-  }
-
-  .w-loading__beat::after {
-    transform: none;
-  }
-}

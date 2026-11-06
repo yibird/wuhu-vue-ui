@@ -8,7 +8,7 @@ export function normalizeFileViewerLocale(locale: string): string {
   return locale.trim().replace(/_/g, '-').toLowerCase()
 }
 
-export function registerFileViewerLocale(locale: string, messages: FileViewerMessages): void {
+export function registerFileViewerLocale(locale: string, messages: FileViewerMessages) {
   localeRegistry.set(normalizeFileViewerLocale(locale), messages)
 }
 
