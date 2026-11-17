@@ -22,7 +22,14 @@ defineSlots<DockSlots>()
 const rootRef = ref<HTMLElement>()
 const itemRefs = ref<(HTMLElement | null)[]>([])
 const scales = ref<number[]>([])
-const activeIndex = ref(-1)
+const hoverIndex = ref(-1)
+const focusIndex = ref(-1)
+const hovering = ref(false)
+/**
+ * Hover and focus are tracked separately: a pointer leave must not clear the
+ * highlight of a keyboard-focused item, and a blur must not clear hover.
+ */
+const activeIndex = computed(() => (focusIndex.value >= 0 ? focusIndex.value : hoverIndex.value))
 
 /**
  * Item centers relative to the dock root. Cached because pointer frames only
@@ -143,11 +150,21 @@ function applyPointer(clientX: number, clientY: number) {
   }
 }
 
+function handlePointerEnter() {
+  hovering.value = true
+  invalidateItemCenters()
+}
+
 function onPointerLeave() {
   pointerRaf.cancel()
   pendingPointer = null
+  hovering.value = false
   resetScales()
-  activeIndex.value = -1
+  hoverIndex.value = -1
+}
+
+function handleItemBlur(index: number) {
+  if (focusIndex.value === index) focusIndex.value = -1
 }
 
 function navigate(item: DockItem) {
@@ -158,7 +175,7 @@ function navigate(item: DockItem) {
 function activate(item: DockItem | undefined, index: number, event: Event) {
   if (!item || item.disabled || item.separator) return
 
-  activeIndex.value = index
+  focusIndex.value = index
 
   if (typeof item.command === 'function') {
     item.command(item, event)
@@ -169,10 +186,19 @@ function activate(item: DockItem | undefined, index: number, event: Event) {
   emit('select', item, event)
 }
 
-watch(
-  () => [props.model, props.position, props.baseSize, props.gap],
-  () => invalidateItemCenters(),
+/**
+ * Re-measure and reset when the item list itself changes. Watching only the
+ * array reference misses in-place `push`/`splice`/`sort`, which would leave the
+ * cached centres shorter than the list and stop new items from magnifying.
+ */
+const modelSignature = computed(() =>
+  items.value.map((item) => item.id ?? (item.separator ? '|' : item.label)).join('\u0000'),
 )
+
+watch([modelSignature, () => props.position, () => props.baseSize, () => props.gap], () => {
+  invalidateItemCenters()
+  resetScales()
+})
 
 onMounted(() => {
   resetScales()
@@ -200,10 +226,10 @@ onBeforeUnmount(() => {
   <ul
     ref="rootRef"
     class="w-dock"
-    :class="`w-dock--${position}`"
+    :class="[`w-dock--${position}`, { 'is-magnifying': hovering && magnification }]"
     :aria-label="ariaLabel"
     :style="rootStyle"
-    @pointerenter="invalidateItemCenters"
+    @pointerenter="handlePointerEnter"
     @pointermove="onPointerMove"
     @pointerleave="onPointerLeave"
   >
@@ -217,8 +243,9 @@ onBeforeUnmount(() => {
           :class="{ 'is-active': isActive(index), 'is-disabled': item.disabled }"
           :disabled="item.disabled"
           :aria-label="item.label"
-          @pointerenter="activeIndex = index"
-          @focus="activeIndex = index"
+          @pointerenter="hoverIndex = index"
+          @focus="focusIndex = index"
+          @blur="handleItemBlur(index)"
           @click="activate(item, index, $event)"
         >
           <span class="w-dock__inner" :style="itemStyle(index)">

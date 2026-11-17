@@ -406,10 +406,20 @@ function handlePointerEnd() {
   verify()
 }
 
+/**
+ * A cancelled gesture (system swipe, touch-action takeover, call overlay) is
+ * not a submit. Revert the handle instead of counting a failed attempt.
+ */
+function handlePointerCancel() {
+  if (!dragging.value) return
+  dragging.value = false
+  offset.value = dragStartOffset
+}
+
 const drag = usePointerDrag({
   onMove: handlePointerMove,
   onEnd: handlePointerEnd,
-  onCancel: handlePointerEnd,
+  onCancel: handlePointerCancel,
 })
 
 function handleKeydown(event: KeyboardEvent) {

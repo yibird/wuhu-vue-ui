@@ -203,7 +203,7 @@ import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 }
 ```
 
-每个组件包在 `src/style/token.less` 中只维护自己实际使用的亮暗令牌；playground 与 docs 各自在应用级 `tokens.less` 中维护完整主题。所有令牌都是 CSS 变量，可以在任意祖先节点覆盖：
+组件包不声明全局主题令牌，只在组件根节点维护自己的私有令牌（如 `--w-dock-size`），因此多个包共存时不会互相覆盖；主题令牌由应用统一提供，组件通过 `var(--w-*, fallback)` 读取。playground 与 docs 共用同一份令牌 mixin（`playground/src/tokens.less`），docs 仅覆盖品牌色。所有令牌都是 CSS 变量，可以在任意祖先节点覆盖：
 
 ```css
 :root {

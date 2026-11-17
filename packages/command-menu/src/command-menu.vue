@@ -249,6 +249,24 @@ function handleKeydown(event: KeyboardEvent) {
     return
   }
 
+  // A handler inside the list already consumed the key.
+  if (event.defaultPrevented) return
+
+  /*
+   * Navigation belongs to the combobox input, but the handler sits on the root
+   * so keys bubbling from the root still work. Interactive children (the clear
+   * button, actions rendered by the item slot) must keep their own Enter/Space
+   * behaviour instead of activating the highlighted command.
+   */
+  const target = event.target
+  if (
+    target instanceof HTMLElement &&
+    target !== inputRef.value &&
+    target.closest('button, a, input, textarea, select, [role="button"], [contenteditable="true"]')
+  ) {
+    return
+  }
+
   if (listNavigation.handleKeydown(event)) {
     // Keep the key from reaching outer shortcut or scroll handlers.
     event.stopPropagation()
@@ -580,7 +598,22 @@ defineExpose({
       :style="props.styles?.empty"
       role="status"
     >
-      <slot name="empty" :query="query">{{ emptyText }}</slot>
+      <slot name="empty" :query="query">
+        <svg
+          class="w-command-menu__empty-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="10.5" cy="10.5" r="6.5" />
+          <path d="m15.5 15.5 4.5 4.5" />
+        </svg>
+        <span>{{ emptyText }}</span>
+      </slot>
     </div>
   </div>
 </template>

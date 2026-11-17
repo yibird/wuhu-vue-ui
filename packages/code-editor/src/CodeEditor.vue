@@ -228,10 +228,30 @@ function getValue(): string {
   return editor.value?.getValue() ?? props.modelValue ?? ''
 }
 
+/**
+ * Replaces the buffer without resetting the viewport, folding state or the
+ * undo stack. `setValue` rebuilds the model, which is wrong for a viewer that
+ * receives streaming or polled updates.
+ */
+function replaceContent(instance: MonacoEditor.IStandaloneCodeEditor, next: string) {
+  const model = instance.getModel()
+  // Minimal test doubles only implement getValue/setValue; real Monaco models
+  // always expose getFullModelRange.
+  if (
+    !model ||
+    typeof model.getFullModelRange !== 'function' ||
+    typeof model.pushEditOperations !== 'function'
+  ) {
+    instance.setValue(next)
+    return
+  }
+  model.pushEditOperations([], [{ range: model.getFullModelRange(), text: next }], () => null)
+}
+
 function setValue(value: string) {
   const instance = editor.value
   if (!instance || instance.getValue() === value) return
-  instance.setValue(value)
+  replaceContent(instance, value)
 }
 
 function setLanguage(language: string) {
@@ -257,7 +277,7 @@ watch(
 
     syncingFromProps = true
     try {
-      instance.setValue(next)
+      replaceContent(instance, next)
     } finally {
       syncingFromProps = false
     }

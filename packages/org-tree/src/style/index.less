@@ -1,7 +1,7 @@
 @import './token.less';
 
 .w-org-tree {
-  --w-org-tree-line-color: color-mix(in srgb, var(--w-color-text, #0f172a) 22%, transparent);
+  --w-org-tree-line-color: color-mix(in srgb, var(--w-color-text, #0f172a) 16%, transparent);
   --w-org-tree-line-width: 1.5px;
   --w-org-tree-line-style: solid;
   --w-org-tree-line-length: 44px;
@@ -410,24 +410,27 @@
   &__menu {
     position: fixed;
     z-index: var(--w-z-dropdown, 1000);
-    min-width: 160px;
+    min-width: 180px;
     max-width: 260px;
-    padding: 4px;
+    padding: 6px;
     color: var(--w-color-text, #0f172a);
     font-family: var(--w-font-family, inherit);
     font-size: var(--w-font-size-sm, 13px);
     border: 1px solid var(--w-color-border, #e2e8f0);
-    border-radius: var(--w-radius-md, 8px);
-    background: var(--w-org-tree-menu-bg, var(--w-color-surface, #ffffff));
-    box-shadow: var(--w-shadow-lg, 0 16px 32px -8px rgba(15, 23, 42, 0.16));
+    border-radius: var(--w-radius-lg, 12px);
+    background: var(--w-org-tree-menu-bg, var(--w-color-surface-elevated, #ffffff));
+    box-shadow: var(--w-shadow-overlay, 0 24px 56px -20px rgba(15, 23, 42, 0.3));
+    transform-origin: top left;
+    animation: w-org-tree-menu-in 120ms var(--w-easing-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
   }
 
   &__menu-item {
     display: block;
     width: 100%;
+    min-height: 34px;
     padding: 7px 10px;
     border: none;
-    border-radius: var(--w-radius-sm, 6px);
+    border-radius: var(--w-radius-md, 8px);
     background: transparent;
     color: var(--w-color-text, #0f172a);
     font-family: inherit;
@@ -436,9 +439,14 @@
     text-align: left;
     white-space: nowrap;
     cursor: pointer;
+    transition: background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
     &:hover:not(:disabled) {
-      background: var(--w-color-surface-hover, #f1f5f9);
+      background: color-mix(
+        in srgb,
+        var(--w-color-text, #0f172a) 6%,
+        var(--w-color-surface-elevated, #ffffff)
+      );
     }
 
     &:focus-visible {
@@ -448,11 +456,29 @@
 
     &:disabled {
       color: var(--w-color-text-tertiary, #5b6678);
+      opacity: 0.5;
       cursor: not-allowed;
     }
   }
 
   &.is-disabled &__viewport {
     cursor: not-allowed;
+  }
+}
+
+@keyframes w-org-tree-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-org-tree__menu {
+    animation: none;
+  }
+
+  .w-org-tree__menu-item {
+    transition: none;
   }
 }

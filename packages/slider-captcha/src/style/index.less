@@ -11,7 +11,12 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 100%;
+  /*
+   * Keep the configured size. The puzzle is drawn in image pixels and the
+   * handle offset is compared against them, so shrinking the canvas would
+   * desynchronise the piece from the cutout.
+   */
+  max-width: none;
   color: var(--w-color-text, #0f172a);
   font-family: var(--w-font-family, inherit);
   user-select: none;
@@ -30,7 +35,6 @@
 
   &__canvas {
     display: block;
-    max-width: 100%;
   }
 
   &__piece {
@@ -112,10 +116,12 @@
     height: var(--w-slider-captcha-handle-size, 44px);
     overflow: hidden;
     isolation: isolate;
-    border: 1px solid var(--w-color-border-strong, #cbd5e1);
-    border-radius: var(--w-radius-md, 8px);
+    border: 1px solid var(--w-color-border, #e2e8f0);
+    border-radius: 10px;
     background: var(--w-slider-captcha-track-bg);
-    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+    box-shadow:
+      inset 0 1px 2px rgba(15, 23, 42, 0.05),
+      inset 0 0 0 1px color-mix(in srgb, var(--w-color-text, #0f172a) 2%, transparent);
     touch-action: none;
   }
 
@@ -124,7 +130,11 @@
     top: 0;
     bottom: 0;
     left: 0;
-    background: var(--w-slider-captcha-fill-bg);
+    background: linear-gradient(
+      90deg,
+      var(--w-slider-captcha-fill-bg),
+      var(--w-color-primary-soft-hover, rgba(79, 70, 229, 0.16))
+    );
     transition:
       width var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
       background-color var(--w-duration-normal, 220ms) ease;
@@ -138,7 +148,9 @@
     justify-content: center;
     padding: 0 12px;
     color: var(--w-color-primary, #4f46e5);
-    font-size: var(--w-font-size-sm, 13px);
+    font-size: var(--w-font-size-xs, 12px);
+    font-weight: var(--w-font-weight-medium, 500);
+    letter-spacing: 0.01em;
     line-height: 1.3;
     text-align: center;
     pointer-events: none;
@@ -157,10 +169,13 @@
     height: 100%;
     padding: 0;
     border: 0;
-    border-radius: calc(var(--w-radius-md, 8px) - 1px);
+    border-radius: 9px;
     background: var(--w-slider-captcha-handle-bg);
     color: var(--w-slider-captcha-handle-color);
-    box-shadow: var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.06),
+      0 4px 10px -4px rgba(15, 23, 42, 0.24),
+      inset 0 0 0 1px color-mix(in srgb, var(--w-color-text, #0f172a) 6%, transparent);
     cursor: grab;
     touch-action: none;
     appearance: none;
@@ -179,8 +194,9 @@
       background: var(--w-color-surface-hover, #f1f5f9);
       color: var(--w-color-primary, #4f46e5);
       box-shadow:
-        var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1)),
-        inset 0 0 0 1px var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+        0 1px 2px rgba(15, 23, 42, 0.06),
+        0 6px 14px -6px rgba(15, 23, 42, 0.28),
+        inset 0 0 0 1px var(--w-color-primary-soft-hover, rgba(79, 70, 229, 0.16));
     }
 
     &:active {
@@ -341,5 +357,23 @@
   100% {
     opacity: 0;
     transform: translateX(340%) skewX(-12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-slider-captcha__loading::before,
+  .w-slider-captcha.is-error .w-slider-captcha__slider {
+    animation: none;
+  }
+
+  .w-slider-captcha__image::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  .w-slider-captcha__fill,
+  .w-slider-captcha__handle,
+  .w-slider-captcha__piece {
+    transition: none;
   }
 }

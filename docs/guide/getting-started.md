@@ -35,7 +35,7 @@ bun add @wuhu-vue-ui/scrollbar
 }
 ```
 
-暗色主题可在 `[data-w-theme='dark']` 下定义对应变量。示例站点的完整亮暗令牌与 `prefers-color-scheme` 参考实现位于 `playground/src/tokens.less` 与 `docs/.vitepress/theme/tokens.less`，可按需复制到业务项目。
+暗色主题可在 `[data-w-theme='dark']` 下定义对应变量。组件包不声明全局主题令牌，只在自己的根节点声明组件私有令牌（如 `--w-dock-size`），因此多包共存时不会互相覆盖。示例站点的完整亮暗令牌与 `prefers-color-scheme` 参考实现位于 `playground/src/tokens.less`（可复用的 mixin）与 `playground/src/theme.less`（应用入口），可按需复制到业务项目。
 
 ## 使用组件
 
@@ -65,7 +65,7 @@ import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 }
 ```
 
-组件局部变量使用独立的组件前缀，例如 Command Menu 的 `--w-command-menu-active-bg`。
+组件局部变量使用独立的组件前缀，例如 Command Menu 的 `--w-command-menu-active-bg`。组件私有令牌在组件根节点声明，只影响该组件；主题令牌（`--w-color-*`、`--w-font-*`、`--w-radius-*` 等）由应用统一提供，组件只读取并带 fallback。
 
 ## 可访问性
 

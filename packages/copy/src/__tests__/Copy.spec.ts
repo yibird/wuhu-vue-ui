@@ -179,6 +179,28 @@ describe('Copy', () => {
     wrapper.unmount()
   })
 
+  it('marks the success icon as inert and keeps it labelled', async () => {
+    mockClipboard()
+    writeText.mockResolvedValue(undefined)
+
+    const wrapper = mount(Copy, { props: { text: () => 'success-state' } })
+    const trigger = wrapper.get('.w-copy__trigger')
+
+    await trigger.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.classes()).toContain('is-copied')
+    expect(trigger.attributes('aria-label')).toBe('复制成功')
+    expect(trigger.attributes('aria-disabled')).toBe('true')
+
+    writeText.mockClear()
+    await trigger.trigger('click')
+    await flushPromises()
+    expect(writeText).not.toHaveBeenCalled()
+
+    wrapper.unmount()
+  })
+
   it('disables the icon trigger', () => {
     const wrapper = mount(Copy, { props: { text: () => 'disabled', disabled: true } })
     const trigger = wrapper.get('.w-copy__trigger')
@@ -226,7 +248,10 @@ describe('Copy', () => {
       .fn<() => Promise<string>>()
       .mockResolvedValueOnce('first')
       .mockRejectedValueOnce(new Error('text failed'))
-    const wrapper = mount(Copy, { props: { text: getText } })
+    const wrapper = mount(Copy, {
+      props: { text: getText, showIcon: false },
+      slots: { default: () => h('span', '复制') },
+    })
 
     await wrapper.get('.w-copy__trigger').trigger('click')
     await flushPromises()

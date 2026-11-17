@@ -4,7 +4,7 @@
 
 ## 基础用法
 
-通过组件 ref 调用 `open(event)`。焦点停留在菜单面板上，菜单项本身不可聚焦；方向键移动高亮项，`Escape`、选择或 `Tab` 会关闭菜单并恢复焦点。
+通过组件 ref 调用 `open(event)`。焦点停留在菜单面板上，菜单项本身不可聚焦；方向键切换当前项并通过 `aria-activedescendant` 播报，`Escape`、选择或 `Tab` 会关闭菜单并恢复焦点。
 
 <demo vue="../demos/context-menu/basic.vue" />
 

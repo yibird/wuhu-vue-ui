@@ -1014,7 +1014,17 @@ function onTaskContextMenu(row: GanttRow, event: MouseEvent) {
   selectRow(row)
 
   contextMenuTrigger.value = event.currentTarget as HTMLElement | null
-  contextMenuState.value = { row, x: event.clientX, y: event.clientY, items }
+  // Shift+F10 / the context-menu key report (0, 0); anchor to the task bar.
+  const anchor =
+    event.clientX === 0 && event.clientY === 0
+      ? contextMenuTrigger.value?.getBoundingClientRect()
+      : undefined
+  contextMenuState.value = {
+    row,
+    x: anchor ? anchor.left : event.clientX,
+    y: anchor ? anchor.bottom : event.clientY,
+    items,
+  }
   contextMenuDismiss.start()
 
   nextTick(() => {
@@ -1208,6 +1218,14 @@ function beginTaskDrag(event: PointerEvent, row: GanttRow) {
   event.preventDefault()
   event.stopPropagation()
   hideTooltip()
+
+  /*
+   * `preventDefault` suppresses the browser's focus-on-mousedown, which would
+   * leave keyboard nudging dead right after a click. Focus the bar explicitly
+   * so Arrow/Enter keep working and `tabStopKey` follows the selection.
+   */
+  const bar = event.currentTarget
+  if (bar instanceof HTMLElement) bar.focus({ preventScroll: true })
 
   dragState.value = {
     row,

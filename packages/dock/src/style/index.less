@@ -1,5 +1,3 @@
-@import './token.less';
-
 .w-dock {
   --w-dock-size: 48px;
   --w-dock-gap: 8px;
@@ -12,12 +10,19 @@
   margin: 0;
   list-style: none;
   background: var(--w-color-surface-elevated, #ffffff);
-  border: 1px solid var(--w-color-border-subtle, #f1f5f9);
+  border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-xl, 16px);
-  box-shadow: var(--w-shadow-lg, 0 16px 32px -8px rgba(15, 23, 42, 0.16));
+  box-shadow: var(--w-shadow-lg, 0 16px 40px -16px rgba(15, 23, 42, 0.22));
   font-family: var(--w-font-family, inherit);
   user-select: none;
   touch-action: manipulation;
+
+  /* Frosted glass when the platform supports it; the opaque surface above is
+     the fallback. */
+  @supports (backdrop-filter: blur(1px)) {
+    background: color-mix(in srgb, var(--w-color-surface-elevated, #ffffff) 82%, transparent);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
 
   /*
    * Keep the tooltip clear of the scaled item tile. The tile grows from the
@@ -60,6 +65,11 @@
   cursor: pointer;
   appearance: none;
 
+  &:focus-visible {
+    outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+    outline-offset: 2px;
+  }
+
   &.is-disabled {
     opacity: var(--w-opacity-disabled, 0.55);
     cursor: not-allowed;
@@ -84,6 +94,16 @@
 .w-dock__item.is-active .w-dock__inner {
   background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
   color: var(--w-color-primary, #4f46e5);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--w-color-primary, #4f46e5) 8%, transparent);
+}
+
+/*
+ * While magnifying, JS writes `transform` every frame. A transform transition
+ * would restart on each write, so the icon would lag behind the pointer and
+ * stay in a perpetual compositing transition.
+ */
+.w-dock.is-magnifying .w-dock__inner {
+  transition-property: background-color, color;
 }
 
 .w-dock__item:active .w-dock__inner {
@@ -148,16 +168,18 @@
 .w-dock__tooltip {
   position: absolute;
   z-index: 1;
-  padding: 4px 8px;
+  padding: 5px 9px;
   color: var(--w-color-text, #0f172a);
   font-size: var(--w-font-size-xs, 12px);
+  letter-spacing: -0.004em;
   line-height: 1.4;
   white-space: nowrap;
   background: var(--w-color-surface-elevated, #ffffff);
-  border: 1px solid var(--w-color-border, #e2e8f0);
+  border: 1px solid var(--w-color-border-subtle, #f1f5f9);
   border-radius: var(--w-radius-sm, 6px);
-  box-shadow: var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+  box-shadow: var(--w-shadow-md, 0 8px 24px -12px rgba(15, 23, 42, 0.18));
   pointer-events: none;
+  animation: w-dock-tooltip-in 120ms var(--w-easing-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
 .w-dock--bottom .w-dock__tooltip {
@@ -186,17 +208,47 @@
 
 .w-dock__separator {
   flex: none;
-  background: var(--w-color-border, #e2e8f0);
 }
 
 .w-dock--bottom .w-dock__separator,
 .w-dock--top .w-dock__separator {
   width: 1px;
   height: calc(var(--w-dock-size, 48px) * 0.7);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--w-color-border, #e2e8f0) 22%,
+    var(--w-color-border, #e2e8f0) 78%,
+    transparent
+  );
 }
 
 .w-dock--left .w-dock__separator,
 .w-dock--right .w-dock__separator {
   width: calc(var(--w-dock-size, 48px) * 0.7);
   height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--w-color-border, #e2e8f0) 22%,
+    var(--w-color-border, #e2e8f0) 78%,
+    transparent
+  );
+}
+
+@keyframes w-dock-tooltip-in {
+  from {
+    opacity: 0;
+    translate: 0 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-dock__inner {
+    transition: none;
+  }
+
+  .w-dock__tooltip {
+    animation: none;
+  }
 }

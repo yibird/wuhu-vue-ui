@@ -1,5 +1,3 @@
-@import './token.less';
-
 .w-number-ticker {
   display: inline-flex;
   align-items: center;
@@ -21,6 +19,8 @@
     height: 1.2em;
     overflow: hidden;
     vertical-align: bottom;
+    /* Soften the wheel edges so digits enter/leave instead of hard-clipping. */
+    mask-image: linear-gradient(to bottom, transparent 0, #000 7%, #000 93%, transparent 100%);
   }
 
   &__strip {
@@ -49,5 +49,11 @@
   &__affix {
     display: inline-block;
     white-space: pre;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-number-ticker__strip {
+    transition: none;
   }
 }

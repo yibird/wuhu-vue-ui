@@ -18,7 +18,8 @@ description: Wuhu Vue UI 的设计系统与样式规范。使用设计令牌、�
 2. **令牌必须有 fallback**：`var(--w-color-primary, #4f46e5)`，保证组件在未加载主题文件时仍可独立使用。
 3. **不硬编码颜色**：唯一例外是 token 定义本身和 `fallback`。
 4. **组件私有变量用 `--w-<component>-*`**，例如 `--w-command-menu-active-bg`。
-5. **令牌随组件包独立**：每个包只在自己的 `src/style/token.less` 中维护实际用到的令牌，亮/暗成对；组件之间不共享 token 文件。多个组件都用到同一令牌时，分别复制到各自包中。
+5. **组件包不声明全局主题**：不写 `:root` / 裸 `[data-w-theme]` 主题块。组件只读取应用提供的共享令牌，并用 fallback 保证独立可用；组件私有令牌（`--w-<component>-*`）声明在组件根选择器上，暗色变体同样限定在组件根。共享主题的唯一来源是 `playground/src/tokens.less` 的 `.w-light-tokens()` / `.w-dark-tokens()` mixin。
+6. **elevated 表面上的 hover 用前景色状态层**：`color-mix(in srgb, var(--w-color-text) 6%, var(--w-color-surface-elevated))`。不要用 `--w-color-surface-hover` 叠在 elevated 面板上——暗色下它会比面板更暗。
 
 ## 令牌速查
 
@@ -34,8 +35,9 @@ description: Wuhu Vue UI 的设计系统与样式规范。使用设计令牌、�
 | 字体   | `--w-font-family` `--w-font-family-mono`                                                                                                        |
 | 字号   | `--w-font-size-3xs` ~ `--w-font-size-2xl`、`--w-font-weight-*`、`--w-line-height-*`                                                             |
 | 圆角   | `--w-radius-xs` / `-sm` / `-md` / `-lg` / `-xl` / `-full`                                                                                       |
-| 阴影   | `--w-shadow-sm` / `-md` / `-lg`                                                                                                                 |
-| 动效   | `--w-duration-fast` / `-normal` / `-slow`、`--w-easing-standard` / `-emphasized`                                                                |
+| 阴影   | `--w-shadow-xs` / `-sm` / `-md` / `-lg` / `-hover` / `-overlay`                                                                                 |
+| 动效   | `--w-duration-press` / `-fast` / `-normal` / `-slow`、`--w-easing-standard` / `-out` / `-emphasized`                                            |
+| 焦点   | `--w-focus-ring-width` / `--w-focus-ring-color` / `--w-focus-ring-offset` / `--w-focus-ring-shadow`                                             |
 | 层级   | `--w-z-sticky` / `--w-z-dropdown` / `--w-z-overlay` / `--w-z-toast`                                                                             |
 
 先读当前组件包的 `src/style/token.less` 确认实际存在的令牌；新增跨组件令牌时，同步到所有使用它的包，不要凭空创造。
@@ -43,16 +45,18 @@ description: Wuhu Vue UI 的设计系统与样式规范。使用设计令牌、�
 ## 样式文件组织
 
 ```text
-packages/<name>/src/style/token.less   # 该组件实际使用的亮/暗令牌
-packages/<name>/src/style/index.less   # 组件样式，顶部 @import './token.less'
-playground/src/tokens.less             # playground 应用级完整令牌
-docs/.vitepress/theme/tokens.less      # docs 应用级完整令牌
+packages/<name>/src/style/index.less   # 组件样式（唯一样式入口）
+packages/<name>/src/style/token.less   # 可选：仅当组件拥有私有令牌时存在
+playground/src/tokens.less             # 共享主题 mixin（唯一来源）
+playground/src/theme.less              # playground 主题入口
+docs/.vitepress/theme/tokens.less      # 复用 playground mixin，只覆盖品牌色
 ```
 
 - 不写 `<style scoped>`；样式集中在 `style/index.less`。
 - BEM 命名：`.w-foo`、`.w-foo__header`、`.w-foo__item.is-active`。
 - 使用 Less 嵌套，但避免超过 3 层。
 - 组件根节点加稳定的类名，状态用 `is-*` 修饰类。
+- 没有私有令牌的包**不要**创建 `token.less`，也不要写 `@import './token.less'`。
 
 ```less
 .w-foo {
@@ -87,10 +91,10 @@ docs/.vitepress/theme/tokens.less      # docs 应用级完整令牌
 
 ## 主题
 
-- 每个组件包通过 `src/style/token.less` 提供该组件所需的亮色、暗色令牌；未加载主题文件时仍使用 fallback 独立渲染。
-- 组件之间不共享 token 文件；playground/docs 使用各自的应用级 `tokens.less`。
-- 不要在组件内直接写死暗色颜色，使用 `[data-w-theme='dark']` / `prefers-color-scheme` 下的 token。
-- 新增令牌时同步亮/暗两套取值。
+- 共享主题令牌由应用提供，组件通过 `var(--w-*, fallback)` 读取；未加载主题文件时仍使用 fallback 独立渲染。
+- 组件私有令牌声明在组件根节点；暗色变体用 `[data-w-theme='dark'] .w-foo` 与 `@media (prefers-color-scheme: dark) :root:not([data-w-theme]) .w-foo`，不要写全局暗色覆盖。
+- 新增共享令牌时，只改 `playground/src/tokens.less` 的亮/暗 mixin，并同步文档；不要往组件包里复制主题块。
+- 浮层/菜单的 hover 使用前景色状态层（见核心原则 6），保证亮暗都有正确方向。
 
 ## 动效
 
@@ -109,15 +113,19 @@ docs/.vitepress/theme/tokens.less      # docs 应用级完整令牌
 ## 修改令牌的流程
 
 1. 确认现有令牌无法满足，避免重复语义。
-2. 在使用该令牌的每个组件包的 `src/style/token.less` 中同时添加亮/暗取值；如果多个包共用，逐个同步。
+2. 在 `playground/src/tokens.less` 的 `.w-shared-tokens()` / `.w-light-tokens()` / `.w-dark-tokens()` 中添加或调整，亮/暗成对。
 3. 用 `--w-` 命名空间与语义化命名（`--w-color-*` / `--w-radius-*` …）。
-4. 更新 `docs/guide/getting-started.md` 中令牌说明（如涉及公开 API）。
-5. 运行 `pnpm docs:build` 或 `pnpm build` 验证样式构建。
+4. 组件通过 `var(--w-*, fallback)` 消费；组件私有的几何/动效值放组件根节点。
+5. 更新 `docs/guide/styling.md` 的令牌说明（如涉及公开 API）。
+6. 运行 `pnpm docs:build` 或 `pnpm build` 验证样式构建。
 
 ## 完成前检查
 
+- [ ] 组件包内没有 `:root` / 裸 `[data-w-theme]` 主题块
 - [ ] 没有硬编码颜色/圆角/阴影/动效时长（fallback 除外）
 - [ ] 每个 `var(--w-*)` 都有 fallback
 - [ ] 亮色与暗色主题均正常
+- [ ] elevated 面板的 hover 使用前景色状态层，而非 `surface-hover`
 - [ ] `focus-visible`、hover、active、disabled 状态齐全
+- [ ] 新动效带 `prefers-reduced-motion` 降级
 - [ ] 对比度满足 WCAG AA

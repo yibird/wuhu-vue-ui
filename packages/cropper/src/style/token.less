@@ -1,28 +1,5 @@
-:root {
-  color-scheme: light;
-  --w-radius-lg: 12px;
+// Component-scoped tokens. Radius is the only value this package owns; every
+// colour resolves from the app theme through `var(--w-*, fallback)`.
+.w-cropper {
   --w-cropper-radius: 12px;
-  --w-color-surface-subtle: #f1f5f9;
-  --w-opacity-disabled: 0.55;
-  --w-focus-ring-width: 2px;
-  --w-focus-ring-color: var(--w-color-primary);
-  --w-color-primary: #4f46e5;
-  --w-duration-normal: 220ms;
-  --w-easing-standard: cubic-bezier(0.2, 0, 0, 1);
-}
-
-[data-w-theme='dark'] {
-  color-scheme: dark;
-  --w-color-surface-subtle: #141d2f;
-  --w-focus-ring-color: #a5b4fc;
-  --w-color-primary: #818cf8;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-w-theme]) {
-    color-scheme: dark;
-    --w-color-surface-subtle: #141d2f;
-    --w-focus-ring-color: #a5b4fc;
-    --w-color-primary: #818cf8;
-  }
 }

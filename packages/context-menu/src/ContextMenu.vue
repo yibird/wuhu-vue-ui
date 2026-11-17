@@ -40,6 +40,7 @@ const props = withDefaults(defineProps<ContextMenuProps>(), {
   open: undefined,
   closeOnSelect: true,
   restoreFocus: true,
+  ariaLabel: '上下文菜单',
 })
 
 const emit = defineEmits<{
@@ -134,8 +135,22 @@ function openMenu(event: MouseEvent) {
   event.preventDefault()
   const trigger =
     event.currentTarget instanceof HTMLElement ? event.currentTarget : getActiveElement()
-  beginOpen({ x: event.clientX, y: event.clientY }, items, trigger)
+
+  // Shift+F10 and the context-menu key report (0, 0). Anchoring to the trigger
+  // keeps keyboard users next to the element instead of the viewport corner.
+  const point =
+    event.clientX === 0 && event.clientY === 0
+      ? anchorPoint(trigger)
+      : { x: event.clientX, y: event.clientY }
+
+  beginOpen(point, items, trigger)
   return true
+}
+
+function anchorPoint(trigger: HTMLElement | null): MenuPosition {
+  const rect = trigger?.getBoundingClientRect()
+  if (!rect) return { x: 0, y: 0 }
+  return { x: rect.left, y: rect.bottom }
 }
 
 function close() {
@@ -228,11 +243,6 @@ function itemIndex(item: ContextMenuActionItem) {
   return enabledItems.value.indexOf(item)
 }
 
-function activateOnHover(item: ContextMenuActionItem) {
-  const index = itemIndex(item)
-  if (index >= 0) activeIndex.value = index
-}
-
 function selectItem(item: ContextMenuActionItem) {
   if (item.disabled) return
   emit('select', { item })
@@ -276,7 +286,7 @@ defineExpose<ContextMenuExpose>({
         :style="[menuStyle, attrs.style, props.styles?.root]"
         role="menu"
         aria-orientation="vertical"
-        aria-label="上下文菜单"
+        :aria-label="props.ariaLabel"
         :aria-activedescendant="activeItemId"
         tabindex="-1"
         @keydown="handleKeydown"
@@ -320,7 +330,6 @@ defineExpose<ContextMenuExpose>({
             tabindex="-1"
             :disabled="item.disabled"
             @mousedown.prevent
-            @mouseenter="activateOnHover(item)"
             @click.stop="selectItem(item)"
           >
             <span

@@ -5,7 +5,6 @@ import { useClipboard } from './useClipboard'
 
 const props = withDefaults(defineProps<CopyProps>(), {
   disabled: false,
-  ariaLabel: '复制',
   duration: 1800,
   showIcon: true,
 })
@@ -46,6 +45,12 @@ let unmounted = false
 let requestId = 0
 const loading = computed(() => resolving.value || clipboardLoading.value)
 const isDisabled = computed(() => props.disabled || loading.value)
+/** The icon-only success state is intentionally inert; text mode can re-copy. */
+const isInert = computed(() => isDisabled.value || (props.showIcon && copied.value))
+const triggerLabel = computed(() => {
+  if (copied.value) return '复制成功'
+  return loading.value ? '复制中' : '复制'
+})
 const rootClasses = computed(() => ({
   'is-copied': copied.value,
   'is-loading': loading.value,
@@ -61,7 +66,8 @@ function resetState() {
 }
 
 async function handleCopy(): Promise<boolean> {
-  if (props.disabled || loading.value) return false
+  // Clicking the success icon must not restart the copy or its animation.
+  if (props.disabled || loading.value || (props.showIcon && copied.value)) return false
 
   emit('copy', isSupported.value)
 
@@ -136,7 +142,8 @@ defineExpose({
       v-if="showIcon"
       type="button"
       class="w-copy__trigger w-copy__trigger--icon"
-      :aria-label="ariaLabel"
+      :aria-label="triggerLabel"
+      :aria-disabled="copied || undefined"
       :disabled="isDisabled"
       @click="handleCopy"
     >
@@ -152,7 +159,9 @@ defineExpose({
         </svg>
         <svg v-else-if="copied" viewBox="0 0 24 24" fill="none">
           <path
+            class="w-copy__check"
             d="m5 12.5 4.2 4.2L19 6.9"
+            pathLength="1"
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"
@@ -187,8 +196,8 @@ defineExpose({
       v-else
       class="w-copy__trigger"
       role="button"
-      :tabindex="isDisabled ? -1 : 0"
-      :aria-disabled="isDisabled || undefined"
+      :tabindex="isInert ? -1 : 0"
+      :aria-disabled="isInert || undefined"
       @click="handleCopy"
       @keydown="handleTriggerKeydown"
     >

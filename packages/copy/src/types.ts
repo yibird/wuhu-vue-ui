@@ -3,8 +3,6 @@ export interface CopyProps {
   text?: () => string | Promise<string>
   /** Disable the copy trigger. */
   disabled?: boolean
-  /** Accessible label for the icon trigger. Defaults to `复制`. */
-  ariaLabel?: string
   /** How long the copied state is shown, in milliseconds. */
   duration?: number
   /**

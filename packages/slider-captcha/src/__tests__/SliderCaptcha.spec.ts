@@ -131,6 +131,26 @@ describe('SliderCaptcha', () => {
     wrapper.unmount()
   })
 
+  it('reverts the handle without verifying when the gesture is cancelled', async () => {
+    const wrapper = await mountCaptcha({ tolerance: 9999 })
+    const slider = wrapper.get('[role="slider"]')
+
+    slider.element.dispatchEvent(
+      new MouseEvent('pointerdown', { bubbles: true, cancelable: true, clientX: 10 }),
+    )
+    window.dispatchEvent(new MouseEvent('pointermove', { clientX: 90 }))
+    await nextTick()
+    expect(Number(slider.attributes('aria-valuenow'))).toBeGreaterThan(0)
+
+    window.dispatchEvent(new MouseEvent('pointercancel'))
+    await nextTick()
+
+    expect(slider.attributes('aria-valuenow')).toBe('0')
+    expect(wrapper.emitted('success')).toBeUndefined()
+    expect(wrapper.emitted('fail')).toBeUndefined()
+    wrapper.unmount()
+  })
+
   it('stops an active drag when disabled', async () => {
     const wrapper = await mountCaptcha({ tolerance: 9999 })
     const slider = wrapper.get('[role="slider"]')

@@ -89,6 +89,40 @@ afterEach(() => {
 })
 
 describe('ContextMenu', () => {
+  it('anchors keyboard-invoked menus to the trigger instead of the viewport corner', async () => {
+    const wrapper = mountMenu()
+    const trigger = createTrigger()
+    trigger.getBoundingClientRect = () =>
+      ({
+        left: 120,
+        top: 12,
+        right: 180,
+        bottom: 40,
+        width: 60,
+        height: 28,
+        x: 120,
+        y: 12,
+        toJSON: () => ({}),
+      }) as DOMRect
+    trigger.addEventListener('contextmenu', (event) => menuVm(wrapper).open(event))
+
+    trigger.dispatchEvent(contextEvent(0, 0))
+    await nextTick()
+    await nextTick()
+
+    const menu = getMenu()
+    expect(menu).not.toBeNull()
+    expect(menu!.style.getPropertyValue('--w-context-menu-x')).toBe('120px')
+    expect(menu!.style.getPropertyValue('--w-context-menu-y')).toBe('40px')
+  })
+
+  it('accepts a custom accessible label', async () => {
+    const wrapper = mountMenu({ ariaLabel: 'Actions' })
+    await openMenu(wrapper)
+
+    expect(getMenu()!.getAttribute('aria-label')).toBe('Actions')
+  })
+
   it('renders actions, headings and separators with menu semantics', async () => {
     const wrapper = mountMenu()
     await openMenu(wrapper)

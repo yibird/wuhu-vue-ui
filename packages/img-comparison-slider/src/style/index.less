@@ -1,10 +1,8 @@
-@import './token.less';
-
 .w-img-comparison-slider {
   position: relative;
   width: 100%;
-  /* Keep the handle/knob visible at 0% and 100%; image layers do their own clipping. */
-  overflow: visible;
+  /* Clip the handle, divider line and knob to the rounded container edges. */
+  overflow: hidden;
   border-radius: var(--w-img-comparison-slider-radius, var(--w-radius-lg, 12px));
   background: var(--w-color-surface-subtle, #f1f5f9);
   isolation: isolate;
@@ -12,13 +10,31 @@
   touch-action: pan-y;
   cursor: ew-resize;
 
-  --w-img-comparison-slider-knob-size: 30px;
+  --w-img-comparison-slider-knob-size: 36px;
   --w-img-comparison-slider-line: var(--w-color-surface, #ffffff);
+  /*
+   * Labels sit on top of arbitrary artwork, so they keep a dark scrim in both
+   * themes. Inverting them with the theme would put white pills on light images.
+   */
+  --w-img-comparison-slider-label-bg: rgba(15, 23, 42, 0.78);
+  --w-img-comparison-slider-label-text: #ffffff;
   --w-img-comparison-slider-knob-ring: color-mix(
     in srgb,
-    var(--w-color-primary, #4f46e5) 24%,
+    var(--w-color-primary, #4f46e5) 32%,
     transparent
   );
+
+  /* Crisp inner edge so the media never bleeds into the page. */
+  &::after {
+    position: absolute;
+    z-index: 5;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 12%, transparent);
+    content: '';
+    pointer-events: none;
+  }
 
   &--vertical {
     cursor: ns-resize;
@@ -82,17 +98,18 @@
     z-index: 3;
     top: 12px;
     padding: 4px 10px;
-    border: 1px solid var(--w-color-border, #e2e8f0);
+    border: 1px solid color-mix(in srgb, var(--w-color-surface, #ffffff) 14%, transparent);
     border-radius: var(--w-radius-full, 9999px);
-    background: var(--w-color-tooltip-bg, rgba(15, 23, 42, 0.94));
-    color: var(--w-color-tooltip-text, #ffffff);
+    background: var(--w-img-comparison-slider-label-bg, rgba(15, 23, 42, 0.78));
+    color: var(--w-img-comparison-slider-label-text, #ffffff);
     font-family: var(--w-font-family, inherit);
-    font-size: var(--w-font-size-xs, 12px);
-    font-weight: var(--w-font-weight-medium, 500);
+    font-size: var(--w-font-size-2xs, 11px);
+    font-weight: var(--w-font-weight-semibold, 600);
     line-height: 1.5;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
     pointer-events: none;
-    backdrop-filter: blur(6px);
+    box-shadow: var(--w-shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.05));
+    backdrop-filter: blur(8px);
 
     &--before {
       left: 12px;
@@ -190,7 +207,8 @@
     justify-content: center;
     width: var(--w-img-comparison-slider-knob-size, 30px);
     height: var(--w-img-comparison-slider-knob-size, 30px);
-    border: 1px solid color-mix(in srgb, var(--w-color-border, #e2e8f0) 72%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 22%, transparent);
     border-radius: var(--w-radius-full, 9999px);
     background:
       radial-gradient(
@@ -198,7 +216,7 @@
         color-mix(in srgb, var(--w-color-surface, #ffffff) 74%, #ffffff) 0%,
         transparent 62%
       ),
-      color-mix(in srgb, var(--w-color-surface, #ffffff) 88%, transparent);
+      color-mix(in srgb, var(--w-color-surface, #ffffff) 94%, transparent);
     color: var(--w-color-primary, #4f46e5);
     backdrop-filter: blur(10px) saturate(1.15);
     box-shadow:
@@ -264,6 +282,17 @@
 
 @media (max-width: 640px) {
   .w-img-comparison-slider {
-    --w-img-comparison-slider-knob-size: 36px;
+    --w-img-comparison-slider-knob-size: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-img-comparison-slider__knob {
+    transition: none;
+  }
+
+  .w-img-comparison-slider__handle:hover .w-img-comparison-slider__knob,
+  .w-img-comparison-slider.is-dragging .w-img-comparison-slider__knob {
+    transform: translate(-50%, -50%);
   }
 }

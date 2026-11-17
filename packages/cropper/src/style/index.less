@@ -103,3 +103,9 @@
     transition: opacity var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .w-cropper__action {
+    transition: none;
+  }
+}

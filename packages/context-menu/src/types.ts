@@ -89,6 +89,8 @@ export interface ContextMenuProps {
   closeOnSelect?: boolean
   /** Restore focus on Escape, selection and Tab. Defaults to true. */
   restoreFocus?: boolean
+  /** Accessible name of the menu panel. Defaults to `上下文菜单`. */
+  ariaLabel?: string
   /** Semantic class names. */
   classes?: ContextMenuClasses
   /** Semantic inline styles. */

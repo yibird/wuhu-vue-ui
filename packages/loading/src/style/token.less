@@ -1,17 +1,6 @@
-:root {
-  color-scheme: light;
-  --w-color-primary: #4f46e5;
-  --w-color-surface: #ffffff;
-  --w-radius-md: 8px;
-  --w-color-text: #0f172a;
-  --w-font-family:
-    'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
-  --w-font-size-lg: 16px;
-  --w-font-weight-semibold: 600;
-  --w-color-text-secondary: #475569;
-  --w-font-size-xs: 12px;
-  --w-duration-fast: 120ms;
-  --w-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+// Component-scoped motion tokens. Override on `.w-loading` to retune the
+// indicator without affecting other packages.
+.w-loading {
   --w-loading-transition-duration: var(--w-duration-fast, 120ms);
   --w-loading-bars-duration: 860ms;
   --w-loading-bars-delay-step: 80ms;
@@ -21,22 +10,4 @@
   --w-loading-ring-duration: 780ms;
   --w-loading-ring-core-duration: 1100ms;
   --w-loading-spinner-duration: 1100ms;
-}
-
-[data-w-theme='dark'] {
-  color-scheme: dark;
-  --w-color-primary: #818cf8;
-  --w-color-surface: #1e293b;
-  --w-color-text: #e2e8f0;
-  --w-color-text-secondary: #cbd5e1;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-w-theme]) {
-    color-scheme: dark;
-    --w-color-primary: #818cf8;
-    --w-color-surface: #1e293b;
-    --w-color-text: #e2e8f0;
-    --w-color-text-secondary: #cbd5e1;
-  }
 }

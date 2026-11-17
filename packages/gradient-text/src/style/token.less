@@ -1,20 +1,19 @@
-:root {
-  color-scheme: light;
+// Component-scoped tokens. Override them on `.w-gradient-text` (or any
+// ancestor) without touching the rest of the library.
+.w-gradient-text {
   --w-gradient-text-from: #4f46e5;
   --w-gradient-text-via: #9333ea;
   --w-gradient-text-to: #0369a1;
 }
 
-[data-w-theme='dark'] {
-  color-scheme: dark;
+[data-w-theme='dark'] .w-gradient-text {
   --w-gradient-text-from: #818cf8;
   --w-gradient-text-via: #c084fc;
   --w-gradient-text-to: #38bdf8;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-w-theme]) {
-    color-scheme: dark;
+  :root:not([data-w-theme]) .w-gradient-text {
     --w-gradient-text-from: #818cf8;
     --w-gradient-text-via: #c084fc;
     --w-gradient-text-to: #38bdf8;

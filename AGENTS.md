@@ -88,9 +88,10 @@ pnpm install
 │  ├─ src/docs/component-meta.ts  # 组件元数据（首页/侧边栏/playground 共用）
 │  ├─ src/docs/catalog.ts   # 元数据 + Demo 组件映射
 │  ├─ src/home/             # playground 首页
-│  └─ src/tokens.less       # playground 应用级亮暗令牌
+│  ├─ src/tokens.less       # 可复用的亮暗令牌 mixin（唯一来源）
+│  └─ src/theme.less        # playground 主题入口（应用 mixin）
 ├─ docs/                    # VitePress 文档站
-│  ├─ .vitepress/           # 站点配置、主题、HomeCatalog 与 tokens.less
+│  ├─ .vitepress/           # 站点配置、主题、HomeCatalog 与 tokens.less（复用 playground mixin）
 │  ├─ components/           # 组件文档
 │  ├─ demos/                # 文档站 Demo
 │  ├─ guide/                # 快速开始与主题说明
@@ -135,7 +136,7 @@ packages/<name>/
 
 - **Vue**：`<script setup lang="ts">`；props 类型放 `types.ts`；`defineEmits` 用元组语法；`defineSlots` 声明插槽类型；仅暴露必要 API。不定义组件名，只有其他选项（如 `inheritAttrs`）时才使用 `defineOptions`。
 - **样式**：集中在 `src/style/index.less`，由包根目录 `index.ts` 顶部引入；BEM 命名（`.w-foo__bar.is-active`）；不写 `<style scoped>`。
-- **设计令牌**：颜色、字号、圆角、阴影、动效只使用 `--w-*`，并带 fallback，例如 `var(--w-color-primary, #4f46e5)`。每个组件包在 `src/style/token.less` 中维护自己实际使用的令牌（含亮/暗两套），由 `src/style/index.less` 引入；组件之间不共享 token 文件。新增令牌时，需同步到所有使用它的组件包；playground/docs 各自维护应用级 `tokens.less`。
+- **设计令牌**：颜色、字号、圆角、阴影、动效只使用 `--w-*`，并带 fallback，例如 `var(--w-color-primary, #4f46e5)`。**组件包不声明全局主题令牌**（不写 `:root` 主题块），只读取应用提供的主题令牌；组件私有令牌（`--w-<component>-*`）声明在组件根选择器上，暗色变体同样限定在该选择器内。只有确实拥有私有令牌的包才保留 `src/style/token.less`，由 `src/style/index.less` 引入；没有私有令牌的包不建 token 文件。新增共享令牌时，需同步到所有使用它的组件包与 `playground/src/tokens.less`；playground/docs 共用同一份令牌 mixin。
 - **TypeScript**：`strict` + `verbatimModuleSyntax`；类型导入必须 `import type`；禁止 `any`（用 `unknown` + 收窄）；包内导入必须是相对路径，不要用别名。
 - **导出**：所有公共组件、composables、类型从包根目录 `index.ts` 导出；类型用 `export type`。
 - **依赖**：组件包仅将 `vue` 声明为 `peerDependencies`；额外运行时依赖放 `dependencies` 并在 `vite.library` 中 external（如需要）。

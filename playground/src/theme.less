@@ -1,0 +1,29 @@
+@import './tokens.less';
+
+/*
+ * Playground theme entry. This is the canonical theme for the library demo;
+ * apps copy the same three blocks and pass their own primary ramp.
+ */
+:root,
+[data-w-theme='light'] {
+  .w-light-tokens();
+}
+
+[data-w-theme='dark'] {
+  .w-dark-tokens();
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) {
+    .w-dark-tokens();
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --w-duration-fast: 0.01ms;
+    --w-duration-normal: 0.01ms;
+    --w-duration-slow: 0.01ms;
+    --w-duration-spinner: 0.01ms;
+  }
+}

@@ -536,6 +536,28 @@ describe('CommandMenu', () => {
     expect(wrapper.find('.w-command-menu__clear').exists()).toBe(false)
   })
 
+  it('does not activate the highlighted command when Enter comes from an inner button', async () => {
+    const wrapper = mountMenu()
+    const input = getInput(wrapper)
+
+    await input.setValue('用户')
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    expect(getActiveLabel(wrapper)).toBe('用户管理')
+
+    const clear = wrapper.get('.w-command-menu__clear')
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    })
+    clear.element.dispatchEvent(event)
+    await nextTick()
+
+    expect(wrapper.emitted('select')).toBeUndefined()
+    expect(event.defaultPrevented).toBe(false)
+    expect(input.element.value).toBe('用户')
+  })
+
   it('uses fixed accessible labels for search and clear', async () => {
     const wrapper = mountMenu()
     const input = getInput(wrapper)

@@ -48,6 +48,27 @@
 
 组件级变量同样可用，例如 `--w-scrollbar-size`、`--w-sliding-highlight-bg`、`--w-file-viewer-primary`。这种方式不依赖内部类名，升级时更稳定。
 
+## 令牌分层
+
+- **主题令牌**：`--w-color-*`、`--w-font-*`、`--w-radius-*`、`--w-shadow-*`、`--w-duration-*`、`--w-easing-*`，由应用统一提供。
+- **交互令牌**：`--w-focus-ring-width` / `--w-focus-ring-color` / `--w-focus-ring-offset` 控制焦点环；`--w-duration-press` 控制按压反馈时长；`--w-easing-out` 用于进场与展开。
+- **组件令牌**：`--w-<component>-*`，只声明在组件根节点，不会影响其他包。
+
+```css
+:root {
+  /* 更克制的动效 */
+  --w-duration-press: 60ms;
+  --w-duration-fast: 100ms;
+  /* 统一的焦点环 */
+  --w-focus-ring-width: 2px;
+  --w-focus-ring-offset: 2px;
+  /* 浮层高度 */
+  --w-shadow-overlay: 0 24px 56px -20px rgba(15, 23, 42, 0.28);
+}
+```
+
+所有动效组件都尊重 `prefers-reduced-motion: reduce`，在系统开启“减少动态效果”时会关闭位移与循环动画。
+
 ## 注意
 
 - `Time` 的格式化长度属性名为 `formatStyle`（`long` / `short` / `narrow`），因此 `style` 可以正常用于内联样式。

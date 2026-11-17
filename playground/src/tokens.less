@@ -24,23 +24,29 @@
   /* Scrollbar base */
   --w-scrollbar-size: 6px;
   --w-scrollbar-track: transparent;
+  --w-scrollbar-opacity: 1;
+  --w-scrollbar-hover-opacity: 1;
 
   /* Focus geometry */
   --w-focus-ring-width: 2px;
   --w-focus-ring-offset: 2px;
 }
 
-.w-light-tokens() {
+/*
+ * Brand-aware mixins. Apps pass their own primary ramp; every translucent
+ * value is derived from it, so a rebrand only changes three colours.
+ */
+.w-light-tokens(@primary: #4f46e5, @primary-hover: #6366f1, @primary-active: #4338ca) {
   .w-shared-tokens();
 
   color-scheme: light;
 
   /* Brand */
-  --w-color-primary: #4f46e5;
-  --w-color-primary-hover: #6366f1;
-  --w-color-primary-active: #4338ca;
-  --w-color-primary-soft: rgba(79, 70, 229, 0.1);
-  --w-color-primary-soft-hover: rgba(79, 70, 229, 0.16);
+  --w-color-primary: @primary;
+  --w-color-primary-hover: @primary-hover;
+  --w-color-primary-active: @primary-active;
+  --w-color-primary-soft: fade(@primary, 10%);
+  --w-color-primary-soft-hover: fade(@primary, 16%);
   --w-color-success: #047857;
   --w-color-success-soft: rgba(4, 120, 87, 0.11);
   --w-color-warning: #b45309;
@@ -76,13 +82,13 @@
   --w-color-tooltip-text: #ffffff;
   --w-color-tooltip-muted: rgba(226, 232, 240, 0.78);
   --w-color-weekend: rgba(100, 116, 139, 0.045);
-  --w-highlight-background: rgba(79, 70, 229, 0.16);
+  --w-highlight-background: fade(@primary, 16%);
   --w-highlight-color: inherit;
 
   /* Scrollbars */
-  --w-scrollbar-thumb: rgba(100, 116, 139, 0.38);
-  --w-scrollbar-thumb-hover: rgba(100, 116, 139, 0.62);
-  --w-scrollbar-thumb-active: rgba(100, 116, 139, 0.78);
+  --w-scrollbar-thumb: #eee;
+  --w-scrollbar-thumb-hover: #e0e0e0;
+  --w-scrollbar-thumb-active: #d6d6d6;
 
   /* Typography */
   --w-font-family:
@@ -111,23 +117,27 @@
   --w-radius-xl: 16px;
   --w-radius-full: 9999px;
 
-  /* Elevation */
-  --w-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --w-shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
-  --w-shadow-lg: 0 16px 32px -8px rgba(15, 23, 42, 0.16), 0 4px 8px -4px rgba(15, 23, 42, 0.08);
-  --w-shadow-hover: 0 8px 20px -6px rgba(15, 23, 42, 0.14), 0 2px 6px -2px rgba(15, 23, 42, 0.08);
-  --w-shadow-overlay:
-    0 24px 48px -12px rgba(15, 23, 42, 0.24), 0 8px 16px -8px rgba(15, 23, 42, 0.12);
+  /* Elevation: low-contrast, layered, with negative spread so panels feel
+     lifted instead of outlined. */
+  --w-shadow-xs: 0 1px 1px rgba(15, 23, 42, 0.04);
+  --w-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --w-shadow-md: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+  --w-shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.04), 0 16px 40px -16px rgba(15, 23, 42, 0.22);
+  --w-shadow-hover: 0 2px 6px rgba(15, 23, 42, 0.05), 0 12px 28px -14px rgba(15, 23, 42, 0.2);
+  --w-shadow-overlay: 0 2px 6px rgba(15, 23, 42, 0.06), 0 24px 56px -20px rgba(15, 23, 42, 0.3);
 
   /* Focus */
   --w-focus-ring-color: var(--w-color-primary);
   --w-focus-ring-shadow: 0 0 0 var(--w-focus-ring-width) var(--w-color-primary-soft);
 
   /* Motion */
+  --w-duration-press: 80ms;
   --w-duration-fast: 120ms;
   --w-duration-normal: 220ms;
   --w-duration-slow: 400ms;
+  --w-duration-spinner: 800ms;
   --w-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
   --w-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* Layering */
@@ -137,16 +147,21 @@
   --w-z-toast: 3000;
 }
 
-.w-dark-tokens() {
+.w-dark-tokens(
+  @primary: #818cf8,
+  @primary-hover: #a5b4fc,
+  @primary-active: #6366f1,
+  @focus-ring: #a5b4fc
+) {
   .w-shared-tokens();
 
   color-scheme: dark;
 
-  --w-color-primary: #818cf8;
-  --w-color-primary-hover: #a5b4fc;
-  --w-color-primary-active: #6366f1;
-  --w-color-primary-soft: rgba(129, 140, 248, 0.16);
-  --w-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+  --w-color-primary: @primary;
+  --w-color-primary-hover: @primary-hover;
+  --w-color-primary-active: @primary-active;
+  --w-color-primary-soft: fade(@primary, 16%);
+  --w-color-primary-soft-hover: fade(@primary, 24%);
   --w-color-success: #34d399;
   --w-color-success-soft: rgba(52, 211, 153, 0.14);
   --w-color-warning: #fbbf24;
@@ -178,42 +193,20 @@
   --w-color-tooltip-text: #0f172a;
   --w-color-tooltip-muted: rgba(51, 65, 85, 0.82);
   --w-color-weekend: rgba(148, 163, 184, 0.06);
-  --w-highlight-background: rgba(129, 140, 248, 0.24);
+  --w-highlight-background: fade(@primary, 24%);
   --w-highlight-color: inherit;
 
-  --w-scrollbar-thumb: rgba(148, 163, 184, 0.34);
-  --w-scrollbar-thumb-hover: rgba(148, 163, 184, 0.58);
-  --w-scrollbar-thumb-active: rgba(148, 163, 184, 0.74);
+  --w-scrollbar-thumb: rgba(226, 232, 240, 0.24);
+  --w-scrollbar-thumb-hover: rgba(226, 232, 240, 0.38);
+  --w-scrollbar-thumb-active: rgba(226, 232, 240, 0.5);
 
-  --w-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --w-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.42), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --w-shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.55), 0 4px 8px -4px rgba(0, 0, 0, 0.38);
-  --w-shadow-hover: 0 10px 24px -8px rgba(0, 0, 0, 0.52), 0 4px 8px -4px rgba(0, 0, 0, 0.34);
-  --w-shadow-overlay: 0 28px 56px -16px rgba(0, 0, 0, 0.68), 0 12px 20px -10px rgba(0, 0, 0, 0.44);
+  --w-shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.3);
+  --w-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.36);
+  --w-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.24), 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+  --w-shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.3), 0 20px 48px -18px rgba(0, 0, 0, 0.78);
+  --w-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.3), 0 14px 32px -16px rgba(0, 0, 0, 0.7);
+  --w-shadow-overlay: 0 2px 8px rgba(0, 0, 0, 0.4), 0 28px 64px -24px rgba(0, 0, 0, 0.82);
 
-  --w-focus-ring-color: #a5b4fc;
-  --w-focus-ring-shadow: 0 0 0 var(--w-focus-ring-width) rgba(165, 180, 252, 0.28);
-}
-
-:root,
-[data-w-theme='light'] {
-  .w-light-tokens();
-}
-
-[data-w-theme='dark'] {
-  .w-dark-tokens();
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-w-theme]) {
-    .w-dark-tokens();
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --w-duration-fast: 0.01ms;
-    --w-duration-normal: 0.01ms;
-    --w-duration-slow: 0.01ms;
-  }
+  --w-focus-ring-color: @focus-ring;
+  --w-focus-ring-shadow: 0 0 0 var(--w-focus-ring-width) fade(@focus-ring, 28%);
 }

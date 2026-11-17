@@ -302,7 +302,18 @@ function reconcileExpansion() {
 
   knownKeys = valid
   expansionInitialized = true
-  internalExpandKeys.value = next
+  // Keep the previous Set identity when nothing changed. `visibleEntries`
+  // depends on it, so assigning an equal copy would re-render the whole tree
+  // on every unrelated node edit.
+  if (!sameKeys(internalExpandKeys.value, next)) internalExpandKeys.value = next
+}
+
+function sameKeys(a: Set<string>, b: Set<string>): boolean {
+  if (a.size !== b.size) return false
+  for (const key of a) {
+    if (!b.has(key)) return false
+  }
+  return true
 }
 
 watch(allEntries, reconcileExpansion, { immediate: true })
@@ -927,13 +938,18 @@ function menuItems(): OrgTreeMenuItem[] {
   return props.contextMenu === false ? [] : props.contextMenu
 }
 
-function closeMenu() {
+/**
+ * `restoreFocus` is opt-in: only keyboard dismissal and explicit selection
+ * should pull focus back. Restoring it after an outside pointerdown would steal
+ * focus from whatever the user just clicked.
+ */
+function closeMenu(restoreFocus = false) {
   if (!menu.value.visible) return
   const triggerKey = menuTriggerKey.value
   menu.value = { ...menu.value, visible: false, node: null }
   menuDismiss.stop()
   menuTriggerKey.value = null
-  if (triggerKey && !unmounted.value) {
+  if (restoreFocus && triggerKey && !unmounted.value) {
     nextTick(() => focusEntry(indexState.value.byKey.get(triggerKey)))
   }
 }
@@ -964,12 +980,14 @@ const menuNavigation = useKeyboardNavigation({
 
 const menuDismiss = useDismissable({
   ignore: menuRef,
-  onDismiss: () => closeMenu(),
+  // Escape is a keyboard dismissal and should return focus; an outside pointer
+  // press must leave focus wherever the user just clicked.
+  onDismiss: (reason) => closeMenu(reason === 'escape'),
 })
 
 function handleMenuKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
-    closeMenu()
+    closeMenu(true)
     return
   }
   menuNavigation.handleKeydown(event)
@@ -989,11 +1007,18 @@ function handleContextMenu(event: MouseEvent) {
 
   event.preventDefault()
 
+  // Shift+F10 / the context-menu key report (0, 0); anchor to the node card so
+  // keyboard users see the menu next to the node they invoked it on.
+  const anchor =
+    event.clientX === 0 && event.clientY === 0
+      ? target?.closest<HTMLElement>('.w-org-tree__node-card')?.getBoundingClientRect()
+      : undefined
+
   menuTriggerKey.value = entry.key
   menu.value = {
     visible: true,
-    x: event.clientX,
-    y: event.clientY,
+    x: anchor ? anchor.left : event.clientX,
+    y: anchor ? anchor.bottom : event.clientY,
     node: entry.node,
   }
   menuDismiss.start()
@@ -1013,7 +1038,7 @@ function handleContextMenu(event: MouseEvent) {
 
 function handleMenuItem(item: OrgTreeMenuItem) {
   const node = menu.value.node
-  closeMenu()
+  closeMenu(true)
   if (!node || item.disabled) return
   emit('menu-click', item.command, node)
 }

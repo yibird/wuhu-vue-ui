@@ -1,5 +1,3 @@
-@import './token.less';
-
 .w-ellipsis {
   position: relative;
   color: var(--w-color-text, #0f172a);
@@ -64,15 +62,30 @@
     position: absolute;
     z-index: var(--w-z-dropdown, 1000);
     max-width: 320px;
-    padding: 6px 10px;
-    border-radius: var(--w-radius-sm, 6px);
+    padding: 7px 10px;
+    border-radius: var(--w-radius-md, 8px);
     background: var(--w-color-tooltip-bg, rgba(15, 23, 42, 0.94));
-    box-shadow: var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+    box-shadow: var(--w-shadow-lg, 0 16px 40px -16px rgba(15, 23, 42, 0.22));
     color: var(--w-color-tooltip-text, #fff);
     font-size: var(--w-font-size-xs, 12px);
-    line-height: var(--w-line-height-normal, 1.55);
+    letter-spacing: -0.004em;
+    line-height: 1.5;
     text-align: left;
     overflow-wrap: anywhere;
     pointer-events: none;
+    animation: w-ellipsis-tooltip-in 120ms var(--w-easing-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  }
+}
+
+@keyframes w-ellipsis-tooltip-in {
+  from {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-ellipsis__tooltip {
+    animation: none;
   }
 }

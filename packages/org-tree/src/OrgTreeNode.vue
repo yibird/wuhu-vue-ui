@@ -91,6 +91,11 @@ function toggle() {
         </span>
       </div>
 
+      <!--
+        Pointer-only affordance: not in the tab order and hidden from AT.
+        The treeitem already exposes aria-expanded and keyboard toggling, so
+        exposing this button too would duplicate the control.
+      -->
       <span v-if="hasChildren" class="w-org-tree__toggle-wrap">
         <slot
           name="expand"
@@ -106,6 +111,7 @@ function toggle() {
             :class="classes?.toggle"
             :style="styles?.toggle"
             tabindex="-1"
+            aria-hidden="true"
             :aria-label="expanded ? collapseLabel : expandLabel"
             :aria-expanded="expanded"
             :title="expanded ? collapseLabel : expandLabel"

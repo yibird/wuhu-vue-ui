@@ -1,23 +1,18 @@
-@import './token.less';
-
 .w-command-menu {
   --w-command-menu-active-bg: color-mix(
     in srgb,
-    var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)) 70%,
+    var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)) 78%,
     transparent
   );
-  /* Translucent so pointer hover stays subtler than the solid keyboard state. */
+  /* A foreground state layer reads correctly on both base and elevated
+     surfaces, unlike `surface-hover` which is tuned for the page background. */
   --w-command-menu-hover-bg: color-mix(
     in srgb,
-    var(--w-color-surface-active, #e2e8f0) 45%,
-    transparent
+    var(--w-color-text, #0f172a) 6%,
+    var(--w-color-surface-elevated, #ffffff)
   );
-  /* Selection is stronger than the transient keyboard/pointer state. */
-  --w-command-menu-selected-bg: color-mix(
-    in srgb,
-    var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)) 100%,
-    transparent
-  );
+  /* Selection is persistent and gets a hairline of its own. */
+  --w-command-menu-selected-bg: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
 
   display: flex;
   flex-direction: column;
@@ -25,20 +20,29 @@
   border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-lg, 12px);
   background: var(--w-color-surface-elevated, #ffffff);
-  box-shadow: var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+  box-shadow: var(--w-shadow-overlay, 0 24px 56px -20px rgba(15, 23, 42, 0.3));
   color: var(--w-color-text, #0f172a);
   font-family: var(--w-font-family, inherit);
   font-size: var(--w-font-size-md, 14px);
   line-height: var(--w-line-height-normal, 1.55);
+  animation: w-command-menu-in 180ms var(--w-easing-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
   transition:
-    border-color var(--w-duration-fast, 120ms) ease,
-    box-shadow var(--w-duration-fast, 120ms) ease;
+    border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+    box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
+  /*
+   * A single calm focus treatment: the border tint carries the state, the halo
+   * only widens it. Avoids the double ring you get from outlining the input.
+   */
   &:focus-within {
-    border-color: var(--w-color-primary, #4f46e5);
+    border-color: color-mix(
+      in srgb,
+      var(--w-color-primary, #4f46e5) 40%,
+      var(--w-color-border, #e2e8f0)
+    );
     box-shadow:
-      0 0 0 var(--w-focus-ring-width, 2px) var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)),
-      var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+      0 0 0 3px var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)),
+      var(--w-shadow-overlay, 0 24px 56px -20px rgba(15, 23, 42, 0.3));
   }
 
   &.is-disabled {
@@ -48,30 +52,36 @@
   &__search {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex: none;
-    padding: 0 14px;
+    padding: 0 16px;
     border-bottom: 1px solid var(--w-color-border-subtle, #f1f5f9);
   }
 
   &__search-icon {
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
     flex: none;
     color: var(--w-color-text-tertiary, #94a3b8);
+    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+  }
+
+  &:focus-within &__search-icon {
+    color: var(--w-color-primary, #4f46e5);
   }
 
   &__input {
     flex: 1 1 auto;
     min-width: 0;
-    height: 48px;
+    height: 52px;
     padding: 0;
     border: 0;
     outline: none;
     background: transparent;
     color: inherit;
     font-family: inherit;
-    font-size: var(--w-font-size-sm, 13px);
+    font-size: var(--w-font-size-md, 14px);
+    letter-spacing: -0.006em;
     line-height: 1.4;
     appearance: none;
 
@@ -88,8 +98,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     flex: none;
     padding: 0;
     border: 0;
@@ -98,8 +108,9 @@
     color: var(--w-color-text-tertiary, #94a3b8);
     cursor: pointer;
     transition:
-      background-color var(--w-duration-fast, 120ms) ease,
-      color var(--w-duration-fast, 120ms) ease;
+      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+      color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+      transform var(--w-duration-press, 80ms) var(--w-easing-standard, ease);
 
     svg {
       width: 14px;
@@ -108,7 +119,11 @@
 
     &:hover {
       background: var(--w-color-surface-hover, #f1f5f9);
-      color: var(--w-color-text-secondary, #475569);
+      color: var(--w-color-text, #0f172a);
+    }
+
+    &:active {
+      transform: scale(0.92);
     }
 
     &:focus-visible {
@@ -122,7 +137,7 @@
     overscroll-behavior: contain;
     padding: 6px;
     scrollbar-width: thin;
-    scrollbar-color: var(--w-scrollbar-thumb, rgba(100, 116, 139, 0.38)) transparent;
+    scrollbar-color: var(--w-scrollbar-thumb, #eee) transparent;
 
     &::-webkit-scrollbar {
       width: var(--w-scrollbar-size, 6px);
@@ -134,49 +149,66 @@
 
     &::-webkit-scrollbar-thumb {
       border-radius: var(--w-radius-full, 9999px);
-      background: var(--w-scrollbar-thumb, rgba(100, 116, 139, 0.38));
+      background: var(--w-scrollbar-thumb, #eee);
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: var(--w-scrollbar-thumb-hover, rgba(100, 116, 139, 0.62));
+      background: var(--w-scrollbar-thumb-hover, #e0e0e0);
     }
   }
 
   &__group + &__group {
-    margin-top: 6px;
+    margin-top: 4px;
   }
 
   &__group-label {
-    padding: 8px 10px;
-    color: var(--w-color-text-secondary, #475569);
+    padding: 10px 10px 6px;
+    color: var(--w-color-text-tertiary, #5b6678);
     font-size: var(--w-font-size-2xs, 11px);
     font-weight: var(--w-font-weight-semibold, 600);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     line-height: 1.4;
+    text-transform: uppercase;
     user-select: none;
   }
 
   &__item {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
-    min-height: 44px;
-    padding: 9px 12px;
-    border-radius: var(--w-radius-sm, 6px);
+    min-height: 38px;
+    padding: 8px 10px;
+    border-radius: var(--w-radius-md, 8px);
     cursor: pointer;
     user-select: none;
     /* Skip layout/paint for rows far outside the scroll viewport. `auto`
        remembers the real rendered height after the first paint. */
     content-visibility: auto;
-    contain-intrinsic-size: auto 48px;
-    transition: background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    contain-intrinsic-size: auto 40px;
+    transition:
+      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+      box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
-    & + & {
-      margin-top: 6px;
+    /* Accent bar for the keyboard cursor. */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 9px;
+      bottom: 9px;
+      left: 0;
+      width: 2px;
+      border-radius: var(--w-radius-full, 9999px);
+      background: var(--w-color-primary, #4f46e5);
+      opacity: 0;
+      transform: scaleY(0.4);
+      transition:
+        opacity var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+        transform var(--w-duration-fast, 120ms) var(--w-easing-out, ease);
     }
 
-    &.is-active:not(.is-disabled) {
-      background-color: var(--w-command-menu-active-bg);
+    & + & {
+      margin-top: 2px;
     }
 
     &.is-hovered:not(.is-disabled),
@@ -184,13 +216,32 @@
       background-color: var(--w-command-menu-hover-bg);
     }
 
+    &.is-active:not(.is-disabled) {
+      background-color: var(--w-command-menu-active-bg);
+
+      &::before {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+
+      .w-command-menu__item-icon {
+        color: var(--w-color-primary, #4f46e5);
+      }
+    }
+
     &:active:not(.is-disabled) {
       background-color: var(--w-color-surface-active, #e2e8f0);
     }
 
-    /* Declared last so the selected state wins over hover and active. */
+    /* Declared last so the persistent selection wins over transient states. */
     &.is-selected:not(.is-disabled) {
       background-color: var(--w-command-menu-selected-bg);
+      box-shadow: inset 0 0 0 1px
+        color-mix(in srgb, var(--w-color-primary, #4f46e5) 18%, transparent);
+
+      .w-command-menu__item-label {
+        color: var(--w-color-primary, #4f46e5);
+      }
     }
 
     &.is-disabled {
@@ -212,17 +263,18 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     flex: none;
     color: var(--w-color-text-secondary, #475569);
     font-size: var(--w-font-size-sm, 13px);
     font-weight: var(--w-font-weight-semibold, 600);
     line-height: 1;
+    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
     > svg {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 17px;
     }
   }
 
@@ -236,16 +288,18 @@
 
   &__item-label {
     overflow: hidden;
-    font-size: var(--w-font-size-sm, 13px);
+    font-size: var(--w-font-size-md, 14px);
     font-weight: var(--w-font-weight-medium, 500);
+    letter-spacing: -0.006em;
     line-height: 1.4;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
   }
 
   &__item-description {
     overflow: hidden;
-    color: var(--w-color-text-secondary, #475569);
+    color: var(--w-color-text-tertiary, #5b6678);
     font-size: var(--w-font-size-xs, 12px);
     line-height: 1.45;
     text-overflow: ellipsis;
@@ -254,10 +308,11 @@
 
   &__shortcut {
     flex: none;
-    padding: 2px 6px;
+    padding: 1px 6px 2px;
     border: 1px solid var(--w-color-border, #e2e8f0);
     border-radius: var(--w-radius-xs, 4px);
     background: var(--w-color-surface-subtle, #f1f5f9);
+    box-shadow: inset 0 -1px 0 var(--w-color-border, #e2e8f0);
     color: var(--w-color-text-secondary, #475569);
     font-family: var(--w-font-family-mono, monospace);
     font-size: var(--w-font-size-2xs, 11px);
@@ -267,10 +322,42 @@
   }
 
   &__empty {
-    padding: 34px 16px;
-    color: var(--w-color-text-secondary, #475569);
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 160px;
+    padding: 36px 16px;
+    color: var(--w-color-text-tertiary, #5b6678);
     font-size: var(--w-font-size-sm, 13px);
     line-height: 1.6;
     text-align: center;
+  }
+
+  &__empty-icon {
+    width: 22px;
+    height: 22px;
+    opacity: 0.6;
+  }
+}
+
+@keyframes w-command-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.99);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-command-menu {
+    animation: none;
+  }
+
+  .w-command-menu__item,
+  .w-command-menu__item::before,
+  .w-command-menu__clear {
+    transition: none;
   }
 }

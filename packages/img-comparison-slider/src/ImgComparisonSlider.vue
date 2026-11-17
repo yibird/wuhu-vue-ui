@@ -80,6 +80,25 @@ const { value: position, setValue: setPositionValue } = useControllableState({
 let dragRect: DOMRect | null = null
 let dragStartPosition = position.value
 
+/**
+ * The pointerdown rect is only valid while the page is still. Any scroll or
+ * resize during the gesture invalidates it, so the next move measures again
+ * instead of comparing viewport coordinates against a stale box.
+ */
+function invalidateDragRect() {
+  dragRect = null
+}
+
+function trackGeometry() {
+  window.addEventListener('scroll', invalidateDragRect, true)
+  window.addEventListener('resize', invalidateDragRect)
+}
+
+function untrackGeometry() {
+  window.removeEventListener('scroll', invalidateDragRect, true)
+  window.removeEventListener('resize', invalidateDragRect)
+}
+
 const displayPosition = computed(() => round(position.value))
 const isHorizontal = computed(() => props.direction === 'horizontal')
 
@@ -179,6 +198,7 @@ function handlePointerDown(event: PointerEvent) {
   dragging.value = true
   dragRect = rect
   dragStartPosition = position.value
+  trackGeometry()
 
   // Report the position before the pointer moves the divider.
   emit('dragstart', dragStartPosition)
@@ -218,6 +238,7 @@ const drag = usePointerDrag({
 function stopDragging() {
   dragging.value = false
   dragRect = null
+  untrackGeometry()
   drag.stop()
 }
 

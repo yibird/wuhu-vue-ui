@@ -1,3 +1,6 @@
+// Component-scoped tokens. Everything is declared on the editor root, so an
+// app-level `--w-color-*` change still flows through the aliases below and no
+// other package is affected.
 .w-tiptap-editor-dark-tokens() {
   color-scheme: dark;
   --w-tiptap-editor-surface: #0f172a;
@@ -22,7 +25,7 @@
   --w-tiptap-editor-status-text: #0f172a;
 }
 
-:root {
+.w-tiptap-editor {
   color-scheme: light;
   --w-tiptap-editor-surface: var(--w-color-surface, #ffffff);
   --w-tiptap-editor-toolbar-surface: var(--w-color-surface-subtle, #f8fafc);
@@ -49,12 +52,12 @@
   --w-tiptap-editor-disabled-opacity: var(--w-opacity-disabled, 0.55);
 }
 
-[data-w-theme='dark'] {
+[data-w-theme='dark'] .w-tiptap-editor {
   .w-tiptap-editor-dark-tokens();
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-w-theme]) {
+  :root:not([data-w-theme]) .w-tiptap-editor {
     .w-tiptap-editor-dark-tokens();
   }
 }

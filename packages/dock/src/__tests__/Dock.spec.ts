@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { h, nextTick } from 'vue'
+import { h, nextTick, reactive } from 'vue'
 import Dock from '../Dock.vue'
 import type { DockItem, DockPosition } from '../types'
 
@@ -175,6 +175,27 @@ describe('Dock', () => {
     expect(neighbour).toBeGreaterThan(1)
     expect(farthest).toBeGreaterThan(neighbour)
     expect(farthest).toBeLessThan(nearest)
+
+    wrapper.unmount()
+  })
+
+  it('re-measures after the model is mutated in place', async () => {
+    const model = reactive<DockItem[]>([{ label: 'A' }, { label: 'B' }])
+    const wrapper = mount(Dock, { props: { model } })
+    mockRects(wrapper)
+
+    // Prime the cached centres with the original two items.
+    await pointerMove(wrapper.get('.w-dock').element, 24, 24)
+
+    model.push({ label: 'C' })
+    await nextTick()
+    mockRects(wrapper)
+
+    await pointerMove(wrapper.get('.w-dock').element, 136, 24)
+    const scales = wrapper
+      .findAll('.w-dock__inner')
+      .map((tile) => scaleOf(tile.attributes('style')))
+    expect(scales[2]).toBeGreaterThan(1.5)
 
     wrapper.unmount()
   })

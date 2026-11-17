@@ -50,6 +50,15 @@ function openMenu(event: MouseEvent, row: FileRow) {
   menu.value?.open(event)
 }
 
+/**
+ * Pass items as a resolver: `open()` runs in the same tick as `activeFile`
+ * changes, before the parent re-renders, so an array prop would still be the
+ * previous (empty) list. The resolver reads the current computed value.
+ */
+function resolveItems() {
+  return items.value
+}
+
 function handleSelect({ item }: ContextMenuSelectDetails) {
   if (!('label' in item)) return
   const name = activeFile.value?.name ?? ''
@@ -63,7 +72,7 @@ function handleSelect({ item }: ContextMenuSelectDetails) {
     description="在列表项上点击右键打开菜单；items 根据命中的行动态生成，禁用状态随数据变化。"
     wide
   >
-    <ContextMenu ref="menu" :items="items" @select="handleSelect" />
+    <ContextMenu ref="menu" :items="resolveItems" @select="handleSelect" />
 
     <div class="context-demo">
       <ul class="context-demo__list">
