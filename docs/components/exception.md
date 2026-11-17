@@ -29,7 +29,6 @@ import { setExceptionPresets } from '@wuhu-vue-ui/exception'
 
 setExceptionPresets({
   notFound: {
-    image: '/banner/404.png',
     title: '页面走丢了',
     description: '地址可能已经变更，试试从首页重新进入。',
   },
@@ -39,6 +38,8 @@ setExceptionPresets({
   },
 })
 ```
+
+Demo 通过按钮手动应用配置，避免页面加载时影响上方的「内置错误类型」示例。
 
 <demo vue="../demos/exception/global.vue" />
 
@@ -51,6 +52,12 @@ setExceptionPresets({
 | `setExceptionPresets` | `(presets: ExceptionPresets) => void` | 全量替换（replace）各错误类型的图片、标题和描述 |
 
 `ExceptionPresets` 为 `Partial<Record<ExceptionType, ExceptionPreset>>`，其中 `ExceptionPreset` 包含可选的 `image`、`title`、`description`。
+
+## 注入全局图片
+
+通过 `setExceptionPresets` 的 `image` 字段，可以按错误类型统一替换 banner 插图；组件自身的 `image` prop 优先级更高。示例通过按钮手动注入，避免影响页面上的其他 Exception 示例。
+
+<demo vue="../demos/exception/global-image.vue" />
 
 ## API
 

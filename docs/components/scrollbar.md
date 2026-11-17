@@ -98,9 +98,9 @@
 | 变量                          | 默认值    | 说明           |
 | ----------------------------- | --------- | -------------- |
 | `--w-scrollbar-size`          | `6px`     | 滚动条粗细     |
-| `--w-scrollbar-thumb`         | `#c9cacd` | 滑块颜色       |
-| `--w-scrollbar-thumb-hover`   | `#b1b2b4` | 滑块悬停颜色   |
-| `--w-scrollbar-thumb-active`  | `#b1b2b4` | 滑块按下颜色   |
+| `--w-scrollbar-thumb`         | `#eee`    | 滑块颜色       |
+| `--w-scrollbar-thumb-hover`   | `#e0e0e0` | 滑块悬停颜色   |
+| `--w-scrollbar-thumb-active`  | `#d6d6d6` | 滑块按下颜色   |
 | `--w-scrollbar-opacity`       | `1`       | 滑块默认透明度 |
 | `--w-scrollbar-hover-opacity` | `1`       | 滑块悬停透明度 |
 

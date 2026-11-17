@@ -1,25 +1,12 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { Exception, setExceptionPresets } from '@wuhu-vue-ui/exception'
 
-const banner = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#6366f1" />
-      <stop offset="1" stop-color="#a855f7" />
-    </linearGradient>
-  </defs>
-  <rect width="320" height="200" rx="20" fill="url(#g)" />
-  <text x="160" y="116" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="64" font-weight="700">404</text>
-  <text x="160" y="150" text-anchor="middle" fill="rgba(255, 255, 255, 0.75)" font-family="system-ui, sans-serif" font-size="14" letter-spacing="2">GLOBAL BANNER</text>
-</svg>
-`)}`
+const applied = ref(false)
 
-onMounted(() => {
+function applyPresets() {
   setExceptionPresets({
     notFound: {
-      image: banner,
       title: '页面走丢了',
       description: '地址可能已经变更，试试从首页重新进入。',
     },
@@ -28,15 +15,25 @@ onMounted(() => {
       description: '我们正在紧急修复，请稍后再试。',
     },
   })
-})
+  applied.value = true
+}
 
-onBeforeUnmount(() => {
+function resetPresets() {
   setExceptionPresets({})
-})
+  applied.value = false
+}
+
+onBeforeUnmount(resetPresets)
 </script>
 
 <template>
   <div class="exception-global">
+    <div class="exception-global__actions">
+      <button type="button" :disabled="applied" @click="applyPresets">应用全局配置</button>
+      <button type="button" :disabled="!applied" @click="resetPresets">恢复默认</button>
+      <span aria-live="polite">{{ applied ? '已应用全局配置' : '当前为默认配置' }}</span>
+    </div>
+
     <div class="exception-global__item">
       <span class="exception-global__label">notFound</span>
       <Exception type="notFound" />
@@ -53,6 +50,43 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    grid-column: 1 / -1;
+    gap: 8px;
+    font-size: 12px;
+
+    button {
+      padding: 6px 12px;
+      border: 1px solid var(--w-color-border, #e2e8f0);
+      border-radius: 8px;
+      background: var(--w-color-surface, #ffffff);
+      color: var(--w-color-text, #0f172a);
+      font: inherit;
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        border-color: var(--w-color-border-strong, #cbd5e1);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--w-color-primary, #4f46e5);
+        outline-offset: 2px;
+      }
+    }
+
+    span {
+      color: var(--w-color-text-tertiary, #64748b);
+    }
+  }
 
   &__item {
     overflow: hidden;
