@@ -31,12 +31,12 @@ function shuffle() {
 <template>
   <div class="sortable-demo">
     <div class="sortable-demo__controls">
-      <span class="hint">direction="horizontal" · animation="slide"</span>
+      <span class="hint">direction="horizontal" · animation="slide-left"</span>
       <Button @click="shuffle">打乱顺序</Button>
     </div>
 
     <MotionGroup
-      animation="slide"
+      animation="slide-left"
       direction="horizontal"
       :duration="280"
       :move-duration="320"

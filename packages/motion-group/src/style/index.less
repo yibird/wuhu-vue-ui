@@ -7,6 +7,8 @@
   --w-motion-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
   --w-motion-enter-x: 0px;
   --w-motion-enter-y: 8px;
+  --w-motion-leave-x: 0px;
+  --w-motion-leave-y: 0px;
 }
 
 /* `css=false` only disables Vue's enter/leave classes; TransitionGroup still
@@ -31,23 +33,52 @@
 }
 
 /* --------------------------------------------------------------------------
- * slide — enter from the edge selected by the `direction` prop
+ * slide-up / slide-down / slide-left / slide-right — enter moving in the
+ * direction named by the preset
  * ------------------------------------------------------------------------ */
 
-.w-motion-group--slide.w-motion-group--vertical {
+.w-motion-group--slide-up {
+  --w-motion-enter-x: 0px;
+  --w-motion-enter-y: 28px;
+  --w-motion-leave-x: 0px;
+  --w-motion-leave-y: -28px;
+}
+
+.w-motion-group--slide-down {
   --w-motion-enter-x: 0px;
   --w-motion-enter-y: -28px;
+  --w-motion-leave-x: 0px;
+  --w-motion-leave-y: 28px;
 }
 
-.w-motion-group--slide.w-motion-group--horizontal {
+.w-motion-group--slide-left {
+  --w-motion-enter-x: 28px;
+  --w-motion-enter-y: 0px;
+  --w-motion-leave-x: -28px;
+  --w-motion-leave-y: 0px;
+}
+
+.w-motion-group--slide-right {
   --w-motion-enter-x: -28px;
   --w-motion-enter-y: 0px;
+  --w-motion-leave-x: 28px;
+  --w-motion-leave-y: 0px;
 }
 
-.w-motion-slide-enter-from,
-.w-motion-slide-leave-to {
+.w-motion-slide-up-enter-from,
+.w-motion-slide-down-enter-from,
+.w-motion-slide-left-enter-from,
+.w-motion-slide-right-enter-from {
   opacity: 0;
   transform: translate3d(var(--w-motion-enter-x), var(--w-motion-enter-y), 0);
+}
+
+.w-motion-slide-up-leave-to,
+.w-motion-slide-down-leave-to,
+.w-motion-slide-left-leave-to,
+.w-motion-slide-right-leave-to {
+  opacity: 0;
+  transform: translate3d(var(--w-motion-leave-x), var(--w-motion-leave-y), 0);
 }
 
 /* --------------------------------------------------------------------------
@@ -79,10 +110,16 @@
  * Absolute leave — keeps the remaining items flowing while one disappears
  * ------------------------------------------------------------------------ */
 
-.w-motion-group--absolute-leave .w-motion-fade-leave-active,
-.w-motion-group--absolute-leave .w-motion-slide-leave-active,
-.w-motion-group--absolute-leave .w-motion-flip-leave-active,
-.w-motion-group--absolute-leave .w-motion-bounce-leave-active {
+.w-motion-group--absolute-leave
+  :is(
+    .w-motion-fade-leave-active,
+    .w-motion-slide-up-leave-active,
+    .w-motion-slide-down-leave-active,
+    .w-motion-slide-left-leave-active,
+    .w-motion-slide-right-leave-active,
+    .w-motion-flip-leave-active,
+    .w-motion-bounce-leave-active
+  ) {
   position: absolute;
   pointer-events: none;
 }
@@ -90,7 +127,10 @@
 .w-motion-group--absolute-leave.w-motion-group--vertical
   :is(
     .w-motion-fade-leave-active,
-    .w-motion-slide-leave-active,
+    .w-motion-slide-up-leave-active,
+    .w-motion-slide-down-leave-active,
+    .w-motion-slide-left-leave-active,
+    .w-motion-slide-right-leave-active,
     .w-motion-flip-leave-active,
     .w-motion-bounce-leave-active
   ) {
@@ -101,7 +141,10 @@
 .w-motion-group--absolute-leave.w-motion-group--horizontal
   :is(
     .w-motion-fade-leave-active,
-    .w-motion-slide-leave-active,
+    .w-motion-slide-up-leave-active,
+    .w-motion-slide-down-leave-active,
+    .w-motion-slide-left-leave-active,
+    .w-motion-slide-right-leave-active,
     .w-motion-flip-leave-active,
     .w-motion-bounce-leave-active
   ) {
@@ -117,8 +160,16 @@
     transition: opacity var(--w-motion-duration) var(--w-motion-ease);
   }
 
-  .w-motion-slide-enter-active,
-  .w-motion-slide-leave-active {
+  :is(
+    .w-motion-slide-up-enter-active,
+    .w-motion-slide-up-leave-active,
+    .w-motion-slide-down-enter-active,
+    .w-motion-slide-down-leave-active,
+    .w-motion-slide-left-enter-active,
+    .w-motion-slide-left-leave-active,
+    .w-motion-slide-right-enter-active,
+    .w-motion-slide-right-leave-active
+  ) {
     transition:
       opacity var(--w-motion-duration) var(--w-motion-ease),
       transform var(--w-motion-duration) var(--w-motion-ease);
@@ -146,7 +197,10 @@
   }
 
   .w-motion-fade-move,
-  .w-motion-slide-move,
+  .w-motion-slide-up-move,
+  .w-motion-slide-down-move,
+  .w-motion-slide-left-move,
+  .w-motion-slide-right-move,
   .w-motion-flip-move,
   .w-motion-bounce-move {
     transition: transform var(--w-motion-move-duration) var(--w-motion-ease);

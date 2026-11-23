@@ -484,7 +484,9 @@ async function exportImage() {
 import { ref } from 'vue'
 import { MotionGroup } from '@wuhu-vue-ui/motion-group'
 
-const animation = ref<'fade' | 'slide' | 'flip' | 'bounce'>('fade')
+const animation = ref<
+  'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'flip' | 'bounce'
+>('fade')
 const cards = ref([
   { id: 1, title: '需求评审' },
   { id: 2, title: '视觉定稿' },
@@ -506,8 +508,8 @@ const cards = ref([
 </template>
 ```
 
-- 内置动画：`fade`、`slide`、`flip`、`bounce`，通过 `animation` 切换，无需额外 CSS。
-- `direction` 控制 `slide` 的进入方向；`duration` / `moveDuration` 分别控制进入退出与 FLIP 位移时长。
+- 内置动画：`fade`、`slide-up`、`slide-down`、`slide-left`、`slide-right`、`flip`、`bounce`，通过 `animation` 切换，无需额外 CSS。
+- `direction` 控制离场项的定位方向；`duration` / `moveDuration` 分别控制进入退出与 FLIP 位移时长。
 - `absoluteLeave`（默认开启）让离场项脱离文档流，剩余项可以立即滑动补位；`disabled` 可整体关闭动画。
 - 列表项必须提供稳定的 `:key`，这是 TransitionGroup 计算 FLIP 位移的前提；支持全部 TransitionGroup 钩子事件与属性透传。
 

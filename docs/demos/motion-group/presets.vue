@@ -20,7 +20,15 @@ const labels: Record<CardStatus, string> = {
 }
 
 const weight: Record<CardStatus, number> = { doing: 0, todo: 1, done: 2 }
-const animations: MotionGroupAnimation[] = ['fade', 'slide', 'flip', 'bounce']
+const animations: MotionGroupAnimation[] = [
+  'fade',
+  'slide-up',
+  'slide-down',
+  'slide-left',
+  'slide-right',
+  'flip',
+  'bounce',
+]
 const animation = ref<MotionGroupAnimation>('fade')
 const cards = ref<StatusCard[]>([
   { id: 1, title: '需求评审', owner: 'Lin', status: 'todo' },

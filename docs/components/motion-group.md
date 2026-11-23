@@ -1,16 +1,16 @@
 # Motion Group 排序动画
 
-基于 TransitionGroup 的列表重排动画，内置 4 套预设并支持过滤进出场。
+基于 TransitionGroup 的列表重排动画，内置 7 套预设并支持过滤进出场。
 
 ## 动画预设与重排
 
-4 套预设的差异主要在进入 / 离开动画：切换预设会重新播放入场，添加 / 移除任务可查看离场；列表重排本身统一使用 FLIP 位移动画。
+预设的差异主要在进入 / 离开动画：切换预设会重新播放入场，添加 / 移除任务可查看离场；列表重排本身统一使用 FLIP 位移动画。`slide-up`、`slide-down`、`slide-left`、`slide-right` 分别表示从下、上、右、左进入，离场时继续沿同一方向移出。
 
 <demo vue="../demos/motion-group/presets.vue" />
 
 ## 横向列表
 
-`direction="horizontal"` 配合 `slide` 预设，适合步骤条、标签栏等横向排序。
+`direction="horizontal"` 配合 `slide-left` / `slide-right`，适合步骤条、标签栏等横向排序。
 
 <demo vue="../demos/motion-group/horizontal.vue" />
 
@@ -42,16 +42,16 @@
 
 ### Props
 
-| 属性            | 类型                                      | 默认值       | 说明                             |
-| --------------- | ----------------------------------------- | ------------ | -------------------------------- |
-| `animation`     | `'fade' \| 'slide' \| 'flip' \| 'bounce'` | `'fade'`     | 内置动画预设                     |
-| `direction`     | `'horizontal' \| 'vertical'`              | `'vertical'` | `slide` 预设方向                 |
-| `tag`           | `string`                                  | `'div'`      | 包装标签                         |
-| `appear`        | `boolean`                                 | `false`      | 首次渲染是否播放动画             |
-| `duration`      | `number`                                  | `260`        | 进入 / 离开动画时长（ms）        |
-| `moveDuration`  | `number`                                  | `duration`   | FLIP 位移动画时长（ms）          |
-| `absoluteLeave` | `boolean`                                 | `true`       | 离场项脱离文档流，剩余项立即补位 |
-| `disabled`      | `boolean`                                 | `false`      | 关闭动画但保留列表功能           |
+| 属性            | 类型                                                                                          | 默认值       | 说明                             |
+| --------------- | --------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
+| `animation`     | `'fade' \| 'slide-up' \| 'slide-down' \| 'slide-left' \| 'slide-right' \| 'flip' \| 'bounce'` | `'fade'`     | 内置动画预设                     |
+| `direction`     | `'horizontal' \| 'vertical'`                                                                  | `'vertical'` | 离场项定位方向                   |
+| `tag`           | `string`                                                                                      | `'div'`      | 包装标签                         |
+| `appear`        | `boolean`                                                                                     | `false`      | 首次渲染是否播放动画             |
+| `duration`      | `number`                                                                                      | `260`        | 进入 / 离开动画时长（ms）        |
+| `moveDuration`  | `number`                                                                                      | `duration`   | FLIP 位移动画时长（ms）          |
+| `absoluteLeave` | `boolean`                                                                                     | `true`       | 离场项脱离文档流，剩余项立即补位 |
+| `disabled`      | `boolean`                                                                                     | `false`      | 关闭动画但保留列表功能           |
 
 ### Emits
 
@@ -75,14 +75,15 @@
 | `--w-motion-move-duration`                  | `var(--w-motion-duration)`                             | FLIP 位移动画时长   |
 | `--w-motion-ease`                           | `var(--w-easing-standard, cubic-bezier(0.2, 0, 0, 1))` | 动画缓动            |
 | `--w-motion-overshoot`                      | `cubic-bezier(0.34, 1.56, 0.64, 1)`                    | `bounce` 过冲缓动   |
-| `--w-motion-enter-x` / `--w-motion-enter-y` | `0px` / `8px`                                          | `slide` 进入位移    |
+| `--w-motion-enter-x` / `--w-motion-enter-y` | `0px` / `8px`                                          | 进入位移            |
+| `--w-motion-leave-x` / `--w-motion-leave-y` | `0px` / `0px`                                          | 离场位移            |
 
 ### 类名
 
 | 类名                                                                                        | 说明           |
 | ------------------------------------------------------------------------------------------- | -------------- |
 | `.w-motion-group`                                                                           | 根容器         |
-| `.w-motion-group--fade/slide/flip/bounce`                                                   | 动画预设修饰类 |
+| `.w-motion-group--fade/slide-up/slide-down/slide-left/slide-right/flip/bounce`              | 动画预设修饰类 |
 | `.w-motion-group--horizontal/vertical`                                                      | 方向修饰类     |
 | `.w-motion-group--absolute-leave`                                                           | 离场项绝对定位 |
 | `.w-motion-group--disabled`                                                                 | 禁用动画       |

@@ -37,7 +37,7 @@ describe('MotionGroup', () => {
   it('applies duration and direction', () => {
     const wrapper = mount(MotionGroup, {
       props: {
-        animation: 'slide',
+        animation: 'slide-left',
         direction: 'horizontal',
         duration: 320,
         moveDuration: 180,
@@ -50,6 +50,20 @@ describe('MotionGroup', () => {
     expect(wrapper.classes()).toContain('w-motion-group--horizontal')
     expect(wrapper.attributes('style')).toContain('--w-motion-duration: 320ms')
     expect(wrapper.attributes('style')).toContain('--w-motion-move-duration: 180ms')
+  })
+
+  it('supports the four directional slide presets', () => {
+    for (const animation of ['slide-up', 'slide-down', 'slide-left', 'slide-right'] as const) {
+      const wrapper = mount(MotionGroup, {
+        props: { animation },
+        slots: {
+          default: () => [h('div', { key: 'a' }, 'A')],
+        },
+      })
+
+      expect(wrapper.classes()).toContain(`w-motion-group--${animation}`)
+      wrapper.unmount()
+    }
   })
 
   it('follows the rendered list order when items move', async () => {

@@ -33,7 +33,7 @@
 - 子元素：`w-<component>__<element>`
 - 状态或变体：`is-*`、`w-<component>--<modifier>`
 
-例如 `w-copy`、`w-copy__spinner`、`w-command-menu__search`、`w-motion-group--slide`。
+例如 `w-copy`、`w-copy__spinner`、`w-command-menu__search`、`w-motion-group--slide-up`。
 
 ## CSS 变量
 

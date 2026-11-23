@@ -2,15 +2,22 @@
  * Built-in presets. Each preset ships enter / leave / move transitions so
  * reordering and filtering the list both stay animated.
  */
-export type MotionGroupAnimation = 'fade' | 'slide' | 'flip' | 'bounce'
+export type MotionGroupAnimation =
+  | 'fade'
+  | 'slide-up'
+  | 'slide-down'
+  | 'slide-left'
+  | 'slide-right'
+  | 'flip'
+  | 'bounce'
 
-/** Direction used by the `slide` preset. */
+/** Layout direction used when pinning leaving items. */
 export type MotionGroupDirection = 'horizontal' | 'vertical'
 
 export interface MotionGroupProps {
   /** Animation preset. Defaults to `fade`. */
   animation?: MotionGroupAnimation
-  /** Slide direction. Defaults to `vertical` (slides in from the top). */
+  /** Layout direction for pinned leaving items. Defaults to `vertical`. */
   direction?: MotionGroupDirection
   /** Tag of the rendered wrapper. Defaults to `div`. */
   tag?: string
