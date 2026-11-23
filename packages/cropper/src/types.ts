@@ -31,15 +31,39 @@ export interface CropperLabels {
   rotateLeft: string
   rotateRight: string
   reset: string
-  /** Fallback alt text when the `alt` prop is omitted. */
+  /** Accessible name of the crop area and alt text of the source image. */
   image: string
 }
+
+export interface CropperToolbarOptions {
+  /** Allow the image to be rotated. Defaults to `true`. */
+  rotatable?: boolean
+  /** Allow the image to be scaled. Defaults to `true`. */
+  scalable?: boolean
+  /** Allow the image to be dragged. Defaults to `true`. */
+  translatable?: boolean
+  /** Allow the crop selection to be moved. Defaults to `true`. */
+  movable?: boolean
+  /** Allow the crop selection to be resized. Defaults to `true`. */
+  resizable?: boolean
+  /** Allow the selection to be zoomed with the mouse wheel. Defaults to `true`. */
+  zoomable?: boolean
+  /** Enable arrow-key nudging of the crop selection. Defaults to `true`. */
+  keyboard?: boolean
+}
+
+/**
+ * Built-in toolbar configuration.
+ *
+ * - `true` (default): show the toolbar and enable every interaction.
+ * - `false`: hide the toolbar; gestures and keyboard interactions stay enabled.
+ * - object: show the toolbar and override individual interactions.
+ */
+export type CropperToolbar = boolean | CropperToolbarOptions
 
 export interface CropperProps {
   /** Image URL to crop. */
   src: string
-  /** Alternative text for the image. Defaults to `labels.image`. */
-  alt?: string
   /** Overrides for the built-in action labels. */
   labels?: Partial<CropperLabels>
   /** Container height. Numbers are treated as pixels. */
@@ -51,31 +75,10 @@ export interface CropperProps {
    * resets the selection to the new coverage.
    */
   initialCoverage?: number
-  /** Allow the image to be rotated. */
-  rotatable?: boolean
-  /** Allow the image to be scaled. */
-  scalable?: boolean
-  /** Allow the image to be dragged. */
-  translatable?: boolean
-  /** Allow the crop selection to be moved. */
-  movable?: boolean
-  /** Allow the crop selection to be resized. */
-  resizable?: boolean
-  /** Allow the selection to be zoomed with the mouse wheel. */
-  zoomable?: boolean
-  /** Enable arrow-key nudging of the crop selection. */
-  keyboard?: boolean
-  /** Disable all interactions. */
-  disabled?: boolean
-  /** Show the built-in action bar (zoom, rotate and reset). */
-  showActionBar?: boolean
+  /** Built-in toolbar and interaction configuration. */
+  toolbar?: CropperToolbar
   /** `crossorigin` attribute for the image element. */
   crossOrigin?: '' | 'anonymous' | 'use-credentials'
-  /**
-   * Advanced: replace the default Cropper.js template.
-   * Treated as trusted HTML and assigned to `innerHTML`; never pass user input.
-   */
-  unsafeTemplate?: string
 }
 
 export interface CropperReadyEvent {

@@ -6,22 +6,25 @@
  */
 :root,
 [data-w-theme='light'] {
-  .w-light-tokens(#5a54f9, #736dfa, #4a44e6);
+  .w-light-tokens(#5a54f9);
 }
 
 [data-w-theme='dark'] {
-  .w-dark-tokens(#8b86fb, #a5a1fc, #736dfa, #a5a1fc);
+  .w-dark-tokens(#8b86fb);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-w-theme]) {
-    .w-dark-tokens(#8b86fb, #a5a1fc, #736dfa, #a5a1fc);
+    .w-dark-tokens(#8b86fb);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
+    --w-duration-press: 0.01ms;
     --w-duration-fast: 0.01ms;
+    --w-duration-enter: 0.01ms;
+    --w-duration-exit: 0.01ms;
     --w-duration-normal: 0.01ms;
     --w-duration-slow: 0.01ms;
     --w-duration-spinner: 0.01ms;

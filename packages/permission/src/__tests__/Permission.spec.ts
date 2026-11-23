@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref, withDirectives } from 'vue'
 import Permission from '../Permission.vue'
 import { vPermission } from '../directive'
-import { PERMISSION_KEY, providePermissions, usePermission } from '../permissions'
+import { PERMISSION_KEY, setPermissions, usePermission } from '../permissions'
 import type { PermissionContext } from '../types'
 
 const defaultSlot = {
@@ -111,13 +111,13 @@ describe('Permission', () => {
     wrapper.unmount()
   })
 
-  it('works with providePermissions and updates reactively', async () => {
+  it('works with setPermissions and updates reactively', async () => {
     const granted = ref(['user:read'])
 
     const wrapper = mount(
       defineComponent({
         setup() {
-          providePermissions(granted)
+          setPermissions(granted)
           return () => h(Permission, { value: ['user:read', 'user:write'] }, defaultSlot)
         },
       }),
@@ -146,7 +146,7 @@ describe('Permission', () => {
     const wrapper = mount(
       defineComponent({
         setup() {
-          providePermissions(granted)
+          setPermissions(granted)
           return () => h(Consumer)
         },
       }),
@@ -188,7 +188,7 @@ describe('vPermission', () => {
     const wrapper = mount(
       defineComponent({
         setup() {
-          providePermissions(granted)
+          setPermissions(granted)
           return () => h(Child)
         },
       }),
@@ -224,7 +224,7 @@ describe('vPermission', () => {
     const wrapper = mount(
       defineComponent({
         setup() {
-          providePermissions(granted)
+          setPermissions(granted)
           return () => h(Child)
         },
       }),
@@ -252,7 +252,7 @@ describe('vPermission', () => {
     const wrapper = mount(
       defineComponent({
         setup() {
-          providePermissions(['read'])
+          setPermissions(['read'])
           return () =>
             withDirectives(h('div', { class: 'target', style: { display: 'flex' } }, '安全内容'), [
               [vPermission, allowed.value ? 'read' : 'write'],
@@ -275,7 +275,7 @@ describe('vPermission', () => {
     const wrapper = mount(
       defineComponent({
         setup() {
-          providePermissions(['read', 'write'])
+          setPermissions(['read', 'write'])
           return () =>
             withDirectives(h('div', { class: 'target' }, '内容'), [
               [vPermission, { value: ['read', 'missing'], mode: 'any' }],
@@ -307,7 +307,7 @@ describe('vPermission', () => {
     const wrapper = mount(
       defineComponent({
         setup() {
-          providePermissions([])
+          setPermissions([])
           return () =>
             withDirectives(h('div', { class: 'target', style: { display: 'grid' } }, '内容'), [
               [vPermission, 'missing'],

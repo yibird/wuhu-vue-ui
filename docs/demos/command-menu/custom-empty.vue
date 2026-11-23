@@ -49,7 +49,6 @@ function handleSearch(value: string) {
         v-model="selected"
         :items="items"
         placeholder="输入一个不存在的命令，例如 focus"
-        aria-label="自定义 empty 插槽"
         @search="handleSearch"
       >
         <template #empty="{ query }">

@@ -167,6 +167,15 @@ export const componentMetas: ComponentMeta[] = [
     tags: ['命令式', '分组', '键盘导航'],
   },
   {
+    slug: 'search-panel',
+    name: 'Search Panel',
+    title: '搜索面板',
+    summary: '以命令面板为内核的模态搜索，内置 Mod+K 唤起、焦点管理、滚动锁与快捷键提示。',
+    packageName: '@wuhu-vue-ui/search-panel',
+    category: 'interaction',
+    tags: ['模态', 'Mod+K', '焦点管理'],
+  },
+  {
     slug: 'cropper',
     name: 'Cropper',
     title: '图片裁剪',
@@ -188,10 +197,10 @@ export const componentMetas: ComponentMeta[] = [
     slug: 'motion-group',
     name: 'Motion Group',
     title: '排序动画',
-    summary: '基于 TransitionGroup 的列表重排动画，内置 6 套预设并支持过滤进出场。',
+    summary: '基于 TransitionGroup 的列表重排动画，内置 4 套预设并支持过滤进出场。',
     packageName: '@wuhu-vue-ui/motion-group',
     category: 'interaction',
-    tags: ['FLIP', '6 套预设', '过滤'],
+    tags: ['FLIP', '4 套预设', '过滤'],
   },
   {
     slug: 'gantt',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Permission, providePermissions, vPermission } from '@wuhu-vue-ui/permission'
+import { Permission, setPermissions, vPermission } from '@wuhu-vue-ui/permission'
 import DemoCard from '../components/demo-card.vue'
 
 const permissions = ref(['user:read', 'user:write', 'order:read'])
@@ -12,7 +12,7 @@ function toggleWrite() {
     : [...permissions.value, 'user:write']
 }
 
-providePermissions(permissions)
+setPermissions(permissions)
 </script>
 
 <template>

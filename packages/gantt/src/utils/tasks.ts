@@ -2,7 +2,7 @@ import type { GanttTask, GanttTaskId } from '../types'
 import { dayDiff, maxDate, minDate, parseDate, startOfDay } from './date'
 
 export const DEFAULT_TASK_COLOR = '#4f46e5'
-export const DEFAULT_GROUP_COLOR = '#64748b'
+export const DEFAULT_GROUP_COLOR = '#4338ca'
 
 export interface ResolvedTask {
   task: GanttTask

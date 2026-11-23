@@ -30,6 +30,7 @@ import IconPickerDemo from '../demos/icon-picker-demo.vue'
 import OrgTreeDemo from '../demos/org-tree-demo.vue'
 import JsonViewerDemo from '../demos/json-viewer-demo.vue'
 import TiptapEditorDemo from '../demos/tiptap-editor-demo.vue'
+import SearchPanelDemo from '../demos/search-panel-demo.vue'
 import type { ComponentMeta } from './component-meta'
 import { componentCategories, componentMetas, metasByCategory } from './component-meta'
 
@@ -71,6 +72,7 @@ const demos: Record<string, Component> = {
   'icon-picker': IconPickerDemo,
   'org-tree': OrgTreeDemo,
   'json-viewer': JsonViewerDemo,
+  'search-panel': SearchPanelDemo,
 }
 
 export const componentDocs: ComponentDoc[] = componentMetas.map((meta) => ({

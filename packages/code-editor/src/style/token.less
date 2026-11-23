@@ -1,0 +1,54 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-code-editor {
+  --w-code-editor-color-border: #e2e8f0;
+  --w-code-editor-radius-lg: 12px;
+  --w-code-editor-color-surface: #ffffff;
+  --w-code-editor-color-text: #0f172a;
+  --w-code-editor-font-family-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --w-code-editor-font-size-sm: 13px;
+  --w-code-editor-duration-fast: 120ms;
+  --w-code-editor-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-code-editor-color-primary: #4f46e5;
+  --w-code-editor-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-code-editor-opacity-disabled: 0.55;
+  --w-code-editor-color-text-tertiary: #5b6678;
+  --w-code-editor-font-family: inherit;
+  --w-code-editor-font-size-xs: 12px;
+  --w-code-editor-color-danger: #dc2626;
+  --w-code-editor-radius-md: 8px;
+  --w-code-editor-duration-press: 80ms;
+  --w-code-editor-color-surface-hover: #f1f5f9;
+  --w-code-editor-color-border-strong: #cbd5e1;
+  --w-code-editor-focus-ring-width: 2px;
+  --w-code-editor-focus-ring-color: #4f46e5;
+  --w-code-editor-focus-ring-offset: 2px;
+  --w-code-editor-duration-spinner: 800ms;
+}
+
+[data-w-theme='dark'] .w-code-editor {
+  --w-code-editor-color-border: #2a3a55;
+  --w-code-editor-color-surface: #0f172a;
+  --w-code-editor-color-text: #e2e8f0;
+  --w-code-editor-color-primary: #818cf8;
+  --w-code-editor-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-code-editor-color-text-tertiary: #94a3b8;
+  --w-code-editor-color-danger: #f87171;
+  --w-code-editor-color-surface-hover: #1c2940;
+  --w-code-editor-color-border-strong: #33445f;
+  --w-code-editor-focus-ring-color: #8e98f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-code-editor {
+    --w-code-editor-color-border: #2a3a55;
+    --w-code-editor-color-surface: #0f172a;
+    --w-code-editor-color-text: #e2e8f0;
+    --w-code-editor-color-primary: #818cf8;
+    --w-code-editor-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-code-editor-color-text-tertiary: #94a3b8;
+    --w-code-editor-color-danger: #f87171;
+    --w-code-editor-color-surface-hover: #1c2940;
+    --w-code-editor-color-border-strong: #33445f;
+    --w-code-editor-focus-ring-color: #8e98f9;
+  }
+}

@@ -1,0 +1,82 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-command-menu {
+  --w-command-menu-color-primary-soft-hover: rgba(79, 70, 229, 0.16);
+  --w-command-menu-color-border: #e2e8f0;
+  --w-command-menu-radius-lg: 12px;
+  --w-command-menu-color-surface-elevated: #ffffff;
+  --w-command-menu-shadow-overlay:
+    0 2px 6px rgba(15, 23, 42, 0.06), 0 24px 56px -20px rgba(15, 23, 42, 0.3);
+  --w-command-menu-color-text: #0f172a;
+  --w-command-menu-font-family: inherit;
+  --w-command-menu-font-size-md: 14px;
+  --w-command-menu-line-height-normal: 1.55;
+  --w-command-menu-duration-enter: 180ms;
+  --w-command-menu-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --w-command-menu-duration-fast: 120ms;
+  --w-command-menu-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-command-menu-color-primary: #4f46e5;
+  --w-command-menu-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-command-menu-opacity-disabled: 0.55;
+  --w-command-menu-color-border-subtle: #f1f5f9;
+  --w-command-menu-color-text-tertiary: #5b6678;
+  --w-command-menu-radius-full: 9999px;
+  --w-command-menu-duration-press: 80ms;
+  --w-command-menu-color-surface-hover: #f1f5f9;
+  --w-command-menu-focus-ring-width: 2px;
+  --w-command-menu-focus-ring-color: #4f46e5;
+  --w-command-menu-focus-ring-offset: 2px;
+  --w-command-menu-scrollbar-thumb: #eee;
+  --w-command-menu-scrollbar-size: 6px;
+  --w-command-menu-scrollbar-track: transparent;
+  --w-command-menu-scrollbar-thumb-hover: #e0e0e0;
+  --w-command-menu-font-size-2xs: 11px;
+  --w-command-menu-font-weight-semibold: 600;
+  --w-command-menu-radius-md: 8px;
+  --w-command-menu-color-selected-text: #4139bc;
+  --w-command-menu-color-text-secondary: #475569;
+  --w-command-menu-font-size-sm: 13px;
+  --w-command-menu-font-weight-medium: 500;
+  --w-command-menu-font-size-xs: 12px;
+  --w-command-menu-radius-xs: 4px;
+  --w-command-menu-color-surface-subtle: #f1f5f9;
+  --w-command-menu-font-family-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --w-command-menu-font-weight-normal: 400;
+}
+
+[data-w-theme='dark'] .w-command-menu {
+  --w-command-menu-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+  --w-command-menu-color-border: #2a3a55;
+  --w-command-menu-color-surface-elevated: #1e293b;
+  --w-command-menu-color-text: #e2e8f0;
+  --w-command-menu-color-primary: #818cf8;
+  --w-command-menu-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-command-menu-color-border-subtle: #1d2a40;
+  --w-command-menu-color-text-tertiary: #94a3b8;
+  --w-command-menu-color-surface-hover: #1c2940;
+  --w-command-menu-focus-ring-color: #8e98f9;
+  --w-command-menu-scrollbar-thumb: rgba(226, 232, 240, 0.24);
+  --w-command-menu-scrollbar-thumb-hover: rgba(226, 232, 240, 0.38);
+  --w-command-menu-color-selected-text: #8e98f9;
+  --w-command-menu-color-text-secondary: #cbd5e1;
+  --w-command-menu-color-surface-subtle: #141d2f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-command-menu {
+    --w-command-menu-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+    --w-command-menu-color-border: #2a3a55;
+    --w-command-menu-color-surface-elevated: #1e293b;
+    --w-command-menu-color-text: #e2e8f0;
+    --w-command-menu-color-primary: #818cf8;
+    --w-command-menu-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-command-menu-color-border-subtle: #1d2a40;
+    --w-command-menu-color-text-tertiary: #94a3b8;
+    --w-command-menu-color-surface-hover: #1c2940;
+    --w-command-menu-focus-ring-color: #8e98f9;
+    --w-command-menu-scrollbar-thumb: rgba(226, 232, 240, 0.24);
+    --w-command-menu-scrollbar-thumb-hover: rgba(226, 232, 240, 0.38);
+    --w-command-menu-color-selected-text: #8e98f9;
+    --w-command-menu-color-text-secondary: #cbd5e1;
+    --w-command-menu-color-surface-subtle: #141d2f;
+  }
+}

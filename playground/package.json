@@ -35,6 +35,7 @@
     "@wuhu-vue-ui/resize-container": "workspace:*",
     "@wuhu-vue-ui/ripple": "workspace:*",
     "@wuhu-vue-ui/scrollbar": "workspace:*",
+    "@wuhu-vue-ui/search-panel": "workspace:*",
     "@wuhu-vue-ui/slider-captcha": "workspace:*",
     "@wuhu-vue-ui/sliding-highlight": "workspace:*",
     "@wuhu-vue-ui/time": "workspace:*",

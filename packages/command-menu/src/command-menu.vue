@@ -29,8 +29,6 @@ const props = withDefaults(defineProps<CommandMenuProps>(), {
   disabled: false,
   escapeBehavior: 'clear',
   maxHeight: 360,
-  ariaLabel: '搜索命令',
-  clearLabel: '清除搜索',
 })
 
 const emit = defineEmits<{
@@ -46,6 +44,8 @@ defineSlots<{
   item?: (props: CommandMenuItemSlotProps) => VNodeChild
   /** Replaces the empty-result message. */
   empty?: (props: CommandMenuEmptySlotProps) => VNodeChild
+  /** Content pinned below the result list. */
+  footer?: () => VNodeChild
 }>()
 
 interface DisplayGroup {
@@ -474,7 +474,7 @@ defineExpose({
         :value="query"
         :placeholder="placeholder"
         :disabled="disabled"
-        :aria-label="ariaLabel"
+        aria-label="搜索命令"
         aria-autocomplete="list"
         :aria-expanded="flatItems.length > 0"
         :aria-controls="`${uid}-listbox`"
@@ -491,8 +491,8 @@ defineExpose({
         class="w-command-menu__clear"
         :class="props.classes?.clear"
         :style="props.styles?.clear"
-        :aria-label="clearLabel"
-        :title="clearLabel"
+        aria-label="清除搜索"
+        title="清除搜索"
         @mousedown.prevent
         @click="handleClear"
       >
@@ -514,7 +514,7 @@ defineExpose({
       :class="props.classes?.list"
       :style="[listStyle, props.styles?.list]"
       role="listbox"
-      :aria-label="ariaLabel"
+      aria-label="搜索命令"
       @mouseleave="clearHover"
       @mouseover="handleListMouseOver"
       @mouseup="handleListMouseUp"
@@ -600,20 +600,56 @@ defineExpose({
     >
       <slot name="empty" :query="query">
         <svg
-          class="w-command-menu__empty-icon"
-          viewBox="0 0 24 24"
+          class="w-command-menu__empty-illustration"
+          viewBox="0 0 72 72"
           fill="none"
-          stroke="currentColor"
-          stroke-width="1.6"
-          stroke-linecap="round"
           aria-hidden="true"
           focusable="false"
         >
-          <circle cx="10.5" cy="10.5" r="6.5" />
-          <path d="m15.5 15.5 4.5 4.5" />
+          <circle class="w-command-menu__empty-illustration-bg" cx="36" cy="36" r="30" />
+          <rect
+            x="19"
+            y="23"
+            width="28"
+            height="22"
+            rx="5"
+            stroke="currentColor"
+            stroke-width="1.8"
+            opacity="0.55"
+          />
+          <path d="M19 30h28" stroke="currentColor" stroke-width="1.6" opacity="0.4" />
+          <circle cx="25" cy="26.5" r="1.4" fill="currentColor" opacity="0.55" />
+          <path
+            d="M27 38h12M27 42h8"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            opacity="0.4"
+          />
+          <g class="w-command-menu__empty-illustration-lens">
+            <circle cx="48.5" cy="46" r="7.5" stroke="currentColor" stroke-width="2" />
+            <path
+              d="m54 51.5 5.5 5.5"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </g>
         </svg>
-        <span>{{ emptyText }}</span>
+        <strong class="w-command-menu__empty-title">{{ emptyText }}</strong>
+        <span class="w-command-menu__empty-hint">
+          {{ query ? '换个关键词试试' : '暂无可用的命令' }}
+        </span>
       </slot>
+    </div>
+
+    <div
+      v-if="$slots.footer"
+      class="w-command-menu__footer"
+      :class="props.classes?.footer"
+      :style="props.styles?.footer"
+    >
+      <slot name="footer" />
     </div>
   </div>
 </template>

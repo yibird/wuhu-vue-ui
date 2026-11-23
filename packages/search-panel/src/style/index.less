@@ -1,0 +1,134 @@
+@import './token.less';
+
+.w-search-panel {
+  position: fixed;
+  inset: 0;
+  z-index: var(--w-search-panel-z-index);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(48px, 10vh, 104px) 16px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--w-search-panel-color-backdrop);
+  }
+
+  &__panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: var(--w-search-panel-width);
+    max-width: calc(100vw - 32px);
+    max-height: var(--w-search-panel-max-height);
+    overflow: hidden;
+    border: 1px solid var(--w-search-panel-color-border);
+    border-radius: var(--w-search-panel-radius-xl);
+    background: var(--w-search-panel-color-surface);
+    box-shadow: var(--w-search-panel-shadow);
+    color: var(--w-search-panel-color-text);
+    font-family: var(--w-search-panel-font-family);
+    outline: none;
+
+    &:focus-visible {
+      outline: var(--w-search-panel-focus-ring-width) solid var(--w-search-panel-focus-ring-color);
+      outline-offset: calc(-1 * var(--w-search-panel-focus-ring-width));
+    }
+  }
+
+  &__header {
+    display: flex;
+    flex: none;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--w-search-panel-color-border-subtle);
+  }
+
+  &__command {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Only the panel should show a border and shadow; the embedded menu is
+     visually merged into it. */
+  .w-search-panel__command.w-command-menu {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    animation: none;
+  }
+
+  .w-search-panel__command.w-command-menu:focus-within {
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  &__footer {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 16px;
+    border-top: 1px solid var(--w-search-panel-color-border-subtle);
+    background: var(--w-search-panel-color-surface);
+    color: var(--w-search-panel-color-text-tertiary);
+    font-size: var(--w-search-panel-font-size-xs);
+  }
+
+  &__shortcut {
+    flex: none;
+    padding: 1px 6px;
+    border: 1px solid var(--w-search-panel-color-border);
+    border-radius: var(--w-search-panel-radius-sm);
+    background: var(--w-search-panel-color-surface-subtle);
+    color: var(--w-search-panel-color-text-tertiary);
+    font-family: inherit;
+    font-size: var(--w-search-panel-font-size-2xs);
+    line-height: 1.4;
+  }
+}
+
+.w-search-panel-enter-active {
+  transition: opacity var(--w-search-panel-duration-enter) var(--w-search-panel-easing-standard);
+
+  .w-search-panel__panel {
+    transition:
+      opacity var(--w-search-panel-duration-enter) var(--w-search-panel-easing-out),
+      transform var(--w-search-panel-duration-enter) var(--w-search-panel-easing-out);
+  }
+}
+
+.w-search-panel-leave-active {
+  transition: opacity var(--w-search-panel-duration-leave) var(--w-search-panel-easing-standard);
+
+  .w-search-panel__panel {
+    transition:
+      opacity var(--w-search-panel-duration-leave) var(--w-search-panel-easing-standard),
+      transform var(--w-search-panel-duration-leave) var(--w-search-panel-easing-standard);
+  }
+}
+
+.w-search-panel-enter-from,
+.w-search-panel-leave-to {
+  opacity: 0;
+
+  .w-search-panel__panel {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-search-panel-enter-active,
+  .w-search-panel-leave-active {
+    transition: none;
+  }
+}

@@ -1,7 +1,7 @@
-// Component-scoped tokens. The highlight colour follows the app primary by
-// default, with a neutral fallback for dark surfaces.
+// Component-scoped tokens with literal light/dark values, so the package works
+// standalone. Override them on `.w-sliding-highlight` if needed.
 .w-sliding-highlight {
-  --w-sliding-highlight-bg: var(--w-color-primary-soft, rgba(79, 70, 229, 0.16));
+  --w-sliding-highlight-bg: var(--w-sliding-highlight-color-primary-soft);
 }
 
 [data-w-theme='dark'] .w-sliding-highlight {
@@ -11,5 +11,24 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-w-theme]) .w-sliding-highlight {
     --w-sliding-highlight-bg: rgba(148, 163, 184, 0.18);
+  }
+}
+
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-sliding-highlight {
+  --w-sliding-highlight-duration-slow: 400ms;
+  --w-sliding-highlight-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+  --w-sliding-highlight-duration-normal: 220ms;
+  --w-sliding-highlight-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-sliding-highlight-color-primary-soft: rgba(79, 70, 229, 0.1);
+}
+
+[data-w-theme='dark'] .w-sliding-highlight {
+  --w-sliding-highlight-color-primary-soft: rgba(129, 140, 248, 0.16);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-sliding-highlight {
+    --w-sliding-highlight-color-primary-soft: rgba(129, 140, 248, 0.16);
   }
 }

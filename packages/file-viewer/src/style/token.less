@@ -33,14 +33,8 @@
   --w-file-viewer-code-text: #1e293b;
   --w-file-viewer-code-gutter: #5b6678;
   --w-file-viewer-scrollbar: rgba(100, 116, 139, 0.4);
-  --w-file-viewer-radius: var(--w-radius-xl, 16px);
-  --w-file-viewer-mono: var(
-    --w-font-family-mono,
-    ui-monospace,
-    SFMono-Regular,
-    Consolas,
-    monospace
-  );
+  --w-file-viewer-radius: var(--w-file-viewer-radius-xl);
+  --w-file-viewer-mono: var(--w-file-viewer-font-family-mono);
   --w-file-viewer-watermark-color: #0f172a;
   --w-file-viewer-token-comment: #64748b;
   --w-file-viewer-token-string: #0f766e;
@@ -110,5 +104,39 @@
 @media (prefers-color-scheme: dark) {
   .w-file-viewer:not(.is-light):not(.is-dark) {
     .file-viewer-dark-tokens();
+  }
+}
+
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-file-viewer {
+  --w-file-viewer-shadow-lg:
+    0 2px 4px rgba(15, 23, 42, 0.04), 0 16px 40px -16px rgba(15, 23, 42, 0.22);
+  --w-file-viewer-font-family: inherit;
+  --w-file-viewer-duration-normal: 220ms;
+  --w-file-viewer-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-file-viewer-focus-ring-width: 2px;
+  --w-file-viewer-focus-ring-color: #4f46e5;
+  --w-file-viewer-focus-ring-offset: 2px;
+  --w-file-viewer-z-overlay: 2000;
+  --w-file-viewer-radius-md: 8px;
+  --w-file-viewer-radius-sm: 6px;
+  --w-file-viewer-duration-fast: 120ms;
+  --w-file-viewer-opacity-disabled: 0.55;
+  --w-file-viewer-radius-xs: 4px;
+  --w-file-viewer-shadow-md:
+    0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+  --w-file-viewer-radius-lg: 12px;
+  --w-file-viewer-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --w-file-viewer-radius-xl: 16px;
+  --w-file-viewer-font-family-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+[data-w-theme='dark'] .w-file-viewer {
+  --w-file-viewer-focus-ring-color: #8e98f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-file-viewer {
+    --w-file-viewer-focus-ring-color: #8e98f9;
   }
 }

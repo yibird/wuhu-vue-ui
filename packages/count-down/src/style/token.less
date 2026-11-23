@@ -1,0 +1,19 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-count-down {
+  --w-count-down-color-text: #0f172a;
+  --w-count-down-font-family: inherit;
+  --w-count-down-font-weight-semibold: 600;
+  --w-count-down-color-text-secondary: #475569;
+}
+
+[data-w-theme='dark'] .w-count-down {
+  --w-count-down-color-text: #e2e8f0;
+  --w-count-down-color-text-secondary: #cbd5e1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-count-down {
+    --w-count-down-color-text: #e2e8f0;
+    --w-count-down-color-text-secondary: #cbd5e1;
+  }
+}

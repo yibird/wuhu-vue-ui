@@ -1,0 +1,52 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-copy {
+  --w-copy-color-success-text: #047857;
+  --w-copy-color-text-secondary: #475569;
+  --w-copy-font-family: inherit;
+  --w-copy-font-size-sm: 13px;
+  --w-copy-font-weight-medium: 500;
+  --w-copy-color-border: #e2e8f0;
+  --w-copy-radius-sm: 6px;
+  --w-copy-color-surface: #ffffff;
+  --w-copy-duration-fast: 120ms;
+  --w-copy-duration-press: 80ms;
+  --w-copy-color-surface-hover: #f1f5f9;
+  --w-copy-color-border-strong: #cbd5e1;
+  --w-copy-color-text: #0f172a;
+  --w-copy-focus-ring-width: 2px;
+  --w-copy-focus-ring-color: #4f46e5;
+  --w-copy-color-surface-active: #e2e8f0;
+  --w-copy-opacity-disabled: 0.55;
+  --w-copy-radius-xs: 4px;
+  --w-copy-color-primary: #4f46e5;
+  --w-copy-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --w-copy-duration-spinner: 800ms;
+}
+
+[data-w-theme='dark'] .w-copy {
+  --w-copy-color-success-text: #34d399;
+  --w-copy-color-text-secondary: #cbd5e1;
+  --w-copy-color-border: #2a3a55;
+  --w-copy-color-surface: #0f172a;
+  --w-copy-color-surface-hover: #1c2940;
+  --w-copy-color-border-strong: #33445f;
+  --w-copy-color-text: #e2e8f0;
+  --w-copy-focus-ring-color: #8e98f9;
+  --w-copy-color-surface-active: #24344f;
+  --w-copy-color-primary: #818cf8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-copy {
+    --w-copy-color-success-text: #34d399;
+    --w-copy-color-text-secondary: #cbd5e1;
+    --w-copy-color-border: #2a3a55;
+    --w-copy-color-surface: #0f172a;
+    --w-copy-color-surface-hover: #1c2940;
+    --w-copy-color-border-strong: #33445f;
+    --w-copy-color-text: #e2e8f0;
+    --w-copy-focus-ring-color: #8e98f9;
+    --w-copy-color-surface-active: #24344f;
+    --w-copy-color-primary: #818cf8;
+  }
+}

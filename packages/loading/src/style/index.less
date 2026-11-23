@@ -1,18 +1,18 @@
 @import './token.less';
 
 .w-loading {
-  --w-loading-primary: var(--w-color-primary, #4f46e5);
+  --w-loading-primary: var(--w-loading-color-primary);
   --w-loading-size: 40px;
-  --w-loading-radius: var(--w-radius-md, 8px);
-  /* Use the theme surface so the fullscreen mask matches the page in both themes. */
-  --w-loading-mask: var(--w-color-surface, #ffffff);
+  --w-loading-radius: var(--w-loading-radius-md);
+  /* Keep page context visible behind the fullscreen mask. */
+  --w-loading-mask: color-mix(in srgb, var(--w-loading-color-surface) 82%, transparent);
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--w-loading-gradient, transparent);
-  color: var(--w-color-text, #0f172a);
-  font-family: var(--w-font-family, inherit);
+  color: var(--w-loading-color-text);
+  font-family: var(--w-loading-font-family);
 
   &--full {
     position: fixed;
@@ -47,14 +47,14 @@
 
   &__title {
     margin-top: 10px;
-    font-size: var(--w-font-size-lg, 16px);
-    font-weight: var(--w-font-weight-semibold, 600);
+    font-size: var(--w-loading-font-size-lg);
+    font-weight: var(--w-loading-font-weight-semibold);
     line-height: 1.4;
   }
 
   &__description {
-    color: var(--w-color-text-secondary, #475569);
-    font-size: var(--w-font-size-xs, 12px);
+    color: var(--w-loading-color-text-secondary);
+    font-size: var(--w-loading-font-size-xs);
     line-height: 1.6;
   }
 
@@ -242,8 +242,7 @@
 
 .w-loading-fade-enter-active,
 .w-loading-fade-leave-active {
-  transition: opacity var(--w-loading-transition-duration, var(--w-duration-fast, 120ms))
-    var(--w-easing-standard, ease);
+  transition: opacity var(--w-loading-transition-duration, 120ms) var(--w-loading-easing-standard);
 }
 
 .w-loading-fade-enter-from,
@@ -335,5 +334,14 @@
 @keyframes w-loading-spinner-rotate {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-loading__indicator,
+  .w-loading__indicator *,
+  .w-loading__indicator *::before,
+  .w-loading__indicator *::after {
+    animation: none !important;
   }
 }

@@ -1,0 +1,31 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-view {
+  --w-view-duration-normal: 220ms;
+  --w-view-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-view-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+  --w-view-duration-fast: 120ms;
+  --w-view-color-text-secondary: #475569;
+  --w-view-color-surface: #ffffff;
+  --w-view-color-border: #e2e8f0;
+  --w-view-radius-sm: 6px;
+  --w-view-shadow-md: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+  --w-view-focus-ring-width: 2px;
+  --w-view-focus-ring-color: #4f46e5;
+  --w-view-focus-ring-offset: 2px;
+}
+
+[data-w-theme='dark'] .w-view {
+  --w-view-color-text-secondary: #cbd5e1;
+  --w-view-color-surface: #0f172a;
+  --w-view-color-border: #2a3a55;
+  --w-view-focus-ring-color: #8e98f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-view {
+    --w-view-color-text-secondary: #cbd5e1;
+    --w-view-color-surface: #0f172a;
+    --w-view-color-border: #2a3a55;
+    --w-view-focus-ring-color: #8e98f9;
+  }
+}

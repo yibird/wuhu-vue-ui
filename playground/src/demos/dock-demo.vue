@@ -137,25 +137,27 @@ function iconComponent(item: DockItem): Component | undefined {
       title="自定义 item 插槽"
       description="通过 item 插槽完全接管项目内容，并获取 active 状态。"
     >
-      <Dock :model="customModel" aria-label="自定义导航" @select="handleSelect">
-        <template #item="{ item, active }">
-          <span class="dock-demo__tile" :class="{ 'is-active': active }">
-            <img
-              v-if="isImageIcon(item)"
-              class="dock-demo__icon"
-              :src="iconSource(item)"
-              alt=""
-              draggable="false"
-            />
-            <component
-              :is="iconComponent(item)"
-              v-else-if="iconComponent(item)"
-              class="w-dock__svg"
-            />
-            <strong>{{ item.label }}</strong>
-          </span>
-        </template>
-      </Dock>
+      <div class="dock-demo__stage">
+        <Dock :model="customModel" aria-label="自定义导航" @select="handleSelect">
+          <template #item="{ item, active }">
+            <span class="dock-demo__tile" :class="{ 'is-active': active }">
+              <img
+                v-if="isImageIcon(item)"
+                class="dock-demo__icon"
+                :src="iconSource(item)"
+                alt=""
+                draggable="false"
+              />
+              <component
+                :is="iconComponent(item)"
+                v-else-if="iconComponent(item)"
+                class="w-dock__svg"
+              />
+              <strong>{{ item.label }}</strong>
+            </span>
+          </template>
+        </Dock>
+      </div>
     </DemoCard>
   </div>
 </template>
@@ -208,8 +210,8 @@ function iconComponent(item: DockItem): Component | undefined {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 160px;
-  padding: 32px 16px;
+  min-height: 200px;
+  padding: 56px 16px 32px;
   border-radius: var(--w-radius-lg, 12px);
   background: var(--w-color-surface-subtle, #f1f5f9);
 }
@@ -245,6 +247,12 @@ function iconComponent(item: DockItem): Component | undefined {
   color: var(--w-color-text-secondary, #475569);
   font-size: var(--w-font-size-3xs, 10px);
   white-space: nowrap;
+}
+
+.dock-demo__tile .dock-demo__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
 }
 
 .dock-demo__tile svg {

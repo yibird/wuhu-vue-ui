@@ -1,0 +1,50 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-exception {
+  --w-exception-color-primary: #4f46e5;
+  --w-exception-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-exception-color-surface: #ffffff;
+  --w-exception-color-text: #0f172a;
+  --w-exception-font-family: inherit;
+  --w-exception-line-height-normal: 1.55;
+  --w-exception-color-warning: #b45309;
+  --w-exception-color-warning-soft: rgba(180, 83, 9, 0.12);
+  --w-exception-color-danger: #dc2626;
+  --w-exception-color-danger-soft: rgba(220, 38, 38, 0.1);
+  --w-exception-color-info: #0369a1;
+  --w-exception-color-info-soft: rgba(3, 105, 161, 0.1);
+  --w-exception-radius-xl: 16px;
+  --w-exception-font-weight-semibold: 600;
+  --w-exception-line-height-tight: 1.25;
+  --w-exception-color-text-secondary: #475569;
+  --w-exception-font-size-md: 14px;
+}
+
+[data-w-theme='dark'] .w-exception {
+  --w-exception-color-primary: #818cf8;
+  --w-exception-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-exception-color-surface: #0f172a;
+  --w-exception-color-text: #e2e8f0;
+  --w-exception-color-warning: #fbbf24;
+  --w-exception-color-warning-soft: rgba(251, 191, 36, 0.14);
+  --w-exception-color-danger: #f87171;
+  --w-exception-color-danger-soft: rgba(248, 113, 113, 0.14);
+  --w-exception-color-info: #38bdf8;
+  --w-exception-color-info-soft: rgba(56, 189, 248, 0.14);
+  --w-exception-color-text-secondary: #cbd5e1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-exception {
+    --w-exception-color-primary: #818cf8;
+    --w-exception-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-exception-color-surface: #0f172a;
+    --w-exception-color-text: #e2e8f0;
+    --w-exception-color-warning: #fbbf24;
+    --w-exception-color-warning-soft: rgba(251, 191, 36, 0.14);
+    --w-exception-color-danger: #f87171;
+    --w-exception-color-danger-soft: rgba(248, 113, 113, 0.14);
+    --w-exception-color-info: #38bdf8;
+    --w-exception-color-info-soft: rgba(56, 189, 248, 0.14);
+    --w-exception-color-text-secondary: #cbd5e1;
+  }
+}

@@ -59,6 +59,18 @@ function filter(item: CommandMenuItem, query: string) {
 
 <demo vue="../demos/command-menu/custom-empty.vue" />
 
+## 底部区域
+
+`#footer` 插槽固定在结果列表下方，适合展示快捷键说明、品牌信息或操作提示；有搜索词或空结果时仍会保留。
+
+```vue
+<CommandMenu :items="items">
+  <template #footer>
+    <span>↑ ↓ 导航 · Enter 选择 · Esc 清空</span>
+  </template>
+</CommandMenu>
+```
+
 ## API
 
 ### Props
@@ -75,12 +87,10 @@ function filter(item: CommandMenuItem, query: string) {
 | `disabled`       | `boolean`                      | `false`              | 禁用搜索、导航与选择               |
 | `escapeBehavior` | `'clear' \| 'close' \| 'none'` | `'clear'`            | Escape 行为                        |
 | `maxHeight`      | `string \| number`             | `360`                | 结果列表最大高度                   |
-| `ariaLabel`      | `string`                       | `'搜索命令'`         | 搜索框与结果列表的无障碍名称       |
-| `clearLabel`     | `string`                       | `'清除搜索'`         | 清除按钮的无障碍名称与提示         |
 | `classes`        | `CommandMenuClasses`           | —                    | 语义化类名，按内部部件注入         |
 | `styles`         | `CommandMenuStyles`            | —                    | 语义化内联样式，按内部部件注入     |
 
-`classes` / `styles` 支持的部件键：`root`、`search`、`input`、`clear`、`list`、`group`、`groupLabel`、`item`、`empty`。例如：
+`classes` / `styles` 支持的部件键：`root`、`search`、`input`、`clear`、`list`、`group`、`groupLabel`、`item`、`empty`、`footer`。例如：
 
 ```vue
 <CommandMenu
@@ -106,10 +116,11 @@ function filter(item: CommandMenuItem, query: string) {
 
 ### Slots
 
-| 插槽    | 参数                                                  | 说明             |
-| ------- | ----------------------------------------------------- | ---------------- |
-| `item`  | `{ item, index, active, selected, disabled, select }` | 自定义命令行内容 |
-| `empty` | `{ query }`                                           | 自定义空结果内容 |
+| 插槽     | 参数                                                  | 说明             |
+| -------- | ----------------------------------------------------- | ---------------- |
+| `item`   | `{ item, index, active, selected, disabled, select }` | 自定义命令行内容 |
+| `empty`  | `{ query }`                                           | 自定义空结果内容 |
+| `footer` | —                                                     | 固定在底部的内容 |
 
 `item` 插槽只替换行**内容**，外层 `role="option"`、键盘高亮、`aria-selected` 与点击选择仍由组件管理：
 

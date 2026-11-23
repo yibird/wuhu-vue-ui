@@ -38,11 +38,10 @@ async function exportCrop() {
           <Cropper
             ref="cropperRef"
             src="/samples/banner.png"
-            alt="裁剪示例"
             :height="380"
             :aspect-ratio="cropperAspectRatio"
             :initial-coverage="0.72"
-            :show-action-bar="false"
+            :toolbar="false"
           >
             <template #default="{ ready, zoomIn, zoomOut, rotateLeft, rotateRight, reset }">
               <div class="cropper-toolbar">
@@ -111,19 +110,17 @@ async function exportCrop() {
     >
       <Cropper
         src="/samples/banner.png"
-        alt="16:9 裁剪"
         :height="260"
         :aspect-ratio="16 / 9"
         :initial-coverage="0.84"
       />
     </DemoCard>
 
-    <DemoCard title="禁止旋转" description="通过 rotatable=false 等开关精确控制允许的交互。">
+    <DemoCard title="禁止旋转" description="通过 toolbar 对象的 rotatable 开关控制允许的交互。">
       <Cropper
         src="/samples/banner.png"
-        alt="只读旋转裁剪"
         :height="260"
-        :rotatable="false"
+        :toolbar="{ rotatable: false }"
         :initial-coverage="0.7"
       />
     </DemoCard>

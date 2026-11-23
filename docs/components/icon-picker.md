@@ -38,6 +38,34 @@ const selected = ref<string | null>(null)
 - `string`：作为 `<i>` 的 class 渲染，适合图标字体或 iconfont；
 - `VNode`：通过 `h(Component)` / `h('svg', ...)` 创建，组件或原生 SVG 均可。
 
+## 全局图标库
+
+在应用入口调用 `setIconPickerIcons(groups)` 注册全局图标库；未传入 `items` 的 `IconPicker` 会自动读取它，重新设置数组会同步更新已挂载的实例。
+
+```ts
+import { setIconPickerIcons } from '@wuhu-vue-ui/icon-picker'
+
+setIconPickerIcons([
+  {
+    key: 'actions',
+    label: '操作',
+    items: [{ key: 'add', label: '添加', icon: 'icon-add' }],
+  },
+])
+```
+
+```vue
+<IconPicker v-model="selected" />
+```
+
+显式传入的 `items` 优先级高于全局图标库。
+
+## 多选
+
+设置 `multiple` 后，`v-model` 使用 `string[]`，点击图标切换选中状态；选中项右上角显示带入场动画的勾选标记。
+
+<demo vue="../demos/icon-picker/multiple.vue" />
+
 ## 类名图标
 
 字符串图标会渲染为 `<i class="...">`，可直接复用现有图标字体或原子化图标类名。
@@ -52,7 +80,7 @@ const selected = ref<string | null>(null)
 
 ## 空分组与空状态
 
-`items` 中的空分组会被自动隐藏；当没有任何可选项时，默认展示 `emptyText`，也可以通过 `empty` 插槽自定义空状态。
+空分组会保留在侧边栏中并可选中；当分组为空或搜索无结果时，默认展示图标、`emptyText` 与提示文案，也可以通过 `empty` 插槽自定义，插槽参数为 `{ group, query }`。
 
 <demo vue="../demos/icon-picker/empty.vue" />
 
@@ -70,24 +98,24 @@ const selected = ref<string | null>(null)
 
 ### Props
 
-| 属性           | 类型                | 默认值             | 说明                                     |
-| -------------- | ------------------- | ------------------ | ---------------------------------------- |
-| `items`        | `IconPickerGroup[]` | —（必填）          | 分组图标数据，空分组自动隐藏             |
-| `modelValue`   | `string \| null`    | —                  | 选中图标 key，支持 `v-model`             |
-| `showSearch`   | `boolean`           | `true`             | 是否显示搜索框                           |
-| `placeholder`  | `string`            | `'搜索图标'`       | 搜索框占位文本与无障碍名称               |
-| `emptyText`    | `string`            | `'没有匹配的图标'` | 空结果文本                               |
-| `allLabel`     | `string`            | `'全部图标'`       | 侧边栏「全部图标」文案                   |
-| `groupsLabel`  | `string`            | `'按用途浏览'`     | 侧边栏分组区域标题                       |
-| `libraryLabel` | `string`            | `'图标库'`         | 侧边栏标题                               |
-| `countLabel`   | `(count) => string` | `n 个`             | 主区域结果数量文案                       |
-| `ariaLabel`    | `string`            | `'图标选择器'`     | 根元素无障碍名称                         |
-| `columns`      | `number`            | —                  | 固定列数；未传时按 `itemMinWidth` 自适应 |
-| `itemMinWidth` | `number`            | `72`               | 自动计算列数时的最小单元格宽度           |
-| `itemHeight`   | `number`            | `72`               | 单元格高度（px）                         |
-| `height`       | `string \| number`  | `420`              | 容器高度，数字按 px 处理                 |
-| `overscan`     | `number`            | `4`                | 虚拟列表上下额外渲染的行数               |
-| `disabled`     | `boolean`           | `false`            | 禁用选择                                 |
+| 属性           | 类型                         | 默认值             | 说明                                          |
+| -------------- | ---------------------------- | ------------------ | --------------------------------------------- |
+| `items`        | `IconPickerGroup[]`          | 全局图标库         | 分组图标数据；缺省时读取 `setIconPickerIcons` |
+| `modelValue`   | `string \| string[] \| null` | —                  | 选中 key；多选时为数组，支持 `v-model`        |
+| `multiple`     | `boolean`                    | `false`            | 是否允许多选，选中项显示勾选标记              |
+| `showSearch`   | `boolean`                    | `true`             | 是否显示搜索框                                |
+| `placeholder`  | `string`                     | `'搜索图标'`       | 搜索框占位文本与无障碍名称                    |
+| `emptyText`    | `string`                     | `'没有匹配的图标'` | 空结果文本                                    |
+| `allLabel`     | `string`                     | `'全部图标'`       | 侧边栏「全部图标」文案                        |
+| `groupsLabel`  | `string`                     | `'按用途浏览'`     | 侧边栏分组区域标题                            |
+| `libraryLabel` | `string`                     | `'图标库'`         | 侧边栏标题                                    |
+| `countLabel`   | `(count) => string`          | `n 个`             | 主区域结果数量文案                            |
+| `columns`      | `number`                     | —                  | 固定列数；未传时按 `itemMinWidth` 自适应      |
+| `itemMinWidth` | `number`                     | `72`               | 自动计算列数时的最小单元格宽度                |
+| `itemHeight`   | `number`                     | `72`               | 单元格高度（px）                              |
+| `height`       | `string \| number`           | `420`              | 容器高度，数字按 px 处理                      |
+| `overscan`     | `number`                     | `4`                | 虚拟列表上下额外渲染的行数                    |
+| `disabled`     | `boolean`                    | `false`            | 禁用选择                                      |
 
 ### IconPickerGroup
 
@@ -109,14 +137,20 @@ const selected = ref<string | null>(null)
 
 | 事件                | 参数                                           | 说明         |
 | ------------------- | ---------------------------------------------- | ------------ |
-| `update:modelValue` | `key: string \| null`                          | 选中图标变化 |
+| `update:modelValue` | `string \| string[] \| null`                   | 选中图标变化 |
 | `select`            | `item: IconPickerItem, group: IconPickerGroup` | 选中某个图标 |
 
 ### Slots
 
-| 插槽    | 参数 | 说明         |
-| ------- | ---- | ------------ |
-| `empty` | —    | 自定义空结果 |
+| 插槽    | 参数                       | 说明                     |
+| ------- | -------------------------- | ------------------------ |
+| `empty` | `{ group, query: string }` | 自定义空分组与空搜索结果 |
+
+### 方法
+
+| 方法                 | 类型                                  | 说明                                 |
+| -------------------- | ------------------------------------- | ------------------------------------ |
+| `setIconPickerIcons` | `(groups: IconPickerGroup[]) => void` | 设置全局图标库，已挂载实例会同步更新 |
 
 ### 类名
 
@@ -127,14 +161,17 @@ const selected = ref<string | null>(null)
 | `.w-icon-picker__sidebar` / `__groups` / `__group` | 侧边栏、分组容器与分组项 |
 | `.w-icon-picker__head`                             | 右侧列表标题             |
 | `.w-icon-picker__scroll` / `__row` / `__item`      | 虚拟滚动容器、行与单元格 |
-| `.w-icon-picker__glyph` / `__label`                | 图标与标签               |
+| `.w-icon-picker__glyph` / `__label` / `__check`    | 图标、标签与选中勾选标记 |
 | `.w-icon-picker__empty`                            | 空状态                   |
 
 ### CSS 变量
 
-| 变量                          | 默认值                     | 说明       |
-| ----------------------------- | -------------------------- | ---------- |
-| `--w-icon-picker-height`      | `420px`                    | 容器高度   |
-| `--w-icon-picker-radius`      | `var(--w-radius-lg, 12px)` | 容器圆角   |
-| `--w-icon-picker-item-radius` | `var(--w-radius-md, 8px)`  | 单元格圆角 |
-| `--w-icon-picker-gap`         | `6px`                      | 单元格间距 |
+| 变量                          | 默认值                                     | 说明               |
+| ----------------------------- | ------------------------------------------ | ------------------ |
+| `--w-icon-picker-height`      | `420px`                                    | 容器高度           |
+| `--w-icon-picker-radius`      | `12px`                                     | 容器圆角           |
+| `--w-icon-picker-item-radius` | `8px`                                      | 单元格圆角         |
+| `--w-icon-picker-gap`         | `6px`                                      | 单元格间距         |
+| `--w-icon-picker-hover-bg`    | `#f5f5f5`（暗色 `rgba(226,232,240,0.08)`） | 分组与图标悬浮背景 |
+
+> 所有 `--w-icon-picker-*` 令牌均由本组件在根节点与暗色模式下自行声明，不引用应用主题的 `--w-*` 变量，单独引入本组件即可完整呈现，也可按需覆盖任意令牌。

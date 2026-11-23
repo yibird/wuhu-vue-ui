@@ -7,14 +7,14 @@ const emptyGroups: IconPickerGroup[] = [{ key: 'empty', label: '空分组', item
 
 <template>
   <div class="icon-picker-demo">
-    <IconPicker :items="emptyGroups" :height="260" aria-label="空分组图标选择">
-      <template #empty>
-        <p class="hint">该分组暂无图标，请先配置 items。</p>
+    <IconPicker :items="emptyGroups" :height="260">
+      <template #empty="{ group }">
+        <p class="hint">{{ group?.label ?? '当前图标库' }}暂无图标，请先配置 items。</p>
       </template>
     </IconPicker>
     <p class="icon-picker-demo__hint">
-      `items` 中的空分组会自动从侧边栏隐藏；当没有任何可选项时，可通过 `empty`
-      插槽替换默认的空状态文本。
+      空分组会保留在侧边栏并可选中；`empty` 插槽同时用于空分组与无搜索结果，可拿到 `{ group, query
+      }`。
     </p>
   </div>
 </template>

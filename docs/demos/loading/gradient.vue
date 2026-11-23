@@ -5,8 +5,7 @@ import type { LoadingGradient } from '@wuhu-vue-ui/loading'
 
 const presets: Array<{ label: string; value: LoadingGradient }> = [
   { label: '默认渐变', value: true },
-  { label: '霓虹', value: ['#4f46e5', '#c026d3', '#0ea5e9'] },
-  { label: '日落', value: ['#f97316', '#e11d48'] },
+  { label: '品牌渐变', value: ['var(--w-color-primary, #4f46e5)', 'var(--w-color-info, #0369a1)'] },
   { label: '关闭渐变', value: false },
 ]
 
@@ -55,7 +54,7 @@ const gradient = ref<LoadingGradient>(true)
 .loading-demo__picker button {
   padding: 6px 12px;
   border: 1px solid var(--w-color-border, #e2e8f0);
-  border-radius: var(--w-radius-full, 9999px);
+  border-radius: var(--w-radius-md, 8px);
   background: var(--w-color-surface, #fff);
   color: var(--w-color-text-secondary, #475569);
   font: inherit;
@@ -65,7 +64,7 @@ const gradient = ref<LoadingGradient>(true)
 
 .loading-demo__picker button.is-active {
   border-color: var(--w-color-primary, #4f46e5);
-  background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+  background: var(--w-color-selected, var(--w-color-primary-soft));
   color: var(--w-color-primary, #4f46e5);
 }
 
@@ -76,7 +75,7 @@ const gradient = ref<LoadingGradient>(true)
   align-items: center;
   justify-content: center;
   min-height: 180px;
-  border: 1px dashed var(--w-color-border, #e2e8f0);
+  border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-md, 8px);
 }
 </style>

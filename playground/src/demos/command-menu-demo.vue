@@ -109,7 +109,6 @@ function handleFlatClose() {
             v-model="selected"
             :items="commandItems"
             placeholder="搜索命令..."
-            aria-label="分组命令菜单"
             @select="handleSelect"
             @search="handleSearch"
           />

@@ -55,10 +55,10 @@ onBeforeUnmount(() => {
       <Cropper
         ref="cropperRef"
         :src="imageUrl"
-        :alt="fileName"
         :height="340"
         :aspect-ratio="1"
         :initial-coverage="0.82"
+        :toolbar="false"
       >
         <template #default="{ ready, reset }">
           <div class="cropper-toolbar">

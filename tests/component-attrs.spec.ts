@@ -76,6 +76,7 @@ import SliderCaptcha from '../packages/slider-captcha/src/slider-captcha.vue'
 import IconPicker from '../packages/icon-picker/src/IconPicker.vue'
 import JsonViewer from '../packages/json-viewer/src/JsonViewer.vue'
 import ContextMenu from '../packages/context-menu/src/ContextMenu.vue'
+import SearchPanel from '../packages/search-panel/src/SearchPanel.vue'
 
 interface AttrCase {
   name: string
@@ -144,6 +145,14 @@ const components: AttrCase[] = [
       items: [{ key: 'a', label: 'A' }],
     },
   },
+  {
+    name: 'SearchPanel',
+    component: SearchPanel,
+    props: {
+      open: true,
+      items: [{ key: 'a', label: 'A' }],
+    },
+  },
 ]
 
 describe('class / style pass-through contract', () => {
@@ -169,8 +178,11 @@ describe('class / style pass-through contract', () => {
       const loading = wrapper.find('.w-loading')
       // ContextMenu teleports its panel to body, so it is outside the wrapper tree.
       const contextMenu = document.querySelector<HTMLElement>('.w-context-menu')
+      // SearchPanel teleports its dialog to body; consumer attrs land on the panel.
+      const searchPanel = document.querySelector<HTMLElement>('.w-search-panel__panel')
       const first = wrapper.find('*')
       const root = (contextMenu ??
+        searchPanel ??
         (wrapper.element instanceof Element
           ? wrapper.element
           : loading.exists()

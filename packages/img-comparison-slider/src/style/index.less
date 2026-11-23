@@ -1,17 +1,19 @@
+@import './token.less';
+
 .w-img-comparison-slider {
   position: relative;
   width: 100%;
   /* Clip the handle, divider line and knob to the rounded container edges. */
   overflow: hidden;
-  border-radius: var(--w-img-comparison-slider-radius, var(--w-radius-lg, 12px));
-  background: var(--w-color-surface-subtle, #f1f5f9);
+  border-radius: var(--w-img-comparison-slider-radius, 12px);
+  background: var(--w-img-comparison-slider-color-surface-subtle);
   isolation: isolate;
   user-select: none;
   touch-action: pan-y;
   cursor: ew-resize;
 
   --w-img-comparison-slider-knob-size: 36px;
-  --w-img-comparison-slider-line: var(--w-color-surface, #ffffff);
+  --w-img-comparison-slider-line: var(--w-img-comparison-slider-color-surface);
   /*
    * Labels sit on top of arbitrary artwork, so they keep a dark scrim in both
    * themes. Inverting them with the theme would put white pills on light images.
@@ -20,7 +22,7 @@
   --w-img-comparison-slider-label-text: #ffffff;
   --w-img-comparison-slider-knob-ring: color-mix(
     in srgb,
-    var(--w-color-primary, #4f46e5) 32%,
+    var(--w-img-comparison-slider-color-primary) 32%,
     transparent
   );
 
@@ -31,7 +33,7 @@
     inset: 0;
     border-radius: inherit;
     box-shadow: inset 0 0 0 1px
-      color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 12%, transparent);
+      color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 12%, transparent);
     content: '';
     pointer-events: none;
   }
@@ -47,7 +49,7 @@
 
   &.is-disabled {
     cursor: default;
-    opacity: var(--w-opacity-disabled, 0.55);
+    opacity: var(--w-img-comparison-slider-opacity-disabled);
   }
 
   &__layer {
@@ -70,10 +72,10 @@
       background:
         radial-gradient(
           circle at 20% 25%,
-          var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)),
+          var(--w-img-comparison-slider-color-primary-soft),
           transparent 60%
         ),
-        var(--w-color-surface-subtle, #f1f5f9);
+        var(--w-img-comparison-slider-color-surface-subtle);
     }
 
     &--after {
@@ -81,15 +83,15 @@
       background:
         radial-gradient(
           circle at 80% 70%,
-          var(--w-color-info-soft, rgba(3, 105, 161, 0.1)),
+          var(--w-img-comparison-slider-color-info-soft),
           transparent 60%
         ),
-        var(--w-color-surface-subtle, #f1f5f9);
+        var(--w-img-comparison-slider-color-surface-subtle);
     }
 
     /* Neutral placeholder shown after an image fails to load. */
     &.has-image-error {
-      background: var(--w-color-surface-subtle, #f1f5f9);
+      background: var(--w-img-comparison-slider-color-surface-subtle);
     }
   }
 
@@ -98,17 +100,18 @@
     z-index: 3;
     top: 12px;
     padding: 4px 10px;
-    border: 1px solid color-mix(in srgb, var(--w-color-surface, #ffffff) 14%, transparent);
-    border-radius: var(--w-radius-full, 9999px);
+    border: 1px solid
+      color-mix(in srgb, var(--w-img-comparison-slider-color-surface) 14%, transparent);
+    border-radius: var(--w-img-comparison-slider-radius-full);
     background: var(--w-img-comparison-slider-label-bg, rgba(15, 23, 42, 0.78));
     color: var(--w-img-comparison-slider-label-text, #ffffff);
-    font-family: var(--w-font-family, inherit);
-    font-size: var(--w-font-size-2xs, 11px);
-    font-weight: var(--w-font-weight-semibold, 600);
+    font-family: var(--w-img-comparison-slider-font-family);
+    font-size: var(--w-img-comparison-slider-font-size-2xs);
+    font-weight: var(--w-img-comparison-slider-font-weight-semibold);
     line-height: 1.5;
     letter-spacing: 0.02em;
     pointer-events: none;
-    box-shadow: var(--w-shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.05));
+    box-shadow: var(--w-img-comparison-slider-shadow-sm);
     backdrop-filter: blur(8px);
 
     &--before {
@@ -144,7 +147,7 @@
       left: 50%;
       width: 48px;
       height: 48px;
-      border-radius: var(--w-radius-full, 9999px);
+      border-radius: var(--w-img-comparison-slider-radius-full);
       content: '';
       transform: translate(-50%, -50%);
     }
@@ -166,17 +169,17 @@
     bottom: 0;
     left: 50%;
     width: 2px;
-    border-radius: var(--w-radius-full, 9999px);
+    border-radius: var(--w-img-comparison-slider-radius-full);
     background: linear-gradient(
       180deg,
       transparent 0%,
-      var(--w-img-comparison-slider-line, var(--w-color-surface, #ffffff)) 12%,
-      var(--w-img-comparison-slider-line, var(--w-color-surface, #ffffff)) 88%,
+      var(--w-img-comparison-slider-line, #ffffff) 12%,
+      var(--w-img-comparison-slider-line, #ffffff) 88%,
       transparent 100%
     );
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 26%, transparent),
-      0 0 16px color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 34%, transparent);
+      0 0 0 1px color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 26%, transparent),
+      0 0 16px color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 34%, transparent);
     transform: translateX(-50%);
     pointer-events: none;
   }
@@ -191,8 +194,8 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      var(--w-img-comparison-slider-line, var(--w-color-surface, #ffffff)) 12%,
-      var(--w-img-comparison-slider-line, var(--w-color-surface, #ffffff)) 88%,
+      var(--w-img-comparison-slider-line, #ffffff) 12%,
+      var(--w-img-comparison-slider-line, #ffffff) 88%,
       transparent 100%
     );
     transform: translateY(-50%);
@@ -207,37 +210,38 @@
     justify-content: center;
     width: var(--w-img-comparison-slider-knob-size, 30px);
     height: var(--w-img-comparison-slider-knob-size, 30px);
-    border: 1px solid
-      color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 22%, transparent);
-    border-radius: var(--w-radius-full, 9999px);
+    border: 1px solid color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 22%, transparent);
+    border-radius: var(--w-img-comparison-slider-radius-full);
     background:
       radial-gradient(
         circle at 32% 24%,
-        color-mix(in srgb, var(--w-color-surface, #ffffff) 74%, #ffffff) 0%,
+        color-mix(in srgb, var(--w-img-comparison-slider-color-surface) 74%, #ffffff) 0%,
         transparent 62%
       ),
-      color-mix(in srgb, var(--w-color-surface, #ffffff) 94%, transparent);
-    color: var(--w-color-primary, #4f46e5);
+      color-mix(in srgb, var(--w-img-comparison-slider-color-surface) 94%, transparent);
+    color: var(--w-img-comparison-slider-color-primary);
     backdrop-filter: blur(10px) saturate(1.15);
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 8%, transparent),
-      0 6px 14px -4px
-        color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 38%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 8%, transparent),
+      0 6px 14px -4px color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 38%, transparent),
       0 16px 32px -12px
-        color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 52%, transparent),
+        color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 52%, transparent),
       0 0 0 4px var(--w-img-comparison-slider-knob-ring),
-      inset 0 1px 0 color-mix(in srgb, var(--w-color-surface, #ffffff) 92%, #ffffff);
+      inset 0 1px 0 color-mix(in srgb, var(--w-img-comparison-slider-color-surface) 92%, #ffffff);
     transform: translate(-50%, -50%);
     transition:
-      box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      transform var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+      box-shadow var(--w-img-comparison-slider-duration-fast)
+        var(--w-img-comparison-slider-easing-standard),
+      transform var(--w-img-comparison-slider-duration-fast)
+        var(--w-img-comparison-slider-easing-standard),
+      color var(--w-img-comparison-slider-duration-fast)
+        var(--w-img-comparison-slider-easing-standard);
 
     svg {
       width: 20px;
       height: 20px;
       filter: drop-shadow(
-        0 1px 0 color-mix(in srgb, var(--w-color-surface, #ffffff) 82%, transparent)
+        0 1px 0 color-mix(in srgb, var(--w-img-comparison-slider-color-surface) 82%, transparent)
       );
     }
   }
@@ -247,15 +251,15 @@
   }
 
   &__handle:hover &__knob {
-    color: var(--w-color-primary-hover, #6366f1);
+    color: var(--w-img-comparison-slider-color-primary-hover);
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 10%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 10%, transparent),
       0 10px 22px -6px
-        color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 44%, transparent),
+        color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 44%, transparent),
       0 24px 44px -16px
-        color-mix(in srgb, var(--w-color-mask, rgba(15, 23, 42, 0.46)) 58%, transparent),
+        color-mix(in srgb, var(--w-img-comparison-slider-color-mask) 58%, transparent),
       0 0 0 6px var(--w-img-comparison-slider-knob-ring),
-      inset 0 1px 0 color-mix(in srgb, var(--w-color-surface, #ffffff) 92%, #ffffff);
+      inset 0 1px 0 color-mix(in srgb, var(--w-img-comparison-slider-color-surface) 92%, #ffffff);
     transform: translate(-50%, -50%) scale(1.06);
   }
 
@@ -265,10 +269,15 @@
 
   &__handle:focus-visible &__knob {
     box-shadow:
-      0 0 0 var(--w-focus-ring-width, 2px) var(--w-color-surface, #fff),
-      0 0 0 calc(var(--w-focus-ring-width, 2px) + var(--w-focus-ring-offset, 2px))
-        var(--w-focus-ring-color, var(--w-color-primary, #4f46e5)),
-      var(--w-shadow-md, 0 4px 12px -2px rgba(15, 23, 42, 0.1));
+      0 0 0 var(--w-img-comparison-slider-focus-ring-width)
+        var(--w-img-comparison-slider-color-surface),
+      0 0 0
+        calc(
+          var(--w-img-comparison-slider-focus-ring-width) +
+            var(--w-img-comparison-slider-focus-ring-offset)
+        )
+        var(--w-img-comparison-slider-focus-ring-color),
+      var(--w-img-comparison-slider-shadow-md);
   }
 
   &.is-disabled &__handle {

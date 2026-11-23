@@ -49,7 +49,7 @@ const visibleCards = computed(() =>
     </Button>
   </div>
 
-  <MotionGroup animation="scale" :duration="280" tag="div" class="sortable-filter-list">
+  <MotionGroup animation="fade" :duration="280" tag="div" class="sortable-filter-list">
     <article
       v-for="card in visibleCards"
       :key="card.id"

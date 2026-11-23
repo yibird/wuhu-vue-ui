@@ -31,7 +31,6 @@ function handleSearch(value: string) {
         :disabled="disabled"
         empty-text="没有匹配的命令，试试“新建”或“搜索”"
         placeholder="输入一个不存在的关键词..."
-        aria-label="空状态命令菜单"
         @search="handleSearch"
       />
     </div>

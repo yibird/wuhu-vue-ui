@@ -17,9 +17,6 @@ importers:
       '@vue/test-utils':
         specifier: ^2.5.1
         version: 2.5.1(@vue/compiler-dom@3.5.44)(@vue/server-renderer@3.5.44)(vue@3.5.44(typescript@5.9.3))
-      antdv-next:
-        specifier: ^1.7.0
-        version: 1.7.0(vue@3.5.44(typescript@5.9.3))
       axe-core:
         specifier: ^4.14.0
         version: 4.14.0
@@ -35,15 +32,9 @@ importers:
       lint-staged:
         specifier: ^17.6.0
         version: 17.6.0
-      pdfjs-dist:
-        specifier: ^6.4.299
-        version: 6.4.299
       playwright-core:
         specifier: ^1.64.1
         version: 1.64.1
-      shiki:
-        specifier: 2.1.0
-        version: 2.1.0
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -56,6 +47,100 @@ importers:
       vite-plus:
         specifier: ^1.3.0
         version: 1.3.0(@types/node@24.19.2)(@vitest/ui@5.0.5(vitest@5.0.5))(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(esbuild@0.28.2)(jsdom@30.1.3)(less@4.9.1)(typescript@5.9.3)(vue-tsc@3.3.13(typescript@5.9.3))(yaml@2.9.1)
+      vue:
+        specifier: ^3.5.44
+        version: 3.5.44(typescript@5.9.3)
+      vue-tsc:
+        specifier: ^3.3.13
+        version: 3.3.13(typescript@5.9.3)
+
+  docs:
+    dependencies:
+      '@wuhu-vue-ui/command-menu':
+        specifier: workspace:*
+        version: link:../packages/command-menu
+      '@wuhu-vue-ui/context-menu':
+        specifier: workspace:*
+        version: link:../packages/context-menu
+      '@wuhu-vue-ui/copy':
+        specifier: workspace:*
+        version: link:../packages/copy
+      '@wuhu-vue-ui/cropper':
+        specifier: workspace:*
+        version: link:../packages/cropper
+      '@wuhu-vue-ui/error-boundary':
+        specifier: workspace:*
+        version: link:../packages/error-boundary
+      '@wuhu-vue-ui/exception':
+        specifier: workspace:*
+        version: link:../packages/exception
+      '@wuhu-vue-ui/file-viewer':
+        specifier: workspace:*
+        version: link:../packages/file-viewer
+      '@wuhu-vue-ui/gantt':
+        specifier: workspace:*
+        version: link:../packages/gantt
+      '@wuhu-vue-ui/gradient-text':
+        specifier: workspace:*
+        version: link:../packages/gradient-text
+      '@wuhu-vue-ui/highlight':
+        specifier: workspace:*
+        version: link:../packages/highlight
+      '@wuhu-vue-ui/icon-picker':
+        specifier: workspace:*
+        version: link:../packages/icon-picker
+      '@wuhu-vue-ui/img-comparison-slider':
+        specifier: workspace:*
+        version: link:../packages/img-comparison-slider
+      '@wuhu-vue-ui/json-viewer':
+        specifier: workspace:*
+        version: link:../packages/json-viewer
+      '@wuhu-vue-ui/lazy-container':
+        specifier: workspace:*
+        version: link:../packages/lazy-container
+      '@wuhu-vue-ui/loading':
+        specifier: workspace:*
+        version: link:../packages/loading
+      '@wuhu-vue-ui/motion-group':
+        specifier: workspace:*
+        version: link:../packages/motion-group
+      '@wuhu-vue-ui/number-ticker':
+        specifier: workspace:*
+        version: link:../packages/number-ticker
+      '@wuhu-vue-ui/org-tree':
+        specifier: workspace:*
+        version: link:../packages/org-tree
+      '@wuhu-vue-ui/resize-container':
+        specifier: workspace:*
+        version: link:../packages/resize-container
+      '@wuhu-vue-ui/ripple':
+        specifier: workspace:*
+        version: link:../packages/ripple
+      '@wuhu-vue-ui/scrollbar':
+        specifier: workspace:*
+        version: link:../packages/scrollbar
+      '@wuhu-vue-ui/slider-captcha':
+        specifier: workspace:*
+        version: link:../packages/slider-captcha
+      '@wuhu-vue-ui/sliding-highlight':
+        specifier: workspace:*
+        version: link:../packages/sliding-highlight
+      '@wuhu-vue-ui/time':
+        specifier: workspace:*
+        version: link:../packages/time
+      '@wuhu-vue-ui/view':
+        specifier: workspace:*
+        version: link:../packages/view
+      antdv-next:
+        specifier: ^1.7.0
+        version: 1.7.0(vue@3.5.44(typescript@5.9.3))
+      pdfjs-dist:
+        specifier: ^6.4.299
+        version: 6.4.299
+      vue:
+        specifier: ^3.5.44
+        version: 3.5.44(typescript@5.9.3)
+    devDependencies:
       vitepress:
         specifier: 1.6.4
         version: 1.6.4(@algolia/client-search@5.60.0)(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.30)(search-insights@2.17.3)(typescript@5.9.3)
@@ -64,13 +149,7 @@ importers:
         version: 1.8.0(shiki@2.1.0)(vitepress@1.6.4(@algolia/client-search@5.60.0)(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.30)(search-insights@2.17.3)(typescript@5.9.3))(vue@3.5.44(typescript@5.9.3))
       vitepress-plugin-group-icons:
         specifier: 1.8.1
-        version: 1.8.1(vite@7.3.7(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)(yaml@2.9.1))
-      vue:
-        specifier: ^3.5.44
-        version: 3.5.44(typescript@5.9.3)
-      vue-tsc:
-        specifier: ^3.3.13
-        version: 3.3.13(typescript@5.9.3)
+        version: 1.8.1(vite@5.4.21(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0))
 
   packages/code-editor:
     dependencies:
@@ -290,6 +369,18 @@ importers:
 
   packages/scrollbar:
     dependencies:
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.44(typescript@5.9.3)
+
+  packages/search-panel:
+    dependencies:
+      '@wuhu-vue-ui/command-menu':
+        specifier: workspace:*
+        version: link:../command-menu
+      '@wuhu-vue-ui/core':
+        specifier: workspace:*
+        version: link:../core
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -6680,13 +6771,13 @@ snapshots:
       vitepress: 1.6.4(@algolia/client-search@5.60.0)(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.30)(search-insights@2.17.3)(typescript@5.9.3)
       vue: 3.5.44(typescript@5.9.3)
 
-  vitepress-plugin-group-icons@1.8.1(vite@7.3.7(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)(yaml@2.9.1)):
+  vitepress-plugin-group-icons@1.8.1(vite@5.4.21(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)):
     dependencies:
       '@iconify-json/logos': 1.2.17
       '@iconify-json/vscode-icons': 1.2.91
       '@iconify/utils': 3.1.7
     optionalDependencies:
-      vite: 7.3.7(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)(yaml@2.9.1)
+      vite: 5.4.21(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)
 
   vitepress@1.6.4(@algolia/client-search@5.60.0)(@types/node@24.19.2)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.30)(search-insights@2.17.3)(typescript@5.9.3):
     dependencies:

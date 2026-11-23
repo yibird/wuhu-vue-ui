@@ -176,6 +176,14 @@ describe('Dock', () => {
     expect(farthest).toBeGreaterThan(neighbour)
     expect(farthest).toBeLessThan(nearest)
 
+    const wraps = wrapper.findAll('.w-dock__item-wrap')
+    const wrapWidth = (index: number) => {
+      const match = /width:\s*([\d.]+)px/.exec(wraps[index]?.attributes('style') ?? '')
+      return Number(match?.[1] ?? 0)
+    }
+    expect(wrapWidth(1)).toBeGreaterThan(48)
+    expect(wrapWidth(1)).toBeGreaterThan(wrapWidth(0))
+
     wrapper.unmount()
   })
 

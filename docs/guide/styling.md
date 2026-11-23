@@ -37,37 +37,34 @@
 
 ## CSS 变量
 
-组件优先通过 CSS 自定义属性定制视觉。设计令牌使用 `--w-*` 命名空间，并支持在任意祖先节点覆盖：
+每个组件包在自己的根节点上声明一套完整的 `--w-<component>-*` 令牌，值是字面量并附带暗色版本，不读取应用或其他包的变量，因此可以单独引入使用：
 
 ```css
-:root {
-  --w-color-primary: #16a34a;
-  --w-radius-md: 10px;
+.w-icon-picker {
+  --w-icon-picker-radius: 12px;
+  --w-icon-picker-color-primary: #4f46e5;
 }
 ```
 
-组件级变量同样可用，例如 `--w-scrollbar-size`、`--w-sliding-highlight-bg`、`--w-file-viewer-primary`。这种方式不依赖内部类名，升级时更稳定。
+需要定制时覆盖对应组件的令牌即可，例如 `--w-scrollbar-size`、`--w-sliding-highlight-bg`、`--w-file-viewer-primary`。令牌名沿用原主题令牌的后缀（`--w-color-primary` → `--w-<component>-color-primary`），升级时不依赖内部类名，也不会影响其他组件。
 
 ## 令牌分层
 
-- **主题令牌**：`--w-color-*`、`--w-font-*`、`--w-radius-*`、`--w-shadow-*`、`--w-duration-*`、`--w-easing-*`，由应用统一提供。
-- **交互令牌**：`--w-focus-ring-width` / `--w-focus-ring-color` / `--w-focus-ring-offset` 控制焦点环；`--w-duration-press` 控制按压反馈时长；`--w-easing-out` 用于进场与展开。
-- **组件令牌**：`--w-<component>-*`，只声明在组件根节点，不会影响其他包。
+- **组件令牌**：`--w-<component>-*`。每个包在根节点声明自己读取的全部令牌（颜色、字体、圆角、阴影、动效、焦点环、滚动条等），值都是字面量，包与包之间零依赖。
+- **暗色**：组件自带 `[data-w-theme='dark']` 与 `prefers-color-scheme: dark` 两套值，不需要应用注入主题。
+- **定制**：覆盖组件前缀令牌即可；全局的 `:root` 主题变量不会再影响组件。
 
 ```css
-:root {
-  /* 更克制的动效 */
-  --w-duration-press: 60ms;
-  --w-duration-fast: 100ms;
-  /* 统一的焦点环 */
-  --w-focus-ring-width: 2px;
-  --w-focus-ring-offset: 2px;
-  /* 浮层高度 */
-  --w-shadow-overlay: 0 24px 56px -20px rgba(15, 23, 42, 0.28);
+/* 只调整 Copy 的动效与焦点环，不影响其他包 */
+.w-copy {
+  --w-copy-duration-press: 60ms;
+  --w-copy-duration-fast: 100ms;
+  --w-copy-focus-ring-width: 2px;
+  --w-copy-focus-ring-offset: 2px;
 }
 ```
 
-所有动效组件都尊重 `prefers-reduced-motion: reduce`，在系统开启“减少动态效果”时会关闭位移与循环动画。
+支持动效的组件会尊重 `prefers-reduced-motion: reduce`：Loading、Gradient Text、Motion Group 等组件在系统开启“减少动态效果”时会关闭循环或位移动画，只保留静态形态。
 
 ## 注意
 

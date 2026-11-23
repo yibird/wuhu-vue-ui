@@ -18,12 +18,12 @@
   pointer-events: none;
   list-style: none;
   transition:
-    transform var(--w-duration-slow, 400ms)
-      var(--w-easing-emphasized, cubic-bezier(0.22, 1, 0.36, 1)),
-    width var(--w-duration-slow, 400ms) var(--w-easing-emphasized, cubic-bezier(0.22, 1, 0.36, 1)),
-    height var(--w-duration-slow, 400ms) var(--w-easing-emphasized, cubic-bezier(0.22, 1, 0.36, 1)),
-    opacity var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
-    filter var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
+    transform var(--w-sliding-highlight-duration-normal)
+      var(--w-sliding-highlight-easing-emphasized),
+    width var(--w-sliding-highlight-duration-normal) var(--w-sliding-highlight-easing-emphasized),
+    height var(--w-sliding-highlight-duration-normal) var(--w-sliding-highlight-easing-emphasized),
+    opacity var(--w-sliding-highlight-duration-normal) var(--w-sliding-highlight-easing-standard),
+    filter var(--w-sliding-highlight-duration-normal) var(--w-sliding-highlight-easing-standard);
   will-change: transform, width, height;
 }
 
@@ -39,14 +39,14 @@
  */
 .w-sliding-highlight-enter-active {
   transition:
-    opacity var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
-    filter var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
+    opacity var(--w-sliding-highlight-duration-normal) var(--w-sliding-highlight-easing-standard),
+    filter var(--w-sliding-highlight-duration-normal) var(--w-sliding-highlight-easing-standard);
 }
 
 .w-sliding-highlight-leave-active {
   transition:
-    opacity var(--w-duration-slow, 400ms) var(--w-easing-standard, ease),
-    filter var(--w-duration-slow, 400ms) var(--w-easing-standard, ease);
+    opacity var(--w-sliding-highlight-duration-slow) var(--w-sliding-highlight-easing-standard),
+    filter var(--w-sliding-highlight-duration-slow) var(--w-sliding-highlight-easing-standard);
 }
 
 :where(.w-sliding-highlight__pill) {

@@ -2,7 +2,7 @@
 
 一套面向复杂业务场景的 Vue 3 组件库。采用 pnpm monorepo 组织，一个组件一个独立包，使用 TypeScript、Less、设计令牌（Design Tokens）、Vite+ 与 Husky 构建。
 
-- 31 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、异常页、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、右键菜单、富文本编辑、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
+- 32 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、异常页、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、搜索面板、右键菜单、富文本编辑、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
 - 每个包只将 `vue` 作为 peer dependency；`@wuhu-vue-ui/cropper` 使用 `cropperjs` 提供裁剪能力，`@wuhu-vue-ui/icon-picker` 与 `@wuhu-vue-ui/gantt` 使用 `@tanstack/vue-virtual` 提供虚拟滚动，`@wuhu-vue-ui/tiptap-editor` 使用 Tiptap 提供富文本能力，`@wuhu-vue-ui/code-editor` 将 `monaco-editor` 作为可选 peer dependency。拼音等自定义搜索由使用方通过 `CommandMenu` 的 `filter` 注入。
 - 样式基于 `--w-*` CSS 变量，内置亮色 / 暗色主题，可按项目品牌覆盖。
 - 单包构建自动注入自身样式，无需手动引入组件 CSS。
@@ -28,13 +28,14 @@
 | `@wuhu-vue-ui/img-comparison-slider` | `ImgComparisonSlider` | 可拖拽、触摸与键盘操作的图片对比滑块                                 |
 | `@wuhu-vue-ui/ripple`                | `Ripple`              | Material 风格水波纹，提供组件、指令与组合式函数三种用法              |
 | `@wuhu-vue-ui/cropper`               | `Cropper`             | 基于 Cropper.js 2 的图片裁剪，支持缩放、旋转、比例与导出             |
-| `@wuhu-vue-ui/motion-group`          | `MotionGroup`         | 基于 TransitionGroup 的列表重排动画，内置 6 套预设                   |
+| `@wuhu-vue-ui/motion-group`          | `MotionGroup`         | 基于 TransitionGroup 的列表重排动画，内置 4 套预设                   |
 | `@wuhu-vue-ui/slider-captcha`        | `SliderCaptcha`       | Canvas 拼图滑块验证码，支持拖拽、键盘操作与自定义背景                |
 | `@wuhu-vue-ui/gradient-text`         | `GradientText`        | 线性 / 径向 / 锥形渐变文字，支持背景流动动画                         |
 | `@wuhu-vue-ui/number-ticker`         | `NumberTicker`        | 逐位滚动的数字动画，支持千分位、前缀与小数                           |
 | `@wuhu-vue-ui/sliding-highlight`     | `SlidingHighlight`    | 跟随悬浮 / 焦点的滑块高亮容器，支持任意直接子项与自定义样式          |
 | `@wuhu-vue-ui/command-menu`          | `CommandMenu`         | 命令面板：自定义过滤、分组、键盘导航与悬浮优先高亮                   |
 | `@wuhu-vue-ui/context-menu`          | `ContextMenu`         | 命令式右键菜单：分组、快捷键、键盘导航与视口内自动定位               |
+| `@wuhu-vue-ui/search-panel`          | `SearchPanel`         | 模态搜索面板：Mod+K 唤起、焦点管理、滚动锁与快捷键提示               |
 | `@wuhu-vue-ui/tiptap-editor`         | `TiptapEditor`        | 基于 Tiptap 的富文本编辑器，内置图片上传、表格、任务列表、颜色与全屏 |
 | `@wuhu-vue-ui/code-editor`           | `CodeEditor`          | 基于 Monaco 的代码编辑器，支持 v-model、语言 / 主题切换与只读模式    |
 | `@wuhu-vue-ui/json-viewer`           | `JsonViewer`          | 基于 CodeEditor 的只读 JSON 查看器，自动格式化对象与 JSON 字符串     |
@@ -97,7 +98,7 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 
 ```text
 .
-├─ packages/                   # 32 个 workspace 包：core + 31 个组件包
+├─ packages/                   # 33 个 workspace 包：core + 32 个组件包
 │  ├─ core/                    # 公共工具函数、composables 与 DOM 基础设施
 │  ├─ scrollbar/               # 基础能力组件
 │  ├─ copy/
@@ -119,6 +120,7 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 │  ├─ ripple/
 │  ├─ command-menu/            # 交互增强组件
 │  ├─ context-menu/
+│  ├─ search-panel/
 │  ├─ cropper/
 │  ├─ motion-group/
 │  ├─ slider-captcha/
@@ -183,47 +185,33 @@ import { Scrollbar } from '@wuhu-vue-ui/scrollbar'
 
 ## 主题与设计令牌
 
-组件样式内置 `var(--w-*, fallback)` 默认值，单独安装即可使用，不需要额外的令牌包。
+每个组件包都在自己的根节点上声明完整的一套 `--w-<component>-*` 令牌（字面量默认值 + 暗色值），不读取应用或其他包的变量，单独安装即可使用，不需要额外的令牌包。
 
-如需统一品牌色或暗色主题，可以在应用中覆盖 CSS 变量：
+如需统一品牌色或暗色主题，按组件前缀覆盖即可：
 
 ```css
-:root {
-  --w-color-primary: #16a34a;
-  --w-color-primary-hover: #22c55e;
-  --w-color-primary-soft: rgba(22, 163, 74, 0.12);
-  --w-radius-md: 10px;
-  --w-font-family: 'Your Font', system-ui, sans-serif;
+.w-copy {
+  --w-copy-color-primary: #16a34a;
+  --w-copy-color-primary-hover: #22c55e;
+  --w-copy-font-family: 'Your Font', system-ui, sans-serif;
 }
 
-[data-w-theme='dark'] {
-  --w-color-text: #e2e8f0;
-  --w-color-surface: #0f172a;
-  /* 其余暗色令牌可按需覆盖 */
+[data-w-theme='dark'] .w-copy {
+  --w-copy-color-primary: #22c55e;
 }
 ```
 
-组件包不声明全局主题令牌，只在组件根节点维护自己的私有令牌（如 `--w-dock-size`），因此多个包共存时不会互相覆盖；主题令牌由应用统一提供，组件通过 `var(--w-*, fallback)` 读取。playground 与 docs 共用同一份令牌 mixin（`playground/src/tokens.less`），docs 仅覆盖品牌色。所有令牌都是 CSS 变量，可以在任意祖先节点覆盖：
+组件之间零依赖，覆盖一个包不会影响其他包；全局 `:root` 上的 `--w-color-*` 等变量不会再影响组件。
 
-```css
-:root {
-  --w-color-primary: #16a34a;
-  --w-color-primary-hover: #22c55e;
-  --w-color-primary-soft: rgba(22, 163, 74, 0.12);
-  --w-radius-md: 10px;
-  --w-font-family: 'Your Font', system-ui, sans-serif;
-}
-```
+常用令牌后缀（统一加 `--w-<component>-` 前缀）：
 
-常用令牌分组：
-
-- 品牌色：`--w-color-primary`、`--w-color-success`、`--w-color-warning`、`--w-color-danger`、`--w-color-info`
-- 文本：`--w-color-text`、`--w-color-text-secondary`、`--w-color-text-tertiary`
-- 表面：`--w-color-bg`、`--w-color-surface`、`--w-color-surface-subtle`、`--w-color-surface-hover`
-- 边框：`--w-color-border`、`--w-color-border-strong`
-- 圆角：`--w-radius-xs` ~ `--w-radius-xl`、`--w-radius-full`
-- 阴影：`--w-shadow-sm|md|lg`
-- 动效：`--w-duration-fast|normal|slow`、`--w-easing-standard|emphasized`
+- 品牌色：`color-primary`、`color-success`、`color-warning`、`color-danger`、`color-info`（及其 `-soft`、`-text`、`-hover` 变体）
+- 文本：`color-text`、`color-text-secondary`、`color-text-tertiary`
+- 表面：`color-surface`、`color-surface-subtle`、`color-surface-hover`
+- 边框：`color-border`、`color-border-strong`
+- 圆角：`radius-xs` ~ `radius-xl`、`radius-full`
+- 阴影：`shadow-sm|md|lg`
+- 动效：`duration-fast|normal|slow`、`easing-standard|emphasized`
 
 组件还暴露局部变量，例如：
 
@@ -466,6 +454,7 @@ async function exportImage() {
     :height="380"
     :aspect-ratio="16 / 9"
     :initial-coverage="0.8"
+    :toolbar="false"
     @ready="({ image }) => console.log(image)"
     @crop="(data) => console.log(data)"
   >
@@ -482,7 +471,7 @@ async function exportImage() {
 </template>
 ```
 
-- Props：`src`、`aspectRatio`、`initialCoverage`、`height`、`rotatable`、`scalable`、`translatable`、`movable`、`resizable`、`zoomable`、`keyboard`、`disabled`、`crossOrigin`、`template`。
+- Props：`src`、`aspectRatio`、`initialCoverage`、`height`、`toolbar`（`boolean` 或 `{ rotatable, scalable, translatable, movable, resizable, zoomable, keyboard }`）、`crossOrigin`、`labels`。
 - 事件：`ready`、`crop`、`cropend`、`actionstart`、`actionmove`、`actionend`、`error`。
 - 实例方法：`getData()`、`setData()`、`setAspectRatio()`、`zoom()`、`rotate()`、`reset()`，以及 `getCroppedCanvas()`、`getCroppedBlob()`、`getCroppedDataUrl()` 三种导出方式。`zoom()` 的缩放范围限制在 `0.1`–`10`；`reset()` 会恢复初始的 contain 适配与居中状态。
 - `#default` 插槽接收 `{ ready, cropper, image, selection, canvas, zoomIn, zoomOut, rotateLeft, rotateRight, reset, crop }`，适合放置自定义工具栏。
@@ -495,7 +484,7 @@ async function exportImage() {
 import { ref } from 'vue'
 import { MotionGroup } from '@wuhu-vue-ui/motion-group'
 
-const animation = ref<'fade' | 'slide' | 'scale' | 'flip' | 'bounce' | 'reveal'>('fade')
+const animation = ref<'fade' | 'slide' | 'flip' | 'bounce'>('fade')
 const cards = ref([
   { id: 1, title: '需求评审' },
   { id: 2, title: '视觉定稿' },
@@ -517,7 +506,7 @@ const cards = ref([
 </template>
 ```
 
-- 内置动画：`fade`、`slide`、`scale`、`flip`、`bounce`、`reveal`，通过 `animation` 切换，无需额外 CSS。
+- 内置动画：`fade`、`slide`、`flip`、`bounce`，通过 `animation` 切换，无需额外 CSS。
 - `direction` 控制 `slide` 的进入方向；`duration` / `moveDuration` 分别控制进入退出与 FLIP 位移时长。
 - `absoluteLeave`（默认开启）让离场项脱离文档流，剩余项可以立即滑动补位；`disabled` 可整体关闭动画。
 - 列表项必须提供稳定的 `:key`，这是 TransitionGroup 计算 FLIP 位移的前提；支持全部 TransitionGroup 钩子事件与属性透传。

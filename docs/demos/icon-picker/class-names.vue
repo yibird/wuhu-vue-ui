@@ -23,10 +23,10 @@ const selected = ref<string | null>('star')
 
 <template>
   <div class="icon-picker-demo">
-    <IconPicker v-model="selected" :items="groups" :height="260" aria-label="类名图标选择" />
     <p class="icon-picker-demo__hint">
       传入字符串时渲染为 <code>&lt;i class="..."&gt;</code>，可直接复用项目现有的图标字体类名。
     </p>
+    <IconPicker v-model="selected" :items="groups" :height="260" />
   </div>
 </template>
 

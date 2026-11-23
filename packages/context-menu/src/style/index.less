@@ -1,14 +1,16 @@
+@import './token.less';
+
 .w-context-menu {
-  --w-context-menu-bg: var(--w-color-surface-elevated, #ffffff);
+  --w-context-menu-bg: var(--w-context-menu-color-surface-elevated);
   --w-context-menu-hover-bg: color-mix(
     in srgb,
-    var(--w-color-text, #0f172a) 6%,
-    var(--w-color-surface-elevated, #ffffff)
+    var(--w-context-menu-color-text) 6%,
+    var(--w-context-menu-color-surface-elevated)
   );
-  --w-context-menu-danger: var(--w-color-danger, #dc2626);
-  --w-context-menu-danger-soft: var(--w-color-danger-soft, rgba(220, 38, 38, 0.1));
-  --w-context-menu-disabled-color: var(--w-color-text-tertiary, #5b6678);
-  --w-context-menu-z-index: var(--w-z-dropdown, 1000);
+  --w-context-menu-danger: var(--w-context-menu-color-danger-text);
+  --w-context-menu-danger-soft: var(--w-context-menu-color-danger-soft);
+  --w-context-menu-disabled-color: var(--w-context-menu-color-text-tertiary);
+  --w-context-menu-z-index: var(--w-context-menu-z-dropdown);
   /* Borderless panel: the shadow alone separates it, so keep it very light. */
   --w-context-menu-shadow:
     0 2px 6px rgba(15, 23, 42, 0.04), 0 10px 24px -12px rgba(15, 23, 42, 0.14);
@@ -26,12 +28,12 @@
   padding: 6px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-radius: var(--w-radius-lg, 12px);
+  border-radius: var(--w-context-menu-radius-lg);
   background: var(--w-context-menu-bg);
   box-shadow: var(--w-context-menu-shadow);
-  color: var(--w-color-text, #0f172a);
-  font-family: var(--w-font-family, inherit);
-  font-size: var(--w-font-size-md, 14px);
+  color: var(--w-context-menu-color-text);
+  font-family: var(--w-context-menu-font-family);
+  font-size: var(--w-context-menu-font-size-md);
 
   /*
    * The panel receives focus for screen-reader navigation. Suppress the UA ring,
@@ -51,7 +53,7 @@
     min-height: 34px;
     padding: 7px 10px;
     border: 0;
-    border-radius: var(--w-radius-md, 8px);
+    border-radius: var(--w-context-menu-radius-md);
     background: transparent;
     color: inherit;
     font: inherit;
@@ -59,23 +61,20 @@
     white-space: nowrap;
     cursor: pointer;
     transition:
-      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+      background-color var(--w-context-menu-duration-fast) var(--w-context-menu-easing-standard),
+      color var(--w-context-menu-duration-fast) var(--w-context-menu-easing-standard);
 
     &:hover:not(:disabled) {
       background: var(--w-context-menu-hover-bg);
     }
 
-    /*
-     * Intentionally no active styling. The menu is pointer-first; keyboard
-     * position is still exposed to assistive tech via `aria-activedescendant`.
-     */
+    /* Press state uses the themed selection tint instead of a neutral gray. */
     &:active:not(:disabled) {
-      background: var(--w-color-surface-active, #e2e8f0);
+      background: var(--w-context-menu-color-selected);
     }
 
     &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline: var(--w-context-menu-focus-ring-width) solid var(--w-context-menu-focus-ring-color);
       outline-offset: -2px;
     }
 
@@ -106,9 +105,9 @@
     width: 16px;
     height: 16px;
     flex: none;
-    color: var(--w-color-text-secondary, #475569);
-    font-size: var(--w-font-size-xs, 12px);
-    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    color: var(--w-context-menu-color-text-secondary);
+    font-size: var(--w-context-menu-font-size-xs);
+    transition: color var(--w-context-menu-duration-fast) var(--w-context-menu-easing-standard);
 
     > svg {
       width: 100%;
@@ -120,7 +119,7 @@
     flex: 1;
     min-width: 0;
     overflow: hidden;
-    font-size: var(--w-font-size-sm, 13px);
+    font-size: var(--w-context-menu-font-size-sm);
     letter-spacing: -0.004em;
     line-height: 1.45;
     text-overflow: ellipsis;
@@ -131,16 +130,16 @@
     align-items: center;
     flex: none;
     margin-left: 16px;
-    color: var(--w-color-text-tertiary, #5b6678);
-    font-size: var(--w-font-size-2xs, 11px);
+    color: var(--w-context-menu-color-text-tertiary);
+    font-size: var(--w-context-menu-font-size-2xs);
     font-variant-numeric: tabular-nums;
   }
 
   &__group-label {
     padding: 8px 10px 4px;
-    color: var(--w-color-text-tertiary, #5b6678);
-    font-size: var(--w-font-size-2xs, 11px);
-    font-weight: var(--w-font-weight-semibold, 600);
+    color: var(--w-context-menu-color-text-tertiary);
+    font-size: var(--w-context-menu-font-size-2xs);
+    font-weight: var(--w-context-menu-font-weight-semibold);
     letter-spacing: 0.06em;
     line-height: 1.4;
     text-transform: uppercase;
@@ -150,20 +149,20 @@
   &__separator {
     height: 1px;
     margin: 5px 6px;
-    background: color-mix(in srgb, var(--w-color-text, #0f172a) 12%, transparent);
+    background: color-mix(in srgb, var(--w-context-menu-color-text) 12%, transparent);
   }
 }
 
 .w-context-menu-enter-active {
   transition:
-    opacity 140ms var(--w-easing-out, cubic-bezier(0.16, 1, 0.3, 1)),
-    transform 180ms var(--w-easing-out, cubic-bezier(0.16, 1, 0.3, 1));
+    opacity 140ms var(--w-context-menu-easing-out),
+    transform 180ms var(--w-context-menu-easing-out);
 }
 
 .w-context-menu-leave-active {
   transition:
-    opacity 90ms var(--w-easing-standard, ease),
-    transform 90ms var(--w-easing-standard, ease);
+    opacity 90ms var(--w-context-menu-easing-standard),
+    transform 90ms var(--w-context-menu-easing-standard);
 }
 
 .w-context-menu-enter-from {

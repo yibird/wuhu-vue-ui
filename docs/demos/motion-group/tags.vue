@@ -50,11 +50,11 @@ function shuffle() {
         <Button @click="shuffle">打乱顺序</Button>
         <Button @click="resetTags">重置</Button>
       </div>
-      <span class="hint">animation="reveal" · 新增与删除同样带有进出场动画</span>
+      <span class="hint">animation="slide" · 新增与删除同样带有进出场动画</span>
     </div>
 
     <MotionGroup
-      animation="reveal"
+      animation="slide"
       :duration="260"
       :move-duration="320"
       appear

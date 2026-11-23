@@ -8,7 +8,7 @@ function show() {
   open.value = true
   window.setTimeout(() => {
     open.value = false
-  }, 10000)
+  }, 1600)
 }
 </script>
 

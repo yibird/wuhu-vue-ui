@@ -9,12 +9,21 @@ import './tokens.less'
 import '../../../playground/src/demo-internals.less'
 import '../../../playground/src/demo-styles.less'
 import '../../../playground/src/demos/sliding-highlight.less'
+import '../../demos/scenarios/scenario-shell.less'
 import './style.less'
 
 function getAntTokens(isDark: boolean) {
   return {
     colorPrimary: isDark ? '#8b86fb' : '#5a54f9',
-    borderRadius: 10,
+    colorPrimaryHover: isDark ? '#9792fb' : '#514ce0',
+    colorPrimaryActive: isDark ? '#a09cfc' : '#4a45cc',
+    colorError: isDark ? '#f87171' : '#b91c1c',
+    colorWarning: isDark ? '#fbbf24' : '#92400e',
+    colorSuccess: isDark ? '#34d399' : '#047857',
+    colorInfo: isDark ? '#38bdf8' : '#0369a1',
+    colorTextLightSolid: isDark ? '#0f172a' : '#ffffff',
+    borderRadius: 8,
+    borderRadiusLG: 12,
     controlHeight: 36,
     fontFamily: 'var(--w-font-family)',
     motionDurationFast: '0.12s',

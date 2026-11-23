@@ -1,34 +1,31 @@
+@import './token.less';
+
 .w-command-menu {
-  --w-command-menu-active-bg: color-mix(
-    in srgb,
-    var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)) 78%,
-    transparent
-  );
-  /* A foreground state layer reads correctly on both base and elevated
-     surfaces, unlike `surface-hover` which is tuned for the page background. */
+  /* Theme-tinted state hierarchy: hover < selected < pressed. */
   --w-command-menu-hover-bg: color-mix(
     in srgb,
-    var(--w-color-text, #0f172a) 6%,
-    var(--w-color-surface-elevated, #ffffff)
+    var(--w-command-menu-color-primary) 6%,
+    transparent
   );
-  /* Selection is persistent and gets a hairline of its own. */
-  --w-command-menu-selected-bg: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+  --w-command-menu-selected-bg: var(--w-command-menu-color-primary-soft);
+  --w-command-menu-active-bg: var(--w-command-menu-color-primary-soft-hover);
 
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--w-color-border, #e2e8f0);
-  border-radius: var(--w-radius-lg, 12px);
-  background: var(--w-color-surface-elevated, #ffffff);
-  box-shadow: var(--w-shadow-overlay, 0 24px 56px -20px rgba(15, 23, 42, 0.3));
-  color: var(--w-color-text, #0f172a);
-  font-family: var(--w-font-family, inherit);
-  font-size: var(--w-font-size-md, 14px);
-  line-height: var(--w-line-height-normal, 1.55);
-  animation: w-command-menu-in 180ms var(--w-easing-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  border: 1px solid var(--w-command-menu-color-border);
+  border-radius: var(--w-command-menu-radius-lg);
+  background: var(--w-command-menu-color-surface-elevated);
+  box-shadow: var(--w-command-menu-shadow-overlay);
+  color: var(--w-command-menu-color-text);
+  font-family: var(--w-command-menu-font-family);
+  font-size: var(--w-command-menu-font-size-md);
+  line-height: var(--w-command-menu-line-height-normal);
+  animation: w-command-menu-in var(--w-command-menu-duration-enter) var(--w-command-menu-easing-out)
+    both;
   transition:
-    border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-    box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    border-color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard),
+    box-shadow var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard);
 
   /*
    * A single calm focus treatment: the border tint carries the state, the halo
@@ -37,16 +34,16 @@
   &:focus-within {
     border-color: color-mix(
       in srgb,
-      var(--w-color-primary, #4f46e5) 40%,
-      var(--w-color-border, #e2e8f0)
+      var(--w-command-menu-color-primary) 40%,
+      var(--w-command-menu-color-border)
     );
     box-shadow:
-      0 0 0 3px var(--w-color-primary-soft, rgba(79, 70, 229, 0.1)),
-      var(--w-shadow-overlay, 0 24px 56px -20px rgba(15, 23, 42, 0.3));
+      0 0 0 3px var(--w-command-menu-color-primary-soft),
+      var(--w-command-menu-shadow-overlay);
   }
 
   &.is-disabled {
-    opacity: var(--w-opacity-disabled, 0.55);
+    opacity: var(--w-command-menu-opacity-disabled);
   }
 
   &__search {
@@ -55,19 +52,19 @@
     gap: 12px;
     flex: none;
     padding: 0 16px;
-    border-bottom: 1px solid var(--w-color-border-subtle, #f1f5f9);
+    border-bottom: 1px solid var(--w-command-menu-color-border-subtle);
   }
 
   &__search-icon {
     width: 16px;
     height: 16px;
     flex: none;
-    color: var(--w-color-text-tertiary, #94a3b8);
-    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    color: var(--w-command-menu-color-text-tertiary);
+    transition: color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard);
   }
 
   &:focus-within &__search-icon {
-    color: var(--w-color-primary, #4f46e5);
+    color: var(--w-command-menu-color-primary);
   }
 
   &__input {
@@ -80,13 +77,13 @@
     background: transparent;
     color: inherit;
     font-family: inherit;
-    font-size: var(--w-font-size-md, 14px);
+    font-size: var(--w-command-menu-font-size-md);
     letter-spacing: -0.006em;
     line-height: 1.4;
     appearance: none;
 
     &::placeholder {
-      color: var(--w-color-text-tertiary, #94a3b8);
+      color: var(--w-command-menu-color-text-tertiary);
     }
 
     &:disabled {
@@ -103,14 +100,14 @@
     flex: none;
     padding: 0;
     border: 0;
-    border-radius: var(--w-radius-full, 9999px);
+    border-radius: var(--w-command-menu-radius-full);
     background: transparent;
-    color: var(--w-color-text-tertiary, #94a3b8);
+    color: var(--w-command-menu-color-text-tertiary);
     cursor: pointer;
     transition:
-      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      transform var(--w-duration-press, 80ms) var(--w-easing-standard, ease);
+      background-color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard),
+      color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard),
+      transform var(--w-command-menu-duration-press) var(--w-command-menu-easing-standard);
 
     svg {
       width: 14px;
@@ -118,8 +115,8 @@
     }
 
     &:hover {
-      background: var(--w-color-surface-hover, #f1f5f9);
-      color: var(--w-color-text, #0f172a);
+      background: var(--w-command-menu-color-surface-hover);
+      color: var(--w-command-menu-color-text);
     }
 
     &:active {
@@ -127,8 +124,8 @@
     }
 
     &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
-      outline-offset: var(--w-focus-ring-offset, 2px);
+      outline: var(--w-command-menu-focus-ring-width) solid var(--w-command-menu-focus-ring-color);
+      outline-offset: var(--w-command-menu-focus-ring-offset);
     }
   }
 
@@ -137,23 +134,23 @@
     overscroll-behavior: contain;
     padding: 6px;
     scrollbar-width: thin;
-    scrollbar-color: var(--w-scrollbar-thumb, #eee) transparent;
+    scrollbar-color: var(--w-command-menu-scrollbar-thumb) transparent;
 
     &::-webkit-scrollbar {
-      width: var(--w-scrollbar-size, 6px);
+      width: var(--w-command-menu-scrollbar-size);
     }
 
     &::-webkit-scrollbar-track {
-      background: var(--w-scrollbar-track, transparent);
+      background: var(--w-command-menu-scrollbar-track);
     }
 
     &::-webkit-scrollbar-thumb {
-      border-radius: var(--w-radius-full, 9999px);
-      background: var(--w-scrollbar-thumb, #eee);
+      border-radius: var(--w-command-menu-radius-full);
+      background: var(--w-command-menu-scrollbar-thumb);
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: var(--w-scrollbar-thumb-hover, #e0e0e0);
+      background: var(--w-command-menu-scrollbar-thumb-hover);
     }
   }
 
@@ -163,9 +160,9 @@
 
   &__group-label {
     padding: 10px 10px 6px;
-    color: var(--w-color-text-tertiary, #5b6678);
-    font-size: var(--w-font-size-2xs, 11px);
-    font-weight: var(--w-font-weight-semibold, 600);
+    color: var(--w-command-menu-color-text-tertiary);
+    font-size: var(--w-command-menu-font-size-2xs);
+    font-weight: var(--w-command-menu-font-weight-semibold);
     letter-spacing: 0.08em;
     line-height: 1.4;
     text-transform: uppercase;
@@ -179,7 +176,7 @@
     gap: 10px;
     min-height: 38px;
     padding: 8px 10px;
-    border-radius: var(--w-radius-md, 8px);
+    border-radius: var(--w-command-menu-radius-md);
     cursor: pointer;
     user-select: none;
     /* Skip layout/paint for rows far outside the scroll viewport. `auto`
@@ -187,28 +184,21 @@
     content-visibility: auto;
     contain-intrinsic-size: auto 40px;
     transition:
-      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
-
-    /* Accent bar for the keyboard cursor. */
-    &::before {
-      content: '';
-      position: absolute;
-      top: 9px;
-      bottom: 9px;
-      left: 0;
-      width: 2px;
-      border-radius: var(--w-radius-full, 9999px);
-      background: var(--w-color-primary, #4f46e5);
-      opacity: 0;
-      transform: scaleY(0.4);
-      transition:
-        opacity var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-        transform var(--w-duration-fast, 120ms) var(--w-easing-out, ease);
-    }
+      background-color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard),
+      box-shadow var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard);
 
     & + & {
       margin-top: 2px;
+    }
+
+    /* Keyboard cursor is the strongest ambient state. Pointer hover below is
+       lighter, and an actual press is the darkest state of all. */
+    &.is-active:not(.is-disabled) {
+      background-color: var(--w-command-menu-active-bg);
+
+      .w-command-menu__item-icon {
+        color: var(--w-command-menu-color-primary);
+      }
     }
 
     &.is-hovered:not(.is-disabled),
@@ -216,32 +206,16 @@
       background-color: var(--w-command-menu-hover-bg);
     }
 
-    &.is-active:not(.is-disabled) {
-      background-color: var(--w-command-menu-active-bg);
+    &.is-selected:not(.is-disabled) {
+      background-color: var(--w-command-menu-selected-bg);
 
-      &::before {
-        opacity: 1;
-        transform: scaleY(1);
-      }
-
-      .w-command-menu__item-icon {
-        color: var(--w-color-primary, #4f46e5);
+      .w-command-menu__item-label {
+        color: var(--w-command-menu-color-selected-text);
       }
     }
 
     &:active:not(.is-disabled) {
-      background-color: var(--w-color-surface-active, #e2e8f0);
-    }
-
-    /* Declared last so the persistent selection wins over transient states. */
-    &.is-selected:not(.is-disabled) {
-      background-color: var(--w-command-menu-selected-bg);
-      box-shadow: inset 0 0 0 1px
-        color-mix(in srgb, var(--w-color-primary, #4f46e5) 18%, transparent);
-
-      .w-command-menu__item-label {
-        color: var(--w-color-primary, #4f46e5);
-      }
+      background-color: var(--w-command-menu-active-bg);
     }
 
     &.is-disabled {
@@ -249,7 +223,7 @@
 
       .w-command-menu__item-label,
       .w-command-menu__item-icon {
-        color: var(--w-color-text-tertiary, #94a3b8);
+        color: var(--w-command-menu-color-text-tertiary);
       }
 
       .w-command-menu__item-description,
@@ -266,11 +240,11 @@
     width: 18px;
     height: 18px;
     flex: none;
-    color: var(--w-color-text-secondary, #475569);
-    font-size: var(--w-font-size-sm, 13px);
-    font-weight: var(--w-font-weight-semibold, 600);
+    color: var(--w-command-menu-color-text-secondary);
+    font-size: var(--w-command-menu-font-size-sm);
+    font-weight: var(--w-command-menu-font-weight-semibold);
     line-height: 1;
-    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    transition: color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard);
 
     > svg {
       width: 17px;
@@ -288,19 +262,19 @@
 
   &__item-label {
     overflow: hidden;
-    font-size: var(--w-font-size-md, 14px);
-    font-weight: var(--w-font-weight-medium, 500);
+    font-size: var(--w-command-menu-font-size-md);
+    font-weight: var(--w-command-menu-font-weight-medium);
     letter-spacing: -0.006em;
     line-height: 1.4;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    transition: color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard);
   }
 
   &__item-description {
     overflow: hidden;
-    color: var(--w-color-text-tertiary, #5b6678);
-    font-size: var(--w-font-size-xs, 12px);
+    color: var(--w-command-menu-color-text-tertiary);
+    font-size: var(--w-command-menu-font-size-xs);
     line-height: 1.45;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -309,14 +283,14 @@
   &__shortcut {
     flex: none;
     padding: 1px 6px 2px;
-    border: 1px solid var(--w-color-border, #e2e8f0);
-    border-radius: var(--w-radius-xs, 4px);
-    background: var(--w-color-surface-subtle, #f1f5f9);
-    box-shadow: inset 0 -1px 0 var(--w-color-border, #e2e8f0);
-    color: var(--w-color-text-secondary, #475569);
-    font-family: var(--w-font-family-mono, monospace);
-    font-size: var(--w-font-size-2xs, 11px);
-    font-weight: var(--w-font-weight-normal, 400);
+    border: 1px solid var(--w-command-menu-color-border);
+    border-radius: var(--w-command-menu-radius-xs);
+    background: var(--w-command-menu-color-surface-subtle);
+    box-shadow: inset 0 -1px 0 var(--w-command-menu-color-border);
+    color: var(--w-command-menu-color-text-secondary);
+    font-family: var(--w-command-menu-font-family-mono);
+    font-size: var(--w-command-menu-font-size-2xs);
+    font-weight: var(--w-command-menu-font-weight-normal);
     line-height: 1.5;
     white-space: nowrap;
   }
@@ -327,19 +301,47 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 160px;
-    padding: 36px 16px;
-    color: var(--w-color-text-tertiary, #5b6678);
-    font-size: var(--w-font-size-sm, 13px);
+    gap: 6px;
+    min-height: 180px;
+    padding: 32px 16px;
+    color: var(--w-command-menu-color-text-tertiary);
     line-height: 1.6;
     text-align: center;
   }
 
-  &__empty-icon {
-    width: 22px;
-    height: 22px;
-    opacity: 0.6;
+  &__empty-illustration {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 4px;
+    color: var(--w-command-menu-color-text-tertiary);
+  }
+
+  &__empty-illustration-bg {
+    fill: var(--w-command-menu-color-primary-soft);
+  }
+
+  &__empty-illustration-lens {
+    color: var(--w-command-menu-color-primary);
+  }
+
+  &__empty-title {
+    color: var(--w-command-menu-color-text);
+    font-size: var(--w-command-menu-font-size-sm);
+    font-weight: var(--w-command-menu-font-weight-semibold);
+  }
+
+  &__empty-hint {
+    color: var(--w-command-menu-color-text-tertiary);
+    font-size: var(--w-command-menu-font-size-xs);
+  }
+
+  &__footer {
+    flex: none;
+    padding: 8px 12px;
+    border-top: 1px solid var(--w-command-menu-color-border-subtle);
+    background: var(--w-command-menu-color-surface-elevated);
+    color: var(--w-command-menu-color-text-tertiary);
+    font-size: var(--w-command-menu-font-size-xs);
   }
 }
 

@@ -36,9 +36,8 @@ export const fileViewerLightTheme: Record<string, string> = {
   '--w-file-viewer-code-text': '#1e293b',
   '--w-file-viewer-code-gutter': '#5b6678',
   '--w-file-viewer-scrollbar': 'rgba(100, 116, 139, 0.4)',
-  '--w-file-viewer-radius': 'var(--w-radius-xl, 16px)',
-  '--w-file-viewer-mono':
-    'var(--w-font-family-mono, ui-monospace, SFMono-Regular, Consolas, monospace)',
+  '--w-file-viewer-radius': '16px',
+  '--w-file-viewer-mono': 'ui-monospace, SFMono-Regular, Consolas, monospace',
   '--w-file-viewer-watermark-color': '#0f172a',
   '--w-file-viewer-token-comment': '#64748b',
   '--w-file-viewer-token-string': '#0f766e',
@@ -82,9 +81,8 @@ export const fileViewerDarkTheme: Record<string, string> = {
   '--w-file-viewer-code-text': '#dbe4f0',
   '--w-file-viewer-code-gutter': '#7c8aa5',
   '--w-file-viewer-scrollbar': 'rgba(148, 163, 184, 0.36)',
-  '--w-file-viewer-radius': 'var(--w-radius-xl, 16px)',
-  '--w-file-viewer-mono':
-    'var(--w-font-family-mono, ui-monospace, SFMono-Regular, Consolas, monospace)',
+  '--w-file-viewer-radius': '16px',
+  '--w-file-viewer-mono': 'ui-monospace, SFMono-Regular, Consolas, monospace',
   '--w-file-viewer-watermark-color': '#e2e8f0',
   '--w-file-viewer-token-comment': '#7c8aa5',
   '--w-file-viewer-token-string': '#5eead4',

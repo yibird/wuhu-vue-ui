@@ -1,0 +1,31 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-scrollbar {
+  --w-scrollbar-focus-ring-width: 2px;
+  --w-scrollbar-focus-ring-color: #4f46e5;
+  --w-scrollbar-focus-ring-offset: 2px;
+  --w-scrollbar-radius-full: 9999px;
+  --w-scrollbar-scrollbar-size: 6px;
+  --w-scrollbar-scrollbar-thumb: #eee;
+  --w-scrollbar-scrollbar-opacity: 1;
+  --w-scrollbar-duration-fast: 120ms;
+  --w-scrollbar-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-scrollbar-scrollbar-thumb-hover: #e0e0e0;
+  --w-scrollbar-scrollbar-hover-opacity: 1;
+  --w-scrollbar-scrollbar-thumb-active: #d6d6d6;
+}
+
+[data-w-theme='dark'] .w-scrollbar {
+  --w-scrollbar-focus-ring-color: #8e98f9;
+  --w-scrollbar-scrollbar-thumb: rgba(226, 232, 240, 0.24);
+  --w-scrollbar-scrollbar-thumb-hover: rgba(226, 232, 240, 0.38);
+  --w-scrollbar-scrollbar-thumb-active: rgba(226, 232, 240, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-scrollbar {
+    --w-scrollbar-focus-ring-color: #8e98f9;
+    --w-scrollbar-scrollbar-thumb: rgba(226, 232, 240, 0.24);
+    --w-scrollbar-scrollbar-thumb-hover: rgba(226, 232, 240, 0.38);
+    --w-scrollbar-scrollbar-thumb-active: rgba(226, 232, 240, 0.5);
+  }
+}

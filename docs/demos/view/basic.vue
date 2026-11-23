@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { View, ViewContent, ViewFooter, ViewHeader } from '@wuhu-vue-ui/view'
+import { View, ViewContent, ViewHeader } from '@wuhu-vue-ui/view'
 
 const collapsed = ref(false)
 </script>
@@ -24,10 +24,6 @@ const collapsed = ref(false)
           <p>Header、Content、Footer 可以自由组合；点击头部下方的按钮可折叠头部。</p>
         </section>
       </ViewContent>
-
-      <ViewFooter>
-        <span class="view-demo__footer">数据每 5 分钟自动刷新</span>
-      </ViewFooter>
     </View>
   </div>
 </template>
@@ -40,7 +36,6 @@ const collapsed = ref(false)
   overflow: hidden;
   border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-lg, 12px);
-  background: var(--w-color-surface-subtle, #f8fafc);
 }
 
 .view-demo__header-inner {
@@ -48,7 +43,7 @@ const collapsed = ref(false)
   padding: 12px 14px;
   border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-md, 8px);
-  background: var(--w-color-surface, #fff);
+  background: #fff;
   align-items: center;
   justify-content: space-between;
   gap: 16px;

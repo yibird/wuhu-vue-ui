@@ -1,11 +1,14 @@
+@import './token.less';
+
 .w-highlight {
   display: inline;
 
   &__mark {
-    padding: 0 0.08em;
-    border-radius: var(--w-radius-xs, 4px);
-    background: var(--w-color-primary-soft-hover, rgba(79, 70, 229, 0.16));
-    color: inherit;
+    padding: var(--w-highlight-padding);
+    margin: var(--w-highlight-margin);
+    border-radius: var(--w-highlight-radius);
+    background: var(--w-highlight-bg);
+    color: var(--w-highlight-text);
     font: inherit;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;

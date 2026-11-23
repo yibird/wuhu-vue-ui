@@ -108,7 +108,7 @@ describe('Loading', () => {
       'linear-gradient(135deg, #111111, #222222)',
     )
     expect(root.style.getPropertyValue('--w-loading-primary')).toBe(
-      'var(--w-color-primary, #4f46e5)',
+      'var(--w-loading-color-primary)',
     )
     wrapper.unmount()
   })

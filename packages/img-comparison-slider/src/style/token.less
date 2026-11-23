@@ -1,0 +1,48 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-img-comparison-slider {
+  --w-img-comparison-slider-color-surface-subtle: #f1f5f9;
+  --w-img-comparison-slider-color-surface: #ffffff;
+  --w-img-comparison-slider-color-primary: #4f46e5;
+  --w-img-comparison-slider-color-mask: rgba(15, 23, 42, 0.46);
+  --w-img-comparison-slider-opacity-disabled: 0.55;
+  --w-img-comparison-slider-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-img-comparison-slider-color-info-soft: rgba(3, 105, 161, 0.1);
+  --w-img-comparison-slider-radius-full: 9999px;
+  --w-img-comparison-slider-font-family: inherit;
+  --w-img-comparison-slider-font-size-2xs: 11px;
+  --w-img-comparison-slider-font-weight-semibold: 600;
+  --w-img-comparison-slider-shadow-sm:
+    0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --w-img-comparison-slider-duration-fast: 120ms;
+  --w-img-comparison-slider-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-img-comparison-slider-color-primary-hover: #473fce;
+  --w-img-comparison-slider-focus-ring-width: 2px;
+  --w-img-comparison-slider-focus-ring-offset: 2px;
+  --w-img-comparison-slider-focus-ring-color: #4f46e5;
+  --w-img-comparison-slider-shadow-md:
+    0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+}
+
+[data-w-theme='dark'] .w-img-comparison-slider {
+  --w-img-comparison-slider-color-surface-subtle: #141d2f;
+  --w-img-comparison-slider-color-surface: #0f172a;
+  --w-img-comparison-slider-color-primary: #818cf8;
+  --w-img-comparison-slider-color-mask: rgba(2, 6, 23, 0.72);
+  --w-img-comparison-slider-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-img-comparison-slider-color-info-soft: rgba(56, 189, 248, 0.14);
+  --w-img-comparison-slider-color-primary-hover: #8e98f9;
+  --w-img-comparison-slider-focus-ring-color: #8e98f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-img-comparison-slider {
+    --w-img-comparison-slider-color-surface-subtle: #141d2f;
+    --w-img-comparison-slider-color-surface: #0f172a;
+    --w-img-comparison-slider-color-primary: #818cf8;
+    --w-img-comparison-slider-color-mask: rgba(2, 6, 23, 0.72);
+    --w-img-comparison-slider-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-img-comparison-slider-color-info-soft: rgba(56, 189, 248, 0.14);
+    --w-img-comparison-slider-color-primary-hover: #8e98f9;
+    --w-img-comparison-slider-focus-ring-color: #8e98f9;
+  }
+}

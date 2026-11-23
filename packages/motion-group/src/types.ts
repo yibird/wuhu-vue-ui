@@ -2,7 +2,7 @@
  * Built-in presets. Each preset ships enter / leave / move transitions so
  * reordering and filtering the list both stay animated.
  */
-export type MotionGroupAnimation = 'fade' | 'slide' | 'scale' | 'flip' | 'bounce' | 'reveal'
+export type MotionGroupAnimation = 'fade' | 'slide' | 'flip' | 'bounce'
 
 /** Direction used by the `slide` preset. */
 export type MotionGroupDirection = 'horizontal' | 'vertical'

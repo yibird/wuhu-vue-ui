@@ -22,7 +22,7 @@ const classes: ScrollbarClasses = {
 const styles: ScrollbarStyles = {
   view: { padding: '10px' },
   thumb: {
-    background: 'linear-gradient(180deg, var(--w-color-primary, #4f46e5), #a855f7)',
+    background: 'var(--w-color-primary, #4f46e5)',
     opacity: '1',
   },
 }

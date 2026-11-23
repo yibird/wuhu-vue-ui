@@ -18,6 +18,7 @@ export interface CommandMenuClasses {
   groupLabel?: CommandMenuClassValue
   item?: CommandMenuClassValue
   empty?: CommandMenuClassValue
+  footer?: CommandMenuClassValue
 }
 
 /** Semantic inline styles for the menu's internal parts. */
@@ -31,6 +32,7 @@ export interface CommandMenuStyles {
   groupLabel?: StyleValue
   item?: StyleValue
   empty?: StyleValue
+  footer?: StyleValue
 }
 
 /**
@@ -94,10 +96,6 @@ export interface CommandMenuProps {
   escapeBehavior?: CommandMenuEscapeBehavior
   /** Maximum height of the scrollable result list. Numbers are pixels. */
   maxHeight?: string | number
-  /** Accessible name for the search input and result list. */
-  ariaLabel?: string
-  /** Accessible name and tooltip for the clear-search button. */
-  clearLabel?: string
   /** Semantic class names for the menu's internal parts. */
   classes?: CommandMenuClasses
   /** Semantic inline styles for the menu's internal parts. */

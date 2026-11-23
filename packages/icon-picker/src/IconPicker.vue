@@ -5,16 +5,20 @@ import { useControllableState, useKeyboardNavigation } from '@wuhu-vue-ui/core'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import type { Rect, Virtualizer } from '@tanstack/vue-virtual'
 import IconGlyph from './IconGlyph'
+import { useIconPickerIcons } from './config'
 import type {
+  IconPickerEmptySlotProps,
   IconPickerEmits,
   IconPickerGroup,
   IconPickerItem,
+  IconPickerModelValue,
   IconPickerProps,
   IconPickerSlots,
 } from './types'
 
 const props = withDefaults(defineProps<IconPickerProps>(), {
   modelValue: undefined,
+  multiple: false,
   showSearch: true,
   placeholder: '搜索图标',
   emptyText: '没有匹配的图标',
@@ -22,7 +26,6 @@ const props = withDefaults(defineProps<IconPickerProps>(), {
   groupsLabel: '按用途浏览',
   libraryLabel: '图标库',
   countLabel: (count: number) => `${count} 个`,
-  ariaLabel: '图标选择器',
   clearSearchLabel: '清除搜索',
   columns: undefined,
   itemMinWidth: 72,
@@ -41,28 +44,51 @@ const SCROLL_PADDING = 16
 
 const query = ref('')
 const activeGroupKey = ref<string | null>(null)
-const { value: selectedKey, setValue: setSelectedKey } = useControllableState<string | null>({
-  value: () => props.modelValue,
-  defaultValue: null,
-  onChange: (value) => emit('update:modelValue', value),
-})
+const { value: selectedValue, setValue: setSelectedValue } =
+  useControllableState<IconPickerModelValue>({
+    value: () => props.modelValue,
+    defaultValue: null,
+    normalize: (value) => {
+      if (value == null) return props.multiple ? [] : null
+      if (props.multiple) {
+        const list = Array.isArray(value) ? value : [value]
+        return [...new Set(list.filter((key): key is string => typeof key === 'string'))]
+      }
+      return Array.isArray(value) ? (value[0] ?? null) : value
+    },
+    onChange: (value) => emit('update:modelValue', value),
+  })
 const focusedKey = ref<string | null>(null)
 const scrollRef = ref<HTMLElement>()
 const viewportWidth = ref(0)
 
 let resizeObserver: ResizeObserver | undefined
 
-const groups = computed(() => props.items.filter((group) => group.items.length > 0))
+const globalGroups = useIconPickerIcons()
+const groups = computed(() => props.items ?? globalGroups.value)
 const totalCount = computed(() => groups.value.reduce((sum, group) => sum + group.items.length, 0))
 const currentGroup = computed(
   () => groups.value.find((group) => group.key === activeGroupKey.value) ?? null,
 )
 const groupByItemKey = computed(() => {
   const map = new Map<string, IconPickerGroup>()
-  for (const group of props.items) {
+  for (const group of groups.value) {
     for (const item of group.items) map.set(item.key, group)
   }
   return map
+})
+const selectedKeys = computed<ReadonlySet<string>>(() => {
+  const value = selectedValue.value
+  if (Array.isArray(value)) return new Set(value)
+  return value ? new Set([value]) : new Set()
+})
+const emptySlotProps = computed<IconPickerEmptySlotProps>(() => ({
+  group: currentGroup.value,
+  query: query.value,
+}))
+const emptyHint = computed(() => {
+  if (query.value) return '换个关键词试试'
+  return currentGroup.value ? '当前分组还没有图标' : '当前图标库还没有内容'
 })
 
 const filteredItems = computed<IconPickerItem[]>(() => {
@@ -163,10 +189,8 @@ const tabbableKey = computed(() => {
   if (focusedKey.value && items.some((item) => item.key === focusedKey.value)) {
     return focusedKey.value
   }
-  if (selectedKey.value && items.some((item) => item.key === selectedKey.value)) {
-    return selectedKey.value
-  }
-  return items[0]?.key ?? null
+  const selectedInView = items.find((item) => selectedKeys.value.has(item.key))
+  return selectedInView?.key ?? items[0]?.key ?? null
 })
 
 /**
@@ -226,9 +250,20 @@ function choose(item: IconPickerItem) {
   if (props.disabled) return
 
   focusedKey.value = item.key
-  setSelectedKey(item.key)
-
   const group = groupByItemKey.value.get(item.key)
+
+  if (props.multiple) {
+    const next = new Set(selectedKeys.value)
+    const wasSelected = next.has(item.key)
+    if (wasSelected) next.delete(item.key)
+    else next.add(item.key)
+
+    setSelectedValue([...next])
+    if (!wasSelected && group) emit('select', item, group)
+    return
+  }
+
+  setSelectedValue(item.key)
   if (group) emit('select', item, group)
 }
 
@@ -277,7 +312,7 @@ onBeforeUnmount(() => {
     :class="{ 'is-disabled': disabled }"
     :style="rootStyle"
     role="group"
-    :aria-label="ariaLabel"
+    aria-label="图标选择器"
   >
     <div v-if="showSearch" class="w-icon-picker__toolbar">
       <div v-if="showSearch" class="w-icon-picker__search">
@@ -386,9 +421,9 @@ onBeforeUnmount(() => {
                 :key="item.key"
                 type="button"
                 class="w-icon-picker__item"
-                :class="{ 'is-selected': item.key === selectedKey }"
+                :class="{ 'is-selected': selectedKeys.has(item.key) }"
                 :title="item.label"
-                :aria-pressed="item.key === selectedKey"
+                :aria-pressed="selectedKeys.has(item.key)"
                 :tabindex="item.key === tabbableKey ? 0 : -1"
                 :data-key="item.key"
                 :disabled="disabled"
@@ -400,12 +435,50 @@ onBeforeUnmount(() => {
                   <IconGlyph :icon="item.icon" />
                 </span>
                 <span class="w-icon-picker__label">{{ item.label }}</span>
+                <span
+                  v-if="selectedKeys.has(item.key)"
+                  class="w-icon-picker__check"
+                  aria-hidden="true"
+                >
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="m4 8.5 2.5 2.5L12 5.5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
               </button>
             </div>
           </div>
 
           <div v-else class="w-icon-picker__empty">
-            <slot name="empty">{{ emptyText }}</slot>
+            <slot name="empty" v-bind="emptySlotProps">
+              <span class="w-icon-picker__empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-dasharray="3 3"
+                  />
+                  <path
+                    d="M9 12h6M12 9v6"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </span>
+              <strong>{{ emptyText }}</strong>
+              <span class="w-icon-picker__empty-hint">{{ emptyHint }}</span>
+            </slot>
           </div>
         </div>
       </section>

@@ -1,0 +1,52 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-dock {
+  --w-dock-color-surface-elevated: #ffffff;
+  --w-dock-color-border: #e2e8f0;
+  --w-dock-radius-xl: 16px;
+  --w-dock-shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.04), 0 16px 40px -16px rgba(15, 23, 42, 0.22);
+  --w-dock-font-family: inherit;
+  --w-dock-radius-lg: 12px;
+  --w-dock-color-text-secondary: #475569;
+  --w-dock-focus-ring-width: 2px;
+  --w-dock-focus-ring-color: #4f46e5;
+  --w-dock-opacity-disabled: 0.55;
+  --w-dock-duration-normal: 220ms;
+  --w-dock-duration-fast: 120ms;
+  --w-dock-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-dock-color-primary: #4f46e5;
+  --w-dock-color-primary-soft-hover: rgba(79, 70, 229, 0.16);
+  --w-dock-font-size-lg: 16px;
+  --w-dock-font-weight-semibold: 600;
+  --w-dock-color-text: #0f172a;
+  --w-dock-font-size-xs: 12px;
+  --w-dock-color-border-subtle: #f1f5f9;
+  --w-dock-radius-sm: 6px;
+  --w-dock-shadow-md: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+  --w-dock-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-w-theme='dark'] .w-dock {
+  --w-dock-color-surface-elevated: #1e293b;
+  --w-dock-color-border: #2a3a55;
+  --w-dock-color-text-secondary: #cbd5e1;
+  --w-dock-focus-ring-color: #8e98f9;
+  --w-dock-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-dock-color-primary: #818cf8;
+  --w-dock-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+  --w-dock-color-text: #e2e8f0;
+  --w-dock-color-border-subtle: #1d2a40;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-dock {
+    --w-dock-color-surface-elevated: #1e293b;
+    --w-dock-color-border: #2a3a55;
+    --w-dock-color-text-secondary: #cbd5e1;
+    --w-dock-focus-ring-color: #8e98f9;
+    --w-dock-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-dock-color-primary: #818cf8;
+    --w-dock-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+    --w-dock-color-text: #e2e8f0;
+    --w-dock-color-border-subtle: #1d2a40;
+  }
+}

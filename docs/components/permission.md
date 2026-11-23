@@ -14,14 +14,14 @@
 
 ## 提供权限上下文
 
-在应用或页面根组件调用 `providePermissions`，来源可以是数组、`Set`、ref 或 getter，更新后所有子级校验会同步刷新：
+在应用或页面根组件调用 `setPermissions`，来源可以是数组、`Set`、ref 或 getter，更新后所有子级校验会同步刷新：
 
 ```ts
 import { ref } from 'vue'
-import { providePermissions } from '@wuhu-vue-ui/permission'
+import { setPermissions } from '@wuhu-vue-ui/permission'
 
 const permissions = ref(['user:read', 'user:write'])
-providePermissions(permissions)
+setPermissions(permissions)
 ```
 
 ## 校验模式
@@ -88,12 +88,12 @@ import { vPermission } from '@wuhu-vue-ui/permission'
 
 ### 导出 API
 
-| 名称                 | 类型                                                          | 说明                                     |
-| -------------------- | ------------------------------------------------------------- | ---------------------------------------- |
-| `PERMISSION_KEY`     | `InjectionKey<PermissionContext>`                             | 注入键，可用于自定义 provide             |
-| `providePermissions` | `(source: MaybeRefOrGetter<string[] \| Set<string>>) => void` | 向子级提供响应式权限来源                 |
-| `usePermission`      | `() => PermissionContext`                                     | 读取上下文；无提供者时返回默认拒绝的实现 |
-| `vPermission`        | `ObjectDirective<HTMLElement, PermissionDirectiveValue>`      | 指令形式，无权限时隐藏元素               |
+| 名称             | 类型                                                          | 说明                                     |
+| ---------------- | ------------------------------------------------------------- | ---------------------------------------- |
+| `PERMISSION_KEY` | `InjectionKey<PermissionContext>`                             | 注入键，可用于自定义 provide             |
+| `setPermissions` | `(source: MaybeRefOrGetter<string[] \| Set<string>>) => void` | 向子级提供响应式权限来源                 |
+| `usePermission`  | `() => PermissionContext`                                     | 读取上下文；无提供者时返回默认拒绝的实现 |
+| `vPermission`    | `ObjectDirective<HTMLElement, PermissionDirectiveValue>`      | 指令形式，无权限时隐藏元素               |
 
 ### 类型
 

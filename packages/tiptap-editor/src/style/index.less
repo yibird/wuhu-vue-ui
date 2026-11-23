@@ -8,15 +8,15 @@
   width: 100%;
   overflow: hidden;
   color: var(--w-tiptap-editor-text, #0f172a);
-  font-family: var(--w-font-family, inherit);
-  font-size: var(--w-font-size-md, 14px);
-  line-height: var(--w-line-height-normal, 1.55);
+  font-family: var(--w-tiptap-editor-font-family);
+  font-size: var(--w-tiptap-editor-font-size-md);
+  line-height: var(--w-tiptap-editor-line-height-normal);
   background: var(--w-tiptap-editor-surface, #ffffff);
   border: 1px solid var(--w-tiptap-editor-border, #e2e8f0);
   border-radius: var(--w-tiptap-editor-radius, 8px);
   transition:
-    border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-    box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    border-color var(--w-tiptap-editor-duration-fast) var(--w-tiptap-editor-easing-standard),
+    box-shadow var(--w-tiptap-editor-duration-fast) var(--w-tiptap-editor-easing-standard);
 
   &:focus-within {
     border-color: var(--w-tiptap-editor-focus-color, #4f46e5);
@@ -57,14 +57,14 @@
     padding: 0;
     color: var(--w-tiptap-editor-muted, #5b6678);
     font: inherit;
-    font-size: var(--w-font-size-sm, 13px);
+    font-size: var(--w-tiptap-editor-font-size-sm);
     cursor: pointer;
     background: transparent;
     border: 0;
     border-radius: var(--w-tiptap-editor-radius-sm, 6px);
     transition:
-      color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+      color var(--w-tiptap-editor-duration-fast) var(--w-tiptap-editor-easing-standard),
+      background-color var(--w-tiptap-editor-duration-fast) var(--w-tiptap-editor-easing-standard);
 
     &:hover:not(:disabled) {
       color: var(--w-tiptap-editor-text, #0f172a);
@@ -114,7 +114,7 @@
   }
 
   &__glyph.is-code {
-    font-family: var(--w-font-family-mono, monospace);
+    font-family: var(--w-tiptap-editor-font-family-mono);
     font-size: 11px;
   }
 
@@ -131,7 +131,7 @@
     top: calc(100% + 6px);
     right: 6px;
     left: 6px;
-    z-index: var(--w-z-dropdown, 1000);
+    z-index: var(--w-tiptap-editor-z-dropdown);
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -139,7 +139,7 @@
     background: var(--w-tiptap-editor-surface, #ffffff);
     border: 1px solid var(--w-tiptap-editor-border, #e2e8f0);
     border-radius: var(--w-tiptap-editor-radius, 8px);
-    box-shadow: var(--w-shadow-md, 0 4px 12px rgb(0 0 0 / 10%));
+    box-shadow: var(--w-tiptap-editor-shadow-md);
   }
 
   &__link-form {
@@ -156,13 +156,13 @@
 
   &__hint {
     color: var(--w-tiptap-editor-muted, #5b6678);
-    font-size: var(--w-font-size-2xs, 11px);
+    font-size: var(--w-tiptap-editor-font-size-2xs);
   }
 
   &__error {
     margin: 0;
     color: var(--w-tiptap-editor-danger, #dc2626);
-    font-size: var(--w-font-size-xs, 12px);
+    font-size: var(--w-tiptap-editor-font-size-xs);
   }
 
   &__file-input,
@@ -196,7 +196,7 @@
     padding: 5px 8px;
     color: var(--w-tiptap-editor-text-secondary, #475569);
     font: inherit;
-    font-size: var(--w-font-size-xs, 12px);
+    font-size: var(--w-tiptap-editor-font-size-xs);
     cursor: pointer;
     background: var(--w-tiptap-editor-surface, #ffffff);
     border: 1px solid var(--w-tiptap-editor-border, #e2e8f0);
@@ -223,7 +223,7 @@
     padding: 5px 8px;
     color: var(--w-tiptap-editor-text, #0f172a);
     font: inherit;
-    font-size: var(--w-font-size-xs, 12px);
+    font-size: var(--w-tiptap-editor-font-size-xs);
     background: var(--w-tiptap-editor-surface, #ffffff);
     border: 1px solid var(--w-tiptap-editor-border, #e2e8f0);
     border-radius: var(--w-tiptap-editor-radius-sm, 6px);
@@ -239,7 +239,7 @@
     padding: 5px 8px;
     color: var(--w-tiptap-editor-text-secondary, #475569);
     font: inherit;
-    font-size: var(--w-font-size-xs, 12px);
+    font-size: var(--w-tiptap-editor-font-size-xs);
     cursor: pointer;
     background: var(--w-tiptap-editor-surface, #ffffff);
     border: 1px solid var(--w-tiptap-editor-border, #e2e8f0);
@@ -268,7 +268,7 @@
     align-items: center;
     padding: 5px 12px;
     color: var(--w-tiptap-editor-muted, #5b6678);
-    font-size: var(--w-font-size-2xs, 11px);
+    font-size: var(--w-tiptap-editor-font-size-2xs);
     background: var(--w-tiptap-editor-toolbar-surface, #f8fafc);
     border-top: 1px solid var(--w-tiptap-editor-border, #e2e8f0);
   }
@@ -280,10 +280,10 @@
     z-index: 2;
     padding: 4px 10px;
     color: var(--w-tiptap-editor-status-text, #ffffff);
-    font-size: var(--w-font-size-2xs, 11px);
+    font-size: var(--w-tiptap-editor-font-size-2xs);
     pointer-events: none;
     background: var(--w-tiptap-editor-status-bg, rgba(15, 23, 42, 0.94));
-    border-radius: var(--w-radius-full, 9999px);
+    border-radius: var(--w-tiptap-editor-radius-full);
   }
 
   &__dropzone {
@@ -293,8 +293,8 @@
     display: grid;
     place-items: center;
     color: var(--w-tiptap-editor-focus-color, #4f46e5);
-    font-size: var(--w-font-size-sm, 13px);
-    font-weight: var(--w-font-weight-medium, 500);
+    font-size: var(--w-tiptap-editor-font-size-sm);
+    font-weight: var(--w-tiptap-editor-font-weight-medium);
     pointer-events: none;
     background: var(--w-tiptap-editor-focus-soft, rgba(79, 70, 229, 0.1));
     border: 2px dashed var(--w-tiptap-editor-focus-color, #4f46e5);
@@ -304,7 +304,7 @@
   &.is-fullscreen {
     position: fixed;
     inset: 0;
-    z-index: var(--w-z-overlay, 2000);
+    z-index: var(--w-tiptap-editor-z-overlay);
     border: 0;
     border-radius: 0;
 
@@ -383,11 +383,11 @@
 
     code {
       padding: 1px 4px;
-      font-family: var(--w-font-family-mono, monospace);
+      font-family: var(--w-tiptap-editor-font-family-mono);
       font-size: 0.9em;
       color: var(--w-tiptap-editor-code-text, #0f172a);
       background: var(--w-tiptap-editor-code-surface, #f1f5f9);
-      border-radius: var(--w-radius-xs, 4px);
+      border-radius: var(--w-tiptap-editor-radius-xs);
     }
 
     pre {
@@ -419,7 +419,7 @@
     img {
       max-width: 100%;
       height: auto;
-      border-radius: var(--w-radius-xs, 4px);
+      border-radius: var(--w-tiptap-editor-radius-xs);
     }
 
     img.ProseMirror-selectednode {

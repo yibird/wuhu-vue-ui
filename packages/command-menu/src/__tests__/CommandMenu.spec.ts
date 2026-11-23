@@ -80,7 +80,8 @@ describe('CommandMenu', () => {
 
     await input.setValue('不存在')
     expect(getOptions(wrapper)).toHaveLength(0)
-    expect(wrapper.get('.w-command-menu__empty').text()).toBe('未找到匹配的命令')
+    expect(wrapper.get('.w-command-menu__empty').text()).toContain('未找到匹配的命令')
+    expect(wrapper.get('.w-command-menu__empty-hint').text()).toBe('换个关键词试试')
     expect(wrapper.emitted('search')?.at(-1)).toEqual(['不存在'])
   })
 
@@ -660,6 +661,21 @@ describe('CommandMenu', () => {
     await wrapper.findAll('.w-command-menu__item')[1]?.trigger('click')
 
     expect(wrapper.emitted('select')?.[0]?.[0]).toMatchObject({ key: 'users' })
+  })
+
+  it('renders the footer slot below the list', () => {
+    const wrapper = mountMenu(
+      { classes: { footer: 'custom-footer-class' } },
+      {
+        slots: {
+          footer: () => h('span', { class: 'custom-footer' }, '↑ ↓ 导航 · Enter 选择'),
+        },
+      },
+    )
+
+    const footer = wrapper.get('.w-command-menu__footer')
+    expect(footer.classes()).toContain('custom-footer-class')
+    expect(footer.get('.custom-footer').text()).toContain('Enter 选择')
   })
 
   it('supports a typed empty slot with the current query', async () => {

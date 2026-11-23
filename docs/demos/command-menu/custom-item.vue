@@ -53,12 +53,7 @@ function handleSelect(item: CommandMenuItem) {
 <template>
   <div class="command-demo">
     <div class="command-demo__panel">
-      <CommandMenu
-        v-model="selected"
-        :items="items"
-        aria-label="自定义 item 插槽"
-        @select="handleSelect"
-      >
+      <CommandMenu v-model="selected" :items="items" @select="handleSelect">
         <template #item="{ item, index, active, selected, disabled }">
           <span
             class="command-slot-item"

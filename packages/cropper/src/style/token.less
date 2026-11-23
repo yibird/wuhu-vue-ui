@@ -1,5 +1,50 @@
-// Component-scoped tokens. Radius is the only value this package owns; every
-// colour resolves from the app theme through `var(--w-*, fallback)`.
 .w-cropper {
   --w-cropper-radius: 12px;
+}
+
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-cropper {
+  --w-cropper-color-surface-subtle: #f1f5f9;
+  --w-cropper-focus-ring-width: 2px;
+  --w-cropper-focus-ring-color: #4f46e5;
+  --w-cropper-color-border: #e2e8f0;
+  --w-cropper-radius-md: 8px;
+  --w-cropper-bg-color: #ffffff;
+  --w-cropper-shadow-md: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+  --w-cropper-radius-sm: 6px;
+  --w-cropper-color-text-secondary: #475569;
+  --w-cropper-duration-fast: 120ms;
+  --w-cropper-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-cropper-color-interactive-hover: rgba(15, 23, 42, 0.05);
+  --w-cropper-color-text: #0f172a;
+  --w-cropper-color-interactive-active: rgba(15, 23, 42, 0.09);
+  --w-cropper-focus-ring-offset: 2px;
+  --w-cropper-color-text-tertiary: #5b6678;
+  --w-cropper-opacity-disabled: 0.55;
+}
+
+[data-w-theme='dark'] .w-cropper {
+  --w-cropper-color-surface-subtle: #141d2f;
+  --w-cropper-focus-ring-color: #8e98f9;
+  --w-cropper-color-border: #2a3a55;
+  --w-cropper-bg-color: #1e293b;
+  --w-cropper-color-text-secondary: #cbd5e1;
+  --w-cropper-color-interactive-hover: rgba(226, 232, 240, 0.07);
+  --w-cropper-color-text: #e2e8f0;
+  --w-cropper-color-interactive-active: rgba(226, 232, 240, 0.12);
+  --w-cropper-color-text-tertiary: #94a3b8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-cropper {
+    --w-cropper-color-surface-subtle: #141d2f;
+    --w-cropper-focus-ring-color: #8e98f9;
+    --w-cropper-color-border: #2a3a55;
+    --w-cropper-bg-color: #1e293b;
+    --w-cropper-color-text-secondary: #cbd5e1;
+    --w-cropper-color-interactive-hover: rgba(226, 232, 240, 0.07);
+    --w-cropper-color-text: #e2e8f0;
+    --w-cropper-color-interactive-active: rgba(226, 232, 240, 0.12);
+    --w-cropper-color-text-tertiary: #94a3b8;
+  }
 }

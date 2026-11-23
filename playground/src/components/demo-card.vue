@@ -40,18 +40,12 @@ withDefaults(
   flex-direction: column;
   min-width: 0;
   border: 1px solid var(--w-color-border);
-  border-radius: var(--w-radius-panel, var(--w-radius-xl, 16px));
+  border-radius: var(--w-radius-card, var(--w-radius-lg, 12px));
   background: var(--w-color-surface);
-  box-shadow: var(--w-shadow-sm);
-  transition:
-    border-color var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
-    box-shadow var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
-    transform var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
+  transition: border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
   &:hover {
     border-color: var(--w-color-border-hover, var(--w-color-border-strong));
-    box-shadow: var(--w-shadow-md);
-    transform: translateY(-2px);
   }
 
   &--wide {
@@ -63,7 +57,7 @@ withDefaults(
     align-items: flex-start;
     justify-content: space-between;
     gap: 14px;
-    padding: 16px 18px 0;
+    padding: 18px 20px 0;
   }
 
   &__copy {
@@ -71,9 +65,9 @@ withDefaults(
 
     h3 {
       margin: 0;
-      font-size: var(--w-font-size-sm);
+      font-size: var(--w-font-size-md);
       font-weight: var(--w-font-weight-semibold, 600);
-      letter-spacing: -0.01em;
+      letter-spacing: var(--w-letter-spacing-tight, -0.01em);
     }
 
     p {
@@ -94,11 +88,11 @@ withDefaults(
   &__body {
     flex: 1;
     min-width: 0;
-    padding: 16px 18px 18px;
+    padding: 18px 20px 20px;
   }
 
   &--flush &__body {
-    padding: 14px;
+    padding: 16px;
   }
 
   &--flush &__head {
@@ -109,16 +103,6 @@ withDefaults(
 @media (max-width: 900px) {
   .demo-card--wide {
     grid-column: auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .demo-card {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
   }
 }
 </style>

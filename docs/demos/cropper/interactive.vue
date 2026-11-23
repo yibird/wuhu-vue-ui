@@ -32,11 +32,10 @@ async function exportCrop() {
       <Cropper
         ref="cropperRef"
         src="/samples/banner.png"
-        alt="裁剪示例"
         :height="380"
         :aspect-ratio="aspectRatio"
         :initial-coverage="0.72"
-        :show-action-bar="false"
+        :toolbar="false"
       >
         <template #default="{ ready, zoomIn, zoomOut, rotateLeft, rotateRight, reset }">
           <div class="cropper-toolbar">

@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { h, nextTick } from 'vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it } from 'vite-plus/test'
 import IconPicker from '../IconPicker.vue'
+import { setIconPickerIcons } from '../config'
 import type { IconPickerGroup } from '../types'
 
 function makeGroup(key: string, label: string, count: number): IconPickerGroup {
@@ -41,7 +42,25 @@ function mountPicker(props: Record<string, unknown> = {}, options: Record<string
   })
 }
 
+afterEach(() => {
+  setIconPickerIcons([])
+})
+
 describe('IconPicker', () => {
+  it('uses the global icon library when items is omitted', async () => {
+    setIconPickerIcons([makeGroup('global', '全局', 2)])
+    const wrapper = mountPicker({ items: undefined })
+
+    expect(wrapper.findAll('.w-icon-picker__group')).toHaveLength(2)
+    expect(wrapper.text()).toContain('全局')
+
+    setIconPickerIcons([makeGroup('next', '新图标库', 1)])
+    await nextTick()
+    expect(wrapper.text()).toContain('新图标库')
+
+    wrapper.unmount()
+  })
+
   it('renders grouped sidebar entries and the grouped counts', () => {
     const wrapper = mountPicker()
 
@@ -125,14 +144,35 @@ describe('IconPicker', () => {
     wrapper.unmount()
   })
 
-  it('renders the empty state and hides empty groups', () => {
+  it('keeps empty groups selectable and renders the empty state', () => {
     const wrapper = mountPicker({
       items: [{ key: 'empty', label: '空分组', items: [] }],
     })
 
-    expect(wrapper.findAll('.w-icon-picker__group')).toHaveLength(1)
-    expect(wrapper.get('.w-icon-picker__empty').text()).toBe('没有匹配的图标')
-    expect(wrapper.text()).not.toContain('空分组')
+    expect(wrapper.findAll('.w-icon-picker__group')).toHaveLength(2)
+    expect(wrapper.text()).toContain('空分组')
+    expect(wrapper.get('.w-icon-picker__empty').text()).toContain('没有匹配的图标')
+
+    wrapper.unmount()
+  })
+
+  it('toggles multiple selections and renders check marks', async () => {
+    const wrapper = mountPicker({ multiple: true, modelValue: [] })
+    const items = wrapper.findAll('.w-icon-picker__item')
+
+    await items[0]!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(['arrow-0'])
+    await wrapper.setProps({ modelValue: ['arrow-0'] })
+
+    await items[1]!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(['arrow-0', 'arrow-1'])
+    await wrapper.setProps({ modelValue: ['arrow-0', 'arrow-1'] })
+    expect(wrapper.findAll('.w-icon-picker__check')).toHaveLength(2)
+
+    await items[0]!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(['arrow-1'])
+    await wrapper.setProps({ modelValue: ['arrow-1'] })
+    expect(wrapper.findAll('.w-icon-picker__check')).toHaveLength(1)
 
     wrapper.unmount()
   })

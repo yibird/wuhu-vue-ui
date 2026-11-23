@@ -59,12 +59,12 @@ const gradientValue = computed<string | undefined>(() => {
     // primary color into the theme surface keeps it subtle in both themes.
     return [
       'radial-gradient(120% 90% at 0% 0%,',
-      'color-mix(in srgb, var(--w-color-primary, #4f46e5) 8%, transparent),',
+      'color-mix(in srgb, var(--w-loading-color-primary) 8%, transparent),',
       'transparent 72%),',
       'linear-gradient(158deg,',
-      'var(--w-color-surface, #fff) 0%,',
-      'var(--w-color-surface, #fff) 48%,',
-      'color-mix(in srgb, var(--w-color-primary, #4f46e5) 7%, var(--w-color-surface, #fff)) 100%)',
+      'var(--w-loading-color-surface) 0%,',
+      'var(--w-loading-color-surface) 48%,',
+      'color-mix(in srgb, var(--w-loading-color-primary) 7%, var(--w-loading-color-surface)) 100%)',
     ].join(' ')
   }
 
@@ -78,7 +78,7 @@ const gradientValue = computed<string | undefined>(() => {
   return `linear-gradient(135deg, ${colors.join(', ')})`
 })
 
-const strokeColor = computed(() => props.color ?? 'var(--w-color-primary, #4f46e5)')
+const strokeColor = computed(() => props.color ?? 'var(--w-loading-color-primary)')
 
 const rootStyle = computed<CSSProperties>(() => ({
   zIndex: props.full ? props.zIndex : undefined,

@@ -28,7 +28,7 @@ import { Loading } from '@wuhu-vue-ui/loading'
   align-items: center;
   justify-content: center;
   min-height: 160px;
-  border: 1px dashed var(--w-color-border, #e2e8f0);
+  border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-md, 8px);
 }
 

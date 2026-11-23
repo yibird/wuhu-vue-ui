@@ -33,7 +33,7 @@ export function checkPermission(
  * Provide a reactive permission source to descendants.
  * Array, ref, getter and `Set` sources are supported.
  */
-export function providePermissions(source: MaybeRefOrGetter<string[] | Set<string>>) {
+export function setPermissions(source: MaybeRefOrGetter<string[] | Set<string>>) {
   const granted = computed<ReadonlySet<string>>(() => {
     const resolved = toValue(source)
     return resolved instanceof Set ? resolved : new Set(resolved)

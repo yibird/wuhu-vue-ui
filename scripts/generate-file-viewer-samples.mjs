@@ -8,7 +8,8 @@ import { fileURLToPath } from 'node:url'
 import { deflateSync } from 'node:zlib'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const output = resolve(root, 'playground/public/samples')
+const docsOnly = process.argv.includes('--docs-only')
+const output = resolve(root, docsOnly ? 'docs/public/samples' : 'playground/public/samples')
 mkdirSync(output, { recursive: true })
 
 function crc32(buffer) {
@@ -759,8 +760,11 @@ writeFileSync(
 
 // The docs site serves its own /public directory, so keep a synchronized copy
 // instead of relying on manual duplication.
-const docsOutput = resolve(root, 'docs/public/samples')
-rmSync(docsOutput, { recursive: true, force: true })
-cpSync(output, docsOutput, { recursive: true })
-
-process.stdout.write(`Generated file-viewer samples in ${output} and ${docsOutput}\n`)
+if (!docsOnly) {
+  const docsOutput = resolve(root, 'docs/public/samples')
+  rmSync(docsOutput, { recursive: true, force: true })
+  cpSync(output, docsOutput, { recursive: true })
+  process.stdout.write(`Generated file-viewer samples in ${output} and ${docsOutput}\n`)
+} else {
+  process.stdout.write(`Generated file-viewer samples in ${output}\n`)
+}

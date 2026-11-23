@@ -62,6 +62,16 @@ function itemStyle(index: number): Record<string, string> {
   }
 }
 
+/**
+ * Reserve layout space for the scaled icon so neighbouring items are pushed
+ * apart instead of being painted over. The transform still drives the visible
+ * size; this only changes the flex item's box.
+ */
+function itemWrapStyle(index: number): Record<string, string> {
+  const size = `${props.baseSize * scaleFor(index)}px`
+  return isHorizontal.value ? { width: size } : { height: size }
+}
+
 function imageSource(item: DockItem): string | undefined {
   return typeof item.icon === 'string' ? item.icon : undefined
 }
@@ -147,6 +157,9 @@ function applyPointer(clientX: number, clientY: number) {
 
   if (next.some((value, index) => value !== scales.value[index])) {
     scales.value = next
+    // Scaled items reserve layout space, so their centres move. Re-measure on
+    // the next pointer frame instead of using the pre-magnification snapshot.
+    invalidateItemCenters()
   }
 }
 
@@ -235,7 +248,7 @@ onBeforeUnmount(() => {
   >
     <template v-for="(item, index) in items" :key="item.id ?? index">
       <li v-if="item.separator" class="w-dock__separator" aria-hidden="true" />
-      <li v-else class="w-dock__item-wrap">
+      <li v-else class="w-dock__item-wrap" :style="itemWrapStyle(index)">
         <button
           :ref="(el) => setItemRef(el, index)"
           type="button"

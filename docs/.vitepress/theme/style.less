@@ -1,16 +1,16 @@
 /* VitePress brand: rgb(90, 84, 249) */
 :root {
   --vp-c-brand-1: #5a54f9;
-  --vp-c-brand-2: #4a44e6;
-  --vp-c-brand-3: #403ac9;
-  --vp-c-brand-soft: rgba(90, 84, 249, 0.14);
+  --vp-c-brand-2: #514ce0;
+  --vp-c-brand-3: #4a45cc;
+  --vp-c-brand-soft: rgba(90, 84, 249, 0.1);
   --vp-c-brand: var(--vp-c-brand-1);
 }
 
 .dark {
   --vp-c-brand-1: #8b86fb;
-  --vp-c-brand-2: #736dfa;
-  --vp-c-brand-3: #5a54f9;
+  --vp-c-brand-2: #9792fb;
+  --vp-c-brand-3: #a09cfc;
   --vp-c-brand-soft: rgba(139, 134, 251, 0.16);
   --vp-c-brand: var(--vp-c-brand-1);
 }
@@ -29,92 +29,24 @@ a {
   text-decoration: none;
 }
 
-/* Home hero logo: rotating spectrum aura + 3D tilt on hover. */
+/* Home hero: static presentation; no perpetual motion or rainbow aura. */
 .VPHero .image-container {
-  isolation: isolate;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 14%;
-    z-index: -1;
-    pointer-events: none;
-    background: conic-gradient(
-      from 0deg,
-      #22d3ee,
-      #3b82f6,
-      #5a54f9,
-      #a78bfa,
-      #ec4899,
-      #f97316,
-      #22d3ee
-    );
-    border-radius: 38%;
-    opacity: 0;
-    filter: blur(34px);
-    transform: scale(0.82) rotate(0deg);
-    transition:
-      opacity 0.45s ease,
-      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
   .image-bg {
-    transition:
-      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-      filter 0.55s ease;
+    opacity: 0.9;
   }
 
   .image-src {
-    transform-origin: 50% 50%;
-    will-change: transform;
-    transition:
-      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-      filter 0.55s ease;
-  }
-
-  &:hover::before {
-    opacity: 0.52;
-    animation: wuhu-hero-aura-spin 7s linear infinite;
+    filter: drop-shadow(0 12px 32px rgba(16, 24, 40, 0.12));
+    transition: filter var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
   }
 
   &:hover .image-src {
-    transform: translate(-50%, -50%) perspective(900px) rotateX(5deg) rotateY(-10deg) scale(1.06);
-    animation: wuhu-hero-neon-pulse 2.4s ease-in-out infinite;
-  }
-
-  &:hover .image-bg {
-    transform: translate(-50%, -50%) scale(1.16);
-    filter: var(--vp-home-hero-image-filter) saturate(1.25);
+    filter: drop-shadow(0 16px 40px rgba(16, 24, 40, 0.16));
   }
 }
 
-.dark .VPHero .image-container:hover::before {
-  opacity: 0.42;
-}
-
-@keyframes wuhu-hero-aura-spin {
-  from {
-    transform: scale(1.05) rotate(0deg);
-  }
-
-  to {
-    transform: scale(1.05) rotate(360deg);
-  }
-}
-
-@keyframes wuhu-hero-neon-pulse {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 8px rgba(90, 84, 249, 0.55))
-      drop-shadow(0 0 20px rgba(34, 211, 238, 0.25))
-      drop-shadow(0 14px 28px rgba(90, 84, 249, 0.28));
-  }
-
-  50% {
-    filter: drop-shadow(0 0 12px rgba(90, 84, 249, 0.8))
-      drop-shadow(0 0 28px rgba(255, 107, 61, 0.35))
-      drop-shadow(0 18px 34px rgba(244, 114, 182, 0.3));
-  }
+.dark .VPHero .image-container .image-src {
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.45));
 }
 
 /* VitePress scopes its max-width rule with a data-v attribute. */
@@ -128,6 +60,63 @@ a {
 
 .VPDoc .demo-grid {
   margin: 18px 0;
+}
+
+/* Demo plugin shell: match the component library's panels instead of the
+   plugin defaults (4px radius, #ddd border, Ant blue active tab). */
+.vp-doc {
+  --coot-demo-box-border: var(--w-color-border, #e2e8f0);
+  --coot-demo-box-code-bg: var(--w-color-surface-subtle, #f8f9fb);
+  --coot-demo-box-code-block-bg: var(--vp-code-block-bg);
+  --coot-demo-box-primary-color: var(--w-color-primary, #5a54f9);
+  --coot-demo-box-title-bg: var(--w-color-surface, #ffffff);
+  --coot-demo-box-message-bg: var(--w-color-surface-elevated, #ffffff);
+  --coot-demo-box-message-border: var(--w-color-border, #e2e8f0);
+  --coot-demo-box-tooltip-bg: var(--w-color-tooltip-bg, #0f172a);
+  --coot-demo-box-tooltip-color: var(--w-color-tooltip-text, #ffffff);
+
+  .vitepress-demo-plugin__container {
+    margin: 16px 0 24px;
+    overflow: hidden;
+    border: 1px solid var(--w-color-border, #e2e8f0);
+    border-radius: var(--w-radius-lg, 12px);
+    background: var(--w-color-surface, #ffffff);
+  }
+
+  .vitepress-demo-plugin__container > .vitepress-demo-plugin-preview {
+    padding: 24px;
+    border-radius: 0;
+  }
+
+  .vitepress-demo-plugin__container > .vitepress-demo-plugin-fold {
+    border-bottom-right-radius: var(--w-radius-lg, 12px);
+    border-bottom-left-radius: var(--w-radius-lg, 12px);
+    border-top-color: var(--w-color-border, #e2e8f0);
+    background: var(--w-color-surface, #ffffff);
+  }
+
+  .vitepress-demo-plugin-lang-tabs,
+  .vitepress-demo-plugin-file-tabs {
+    border-color: var(--w-color-border-subtle, #f1f5f9);
+  }
+
+  .vitepress-demo-plugin__container .vitepress-demo-plugin-active-tab {
+    color: var(--w-color-primary, #5a54f9) !important;
+  }
+
+  .vitepress-demo-plugin-placeholder__container {
+    border-color: var(--w-color-border, #e2e8f0);
+    border-radius: var(--w-radius-lg, 12px);
+  }
+
+  .vitepress-demo-plugin-placeholder__container .loader {
+    border-color: var(--w-color-primary-soft, rgba(90, 84, 249, 0.1));
+    border-top-color: var(--w-color-primary, #5a54f9);
+  }
+
+  .vitepress-demo-plugin-placeholder__container .loading-text {
+    color: var(--w-color-primary, #5a54f9);
+  }
 }
 
 /* Home catalog */

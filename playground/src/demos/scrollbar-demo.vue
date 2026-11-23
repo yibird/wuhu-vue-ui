@@ -15,18 +15,18 @@ const items = [
 ]
 
 const stripItems = [
-  { title: 'Design', tag: 'Figma', color: '#4f46e5' },
-  { title: 'Build', tag: 'Vue', color: '#059669' },
-  { title: 'Review', tag: 'PR', color: '#d97706' },
-  { title: 'Release', tag: 'CI', color: '#0284c7' },
-  { title: 'Monitor', tag: 'Ops', color: '#db2777' },
-  { title: 'Iterate', tag: 'Next', color: '#7c3aed' },
-  { title: 'Analyze', tag: 'Data', color: '#0d9488' },
-  { title: 'Archive', tag: 'S3', color: '#2563eb' },
-  { title: 'Automate', tag: 'Bot', color: '#ca8a04' },
-  { title: 'Scale', tag: 'K8s', color: '#e11d48' },
-  { title: 'Document', tag: 'Docs', color: '#7c3aed' },
-  { title: 'Educate', tag: 'Academy', color: '#0891b2' },
+  { title: 'Design', tag: 'Figma' },
+  { title: 'Build', tag: 'Vue' },
+  { title: 'Review', tag: 'PR' },
+  { title: 'Release', tag: 'CI' },
+  { title: 'Monitor', tag: 'Ops' },
+  { title: 'Iterate', tag: 'Next' },
+  { title: 'Analyze', tag: 'Data' },
+  { title: 'Archive', tag: 'S3' },
+  { title: 'Automate', tag: 'Bot' },
+  { title: 'Scale', tag: 'K8s' },
+  { title: 'Document', tag: 'Docs' },
+  { title: 'Educate', tag: 'Academy' },
 ]
 
 const scrollbarRef = ref<InstanceType<typeof Scrollbar> | null>(null)
@@ -65,12 +65,7 @@ function handleScroll(event: ScrollbarScrollEvent) {
     >
       <Scrollbar height="148px" always class="demo-scrollbar">
         <div class="scroll-strip">
-          <article
-            v-for="item in stripItems"
-            :key="item.title"
-            class="scroll-strip__card"
-            :style="{ '--strip-color': item.color }"
-          >
+          <article v-for="item in stripItems" :key="item.title" class="scroll-strip__card">
             <span class="scroll-strip__tag">{{ item.tag }}</span>
             <strong>{{ item.title }}</strong>
             <span class="scroll-strip__line" />
@@ -106,12 +101,7 @@ function handleScroll(event: ScrollbarScrollEvent) {
           @scroll="handleScroll"
         >
           <div class="scroll-strip">
-            <article
-              v-for="item in stripItems"
-              :key="item.title"
-              class="scroll-strip__card"
-              :style="{ '--strip-color': item.color }"
-            >
+            <article v-for="item in stripItems" :key="item.title" class="scroll-strip__card">
               <span class="scroll-strip__tag">{{ item.tag }}</span>
               <strong>{{ item.title }}</strong>
               <span class="scroll-strip__line" />

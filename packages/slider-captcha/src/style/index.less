@@ -1,11 +1,11 @@
 @import './token.less';
 
 .w-slider-captcha {
-  --w-slider-captcha-radius: var(--w-radius-lg, 12px);
-  --w-slider-captcha-track-bg: var(--w-color-surface-subtle, #f1f5f9);
-  --w-slider-captcha-fill-bg: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
-  --w-slider-captcha-handle-bg: var(--w-color-surface, #ffffff);
-  --w-slider-captcha-handle-color: var(--w-color-text-secondary, #475569);
+  --w-slider-captcha-radius: var(--w-slider-captcha-radius-lg);
+  --w-slider-captcha-track-bg: var(--w-slider-captcha-color-surface-subtle);
+  --w-slider-captcha-fill-bg: var(--w-slider-captcha-color-primary-soft);
+  --w-slider-captcha-handle-bg: var(--w-slider-captcha-color-surface);
+  --w-slider-captcha-handle-color: var(--w-slider-captcha-color-text-secondary);
   --w-slider-captcha-sweep-color: rgba(255, 255, 255, 0.86);
 
   display: flex;
@@ -17,8 +17,8 @@
    * desynchronise the piece from the cutout.
    */
   max-width: none;
-  color: var(--w-color-text, #0f172a);
-  font-family: var(--w-font-family, inherit);
+  color: var(--w-slider-captcha-color-text);
+  font-family: var(--w-slider-captcha-font-family);
   user-select: none;
 
   &__image {
@@ -27,10 +27,10 @@
     overflow: hidden;
     /* Keep the overlay z-index tokens local to the captcha. */
     isolation: isolate;
-    border: 1px solid var(--w-color-border, #e2e8f0);
+    border: 1px solid var(--w-slider-captcha-color-border);
     border-radius: var(--w-slider-captcha-radius);
-    background: var(--w-color-surface-subtle, #f1f5f9);
-    box-shadow: var(--w-shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.06));
+    background: var(--w-slider-captcha-color-surface-subtle);
+    box-shadow: var(--w-slider-captcha-shadow-sm);
   }
 
   &__canvas {
@@ -43,7 +43,8 @@
     left: 0;
     pointer-events: none;
     filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.35));
-    transition: transform var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    transition: transform var(--w-slider-captcha-duration-fast)
+      var(--w-slider-captcha-easing-standard);
     will-change: transform;
   }
 
@@ -51,7 +52,7 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    z-index: var(--w-z-sticky, 10);
+    z-index: var(--w-slider-captcha-z-sticky);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -59,14 +60,14 @@
     height: 30px;
     padding: 0;
     border: 1px solid rgba(255, 255, 255, 0.24);
-    border-radius: var(--w-radius-full, 9999px);
+    border-radius: var(--w-slider-captcha-radius-full);
     background: rgba(15, 23, 42, 0.52);
     color: #ffffff;
     cursor: pointer;
     backdrop-filter: blur(6px);
     transition:
-      background-color var(--w-duration-fast, 120ms) ease,
-      transform var(--w-duration-fast, 120ms) ease;
+      background-color var(--w-slider-captcha-duration-fast) ease,
+      transform var(--w-slider-captcha-duration-fast) ease;
 
     svg {
       width: 16px;
@@ -82,7 +83,8 @@
     }
 
     &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline: var(--w-slider-captcha-focus-ring-width) solid
+        var(--w-slider-captcha-focus-ring-color);
       outline-offset: 2px;
     }
   }
@@ -90,7 +92,7 @@
   &__loading {
     position: absolute;
     inset: 0;
-    z-index: var(--w-z-overlay, 2000);
+    z-index: var(--w-slider-captcha-z-overlay);
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -98,7 +100,7 @@
     gap: 8px;
     background: rgba(15, 23, 42, 0.42);
     color: #ffffff;
-    font-size: var(--w-font-size-xs, 12px);
+    font-size: var(--w-slider-captcha-font-size-xs);
     backdrop-filter: blur(2px);
 
     &::before {
@@ -116,12 +118,12 @@
     height: var(--w-slider-captcha-handle-size, 44px);
     overflow: hidden;
     isolation: isolate;
-    border: 1px solid var(--w-color-border, #e2e8f0);
+    border: 1px solid var(--w-slider-captcha-color-border);
     border-radius: 10px;
     background: var(--w-slider-captcha-track-bg);
     box-shadow:
       inset 0 1px 2px rgba(15, 23, 42, 0.05),
-      inset 0 0 0 1px color-mix(in srgb, var(--w-color-text, #0f172a) 2%, transparent);
+      inset 0 0 0 1px color-mix(in srgb, var(--w-slider-captcha-color-text) 2%, transparent);
     touch-action: none;
   }
 
@@ -133,11 +135,11 @@
     background: linear-gradient(
       90deg,
       var(--w-slider-captcha-fill-bg),
-      var(--w-color-primary-soft-hover, rgba(79, 70, 229, 0.16))
+      var(--w-slider-captcha-color-primary-soft-hover)
     );
     transition:
-      width var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      background-color var(--w-duration-normal, 220ms) ease;
+      width var(--w-slider-captcha-duration-fast) var(--w-slider-captcha-easing-standard),
+      background-color var(--w-slider-captcha-duration-normal) ease;
   }
 
   &__tip {
@@ -147,21 +149,21 @@
     align-items: center;
     justify-content: center;
     padding: 0 12px;
-    color: var(--w-color-primary, #4f46e5);
-    font-size: var(--w-font-size-xs, 12px);
-    font-weight: var(--w-font-weight-medium, 500);
+    color: var(--w-slider-captcha-color-primary);
+    font-size: var(--w-slider-captcha-font-size-xs);
+    font-weight: var(--w-slider-captcha-font-weight-medium);
     letter-spacing: 0.01em;
     line-height: 1.3;
     text-align: center;
     pointer-events: none;
-    transition: opacity var(--w-duration-fast, 120ms) ease;
+    transition: opacity var(--w-slider-captcha-duration-fast) ease;
   }
 
   &__handle {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: var(--w-z-sticky, 10);
+    z-index: var(--w-slider-captcha-z-sticky);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -175,15 +177,15 @@
     box-shadow:
       0 1px 2px rgba(15, 23, 42, 0.06),
       0 4px 10px -4px rgba(15, 23, 42, 0.24),
-      inset 0 0 0 1px color-mix(in srgb, var(--w-color-text, #0f172a) 6%, transparent);
+      inset 0 0 0 1px color-mix(in srgb, var(--w-slider-captcha-color-text) 6%, transparent);
     cursor: grab;
     touch-action: none;
     appearance: none;
     transition:
-      transform var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      color var(--w-duration-fast, 120ms) ease,
-      background-color var(--w-duration-fast, 120ms) ease,
-      box-shadow var(--w-duration-fast, 120ms) ease;
+      transform var(--w-slider-captcha-duration-fast) var(--w-slider-captcha-easing-standard),
+      color var(--w-slider-captcha-duration-fast) ease,
+      background-color var(--w-slider-captcha-duration-fast) ease,
+      box-shadow var(--w-slider-captcha-duration-fast) ease;
 
     svg {
       width: 18px;
@@ -191,12 +193,12 @@
     }
 
     &:hover:not(:disabled) {
-      background: var(--w-color-surface-hover, #f1f5f9);
-      color: var(--w-color-primary, #4f46e5);
+      background: var(--w-slider-captcha-color-surface-hover);
+      color: var(--w-slider-captcha-color-primary);
       box-shadow:
         0 1px 2px rgba(15, 23, 42, 0.06),
         0 6px 14px -6px rgba(15, 23, 42, 0.28),
-        inset 0 0 0 1px var(--w-color-primary-soft-hover, rgba(79, 70, 229, 0.16));
+        inset 0 0 0 1px var(--w-slider-captcha-color-primary-soft-hover);
     }
 
     &:active {
@@ -204,7 +206,8 @@
     }
 
     &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+      outline: var(--w-slider-captcha-focus-ring-width) solid
+        var(--w-slider-captcha-focus-ring-color);
       outline-offset: -2px;
     }
 
@@ -215,7 +218,7 @@
 
   &.is-dragging {
     .w-slider-captcha__slider {
-      border-color: var(--w-color-primary, #4f46e5);
+      border-color: var(--w-slider-captcha-color-primary);
     }
 
     .w-slider-captcha__handle,
@@ -227,22 +230,20 @@
 
   &.is-success {
     .w-slider-captcha__slider {
-      border-color: var(--w-slider-captcha-success-text, #52c41a);
+      border-color: var(--w-slider-captcha-success-text, #047857);
     }
 
     .w-slider-captcha__fill {
-      background: color-mix(in srgb, var(--w-slider-captcha-success-text, #52c41a) 8%, transparent);
+      background: color-mix(in srgb, var(--w-slider-captcha-success-text, #047857) 8%, transparent);
       transition:
-        width var(--w-duration-slow, 400ms)
-          var(--w-easing-emphasized, cubic-bezier(0.22, 1, 0.36, 1)),
-        background-color var(--w-duration-normal, 220ms) ease;
+        width var(--w-slider-captcha-duration-slow) var(--w-slider-captcha-easing-emphasized),
+        background-color var(--w-slider-captcha-duration-normal) ease;
     }
 
     .w-slider-captcha__handle {
       transition:
-        transform var(--w-duration-slow, 400ms)
-          var(--w-easing-emphasized, cubic-bezier(0.22, 1, 0.36, 1)),
-        color var(--w-duration-fast, 120ms) ease;
+        transform var(--w-slider-captcha-duration-slow) var(--w-slider-captcha-easing-emphasized),
+        color var(--w-slider-captcha-duration-fast) ease;
     }
 
     .w-slider-captcha__slider::after {
@@ -251,7 +252,7 @@
       top: -20%;
       bottom: -20%;
       left: 0;
-      z-index: var(--w-z-sticky, 10);
+      z-index: var(--w-slider-captcha-z-sticky);
       width: 42%;
       background: linear-gradient(
         90deg,
@@ -262,27 +263,27 @@
       opacity: 0;
       pointer-events: none;
       transform: translateX(-120%) skewX(-12deg);
-      animation: w-slider-captcha-sweep 900ms var(--w-easing-standard, ease) 60ms 1;
+      animation: w-slider-captcha-sweep 900ms var(--w-slider-captcha-easing-standard) 60ms 1;
     }
 
     /* The icon keeps the semantic success colour. */
     .w-slider-captcha__tip {
-      color: var(--w-slider-captcha-success-text, #52c41a);
+      color: var(--w-slider-captcha-success-text, #047857);
     }
 
     .w-slider-captcha__handle {
-      color: var(--w-color-success, #047857);
+      color: var(--w-slider-captcha-color-success);
     }
   }
 
   &.is-error {
     .w-slider-captcha__slider {
       border-color: var(--w-slider-captcha-danger-text, #b91c1c);
-      animation: w-slider-captcha-shake 420ms var(--w-easing-standard, ease);
+      animation: w-slider-captcha-shake 420ms var(--w-slider-captcha-easing-standard);
     }
 
     .w-slider-captcha__fill {
-      background: var(--w-color-danger-soft, rgba(220, 38, 38, 0.1));
+      background: var(--w-slider-captcha-color-danger-soft);
     }
 
     .w-slider-captcha__tip {
@@ -290,12 +291,12 @@
     }
 
     .w-slider-captcha__handle {
-      color: var(--w-color-danger, #dc2626);
+      color: var(--w-slider-captcha-color-danger-text);
     }
   }
 
   &.is-disabled {
-    opacity: var(--w-opacity-disabled, 0.55);
+    opacity: var(--w-slider-captcha-opacity-disabled);
   }
 
   &__live {

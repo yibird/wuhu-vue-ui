@@ -179,6 +179,7 @@ interface DependencyLine {
 
 const HEADER_HEIGHT = 56
 const DRAG_THRESHOLD = 4
+const DEPENDENCY_CORNER_RADIUS = 8
 const ROW_OVERSCAN = 6
 const COLUMN_OVERSCAN = 2
 /**
@@ -555,9 +556,8 @@ function taskColorStyle(color: string): CSSProperties {
 
   const style = {
     '--w-gantt-task-color': color,
-    '--w-gantt-task-soft':
-      colorWithAlpha(color, 0.14) ?? 'var(--w-color-primary-soft, rgba(79, 70, 229, 0.1))',
-    '--w-gantt-task-border': colorWithAlpha(color, 0.38) ?? 'var(--w-color-border-strong, #cbd5e1)',
+    '--w-gantt-task-soft': colorWithAlpha(color, 0.14) ?? 'var(--w-gantt-color-primary-soft)',
+    '--w-gantt-task-border': colorWithAlpha(color, 0.38) ?? 'var(--w-gantt-color-border-strong)',
   } as CSSProperties
 
   if (colorStyleCache.size >= 256) colorStyleCache.clear()
@@ -772,7 +772,26 @@ const dependencyLines = computed<DependencyLine[]>(() => {
         path = `M ${fromX} ${fromY} C ${midX} ${fromY}, ${midX} ${toY}, ${toX} ${toY}`
       } else {
         const detourX = Math.max(fromX, toX) + 22
-        path = `M ${fromX} ${fromY} H ${detourX} V ${toY} H ${toX}`
+        const verticalSpan = Math.abs(toY - fromY)
+        const radius = Math.min(
+          DEPENDENCY_CORNER_RADIUS,
+          verticalSpan / 2,
+          (detourX - Math.max(fromX, toX)) / 2,
+          (detourX - toX) / 2,
+        )
+        const direction = toY >= fromY ? 1 : -1
+
+        path =
+          radius >= 1
+            ? [
+                `M ${fromX} ${fromY}`,
+                `H ${detourX - radius}`,
+                `Q ${detourX} ${fromY} ${detourX} ${fromY + direction * radius}`,
+                `V ${toY - direction * radius}`,
+                `Q ${detourX} ${toY} ${detourX - radius} ${toY}`,
+                `H ${toX}`,
+              ].join(' ')
+            : `M ${fromX} ${fromY} H ${detourX} V ${toY} H ${toX}`
       }
 
       lines.push({

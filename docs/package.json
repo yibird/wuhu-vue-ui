@@ -1,0 +1,49 @@
+{
+  "name": "@wuhu-vue-ui/docs",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev --port 9191",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "predev": "node ../scripts/generate-file-viewer-samples.mjs --docs-only",
+    "prebuild": "node ../scripts/generate-file-viewer-samples.mjs --docs-only"
+  },
+  "dependencies": {
+    "@wuhu-vue-ui/command-menu": "workspace:*",
+    "@wuhu-vue-ui/context-menu": "workspace:*",
+    "@wuhu-vue-ui/copy": "workspace:*",
+    "@wuhu-vue-ui/cropper": "workspace:*",
+    "@wuhu-vue-ui/error-boundary": "workspace:*",
+    "@wuhu-vue-ui/exception": "workspace:*",
+    "@wuhu-vue-ui/file-viewer": "workspace:*",
+    "@wuhu-vue-ui/gantt": "workspace:*",
+    "@wuhu-vue-ui/gradient-text": "workspace:*",
+    "@wuhu-vue-ui/highlight": "workspace:*",
+    "@wuhu-vue-ui/icon-picker": "workspace:*",
+    "@wuhu-vue-ui/img-comparison-slider": "workspace:*",
+    "@wuhu-vue-ui/json-viewer": "workspace:*",
+    "@wuhu-vue-ui/lazy-container": "workspace:*",
+    "@wuhu-vue-ui/loading": "workspace:*",
+    "@wuhu-vue-ui/motion-group": "workspace:*",
+    "@wuhu-vue-ui/number-ticker": "workspace:*",
+    "@wuhu-vue-ui/org-tree": "workspace:*",
+    "@wuhu-vue-ui/resize-container": "workspace:*",
+    "@wuhu-vue-ui/ripple": "workspace:*",
+    "@wuhu-vue-ui/scrollbar": "workspace:*",
+    "@wuhu-vue-ui/search-panel": "workspace:*",
+    "@wuhu-vue-ui/slider-captcha": "workspace:*",
+    "@wuhu-vue-ui/sliding-highlight": "workspace:*",
+    "@wuhu-vue-ui/time": "workspace:*",
+    "@wuhu-vue-ui/view": "workspace:*",
+    "antdv-next": "^1.7.0",
+    "pdfjs-dist": "^6.4.299",
+    "vue": "^3.5.44"
+  },
+  "devDependencies": {
+    "vitepress": "1.6.4",
+    "vitepress-demo-plugin": "1.8.0",
+    "vitepress-plugin-group-icons": "1.8.1"
+  }
+}

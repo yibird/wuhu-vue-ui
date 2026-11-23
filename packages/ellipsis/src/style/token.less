@@ -1,0 +1,47 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-ellipsis {
+  --w-ellipsis-color-text: #0f172a;
+  --w-ellipsis-font-family: inherit;
+  --w-ellipsis-font-size-md: 14px;
+  --w-ellipsis-line-height-normal: 1.55;
+  --w-ellipsis-focus-ring-width: 2px;
+  --w-ellipsis-focus-ring-color: #4f46e5;
+  --w-ellipsis-color-primary: #4f46e5;
+  --w-ellipsis-font-size-sm: 13px;
+  --w-ellipsis-font-weight-medium: 500;
+  --w-ellipsis-duration-fast: 120ms;
+  --w-ellipsis-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-ellipsis-color-primary-hover: #473fce;
+  --w-ellipsis-color-primary-active: #4139bc;
+  --w-ellipsis-radius-xs: 4px;
+  --w-ellipsis-z-dropdown: 1000;
+  --w-ellipsis-radius-md: 8px;
+  --w-ellipsis-color-tooltip-bg: rgba(15, 23, 42, 0.94);
+  --w-ellipsis-shadow-lg:
+    0 2px 4px rgba(15, 23, 42, 0.04), 0 16px 40px -16px rgba(15, 23, 42, 0.22);
+  --w-ellipsis-color-tooltip-text: #ffffff;
+  --w-ellipsis-font-size-xs: 12px;
+  --w-ellipsis-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-w-theme='dark'] .w-ellipsis {
+  --w-ellipsis-color-text: #e2e8f0;
+  --w-ellipsis-focus-ring-color: #8e98f9;
+  --w-ellipsis-color-primary: #818cf8;
+  --w-ellipsis-color-primary-hover: #8e98f9;
+  --w-ellipsis-color-primary-active: #98a1f9;
+  --w-ellipsis-color-tooltip-bg: rgba(226, 232, 240, 0.96);
+  --w-ellipsis-color-tooltip-text: #0f172a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-ellipsis {
+    --w-ellipsis-color-text: #e2e8f0;
+    --w-ellipsis-focus-ring-color: #8e98f9;
+    --w-ellipsis-color-primary: #818cf8;
+    --w-ellipsis-color-primary-hover: #8e98f9;
+    --w-ellipsis-color-primary-active: #98a1f9;
+    --w-ellipsis-color-tooltip-bg: rgba(226, 232, 240, 0.96);
+    --w-ellipsis-color-tooltip-text: #0f172a;
+  }
+}

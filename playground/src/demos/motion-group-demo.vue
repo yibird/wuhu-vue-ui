@@ -25,7 +25,7 @@ const statusWeight: Record<CardStatus, number> = {
   done: 2,
 }
 
-const animations: MotionGroupAnimation[] = ['fade', 'slide', 'scale', 'flip', 'bounce', 'reveal']
+const animations: MotionGroupAnimation[] = ['fade', 'slide', 'flip', 'bounce']
 const animation = ref<MotionGroupAnimation>('fade')
 const cards = ref<StatusCard[]>([
   { id: 1, title: '需求评审', owner: 'Lin', status: 'todo' },
@@ -71,7 +71,7 @@ function shuffleCards() {
 
 <template>
   <div class="demo-grid">
-    <DemoCard title="动画预设与重排" description="切换 6 套预设，观察重排、进入与离开动画。" wide>
+    <DemoCard title="动画预设与重排" description="切换 4 套预设，观察进入与离开动画。" wide>
       <div class="sortable-demo">
         <div class="sortable-demo__controls">
           <div class="segmented" role="group" aria-label="动画预设">
@@ -135,7 +135,7 @@ function shuffleCards() {
         </button>
       </div>
 
-      <MotionGroup animation="scale" :duration="280" tag="div" class="sortable-filter-list">
+      <MotionGroup animation="fade" :duration="280" tag="div" class="sortable-filter-list">
         <article
           v-for="card in filteredCards"
           :key="card.id"

@@ -13,3 +13,5 @@ playground/dist/
 .screenshots/
 
 .agent-tests/
+
+docs/public/samples/

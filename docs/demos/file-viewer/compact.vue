@@ -52,16 +52,12 @@ const markdownOptions = { markdown: { baseUrl: '/samples/' } }
   position: relative;
   padding: 16px;
   border: 1px solid var(--w-color-border);
-  border-radius: var(--w-radius-panel, 16px);
+  border-radius: var(--w-radius-card, var(--w-radius-lg, 12px));
   background: var(--w-color-surface);
-  box-shadow: var(--w-shadow-sm);
-  transition:
-    border-color var(--w-duration-normal, 220ms) var(--w-easing-standard, ease),
-    box-shadow var(--w-duration-normal, 220ms) var(--w-easing-standard, ease);
+  transition: border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
   &:hover {
     border-color: var(--w-color-border-hover, var(--w-color-border-strong));
-    box-shadow: var(--w-shadow-md);
   }
 }
 
@@ -102,9 +98,8 @@ const markdownOptions = { markdown: { baseUrl: '/samples/' } }
 
   small {
     color: var(--w-color-text-tertiary);
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.08em;
   }
 
   &:hover {

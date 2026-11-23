@@ -10,4 +10,6 @@ export type {
   CropperProps,
   CropperReadyEvent,
   CropperSlotProps,
+  CropperToolbar,
+  CropperToolbarOptions,
 } from './src/types'

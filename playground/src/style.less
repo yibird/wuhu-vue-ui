@@ -7,10 +7,7 @@ html {
 
 body {
   margin: 0;
-  background:
-    radial-gradient(900px 560px at 8% -10%, rgba(79, 70, 229, 0.09), transparent 60%),
-    radial-gradient(760px 520px at 96% 2%, rgba(14, 165, 233, 0.07), transparent 55%),
-    var(--w-color-bg);
+  background: var(--w-color-bg);
   color: var(--w-color-text);
   font-family: var(--w-font-family);
   font-size: 14px;
@@ -312,51 +309,41 @@ a {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  height: 40px;
-  padding: 0 16px;
+  height: 38px;
+  padding: 0 14px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--w-radius-md, 8px);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
   appearance: none;
   transition:
-    transform var(--w-duration-fast) ease,
-    box-shadow var(--w-duration-fast) ease,
-    background-color var(--w-duration-fast) ease,
-    border-color var(--w-duration-fast) ease;
+    background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+    border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+    color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
   svg {
     width: 18px;
     height: 18px;
   }
 
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
   &:focus-visible {
-    outline: 2px solid var(--w-color-primary);
-    outline-offset: 2px;
+    outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+    outline-offset: var(--w-focus-ring-offset, 2px);
   }
 
   &--primary {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    color: #ffffff;
-    box-shadow:
-      0 8px 20px -8px rgba(79, 70, 229, 0.55),
-      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    background: var(--w-color-primary);
+    color: var(--w-color-on-primary);
 
     &:hover {
-      box-shadow:
-        0 12px 26px -8px rgba(79, 70, 229, 0.62),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      background: var(--w-color-primary-hover);
+    }
+
+    &:active {
+      background: var(--w-color-primary-active);
     }
   }
 
@@ -367,14 +354,14 @@ a {
 
     &:hover {
       border-color: var(--w-color-border-strong);
-      background: var(--w-color-surface-hover);
+      background: var(--w-color-interactive-hover);
     }
   }
 
   &--danger {
     border-color: var(--w-color-danger-soft);
     background: var(--w-color-danger-soft);
-    color: #b91c1c;
+    color: var(--w-color-danger-text);
   }
 
   &--small {
@@ -1221,43 +1208,28 @@ a {
 }
 
 .ticker-card {
-  position: relative;
-  overflow: hidden;
-  padding: 20px;
-  border-radius: 14px;
-  background:
-    radial-gradient(420px 180px at 110% -10%, rgba(129, 140, 248, 0.38), transparent 60%),
-    linear-gradient(135deg, #111827, #312e81 70%, #1e1b4b);
-  color: #ffffff;
-
-  &::after {
-    position: absolute;
-    top: -40px;
-    right: -20px;
-    width: 140px;
-    height: 140px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 9999px;
-    content: '';
-  }
+  padding: 18px;
+  border: 1px solid var(--w-color-border);
+  border-radius: var(--w-radius-card, var(--w-radius-lg, 12px));
+  background: var(--w-color-surface);
 
   &__label {
-    color: rgba(226, 232, 240, 0.64);
-    font-size: 10px;
-    letter-spacing: 0.04em;
+    color: var(--w-color-text-tertiary);
+    font-size: var(--w-font-size-xs);
   }
 
   &__value {
     margin: 8px 0 6px;
-    font-size: clamp(32px, 4vw, 44px);
-    font-weight: 700;
-    letter-spacing: -0.045em;
-    line-height: 1;
+    font-size: clamp(30px, 4vw, 40px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
   }
 
   &__meta {
-    color: #6ee7b7;
-    font-size: 10px;
+    color: var(--w-color-success-text);
+    font-size: var(--w-font-size-xs);
   }
 }
 
@@ -1623,9 +1595,8 @@ a {
   position: relative;
   padding: 14px;
   border: 1px solid var(--w-color-border);
-  border-radius: 24px;
+  border-radius: var(--w-radius-card, var(--w-radius-lg, 12px));
   background: var(--w-color-surface);
-  box-shadow: var(--w-shadow-md);
 }
 
 .viewer-card__controls {
@@ -1932,20 +1903,20 @@ a {
   min-width: 0;
   padding: 14px;
   border: 1px solid var(--w-color-border);
-  border-radius: 14px;
+  border-radius: var(--w-radius-card, var(--w-radius-lg, 12px));
   background: var(--w-color-surface);
-  box-shadow: var(--w-shadow-sm);
-  transition:
-    border-color var(--w-duration-normal) ease,
-    background-color var(--w-duration-normal) ease;
+  transition: border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+
+  &:hover {
+    border-color: var(--w-color-border-strong);
+  }
 
   &__dot {
-    width: 9px;
-    height: 9px;
+    width: 6px;
+    height: 6px;
     flex: none;
-    border-radius: 9999px;
+    border-radius: var(--w-radius-full, 9999px);
     background: var(--w-color-text-tertiary);
-    box-shadow: 0 0 0 4px var(--w-color-surface-subtle);
   }
 
   &__main {
@@ -1969,28 +1940,16 @@ a {
     }
   }
 
-  &--doing {
-    border-color: var(--w-color-info-soft);
-    background: var(--w-color-info-soft);
-
-    .status-card__dot {
-      background: var(--w-color-info);
-    }
+  &--doing .status-card__dot {
+    background: var(--w-color-info);
   }
 
-  &--todo {
-    .status-card__dot {
-      background: var(--w-color-warning);
-    }
+  &--todo .status-card__dot {
+    background: var(--w-color-warning);
   }
 
-  &--done {
-    border-color: var(--w-color-success-soft);
-    background: var(--w-color-success-soft);
-
-    .status-card__dot {
-      background: var(--w-color-success);
-    }
+  &--done .status-card__dot {
+    background: var(--w-color-success);
   }
 }
 

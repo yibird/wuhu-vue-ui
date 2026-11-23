@@ -20,7 +20,7 @@ const labels: Record<CardStatus, string> = {
 }
 
 const weight: Record<CardStatus, number> = { doing: 0, todo: 1, done: 2 }
-const animations: MotionGroupAnimation[] = ['fade', 'slide', 'scale', 'flip', 'bounce', 'reveal']
+const animations: MotionGroupAnimation[] = ['fade', 'slide', 'flip', 'bounce']
 const animation = ref<MotionGroupAnimation>('fade')
 const cards = ref<StatusCard[]>([
   { id: 1, title: '需求评审', owner: 'Lin', status: 'todo' },
@@ -39,15 +39,23 @@ function advance(card: StatusCard) {
   reorder()
 }
 
-function shuffle() {
-  const next = [...cards.value]
-  for (let index = next.length - 1; index > 0; index -= 1) {
-    const target = Math.floor(Math.random() * (index + 1))
-    const current = next[index]!
-    next[index] = next[target]!
-    next[target] = current
-  }
-  cards.value = next
+let nextId = 6
+
+function addCard() {
+  cards.value = [
+    ...cards.value,
+    {
+      id: nextId,
+      title: `新增任务 ${nextId - 5}`,
+      owner: '陈默',
+      status: 'todo',
+    },
+  ]
+  nextId += 1
+}
+
+function removeCard() {
+  cards.value = cards.value.slice(0, -1)
 }
 </script>
 
@@ -56,12 +64,14 @@ function shuffle() {
     <div class="sortable-demo__controls">
       <Segmented v-model:value="animation" :options="animations" />
       <div class="sortable-demo__actions">
-        <Button @click="shuffle">随机排序</Button>
+        <Button @click="addCard">添加任务</Button>
+        <Button @click="removeCard">移除一项</Button>
         <Button @click="reorder">按状态排序</Button>
       </div>
     </div>
 
     <MotionGroup
+      :key="animation"
       :animation="animation"
       :duration="320"
       appear

@@ -5,9 +5,8 @@ import { Cropper } from '@wuhu-vue-ui/cropper'
 <template>
   <Cropper
     src="/samples/banner.png"
-    alt="禁止旋转裁剪"
     :height="280"
-    :rotatable="false"
+    :toolbar="{ rotatable: false }"
     :initial-coverage="0.7"
   />
 </template>

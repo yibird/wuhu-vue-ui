@@ -1,10 +1,10 @@
 # Motion Group 排序动画
 
-基于 TransitionGroup 的列表重排动画，内置 6 套预设并支持过滤进出场。
+基于 TransitionGroup 的列表重排动画，内置 4 套预设并支持过滤进出场。
 
 ## 动画预设与重排
 
-切换 6 套预设，观察重排、进入与离开动画。
+4 套预设的差异主要在进入 / 离开动画：切换预设会重新播放入场，添加 / 移除任务可查看离场；列表重排本身统一使用 FLIP 位移动画。
 
 <demo vue="../demos/motion-group/presets.vue" />
 
@@ -42,16 +42,16 @@
 
 ### Props
 
-| 属性            | 类型                                                             | 默认值       | 说明                             |
-| --------------- | ---------------------------------------------------------------- | ------------ | -------------------------------- |
-| `animation`     | `'fade' \| 'slide' \| 'scale' \| 'flip' \| 'bounce' \| 'reveal'` | `'fade'`     | 内置动画预设                     |
-| `direction`     | `'horizontal' \| 'vertical'`                                     | `'vertical'` | `slide` 预设方向                 |
-| `tag`           | `string`                                                         | `'div'`      | 包装标签                         |
-| `appear`        | `boolean`                                                        | `false`      | 首次渲染是否播放动画             |
-| `duration`      | `number`                                                         | `260`        | 进入 / 离开动画时长（ms）        |
-| `moveDuration`  | `number`                                                         | `duration`   | FLIP 位移动画时长（ms）          |
-| `absoluteLeave` | `boolean`                                                        | `true`       | 离场项脱离文档流，剩余项立即补位 |
-| `disabled`      | `boolean`                                                        | `false`      | 关闭动画但保留列表功能           |
+| 属性            | 类型                                      | 默认值       | 说明                             |
+| --------------- | ----------------------------------------- | ------------ | -------------------------------- |
+| `animation`     | `'fade' \| 'slide' \| 'flip' \| 'bounce'` | `'fade'`     | 内置动画预设                     |
+| `direction`     | `'horizontal' \| 'vertical'`              | `'vertical'` | `slide` 预设方向                 |
+| `tag`           | `string`                                  | `'div'`      | 包装标签                         |
+| `appear`        | `boolean`                                 | `false`      | 首次渲染是否播放动画             |
+| `duration`      | `number`                                  | `260`        | 进入 / 离开动画时长（ms）        |
+| `moveDuration`  | `number`                                  | `duration`   | FLIP 位移动画时长（ms）          |
+| `absoluteLeave` | `boolean`                                 | `true`       | 离场项脱离文档流，剩余项立即补位 |
+| `disabled`      | `boolean`                                 | `false`      | 关闭动画但保留列表功能           |
 
 ### Emits
 
@@ -82,7 +82,7 @@
 | 类名                                                                                        | 说明           |
 | ------------------------------------------------------------------------------------------- | -------------- |
 | `.w-motion-group`                                                                           | 根容器         |
-| `.w-motion-group--fade/slide/scale/flip/bounce/reveal`                                      | 动画预设修饰类 |
+| `.w-motion-group--fade/slide/flip/bounce`                                                   | 动画预设修饰类 |
 | `.w-motion-group--horizontal/vertical`                                                      | 方向修饰类     |
 | `.w-motion-group--absolute-leave`                                                           | 离场项绝对定位 |
 | `.w-motion-group--disabled`                                                                 | 禁用动画       |

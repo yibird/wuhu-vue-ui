@@ -35,6 +35,7 @@ export default defineConfig({
     },
     nav: [
       { text: '组件', link: '/components/scrollbar' },
+      { text: '场景', link: '/scenarios/' },
       { text: '指南', link: '/guide/getting-started' },
     ],
     sidebar: [

@@ -1,3 +1,5 @@
+@import './token.less';
+
 .w-error-boundary {
   min-width: 0;
 
@@ -17,17 +19,13 @@
     gap: 10px;
     min-height: 180px;
     padding: 32px 24px;
-    border: 1px dashed var(--w-color-danger-soft, rgba(220, 38, 38, 0.1));
-    border-radius: var(--w-radius-lg, 12px);
+    border: 1px dashed var(--w-error-boundary-color-danger-soft);
+    border-radius: var(--w-error-boundary-radius-lg);
     background:
-      radial-gradient(
-        circle at 50% 0%,
-        var(--w-color-danger-soft, rgba(220, 38, 38, 0.1)),
-        transparent 65%
-      ),
-      var(--w-color-surface, #fff);
-    color: var(--w-color-text, #0f172a);
-    font-family: var(--w-font-family, inherit);
+      radial-gradient(circle at 50% 0%, var(--w-error-boundary-color-danger-soft), transparent 65%),
+      var(--w-error-boundary-color-surface);
+    color: var(--w-error-boundary-color-text);
+    font-family: var(--w-error-boundary-font-family);
     text-align: center;
   }
 
@@ -38,9 +36,9 @@
     width: 44px;
     height: 44px;
     margin-bottom: 2px;
-    border-radius: var(--w-radius-full, 9999px);
-    background: var(--w-color-danger-soft, rgba(220, 38, 38, 0.1));
-    color: var(--w-color-danger, #dc2626);
+    border-radius: var(--w-error-boundary-radius-full);
+    background: var(--w-error-boundary-color-danger-soft);
+    color: var(--w-error-boundary-color-danger);
 
     svg {
       width: 24px;
@@ -50,17 +48,17 @@
 
   &__title {
     margin: 0;
-    font-size: var(--w-font-size-lg, 16px);
-    font-weight: var(--w-font-weight-semibold, 600);
-    line-height: var(--w-line-height-tight, 1.25);
+    font-size: var(--w-error-boundary-font-size-lg);
+    font-weight: var(--w-error-boundary-font-weight-semibold);
+    line-height: var(--w-error-boundary-line-height-tight);
   }
 
   &__description {
     max-width: 440px;
     margin: 0;
-    color: var(--w-color-text-secondary, #475569);
-    font-size: var(--w-font-size-sm, 13px);
-    line-height: var(--w-line-height-normal, 1.55);
+    color: var(--w-error-boundary-color-text-secondary);
+    font-size: var(--w-error-boundary-font-size-sm);
+    line-height: var(--w-error-boundary-line-height-normal);
   }
 
   &__details {
@@ -69,16 +67,16 @@
     margin: 4px 0 6px;
     padding: 10px 12px;
     overflow: auto;
-    border: 1px solid var(--w-color-border, #e2e8f0);
-    border-radius: var(--w-radius-sm, 6px);
+    border: 1px solid var(--w-error-boundary-color-border);
+    border-radius: var(--w-error-boundary-radius-sm);
     background: color-mix(
       in srgb,
-      var(--w-color-surface-hover, #f1f5f9) 45%,
-      var(--w-color-surface, #ffffff)
+      var(--w-error-boundary-color-surface-hover) 45%,
+      var(--w-error-boundary-color-surface)
     );
-    color: var(--w-color-text-secondary, #475569);
-    font-family: var(--w-font-family-mono, monospace);
-    font-size: var(--w-font-size-xs, 12px);
+    color: var(--w-error-boundary-color-text-secondary);
+    font-family: var(--w-error-boundary-font-family-mono);
+    font-size: var(--w-error-boundary-font-size-xs);
     line-height: 1.5;
     text-align: left;
     white-space: pre-wrap;
@@ -88,26 +86,27 @@
   &__reset {
     margin-top: 4px;
     padding: 7px 16px;
-    border: 1px solid var(--w-color-primary, #4f46e5);
-    border-radius: var(--w-radius-sm, 6px);
-    background: var(--w-color-surface, #fff);
-    color: var(--w-color-primary, #4f46e5);
+    border: 1px solid var(--w-error-boundary-color-primary);
+    border-radius: var(--w-error-boundary-radius-sm);
+    background: var(--w-error-boundary-color-surface);
+    color: var(--w-error-boundary-color-primary);
     font: inherit;
-    font-size: var(--w-font-size-sm, 13px);
-    font-weight: var(--w-font-weight-medium, 500);
+    font-size: var(--w-error-boundary-font-size-sm);
+    font-weight: var(--w-error-boundary-font-weight-medium);
     cursor: pointer;
     transition:
-      background-color var(--w-duration-fast, 120ms) ease,
-      border-color var(--w-duration-fast, 120ms) ease;
+      background-color var(--w-error-boundary-duration-fast) ease,
+      border-color var(--w-error-boundary-duration-fast) ease;
 
     &:hover {
-      background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
-      border-color: var(--w-color-primary, #4f46e5);
+      background: var(--w-error-boundary-color-primary-soft);
+      border-color: var(--w-error-boundary-color-primary);
     }
 
     &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
-      outline-offset: var(--w-focus-ring-offset, 2px);
+      outline: var(--w-error-boundary-focus-ring-width) solid
+        var(--w-error-boundary-focus-ring-color);
+      outline-offset: var(--w-error-boundary-focus-ring-offset);
     }
   }
 }

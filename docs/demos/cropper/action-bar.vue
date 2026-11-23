@@ -2,22 +2,21 @@
 import { ref } from 'vue'
 import { Cropper } from '@wuhu-vue-ui/cropper'
 
-const showActionBar = ref(true)
+const toolbarEnabled = ref(true)
 </script>
 
 <template>
   <div class="cropper-action-demo">
     <label class="cropper-action-demo__toggle">
-      <input v-model="showActionBar" type="checkbox" />
+      <input v-model="toolbarEnabled" type="checkbox" />
       <span>显示内置操作栏</span>
     </label>
 
     <Cropper
       src="/samples/banner.png"
-      alt="内置操作栏示例"
       :height="340"
       :initial-coverage="0.72"
-      :show-action-bar="showActionBar"
+      :toolbar="toolbarEnabled"
     />
   </div>
 </template>

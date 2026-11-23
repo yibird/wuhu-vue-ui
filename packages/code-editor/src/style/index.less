@@ -1,31 +1,33 @@
+@import './token.less';
+
 .w-code-editor {
   position: relative;
   display: block;
   box-sizing: border-box;
   overflow: hidden;
-  border: 1px solid var(--w-color-border, #e2e8f0);
-  border-radius: var(--w-radius-lg, 12px);
-  background: var(--w-color-surface, #fff);
-  color: var(--w-color-text, #0f172a);
+  border: 1px solid var(--w-code-editor-color-border);
+  border-radius: var(--w-code-editor-radius-lg);
+  background: var(--w-code-editor-color-surface);
+  color: var(--w-code-editor-color-text);
   font-family:
-    var(--w-font-family-mono, ui-monospace), SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--w-font-size-sm, 13px);
+    var(--w-code-editor-font-family-mono), SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--w-code-editor-font-size-sm);
   transition:
-    border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-    box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+    border-color var(--w-code-editor-duration-fast) var(--w-code-editor-easing-standard),
+    box-shadow var(--w-code-editor-duration-fast) var(--w-code-editor-easing-standard);
 
   &:focus-within {
     border-color: color-mix(
       in srgb,
-      var(--w-color-primary, #4f46e5) 40%,
-      var(--w-color-border, #e2e8f0)
+      var(--w-code-editor-color-primary) 40%,
+      var(--w-code-editor-color-border)
     );
-    box-shadow: 0 0 0 3px var(--w-color-primary-soft, rgba(79, 70, 229, 0.16));
+    box-shadow: 0 0 0 3px var(--w-code-editor-color-primary-soft);
   }
 
   &.is-disabled {
     cursor: not-allowed;
-    opacity: var(--w-opacity-disabled, 0.55);
+    opacity: var(--w-code-editor-opacity-disabled);
   }
 
   &__container {
@@ -44,17 +46,17 @@
     justify-content: center;
     gap: 10px;
     padding: 16px;
-    background: var(--w-color-surface, #fff);
-    color: var(--w-color-text-tertiary, #5b6678);
-    font-family: var(--w-font-family, inherit);
-    font-size: var(--w-font-size-xs, 12px);
+    background: var(--w-code-editor-color-surface);
+    color: var(--w-code-editor-color-text-tertiary);
+    font-family: var(--w-code-editor-font-family);
+    font-size: var(--w-code-editor-font-size-xs);
     letter-spacing: -0.004em;
     text-align: center;
   }
 
   &__error {
     flex-direction: column;
-    color: var(--w-color-danger, #dc2626);
+    color: var(--w-code-editor-color-danger);
   }
 
   &__error-text {
@@ -65,21 +67,21 @@
   &__retry {
     min-height: 28px;
     padding: 4px 12px;
-    border: 1px solid var(--w-color-border, #e2e8f0);
-    border-radius: var(--w-radius-md, 8px);
-    background: var(--w-color-surface, #fff);
-    color: var(--w-color-text, #0f172a);
+    border: 1px solid var(--w-code-editor-color-border);
+    border-radius: var(--w-code-editor-radius-md);
+    background: var(--w-code-editor-color-surface);
+    color: var(--w-code-editor-color-text);
     font: inherit;
     line-height: 1.5;
     cursor: pointer;
     transition:
-      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      transform var(--w-duration-press, 80ms) var(--w-easing-standard, ease);
+      background-color var(--w-code-editor-duration-fast) var(--w-code-editor-easing-standard),
+      border-color var(--w-code-editor-duration-fast) var(--w-code-editor-easing-standard),
+      transform var(--w-code-editor-duration-press) var(--w-code-editor-easing-standard);
 
     &:hover {
-      background: var(--w-color-surface-hover, #f1f5f9);
-      border-color: var(--w-color-border-strong, #cbd5e1);
+      background: var(--w-code-editor-color-surface-hover);
+      border-color: var(--w-code-editor-color-border-strong);
     }
 
     &:active {
@@ -87,18 +89,18 @@
     }
 
     &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
-      outline-offset: var(--w-focus-ring-offset, 2px);
+      outline: var(--w-code-editor-focus-ring-width) solid var(--w-code-editor-focus-ring-color);
+      outline-offset: var(--w-code-editor-focus-ring-offset);
     }
   }
 
   &__spinner {
     width: 15px;
     height: 15px;
-    border: 2px solid var(--w-color-border, #e2e8f0);
-    border-top-color: var(--w-color-primary, #4f46e5);
+    border: 2px solid var(--w-code-editor-color-border);
+    border-top-color: var(--w-code-editor-color-primary);
     border-radius: 50%;
-    animation: w-code-editor-spin var(--w-duration-spinner, 800ms) linear infinite;
+    animation: w-code-editor-spin var(--w-code-editor-duration-spinner) linear infinite;
   }
 }
 

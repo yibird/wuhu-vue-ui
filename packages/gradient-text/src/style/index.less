@@ -36,3 +36,10 @@
     -webkit-text-fill-color: currentColor;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .w-gradient-text.is-animated {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}

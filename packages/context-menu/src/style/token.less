@@ -1,0 +1,48 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-context-menu {
+  --w-context-menu-color-surface-elevated: #ffffff;
+  --w-context-menu-color-text: #0f172a;
+  --w-context-menu-color-danger-text: #b91c1c;
+  --w-context-menu-color-danger-soft: rgba(220, 38, 38, 0.1);
+  --w-context-menu-color-text-tertiary: #5b6678;
+  --w-context-menu-z-dropdown: 1000;
+  --w-context-menu-radius-lg: 12px;
+  --w-context-menu-font-family: inherit;
+  --w-context-menu-font-size-md: 14px;
+  --w-context-menu-radius-md: 8px;
+  --w-context-menu-duration-fast: 120ms;
+  --w-context-menu-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-context-menu-color-selected: rgba(79, 70, 229, 0.1);
+  --w-context-menu-focus-ring-width: 2px;
+  --w-context-menu-focus-ring-color: #4f46e5;
+  --w-context-menu-color-text-secondary: #475569;
+  --w-context-menu-font-size-xs: 12px;
+  --w-context-menu-font-size-sm: 13px;
+  --w-context-menu-font-size-2xs: 11px;
+  --w-context-menu-font-weight-semibold: 600;
+  --w-context-menu-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-w-theme='dark'] .w-context-menu {
+  --w-context-menu-color-surface-elevated: #1e293b;
+  --w-context-menu-color-text: #e2e8f0;
+  --w-context-menu-color-danger-text: #f87171;
+  --w-context-menu-color-danger-soft: rgba(248, 113, 113, 0.14);
+  --w-context-menu-color-text-tertiary: #94a3b8;
+  --w-context-menu-color-selected: rgba(129, 140, 248, 0.16);
+  --w-context-menu-focus-ring-color: #8e98f9;
+  --w-context-menu-color-text-secondary: #cbd5e1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-context-menu {
+    --w-context-menu-color-surface-elevated: #1e293b;
+    --w-context-menu-color-text: #e2e8f0;
+    --w-context-menu-color-danger-text: #f87171;
+    --w-context-menu-color-danger-soft: rgba(248, 113, 113, 0.14);
+    --w-context-menu-color-text-tertiary: #94a3b8;
+    --w-context-menu-color-selected: rgba(129, 140, 248, 0.16);
+    --w-context-menu-focus-ring-color: #8e98f9;
+    --w-context-menu-color-text-secondary: #cbd5e1;
+  }
+}

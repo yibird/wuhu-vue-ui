@@ -105,11 +105,11 @@ describe('Cropper', () => {
 
   it('renders the source image and emits ready after the image loads', async () => {
     const wrapper = mount(Cropper, {
-      props: { src: '/photo.jpg', alt: 'Photo' },
+      props: { src: '/photo.jpg' },
     })
 
     expect(wrapper.get('img').attributes('src')).toBe('/photo.jpg')
-    expect(wrapper.get('img').attributes('alt')).toBe('Photo')
+    expect(wrapper.get('img').attributes('alt')).toBe('待裁剪图片')
     // The source image is only a Cropper.js input; screen readers already get
     // the accessible name from the root group.
     expect(wrapper.get('img').attributes('aria-hidden')).toBe('true')
@@ -148,9 +148,9 @@ describe('Cropper', () => {
     wrapper.unmount()
   })
 
-  it('can hide the built-in action bar', async () => {
+  it('hides the built-in toolbar when toolbar is false', async () => {
     const wrapper = mount(Cropper, {
-      props: { src: '/photo.jpg', showActionBar: false },
+      props: { src: '/photo.jpg', toolbar: false },
     })
     await flushPromises()
 
@@ -158,9 +158,9 @@ describe('Cropper', () => {
     wrapper.unmount()
   })
 
-  it('disables actions that conflict with interaction props', async () => {
+  it('disables actions that conflict with toolbar options', async () => {
     const wrapper = mount(Cropper, {
-      props: { src: '/photo.jpg', rotatable: false, scalable: false },
+      props: { src: '/photo.jpg', toolbar: { rotatable: false, scalable: false } },
     })
     await flushPromises()
 
@@ -179,8 +179,7 @@ describe('Cropper', () => {
         src: '/photo.jpg',
         aspectRatio: 1,
         initialCoverage: 0.7,
-        movable: false,
-        disabled: true,
+        toolbar: { movable: false },
       },
     })
 
@@ -189,7 +188,6 @@ describe('Cropper', () => {
     expect(mocks.selection.aspectRatio).toBe(1)
     expect(mocks.selection.initialCoverage).toBe(0.7)
     expect(mocks.selection.movable).toBe(false)
-    expect(mocks.canvas.disabled).toBe(true)
     wrapper.unmount()
   })
 
@@ -247,7 +245,10 @@ describe('Cropper', () => {
 
   it('restores the initial contain + center fit on reset, even when interaction is locked', async () => {
     const wrapper = mount(Cropper, {
-      props: { src: '/photo.jpg', rotatable: false, translatable: false, scalable: false },
+      props: {
+        src: '/photo.jpg',
+        toolbar: { rotatable: false, translatable: false, scalable: false },
+      },
     })
     await flushPromises()
 

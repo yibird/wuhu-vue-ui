@@ -50,7 +50,7 @@ pnpm install
 
 ```text
 .
-├─ packages/                # 32 个 workspace 包：core + 31 个组件包
+├─ packages/                # 33 个 workspace 包：core + 32 个组件包
 │  ├─ core/                 # 公共工具、组合式函数与 DOM 基础设施
 │  ├─ scrollbar/            # 基础能力组件
 │  ├─ copy/
@@ -72,6 +72,7 @@ pnpm install
 │  ├─ ripple/
 │  ├─ command-menu/         # 交互增强组件
 │  ├─ context-menu/
+│  ├─ search-panel/
 │  ├─ cropper/
 │  ├─ motion-group/
 │  ├─ slider-captcha/

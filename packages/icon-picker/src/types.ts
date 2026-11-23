@@ -23,11 +23,22 @@ export interface IconPickerGroup {
   items: IconPickerItem[]
 }
 
+export type IconPickerModelValue = string | string[] | null
+
+export interface IconPickerEmptySlotProps {
+  /** Icon group currently in view, or `null` for the "all" view. */
+  group: IconPickerGroup | null
+  /** Current search query. */
+  query: string
+}
+
 export interface IconPickerProps {
-  /** Grouped icon data. Empty groups are hidden automatically. */
-  items: IconPickerGroup[]
-  /** Selected icon key. Supports `v-model`. */
-  modelValue?: string | null
+  /** Grouped icon data. Falls back to the global library set by `setIconPickerIcons`. */
+  items?: IconPickerGroup[]
+  /** Selected icon key (single) or keys (multiple). Supports `v-model`. */
+  modelValue?: IconPickerModelValue
+  /** Allow toggling multiple icons. Defaults to false. */
+  multiple?: boolean
   /** Show the search field. Defaults to `true`. */
   showSearch?: boolean
   /** Search placeholder and accessible name. */
@@ -42,8 +53,6 @@ export interface IconPickerProps {
   libraryLabel?: string
   /** Formats the result count in the header. Defaults to `n 个`. */
   countLabel?: (count: number) => string
-  /** Accessible name of the picker. */
-  ariaLabel?: string
   /** Accessible label of the clear-search button. Defaults to `清除搜索`. */
   clearSearchLabel?: string
   /** Fixed column count. When omitted, columns fit `itemMinWidth`. */
@@ -61,11 +70,11 @@ export interface IconPickerProps {
 }
 
 export interface IconPickerEmits {
-  'update:modelValue': [key: string | null]
+  'update:modelValue': [value: IconPickerModelValue]
   select: [item: IconPickerItem, group: IconPickerGroup]
 }
 
 export interface IconPickerSlots {
-  /** Replace the empty-result content. */
-  empty?: () => unknown
+  /** Replace the empty group / empty-result content. */
+  empty?: (props: IconPickerEmptySlotProps) => unknown
 }

@@ -1,0 +1,53 @@
+.w-search-panel {
+  --w-search-panel-color-surface: #ffffff;
+  --w-search-panel-color-text: #0f172a;
+  --w-search-panel-color-text-tertiary: #5b6678;
+  --w-search-panel-color-border: #e2e8f0;
+  --w-search-panel-color-border-subtle: #f1f5f9;
+  --w-search-panel-color-surface-subtle: #f8f9fb;
+  --w-search-panel-color-backdrop: rgba(15, 23, 42, 0.42);
+  --w-search-panel-shadow:
+    0 24px 64px -24px rgba(15, 23, 42, 0.35), 0 2px 8px rgba(15, 23, 42, 0.06);
+  --w-search-panel-radius-xl: 16px;
+  --w-search-panel-radius-sm: 6px;
+  --w-search-panel-width: 640px;
+  --w-search-panel-max-height: 70vh;
+  --w-search-panel-z-index: 1001;
+  --w-search-panel-duration-enter: 220ms;
+  --w-search-panel-duration-leave: 180ms;
+  --w-search-panel-duration-fast: 120ms;
+  --w-search-panel-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --w-search-panel-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-search-panel-focus-ring-width: 2px;
+  --w-search-panel-focus-ring-color: #4f46e5;
+  --w-search-panel-font-family:
+    'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --w-search-panel-font-size-xs: 12px;
+  --w-search-panel-font-size-2xs: 11px;
+}
+
+[data-w-theme='dark'] .w-search-panel {
+  --w-search-panel-color-surface: #1e293b;
+  --w-search-panel-color-text: #e2e8f0;
+  --w-search-panel-color-text-tertiary: #94a3b8;
+  --w-search-panel-color-border: #2a3a55;
+  --w-search-panel-color-border-subtle: #1d2a40;
+  --w-search-panel-color-surface-subtle: #141d2f;
+  --w-search-panel-color-backdrop: rgba(2, 6, 23, 0.66);
+  --w-search-panel-shadow: 0 24px 64px -24px rgba(0, 0, 0, 0.62), 0 2px 8px rgba(0, 0, 0, 0.32);
+  --w-search-panel-focus-ring-color: #a5b4fc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-search-panel {
+    --w-search-panel-color-surface: #1e293b;
+    --w-search-panel-color-text: #e2e8f0;
+    --w-search-panel-color-text-tertiary: #94a3b8;
+    --w-search-panel-color-border: #2a3a55;
+    --w-search-panel-color-border-subtle: #1d2a40;
+    --w-search-panel-color-surface-subtle: #141d2f;
+    --w-search-panel-color-backdrop: rgba(2, 6, 23, 0.66);
+    --w-search-panel-shadow: 0 24px 64px -24px rgba(0, 0, 0, 0.62), 0 2px 8px rgba(0, 0, 0, 0.32);
+    --w-search-panel-focus-ring-color: #a5b4fc;
+  }
+}

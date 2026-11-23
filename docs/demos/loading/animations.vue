@@ -42,7 +42,7 @@ const animation = ref<LoadingAnimation>('ring')
 .loading-demo__picker button {
   padding: 6px 12px;
   border: 1px solid var(--w-color-border, #e2e8f0);
-  border-radius: var(--w-radius-full, 9999px);
+  border-radius: var(--w-radius-md, 8px);
   background: var(--w-color-surface, #fff);
   color: var(--w-color-text-secondary, #475569);
   font: inherit;
@@ -52,7 +52,7 @@ const animation = ref<LoadingAnimation>('ring')
 
 .loading-demo__picker button.is-active {
   border-color: var(--w-color-primary, #4f46e5);
-  background: var(--w-color-primary-soft, rgba(79, 70, 229, 0.1));
+  background: var(--w-color-selected, var(--w-color-primary-soft));
   color: var(--w-color-primary, #4f46e5);
 }
 
@@ -61,7 +61,7 @@ const animation = ref<LoadingAnimation>('ring')
   align-items: center;
   justify-content: center;
   min-height: 160px;
-  border: 1px dashed var(--w-color-border, #e2e8f0);
+  border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-md, 8px);
 }
 </style>

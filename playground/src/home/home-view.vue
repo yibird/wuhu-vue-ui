@@ -1,45 +1,29 @@
 <script setup lang="ts">
-import { GradientText } from '@wuhu-vue-ui/gradient-text'
 import { docsByCategory, componentDocs } from '../docs/catalog'
 
 const features = [
   {
-    index: '01',
     title: '独立组件包',
-    description: '16 个组件独立发布、按需引入，互不耦合，升级与替换都更可控。',
+    description: `${componentDocs.length} 个组件独立发布、按需引入，升级与替换都更可控。`,
   },
   {
-    index: '02',
     title: 'TypeScript 优先',
-    description: '所有 Props、事件、插槽与实例方法均提供完整类型，严格模式无隐式 any。',
+    description: 'Props、事件、插槽与实例方法均提供完整类型，严格模式无隐式 any。',
   },
   {
-    index: '03',
     title: '设计令牌驱动',
     description: '统一的 --w-* 令牌与亮 / 暗主题，可通过任意祖先节点覆盖品牌样式。',
   },
   {
-    index: '04',
     title: '可访问性内建',
-    description: '键盘导航、ARIA 关系、焦点管理与 prefers-reduced-motion 均在组件内处理。',
-  },
-  {
-    index: '05',
-    title: '组合式 API',
-    description: '全部基于 script setup 与 Composition API，逻辑清晰、易于组合与扩展。',
-  },
-  {
-    index: '06',
-    title: '轻量运行时',
-    description: '可选能力按需安装，拼音、虚拟列表等依赖不会被打进组件本体。',
+    description: '键盘导航、ARIA 关系、焦点管理与 reduced-motion 均在组件内处理。',
   },
 ]
 
 const stats = [
   { value: String(componentDocs.length), label: '独立组件包' },
   { value: String(docsByCategory.length), label: '组件分类' },
-  { value: '100%', label: 'TypeScript' },
-  { value: '0', label: 'UI 框架依赖' },
+  { value: 'MIT', label: '开源协议' },
 ]
 
 const installCode = `pnpm add @wuhu-vue-ui/scrollbar
@@ -57,27 +41,10 @@ function scrollToCatalog() {
 <template>
   <div class="home">
     <section class="home-hero">
-      <div class="home-hero__glow home-hero__glow--a" aria-hidden="true" />
-      <div class="home-hero__glow home-hero__glow--b" aria-hidden="true" />
-
       <div class="home-hero__content">
-        <span class="home-badge">
-          <span class="home-badge__dot" />
-          Vue 3.5 · TypeScript · Less · Monorepo
-        </span>
+        <span class="home-badge">Vue 3.5 · TypeScript · Less · Monorepo</span>
 
-        <h1 class="home-hero__title">
-          为复杂业务而生的
-          <span class="home-hero__gradient">
-            <GradientText
-              :colors="['#4f46e5', '#c026d3', '#0ea5e9']"
-              :animate="true"
-              :duration="7000"
-            >
-              Vue 3 组件库
-            </GradientText>
-          </span>
-        </h1>
+        <h1 class="home-hero__title">为复杂业务而生的 Vue 3 组件库</h1>
 
         <p class="home-hero__lead">
           {{ componentDocs.length }} 个经过细节打磨的业务组件，独立发布、按需引入。
@@ -111,8 +78,7 @@ function scrollToCatalog() {
       <div class="home-hero__preview" aria-hidden="true">
         <div class="home-preview">
           <div class="home-preview__bar">
-            <span class="home-preview__dots"><i /><i /><i /></span>
-            <span>Command Menu</span>
+            <span>命令面板预览</span>
           </div>
           <div class="home-preview__search">
             <svg viewBox="0 0 20 20" fill="none">
@@ -146,32 +112,18 @@ function scrollToCatalog() {
           </div>
           <div class="home-preview__hint">↑ ↓ 导航 · Enter 选择 · Esc 清空</div>
         </div>
-
-        <div class="home-float home-float--number">
-          <span>本月营收</span>
-          <strong>¥ 128,860.5</strong>
-          <small>↗ 18.2%</small>
-        </div>
-        <div class="home-float home-float--theme">
-          <span class="home-float__swatch" />
-          <div>
-            <strong>亮 / 暗主题</strong>
-            <small>由设计令牌自动驱动</small>
-          </div>
-        </div>
       </div>
     </section>
 
     <section class="home-section">
       <div class="home-section__head">
-        <span class="home-eyebrow">Why Wuhu UI</span>
+        <span class="home-eyebrow">能力</span>
         <h2>把复杂交互做成稳定基础设施</h2>
         <p>每一处键盘、焦点、主题与卸载细节，都封装在组件内部。</p>
       </div>
 
       <div class="home-features">
-        <article v-for="feature in features" :key="feature.index" class="home-feature">
-          <span class="home-feature__index">{{ feature.index }}</span>
+        <article v-for="feature in features" :key="feature.title" class="home-feature">
           <h3>{{ feature.title }}</h3>
           <p>{{ feature.description }}</p>
         </article>
@@ -180,7 +132,7 @@ function scrollToCatalog() {
 
     <section id="component-catalog" class="home-section home-section--catalog">
       <div class="home-section__head">
-        <span class="home-eyebrow">Components</span>
+        <span class="home-eyebrow">组件</span>
         <h2>组件目录</h2>
         <p>每个组件都有独立文档页，并附带多个真实用例。</p>
       </div>
@@ -214,7 +166,7 @@ function scrollToCatalog() {
 
     <section class="home-section home-start">
       <div class="home-start__copy">
-        <span class="home-eyebrow">Get Started</span>
+        <span class="home-eyebrow">开始</span>
         <h2>三行代码开始使用</h2>
         <p>
           引入全局设计令牌后，按需安装任意组件包。样式随包自动注入，也可以手动导入

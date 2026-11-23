@@ -16,7 +16,6 @@ export function createGanttTasks(): GanttTask[] {
     {
       id: 'plan',
       name: '产品规划',
-      color: '#4f46e5',
       children: [
         {
           id: 'research',
@@ -40,7 +39,6 @@ export function createGanttTasks(): GanttTask[] {
     {
       id: 'design',
       name: '视觉设计',
-      color: '#db2777',
       children: [
         {
           id: 'banner',
@@ -65,7 +63,6 @@ export function createGanttTasks(): GanttTask[] {
     {
       id: 'development',
       name: '研发交付',
-      color: '#0f766e',
       children: [
         {
           id: 'components',
@@ -91,7 +88,6 @@ export function createGanttTasks(): GanttTask[] {
           start: isoDate(20),
           end: isoDate(20),
           milestone: true,
-          color: '#f59e0b',
           dependencies: ['integration'],
         },
       ],
@@ -99,7 +95,6 @@ export function createGanttTasks(): GanttTask[] {
     {
       id: 'release',
       name: '测试发布',
-      color: '#0284c7',
       children: [
         {
           id: 'qa',
@@ -116,7 +111,6 @@ export function createGanttTasks(): GanttTask[] {
           start: isoDate(28),
           end: isoDate(28),
           milestone: true,
-          color: '#dc2626',
           dependencies: ['qa'],
         },
       ],

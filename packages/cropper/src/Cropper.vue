@@ -27,17 +27,8 @@ const props = withDefaults(defineProps<CropperProps>(), {
   labels: () => ({}),
   height: 360,
   initialCoverage: 0.5,
-  rotatable: true,
-  scalable: true,
-  translatable: true,
-  movable: true,
-  resizable: true,
-  zoomable: true,
-  keyboard: true,
-  disabled: false,
-  showActionBar: true,
+  toolbar: true,
   crossOrigin: '',
-  unsafeTemplate: '',
 })
 
 const emit = defineEmits<{
@@ -64,7 +55,20 @@ const selectionRef = shallowRef<CropperSelection | null>(null)
 const canvasRef = shallowRef<CropperCanvas | null>(null)
 
 const labels = computed<CropperLabels>(() => ({ ...defaultLabels, ...props.labels }))
-const imageAlt = computed(() => props.alt ?? labels.value.image)
+
+const toolbarEnabled = computed(() => props.toolbar !== false)
+const interactions = computed(() => {
+  const options = typeof props.toolbar === 'object' ? props.toolbar : {}
+  return {
+    rotatable: options.rotatable ?? true,
+    scalable: options.scalable ?? true,
+    translatable: options.translatable ?? true,
+    movable: options.movable ?? true,
+    resizable: options.resizable ?? true,
+    zoomable: options.zoomable ?? true,
+    keyboard: options.keyboard ?? true,
+  }
+})
 
 let initialized = false
 let initToken = 0
@@ -91,7 +95,6 @@ const rootStyle = computed(() => ({
 
 const rootClasses = computed(() => ({
   'is-ready': ready.value,
-  'is-disabled': props.disabled,
 }))
 
 function toError(cause: unknown): Error {
@@ -170,30 +173,27 @@ function unbindEvents() {
 function applyKeyboardState() {
   const selection = selectionRef.value
   if (selection) {
-    selection.keyboard = props.keyboard && keyboardActive.value && !props.disabled
+    selection.keyboard = interactions.value.keyboard && keyboardActive.value
   }
 }
 
 function applyOptions() {
+  const options = interactions.value
   const image = imageRef.value
   if (image) {
-    image.rotatable = props.rotatable
-    image.scalable = props.scalable
-    image.translatable = props.translatable
+    image.rotatable = options.rotatable
+    image.scalable = options.scalable
+    image.translatable = options.translatable
   }
 
   const selection = selectionRef.value
   if (selection) {
     selection.initialCoverage = props.initialCoverage
     selection.aspectRatio = props.aspectRatio ?? Number.NaN
-    selection.movable = props.movable
-    selection.resizable = props.resizable
-    selection.zoomable = props.zoomable
+    selection.movable = options.movable
+    selection.resizable = options.resizable
+    selection.zoomable = options.zoomable
     applyKeyboardState()
-  }
-
-  if (canvasRef.value) {
-    canvasRef.value.disabled = props.disabled
   }
 }
 
@@ -222,7 +222,7 @@ async function initialize(): Promise<void> {
     if (token !== initToken) return
 
     const instance = new CropperImpl(source, {
-      template: props.unsafeTemplate || defaultTemplate,
+      template: defaultTemplate,
     })
     if (token !== initToken) {
       instance.destroy()
@@ -480,36 +480,23 @@ watch(
   },
 )
 
-watch(
-  () => props.disabled,
-  (disabled) => {
-    if (canvasRef.value) canvasRef.value.disabled = disabled
-    applyKeyboardState()
-  },
-)
+watch(interactions, (options) => {
+  const image = imageRef.value
+  if (image) {
+    image.rotatable = options.rotatable
+    image.scalable = options.scalable
+    image.translatable = options.translatable
+  }
 
-watch(
-  () => [props.rotatable, props.scalable, props.translatable] as const,
-  ([rotatable, scalable, translatable]) => {
-    const image = imageRef.value
-    if (!image) return
-    image.rotatable = rotatable
-    image.scalable = scalable
-    image.translatable = translatable
-  },
-)
+  const selection = selectionRef.value
+  if (selection) {
+    selection.movable = options.movable
+    selection.resizable = options.resizable
+    selection.zoomable = options.zoomable
+  }
 
-watch(
-  () => [props.movable, props.resizable, props.zoomable, props.keyboard] as const,
-  ([movable, resizable, zoomable]) => {
-    const selection = selectionRef.value
-    if (!selection) return
-    selection.movable = movable
-    selection.resizable = resizable
-    selection.zoomable = zoomable
-    applyKeyboardState()
-  },
-)
+  applyKeyboardState()
+})
 
 onMounted(() => {
   initialize()
@@ -546,9 +533,8 @@ defineExpose<CropperExpose>({
     :class="rootClasses"
     :style="rootStyle"
     role="group"
-    :aria-label="imageAlt"
-    :aria-disabled="disabled || undefined"
-    :tabindex="disabled ? -1 : 0"
+    :aria-label="labels.image"
+    tabindex="0"
     @focusin="handleFocusIn"
     @focusout="handleFocusOut"
   >
@@ -556,13 +542,13 @@ defineExpose<CropperExpose>({
       ref="sourceRef"
       class="w-cropper__source"
       :src="src"
-      :alt="imageAlt"
+      :alt="labels.image"
       :crossorigin="crossOrigin || undefined"
       aria-hidden="true"
     />
 
     <div
-      v-if="showActionBar"
+      v-if="toolbarEnabled"
       class="w-cropper__action-bar"
       role="toolbar"
       :aria-label="labels.actionBar"
@@ -570,7 +556,7 @@ defineExpose<CropperExpose>({
       <button
         type="button"
         class="w-cropper__action"
-        :disabled="!ready || disabled || !scalable"
+        :disabled="!ready || !interactions.scalable"
         :aria-label="labels.zoomOut"
         :title="labels.zoomOut"
         @click="zoom(-0.1)"
@@ -582,7 +568,7 @@ defineExpose<CropperExpose>({
       <button
         type="button"
         class="w-cropper__action"
-        :disabled="!ready || disabled || !scalable"
+        :disabled="!ready || !interactions.scalable"
         :aria-label="labels.zoomIn"
         :title="labels.zoomIn"
         @click="zoom(0.1)"
@@ -594,7 +580,7 @@ defineExpose<CropperExpose>({
       <button
         type="button"
         class="w-cropper__action"
-        :disabled="!ready || disabled || !rotatable"
+        :disabled="!ready || !interactions.rotatable"
         :aria-label="labels.rotateLeft"
         :title="labels.rotateLeft"
         @click="rotate(-90)"
@@ -607,7 +593,7 @@ defineExpose<CropperExpose>({
       <button
         type="button"
         class="w-cropper__action"
-        :disabled="!ready || disabled || !rotatable"
+        :disabled="!ready || !interactions.rotatable"
         :aria-label="labels.rotateRight"
         :title="labels.rotateRight"
         @click="rotate(90)"
@@ -620,7 +606,7 @@ defineExpose<CropperExpose>({
       <button
         type="button"
         class="w-cropper__action"
-        :disabled="!ready || disabled"
+        :disabled="!ready"
         :aria-label="labels.reset"
         :title="labels.reset"
         @click="reset"

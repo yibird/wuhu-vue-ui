@@ -1,7 +1,7 @@
 // Component-scoped motion tokens. Override on `.w-loading` to retune the
 // indicator without affecting other packages.
 .w-loading {
-  --w-loading-transition-duration: var(--w-duration-fast, 120ms);
+  --w-loading-transition-duration: var(--w-loading-duration-fast);
   --w-loading-bars-duration: 860ms;
   --w-loading-bars-delay-step: 80ms;
   --w-loading-beat-duration: 580ms;
@@ -10,4 +10,35 @@
   --w-loading-ring-duration: 780ms;
   --w-loading-ring-core-duration: 1100ms;
   --w-loading-spinner-duration: 1100ms;
+}
+
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-loading {
+  --w-loading-color-primary: #4f46e5;
+  --w-loading-radius-md: 8px;
+  --w-loading-color-surface: #ffffff;
+  --w-loading-color-text: #0f172a;
+  --w-loading-font-family: inherit;
+  --w-loading-font-size-lg: 16px;
+  --w-loading-font-weight-semibold: 600;
+  --w-loading-color-text-secondary: #475569;
+  --w-loading-font-size-xs: 12px;
+  --w-loading-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-loading-duration-fast: 120ms;
+}
+
+[data-w-theme='dark'] .w-loading {
+  --w-loading-color-primary: #818cf8;
+  --w-loading-color-surface: #0f172a;
+  --w-loading-color-text: #e2e8f0;
+  --w-loading-color-text-secondary: #cbd5e1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-loading {
+    --w-loading-color-primary: #818cf8;
+    --w-loading-color-surface: #0f172a;
+    --w-loading-color-text: #e2e8f0;
+    --w-loading-color-text-secondary: #cbd5e1;
+  }
 }

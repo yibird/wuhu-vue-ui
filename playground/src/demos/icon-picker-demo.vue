@@ -79,35 +79,24 @@ function handleSelect(item: IconPickerItem) {
       description="分组、搜索与虚拟滚动；icon 支持类名或 Vue 虚拟节点。"
       wide
     >
-      <IconPicker
-        v-model="selected"
-        :items="iconGroups"
-        aria-label="图标选择"
-        @select="handleSelect"
-      />
+      <IconPicker v-model="selected" :items="iconGroups" @select="handleSelect" />
       <p class="hint">
         当前：{{ selected ?? '（未选择）' }} · 最近选择：{{ lastSelected?.label ?? '（无）' }}
       </p>
     </DemoCard>
 
     <DemoCard title="隐藏搜索" description="showSearch=false 时隐藏顶部工具栏。">
-      <IconPicker
-        v-model="selected"
-        :items="iconGroups"
-        :show-search="false"
-        :height="280"
-        aria-label="无搜索图标选择"
-      />
+      <IconPicker v-model="selected" :items="iconGroups" :show-search="false" :height="280" />
     </DemoCard>
 
     <DemoCard
       title="空分组与空状态"
-      description="items 中的空分组会自动隐藏；没有可选项时展示 empty 插槽。"
+      description="空分组会保留在侧边栏；empty 插槽接收 { group, query }。"
       wide
     >
-      <IconPicker :items="emptyGroups" :height="240" aria-label="空分组图标选择">
-        <template #empty>
-          <p class="hint">该分组暂无图标，请先配置 items。</p>
+      <IconPicker :items="emptyGroups" :height="240">
+        <template #empty="{ group }">
+          <p class="hint">{{ group?.label ?? '当前图标库' }}暂无图标，请先配置 items。</p>
         </template>
       </IconPicker>
     </DemoCard>

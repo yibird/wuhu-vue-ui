@@ -30,6 +30,7 @@ const routes = [
   'slider-captcha',
   'command-menu',
   'context-menu',
+  'search-panel',
   'cropper',
   'motion-group',
   'gantt',

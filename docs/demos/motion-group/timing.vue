@@ -10,10 +10,10 @@ interface Task {
   owner: string
 }
 
-const animations: MotionGroupAnimation[] = ['fade', 'slide', 'scale', 'flip', 'bounce', 'reveal']
+const animations: MotionGroupAnimation[] = ['fade', 'slide', 'flip', 'bounce']
 
 const animationOptions = animations.map((preset) => ({ label: preset, value: preset }))
-const animation = ref<MotionGroupAnimation>('scale')
+const animation = ref<MotionGroupAnimation>('fade')
 const duration = ref(320)
 const moveDuration = ref(180)
 const disabled = ref(false)

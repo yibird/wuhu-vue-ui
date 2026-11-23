@@ -3,51 +3,41 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
-  height: 40px;
-  padding: 0 16px;
+  height: 38px;
+  padding: 0 14px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--w-radius-md, 8px);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
   appearance: none;
   transition:
-    transform var(--w-duration-fast) ease,
-    box-shadow var(--w-duration-fast) ease,
-    background-color var(--w-duration-fast) ease,
-    border-color var(--w-duration-fast) ease;
+    background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+    border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+    color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
   svg {
     width: 18px;
     height: 18px;
   }
 
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
   &:focus-visible {
-    outline: 2px solid var(--w-color-primary);
-    outline-offset: 2px;
+    outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
+    outline-offset: var(--w-focus-ring-offset, 2px);
   }
 
   &--primary {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    color: #ffffff;
-    box-shadow:
-      0 8px 20px -8px rgba(79, 70, 229, 0.55),
-      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    background: var(--w-color-primary);
+    color: var(--w-color-on-primary);
 
     &:hover {
-      box-shadow:
-        0 12px 26px -8px rgba(79, 70, 229, 0.62),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      background: var(--w-color-primary-hover);
+    }
+
+    &:active {
+      background: var(--w-color-primary-active);
     }
   }
 
@@ -58,14 +48,18 @@
 
     &:hover {
       border-color: var(--w-color-border-strong);
-      background: var(--w-color-surface-hover);
+      background: var(--w-color-interactive-hover);
+    }
+
+    &:active {
+      background: var(--w-color-interactive-active);
     }
   }
 
   &--danger {
     border-color: var(--w-color-danger-soft);
     background: var(--w-color-danger-soft);
-    color: var(--w-color-danger);
+    color: var(--w-color-danger-text);
   }
 
   &--small {
@@ -87,16 +81,15 @@
   width: 100%;
   height: 38px;
   padding: 0 12px;
-  border: 1px solid var(--w-color-border);
-  border-radius: 9px;
+  border: 1px solid var(--w-color-border-control, #8b95a5);
+  border-radius: var(--w-radius-md, 8px);
   outline: none;
-  background: var(--w-color-surface-subtle);
+  background: var(--w-color-surface);
   color: var(--w-color-text);
   font-size: 13px;
   transition:
-    border-color var(--w-duration-fast) ease,
-    box-shadow var(--w-duration-fast) ease,
-    background-color var(--w-duration-fast) ease;
+    border-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+    box-shadow var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
   &::placeholder {
     color: var(--w-color-text-tertiary);
@@ -104,8 +97,7 @@
 
   &:focus {
     border-color: var(--w-color-primary);
-    background: var(--w-color-surface);
-    box-shadow: 0 0 0 3px var(--w-color-primary-soft);
+    box-shadow: var(--w-focus-ring-shadow, 0 0 0 2px var(--w-color-primary-soft));
   }
 }
 
@@ -122,11 +114,11 @@
 
 .event-chip {
   padding: 3px 7px;
-  border-radius: 5px;
+  border-radius: var(--w-radius-xs, 4px);
   background: var(--w-color-surface-subtle);
   color: var(--w-color-text-secondary);
   font-family: var(--w-font-family-mono);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .segmented {
@@ -134,7 +126,7 @@
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--w-color-border);
-  border-radius: 8px;
+  border-radius: var(--w-radius-md, 8px);
   background: var(--w-color-surface-subtle);
 
   button {
@@ -142,25 +134,24 @@
     height: 26px;
     padding: 0 9px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--w-radius-sm, 6px);
     background: transparent;
     color: var(--w-color-text-secondary);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition:
-      background-color var(--w-duration-fast) ease,
-      color var(--w-duration-fast) ease,
-      box-shadow var(--w-duration-fast) ease;
+      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
+      color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
 
     &:hover {
+      background: var(--w-color-interactive-hover);
       color: var(--w-color-text);
     }
 
     &.is-active {
-      background: var(--w-color-surface);
-      color: var(--w-color-primary);
-      box-shadow: var(--w-shadow-sm);
+      background: var(--w-color-selected);
+      color: var(--w-color-selected-text);
       font-weight: 600;
     }
 

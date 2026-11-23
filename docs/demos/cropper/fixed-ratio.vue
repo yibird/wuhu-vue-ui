@@ -5,7 +5,6 @@ import { Cropper } from '@wuhu-vue-ui/cropper'
 <template>
   <Cropper
     src="/samples/banner.png"
-    alt="16:9 裁剪"
     :height="280"
     :aspect-ratio="16 / 9"
     :initial-coverage="0.84"

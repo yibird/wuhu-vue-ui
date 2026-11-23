@@ -32,6 +32,7 @@ import IconPicker from '../packages/icon-picker/src/IconPicker.vue'
 import OrgTree from '../packages/org-tree/src/OrgTree.vue'
 import JsonViewer from '../packages/json-viewer/src/JsonViewer.vue'
 import ContextMenu from '../packages/context-menu/src/ContextMenu.vue'
+import SearchPanel from '../packages/search-panel/src/SearchPanel.vue'
 
 interface SsrCase {
   name: string
@@ -72,6 +73,14 @@ const cases: SsrCase[] = [
   {
     name: 'ContextMenu',
     component: ContextMenu,
+    props: {
+      open: true,
+      items: [{ key: 'a', label: 'A' }],
+    },
+  },
+  {
+    name: 'SearchPanel',
+    component: SearchPanel,
     props: {
       open: true,
       items: [{ key: 'a', label: 'A' }],

@@ -1,0 +1,56 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-error-boundary {
+  --w-error-boundary-color-danger-soft: rgba(220, 38, 38, 0.1);
+  --w-error-boundary-radius-lg: 12px;
+  --w-error-boundary-color-surface: #ffffff;
+  --w-error-boundary-color-text: #0f172a;
+  --w-error-boundary-font-family: inherit;
+  --w-error-boundary-radius-full: 9999px;
+  --w-error-boundary-color-danger: #dc2626;
+  --w-error-boundary-font-size-lg: 16px;
+  --w-error-boundary-font-weight-semibold: 600;
+  --w-error-boundary-line-height-tight: 1.25;
+  --w-error-boundary-color-text-secondary: #475569;
+  --w-error-boundary-font-size-sm: 13px;
+  --w-error-boundary-line-height-normal: 1.55;
+  --w-error-boundary-color-border: #e2e8f0;
+  --w-error-boundary-radius-sm: 6px;
+  --w-error-boundary-color-surface-hover: #f1f5f9;
+  --w-error-boundary-font-family-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --w-error-boundary-font-size-xs: 12px;
+  --w-error-boundary-color-primary: #4f46e5;
+  --w-error-boundary-font-weight-medium: 500;
+  --w-error-boundary-duration-fast: 120ms;
+  --w-error-boundary-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-error-boundary-focus-ring-width: 2px;
+  --w-error-boundary-focus-ring-color: #4f46e5;
+  --w-error-boundary-focus-ring-offset: 2px;
+}
+
+[data-w-theme='dark'] .w-error-boundary {
+  --w-error-boundary-color-danger-soft: rgba(248, 113, 113, 0.14);
+  --w-error-boundary-color-surface: #0f172a;
+  --w-error-boundary-color-text: #e2e8f0;
+  --w-error-boundary-color-danger: #f87171;
+  --w-error-boundary-color-text-secondary: #cbd5e1;
+  --w-error-boundary-color-border: #2a3a55;
+  --w-error-boundary-color-surface-hover: #1c2940;
+  --w-error-boundary-color-primary: #818cf8;
+  --w-error-boundary-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-error-boundary-focus-ring-color: #8e98f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-error-boundary {
+    --w-error-boundary-color-danger-soft: rgba(248, 113, 113, 0.14);
+    --w-error-boundary-color-surface: #0f172a;
+    --w-error-boundary-color-text: #e2e8f0;
+    --w-error-boundary-color-danger: #f87171;
+    --w-error-boundary-color-text-secondary: #cbd5e1;
+    --w-error-boundary-color-border: #2a3a55;
+    --w-error-boundary-color-surface-hover: #1c2940;
+    --w-error-boundary-color-primary: #818cf8;
+    --w-error-boundary-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-error-boundary-focus-ring-color: #8e98f9;
+  }
+}

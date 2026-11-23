@@ -1,5 +1,5 @@
-// Component-scoped tokens. Only the hover elevation is owned by this package;
-// colours come from the app theme through `var(--w-*, fallback)`.
+// Component-scoped tokens. Every token this package reads is declared here with
+// a literal value (plus dark variants), so the package is self-contained.
 .w-org-tree {
   --w-org-tree-card-hover-shadow:
     0 4px 14px -6px rgba(15, 23, 42, 0.18), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
@@ -14,5 +14,60 @@
   :root:not([data-w-theme]) .w-org-tree {
     --w-org-tree-card-hover-shadow:
       0 4px 14px -6px rgba(0, 0, 0, 0.58), 0 2px 4px -2px rgba(0, 0, 0, 0.38);
+  }
+}
+
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-org-tree {
+  --w-org-tree-color-text: #0f172a;
+  --w-org-tree-color-surface: #ffffff;
+  --w-org-tree-color-border: #e2e8f0;
+  --w-org-tree-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-org-tree-color-primary: #4f46e5;
+  --w-org-tree-radius-lg: 12px;
+  --w-org-tree-font-family: inherit;
+  --w-org-tree-font-size-sm: 13px;
+  --w-org-tree-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --w-org-tree-duration-fast: 120ms;
+  --w-org-tree-focus-ring-width: 2px;
+  --w-org-tree-focus-ring-color: #4f46e5;
+  --w-org-tree-opacity-disabled: 0.55;
+  --w-org-tree-shadow-lg:
+    0 2px 4px rgba(15, 23, 42, 0.04), 0 16px 40px -16px rgba(15, 23, 42, 0.22);
+  --w-org-tree-radius-full: 9999px;
+  --w-org-tree-color-text-tertiary: #5b6678;
+  --w-org-tree-color-primary-soft-hover: rgba(79, 70, 229, 0.16);
+  --w-org-tree-z-dropdown: 1000;
+  --w-org-tree-shadow-overlay:
+    0 2px 6px rgba(15, 23, 42, 0.06), 0 24px 56px -20px rgba(15, 23, 42, 0.3);
+  --w-org-tree-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --w-org-tree-radius-md: 8px;
+  --w-org-tree-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-org-tree-color-surface-elevated: #ffffff;
+}
+
+[data-w-theme='dark'] .w-org-tree {
+  --w-org-tree-color-text: #e2e8f0;
+  --w-org-tree-color-surface: #0f172a;
+  --w-org-tree-color-border: #2a3a55;
+  --w-org-tree-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-org-tree-color-primary: #818cf8;
+  --w-org-tree-focus-ring-color: #8e98f9;
+  --w-org-tree-color-text-tertiary: #94a3b8;
+  --w-org-tree-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+  --w-org-tree-color-surface-elevated: #1e293b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-org-tree {
+    --w-org-tree-color-text: #e2e8f0;
+    --w-org-tree-color-surface: #0f172a;
+    --w-org-tree-color-border: #2a3a55;
+    --w-org-tree-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-org-tree-color-primary: #818cf8;
+    --w-org-tree-focus-ring-color: #8e98f9;
+    --w-org-tree-color-text-tertiary: #94a3b8;
+    --w-org-tree-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+    --w-org-tree-color-surface-elevated: #1e293b;
   }
 }

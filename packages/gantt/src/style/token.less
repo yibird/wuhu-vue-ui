@@ -1,0 +1,100 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-gantt {
+  --w-gantt-color-border-subtle: #f1f5f9;
+  --w-gantt-color-weekend: rgba(100, 116, 139, 0.045);
+  --w-gantt-color-surface: #ffffff;
+  --w-gantt-color-text-tertiary: #5b6678;
+  --w-gantt-color-primary: #4f46e5;
+  --w-gantt-color-tooltip-bg: rgba(15, 23, 42, 0.94);
+  --w-gantt-color-tooltip-text: #ffffff;
+  --w-gantt-color-tooltip-muted: rgba(226, 232, 240, 0.78);
+  --w-gantt-color-border: #e2e8f0;
+  --w-gantt-color-border-strong: #cbd5e1;
+  --w-gantt-radius-lg: 12px;
+  --w-gantt-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --w-gantt-color-text: #0f172a;
+  --w-gantt-font-family: inherit;
+  --w-gantt-font-size-sm: 13px;
+  --w-gantt-scrollbar-thumb: #eee;
+  --w-gantt-radius-full: 9999px;
+  --w-gantt-scrollbar-thumb-hover: #e0e0e0;
+  --w-gantt-font-weight-semibold: 600;
+  --w-gantt-color-surface-subtle: #f1f5f9;
+  --w-gantt-color-text-secondary: #475569;
+  --w-gantt-font-size-2xs: 11px;
+  --w-gantt-font-weight-medium: 500;
+  --w-gantt-font-weight-normal: 400;
+  --w-gantt-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-gantt-font-size-3xs: 10px;
+  --w-gantt-opacity-disabled: 0.55;
+  --w-gantt-duration-fast: 120ms;
+  --w-gantt-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-gantt-color-surface-hover: #f1f5f9;
+  --w-gantt-color-surface-active: #e2e8f0;
+  --w-gantt-radius-xs: 4px;
+  --w-gantt-focus-ring-width: 2px;
+  --w-gantt-focus-ring-color: #4f46e5;
+  --w-gantt-focus-ring-offset: 2px;
+  --w-gantt-radius-sm: 6px;
+  --w-gantt-font-size-xs: 12px;
+  --w-gantt-shadow-md: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+  --w-gantt-shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.04), 0 16px 40px -16px rgba(15, 23, 42, 0.22);
+  --w-gantt-radius-md: 8px;
+  --w-gantt-shadow-overlay:
+    0 2px 6px rgba(15, 23, 42, 0.06), 0 24px 56px -20px rgba(15, 23, 42, 0.3);
+  --w-gantt-z-dropdown: 1000;
+  --w-gantt-color-surface-elevated: #ffffff;
+  --w-gantt-color-danger: #dc2626;
+  --w-gantt-font-family-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --w-gantt-easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-w-theme='dark'] .w-gantt {
+  --w-gantt-color-border-subtle: #1d2a40;
+  --w-gantt-color-weekend: rgba(148, 163, 184, 0.06);
+  --w-gantt-color-surface: #0f172a;
+  --w-gantt-color-text-tertiary: #94a3b8;
+  --w-gantt-color-primary: #818cf8;
+  --w-gantt-color-tooltip-bg: rgba(226, 232, 240, 0.96);
+  --w-gantt-color-tooltip-text: #0f172a;
+  --w-gantt-color-tooltip-muted: rgba(51, 65, 85, 0.82);
+  --w-gantt-color-border: #2a3a55;
+  --w-gantt-color-border-strong: #33445f;
+  --w-gantt-color-text: #e2e8f0;
+  --w-gantt-scrollbar-thumb: rgba(226, 232, 240, 0.24);
+  --w-gantt-scrollbar-thumb-hover: rgba(226, 232, 240, 0.38);
+  --w-gantt-color-surface-subtle: #141d2f;
+  --w-gantt-color-text-secondary: #cbd5e1;
+  --w-gantt-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-gantt-color-surface-hover: #1c2940;
+  --w-gantt-color-surface-active: #24344f;
+  --w-gantt-focus-ring-color: #8e98f9;
+  --w-gantt-color-surface-elevated: #1e293b;
+  --w-gantt-color-danger: #f87171;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-gantt {
+    --w-gantt-color-border-subtle: #1d2a40;
+    --w-gantt-color-weekend: rgba(148, 163, 184, 0.06);
+    --w-gantt-color-surface: #0f172a;
+    --w-gantt-color-text-tertiary: #94a3b8;
+    --w-gantt-color-primary: #818cf8;
+    --w-gantt-color-tooltip-bg: rgba(226, 232, 240, 0.96);
+    --w-gantt-color-tooltip-text: #0f172a;
+    --w-gantt-color-tooltip-muted: rgba(51, 65, 85, 0.82);
+    --w-gantt-color-border: #2a3a55;
+    --w-gantt-color-border-strong: #33445f;
+    --w-gantt-color-text: #e2e8f0;
+    --w-gantt-scrollbar-thumb: rgba(226, 232, 240, 0.24);
+    --w-gantt-scrollbar-thumb-hover: rgba(226, 232, 240, 0.38);
+    --w-gantt-color-surface-subtle: #141d2f;
+    --w-gantt-color-text-secondary: #cbd5e1;
+    --w-gantt-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-gantt-color-surface-hover: #1c2940;
+    --w-gantt-color-surface-active: #24344f;
+    --w-gantt-focus-ring-color: #8e98f9;
+    --w-gantt-color-surface-elevated: #1e293b;
+    --w-gantt-color-danger: #f87171;
+  }
+}

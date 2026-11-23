@@ -1,3 +1,5 @@
+@import './token.less';
+
 .w-scrollbar {
   position: relative;
   height: 100%;
@@ -8,8 +10,8 @@
     overflow: auto;
 
     &:focus-visible {
-      outline: var(--w-focus-ring-width, 2px) solid var(--w-focus-ring-color, #4f46e5);
-      outline-offset: var(--w-focus-ring-offset, 2px);
+      outline: var(--w-scrollbar-focus-ring-width) solid var(--w-scrollbar-focus-ring-color);
+      outline-offset: var(--w-scrollbar-focus-ring-offset);
     }
 
     &--hidden-default {
@@ -28,11 +30,11 @@
     right: 2px;
     bottom: 2px;
     z-index: 1;
-    border-radius: var(--w-radius-full, 9999px);
+    border-radius: var(--w-scrollbar-radius-full);
 
     &.is-vertical {
       top: 2px;
-      width: var(--w-scrollbar-size, 6px);
+      width: var(--w-scrollbar-scrollbar-size);
 
       > .w-scrollbar__thumb {
         width: 100%;
@@ -41,7 +43,7 @@
 
     &.is-horizontal {
       left: 2px;
-      height: var(--w-scrollbar-size, 6px);
+      height: var(--w-scrollbar-scrollbar-size);
 
       > .w-scrollbar__thumb {
         height: 100%;
@@ -53,11 +55,11 @@
      bars overlap when both axes scroll. `CORNER_GAP` in the component is 2px. */
   &.is-both-axes {
     .w-scrollbar__bar.is-vertical {
-      bottom: calc(2px + var(--w-scrollbar-size, 6px) + 2px);
+      bottom: calc(2px + var(--w-scrollbar-scrollbar-size) + 2px);
     }
 
     .w-scrollbar__bar.is-horizontal {
-      right: calc(2px + var(--w-scrollbar-size, 6px) + 2px);
+      right: calc(2px + var(--w-scrollbar-scrollbar-size) + 2px);
     }
   }
 
@@ -68,20 +70,20 @@
     height: 0;
     cursor: pointer;
     border-radius: inherit;
-    background-color: var(--w-scrollbar-thumb, #eee);
-    opacity: var(--w-scrollbar-opacity, 1);
+    background-color: var(--w-scrollbar-scrollbar-thumb);
+    opacity: var(--w-scrollbar-scrollbar-opacity);
     transition:
-      background-color var(--w-duration-fast, 120ms) var(--w-easing-standard, ease),
-      opacity var(--w-duration-fast, 120ms) var(--w-easing-standard, ease);
+      background-color var(--w-scrollbar-duration-fast) var(--w-scrollbar-easing-standard),
+      opacity var(--w-scrollbar-duration-fast) var(--w-scrollbar-easing-standard);
 
     &:hover,
     &.is-dragging {
-      background-color: var(--w-scrollbar-thumb-hover, #e0e0e0);
-      opacity: var(--w-scrollbar-hover-opacity, 1);
+      background-color: var(--w-scrollbar-scrollbar-thumb-hover);
+      opacity: var(--w-scrollbar-scrollbar-hover-opacity);
     }
 
     &.is-dragging {
-      background-color: var(--w-scrollbar-thumb-active, #d6d6d6);
+      background-color: var(--w-scrollbar-scrollbar-thumb-active);
       opacity: 1;
       transition: none;
     }

@@ -1,0 +1,20 @@
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-highlight {
+  --w-highlight-radius: 4px;
+  --w-highlight-padding: 0.4em 0.55em;
+  --w-highlight-margin: 0 0.22em;
+  --w-highlight-bg: color-mix(in srgb, #4f46e5 14%, #ffffff);
+  --w-highlight-text: #4338ca;
+}
+
+[data-w-theme='dark'] .w-highlight {
+  --w-highlight-bg: color-mix(in srgb, #818cf8 24%, #0f172a);
+  --w-highlight-text: #c7d2fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-highlight {
+    --w-highlight-bg: color-mix(in srgb, #818cf8 24%, #0f172a);
+    --w-highlight-text: #c7d2fe;
+  }
+}

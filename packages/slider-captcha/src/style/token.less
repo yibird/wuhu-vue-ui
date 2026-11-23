@@ -1,6 +1,75 @@
-// Component-scoped semantic aliases. Both states follow the app theme, so the
-// captcha never ships a second palette that could drift from the library.
+// Component-scoped semantic aliases on top of this package's own literal
+// tokens; no app-level theme variables are required.
 .w-slider-captcha {
-  --w-slider-captcha-success-text: var(--w-color-success, #047857);
-  --w-slider-captcha-danger-text: var(--w-color-danger, #dc2626);
+  --w-slider-captcha-success-text: var(--w-slider-captcha-color-success);
+  --w-slider-captcha-danger-text: var(--w-slider-captcha-color-danger);
+}
+
+/* Self-contained tokens: this package no longer reads theme variables from the app. */
+.w-slider-captcha {
+  --w-slider-captcha-radius-lg: 12px;
+  --w-slider-captcha-color-surface-subtle: #f1f5f9;
+  --w-slider-captcha-color-primary-soft: rgba(79, 70, 229, 0.1);
+  --w-slider-captcha-color-surface: #ffffff;
+  --w-slider-captcha-color-text-secondary: #475569;
+  --w-slider-captcha-color-text: #0f172a;
+  --w-slider-captcha-font-family: inherit;
+  --w-slider-captcha-color-border: #e2e8f0;
+  --w-slider-captcha-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --w-slider-captcha-duration-fast: 120ms;
+  --w-slider-captcha-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --w-slider-captcha-z-sticky: 10;
+  --w-slider-captcha-radius-full: 9999px;
+  --w-slider-captcha-focus-ring-width: 2px;
+  --w-slider-captcha-focus-ring-color: #4f46e5;
+  --w-slider-captcha-z-overlay: 2000;
+  --w-slider-captcha-font-size-xs: 12px;
+  --w-slider-captcha-color-primary-soft-hover: rgba(79, 70, 229, 0.16);
+  --w-slider-captcha-duration-normal: 220ms;
+  --w-slider-captcha-color-primary: #4f46e5;
+  --w-slider-captcha-font-weight-medium: 500;
+  --w-slider-captcha-color-surface-hover: #f1f5f9;
+  --w-slider-captcha-duration-slow: 400ms;
+  --w-slider-captcha-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+  --w-slider-captcha-color-success: #047857;
+  --w-slider-captcha-color-danger-soft: rgba(220, 38, 38, 0.1);
+  --w-slider-captcha-color-danger-text: #b91c1c;
+  --w-slider-captcha-opacity-disabled: 0.55;
+  --w-slider-captcha-color-danger: #dc2626;
+}
+
+[data-w-theme='dark'] .w-slider-captcha {
+  --w-slider-captcha-color-surface-subtle: #141d2f;
+  --w-slider-captcha-color-primary-soft: rgba(129, 140, 248, 0.16);
+  --w-slider-captcha-color-surface: #0f172a;
+  --w-slider-captcha-color-text-secondary: #cbd5e1;
+  --w-slider-captcha-color-text: #e2e8f0;
+  --w-slider-captcha-color-border: #2a3a55;
+  --w-slider-captcha-focus-ring-color: #8e98f9;
+  --w-slider-captcha-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+  --w-slider-captcha-color-primary: #818cf8;
+  --w-slider-captcha-color-surface-hover: #1c2940;
+  --w-slider-captcha-color-success: #34d399;
+  --w-slider-captcha-color-danger-soft: rgba(248, 113, 113, 0.14);
+  --w-slider-captcha-color-danger-text: #f87171;
+  --w-slider-captcha-color-danger: #f87171;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-slider-captcha {
+    --w-slider-captcha-color-surface-subtle: #141d2f;
+    --w-slider-captcha-color-primary-soft: rgba(129, 140, 248, 0.16);
+    --w-slider-captcha-color-surface: #0f172a;
+    --w-slider-captcha-color-text-secondary: #cbd5e1;
+    --w-slider-captcha-color-text: #e2e8f0;
+    --w-slider-captcha-color-border: #2a3a55;
+    --w-slider-captcha-focus-ring-color: #8e98f9;
+    --w-slider-captcha-color-primary-soft-hover: rgba(129, 140, 248, 0.24);
+    --w-slider-captcha-color-primary: #818cf8;
+    --w-slider-captcha-color-surface-hover: #1c2940;
+    --w-slider-captcha-color-success: #34d399;
+    --w-slider-captcha-color-danger-soft: rgba(248, 113, 113, 0.14);
+    --w-slider-captcha-color-danger-text: #f87171;
+    --w-slider-captcha-color-danger: #f87171;
+  }
 }

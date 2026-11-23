@@ -60,7 +60,7 @@ const active = ref('概览')
 <style scoped>
 .nested-triggers {
   height: 380px;
-  padding: 20px;
+  padding: 0;
   overflow: visible;
   border: 1px solid var(--w-color-border, #e2e8f0);
   border-radius: var(--w-radius-lg, 12px);
