@@ -81,7 +81,9 @@ describe('CommandMenu', () => {
     await input.setValue('不存在')
     expect(getOptions(wrapper)).toHaveLength(0)
     expect(wrapper.get('.w-command-menu__empty').text()).toContain('未找到匹配的命令')
-    expect(wrapper.get('.w-command-menu__empty-hint').text()).toBe('换个关键词试试')
+    expect(wrapper.get('.w-command-menu__empty .w-empty__description').text()).toBe(
+      '换个关键词试试',
+    )
     expect(wrapper.emitted('search')?.at(-1)).toEqual(['不存在'])
   })
 
@@ -168,7 +170,7 @@ describe('CommandMenu', () => {
     expect(getActiveLabel(wrapper)).toBe('用户管理')
 
     expect(wrapper.emitted('select')).toBeUndefined()
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:value')).toBeUndefined()
   })
 
   it('moves the active row across group boundaries', async () => {
@@ -191,7 +193,7 @@ describe('CommandMenu', () => {
   })
 
   it('moves from a group-end selection to the next group first item', async () => {
-    const selected = mountMenu({ modelValue: 'users' })
+    const selected = mountMenu({ value: 'users' })
     expect(getActiveLabel(selected)).toBeUndefined()
 
     await getInput(selected).trigger('keydown', { key: 'ArrowDown' })
@@ -201,16 +203,16 @@ describe('CommandMenu', () => {
     await getOptions(clicked)
       .find((option) => option.text().includes('用户管理'))
       ?.trigger('click')
-    expect(clicked.emitted('update:modelValue')?.[0]).toEqual(['users'])
+    expect(clicked.emitted('update:value')?.[0]).toEqual(['users'])
     expect(getActiveLabel(clicked)).toBeUndefined()
 
-    await clicked.setProps({ modelValue: 'users' })
+    await clicked.setProps({ value: 'users' })
     await getInput(clicked).trigger('keydown', { key: 'ArrowDown' })
     expect(getActiveLabel(clicked)).toBe('新建用户')
   })
 
   it('prefers the highlight index over the selected index', async () => {
-    const wrapper = mountMenu({ modelValue: 'help' })
+    const wrapper = mountMenu({ value: 'help' })
     const input = getInput(wrapper)
 
     // Both start with no highlight; the first move starts from the selected item.
@@ -218,7 +220,7 @@ describe('CommandMenu', () => {
     expect(getActiveLabel(wrapper)).toBe('系统设置')
 
     // Changing the selected item must not override an existing highlight.
-    await wrapper.setProps({ modelValue: 'dashboard' })
+    await wrapper.setProps({ value: 'dashboard' })
     await input.trigger('keydown', { key: 'ArrowDown' })
     expect(getActiveLabel(wrapper)).toBe('帮助中心')
   })
@@ -297,13 +299,13 @@ describe('CommandMenu', () => {
   })
 
   it('navigates relative to the selected item', async () => {
-    const up = mountMenu({ modelValue: 'create-user' })
+    const up = mountMenu({ value: 'create-user' })
     expect(getActiveLabel(up)).toBeUndefined()
 
     await getInput(up).trigger('keydown', { key: 'ArrowUp' })
     expect(getActiveLabel(up)).toBe('用户管理')
 
-    const down = mountMenu({ modelValue: 'create-user' })
+    const down = mountMenu({ value: 'create-user' })
     expect(getActiveLabel(down)).toBeUndefined()
 
     await getInput(down).trigger('keydown', { key: 'ArrowDown' })
@@ -315,9 +317,9 @@ describe('CommandMenu', () => {
     const options = getOptions(wrapper)
 
     await options[3]?.trigger('click')
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['create-user'])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual(['create-user'])
 
-    await wrapper.setProps({ modelValue: 'create-user' })
+    await wrapper.setProps({ value: 'create-user' })
     await getInput(wrapper).trigger('keydown', { key: 'ArrowDown' })
     expect(getActiveLabel(wrapper)).toBe('系统设置')
   })
@@ -329,7 +331,7 @@ describe('CommandMenu', () => {
     await input.trigger('keydown', { key: 'ArrowDown' })
     await input.trigger('keydown', { key: 'Enter' })
 
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['dashboard'])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual(['dashboard'])
     expect(wrapper.emitted('select')?.[0]?.[0]).toMatchObject({ key: 'dashboard' })
 
     const disabled = getOptions(wrapper).find((option) => option.text().includes('旧版控制台'))
@@ -351,16 +353,28 @@ describe('CommandMenu', () => {
     expect(input.attributes('aria-activedescendant')).toBe(options[1]?.attributes('id'))
 
     await input.trigger('keydown', { key: 'Enter' })
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['users'])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual(['users'])
 
     await wrapper.get('.w-command-menu__list').trigger('mouseleave')
 
     expect(wrapper.find('.is-hovered').exists()).toBe(false)
-    expect(getActiveLabel(wrapper)).toBe('用户管理')
+    expect(getActiveLabel(wrapper)).toBeUndefined()
 
     await options[2]?.trigger('mouseenter')
     expect(wrapper.find('.is-hovered').exists()).toBe(false)
+    expect(getActiveLabel(wrapper)).toBeUndefined()
+  })
+
+  it('clears the hover highlight when the pointer leaves the row for list space', async () => {
+    const wrapper = mountMenu()
+    const options = getOptions(wrapper)
+
+    await options[1]?.trigger('mouseenter')
     expect(getActiveLabel(wrapper)).toBe('用户管理')
+
+    await wrapper.get('.w-command-menu__list').trigger('mouseover')
+    expect(wrapper.find('.is-hovered').exists()).toBe(false)
+    expect(getActiveLabel(wrapper)).toBeUndefined()
   })
 
   it('clears stale hover when the keyboard moves the active row', async () => {
@@ -442,7 +456,7 @@ describe('CommandMenu', () => {
 
     await input.trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('select')).toBeUndefined()
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:value')).toBeUndefined()
 
     await input.setValue('')
     expect(getActiveLabel(wrapper)).toBeUndefined()
@@ -570,11 +584,11 @@ describe('CommandMenu', () => {
 
     const clear = wrapper.get('.w-command-menu__clear')
     expect(clear.attributes('aria-label')).toBe('清除搜索')
-    expect(clear.attributes('title')).toBe('清除搜索')
+    expect(clear.attributes('title')).toBeUndefined()
   })
 
-  it('tracks modelValue as the selected item', async () => {
-    const wrapper = mountMenu({ modelValue: 'users' })
+  it('tracks value as the selected item', async () => {
+    const wrapper = mountMenu({ value: 'users' })
 
     const selected = getOptions(wrapper).find(
       (option) => option.attributes('aria-selected') === 'true',
@@ -583,7 +597,7 @@ describe('CommandMenu', () => {
     expect(selected?.classes()).toContain('is-selected')
     expect(selected?.find('.w-command-menu__check').exists()).toBe(false)
 
-    await wrapper.setProps({ modelValue: 'settings' })
+    await wrapper.setProps({ value: 'settings' })
 
     const nextSelected = getOptions(wrapper).find(
       (option) => option.attributes('aria-selected') === 'true',

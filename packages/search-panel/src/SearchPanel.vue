@@ -296,7 +296,7 @@ defineExpose<SearchPanelExpose>({
             class="w-search-panel__command"
             :classes="commandClasses"
             :styles="commandStyles"
-            @update:model-value="emit('update:value', $event)"
+            @update:value="emit('update:value', $event)"
             @select="handleSelect"
             @search="emit('search', $event)"
           >

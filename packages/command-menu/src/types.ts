@@ -45,7 +45,7 @@ export type CommandMenuIcon = Component | string
 export type CommandMenuEscapeBehavior = 'clear' | 'close' | 'none'
 
 export interface CommandMenuItem {
-  /** Stable, unique identifier used for selection and `v-model`. */
+  /** Stable, unique identifier used for selection and `v-model:value`. */
   key: CommandMenuKey
   /** Primary text displayed and searched. */
   label: string
@@ -69,8 +69,8 @@ export type CommandMenuFilter = (item: CommandMenuItem, query: string) => boolea
 export interface CommandMenuProps {
   /** Commands to display. The array is never mutated. */
   items: CommandMenuItem[]
-  /** Currently selected item key. Supports `v-model`. */
-  modelValue?: CommandMenuKey
+  /** Currently selected item key. Supports `v-model:value`. */
+  value?: CommandMenuKey
   /** Search input placeholder. */
   placeholder?: string
   /** Message shown when filtering yields no items. */
@@ -109,10 +109,10 @@ export interface CommandMenuItemSlotProps {
   index: number
   /** Whether the row is the keyboard/pointer active row. */
   active: boolean
-  /** Whether the row matches `v-model`. */
+  /** Whether the row matches `v-model:value`. */
   selected: boolean
   disabled: boolean
-  /** Selects this row and emits `update:modelValue` / `select`. */
+  /** Selects this row and emits `update:value` / `select`. */
   select: () => void
 }
 

@@ -4,7 +4,7 @@
 
 ## 基础用法
 
-传入 `items` 与 `v-model` 即可使用。侧边栏按分组过滤，搜索基于图标 `label`，列表使用 `@tanstack/vue-virtual` 虚拟滚动。
+传入 `items` 与 `v-model:value` 即可使用。侧边栏按分组过滤，搜索基于图标 `label`，列表使用 `@tanstack/vue-virtual` 虚拟滚动。
 
 <demo vue="../demos/icon-picker/basic.vue" />
 
@@ -29,7 +29,7 @@ const selected = ref<string | null>(null)
 </script>
 
 <template>
-  <IconPicker v-model="selected" :items="iconGroups" />
+  <IconPicker v-model:value="selected" :items="iconGroups" />
 </template>
 ```
 
@@ -55,14 +55,14 @@ setIconPickerIcons([
 ```
 
 ```vue
-<IconPicker v-model="selected" />
+<IconPicker v-model:value="selected" />
 ```
 
 显式传入的 `items` 优先级高于全局图标库。
 
 ## 多选
 
-设置 `multiple` 后，`v-model` 使用 `string[]`，点击图标切换选中状态；选中项右上角显示带入场动画的勾选标记。
+设置 `multiple` 后，`v-model:value` 使用 `string[]`，点击图标切换选中状态；选中项右上角显示带入场动画的勾选标记。
 
 <demo vue="../demos/icon-picker/multiple.vue" />
 
@@ -101,7 +101,7 @@ setIconPickerIcons([
 | 属性           | 类型                         | 默认值             | 说明                                          |
 | -------------- | ---------------------------- | ------------------ | --------------------------------------------- |
 | `items`        | `IconPickerGroup[]`          | 全局图标库         | 分组图标数据；缺省时读取 `setIconPickerIcons` |
-| `modelValue`   | `string \| string[] \| null` | —                  | 选中 key；多选时为数组，支持 `v-model`        |
+| `value`        | `string \| string[] \| null` | —                  | 选中 key；多选时为数组，支持 `v-model:value`  |
 | `multiple`     | `boolean`                    | `false`            | 是否允许多选，选中项显示勾选标记              |
 | `showSearch`   | `boolean`                    | `true`             | 是否显示搜索框                                |
 | `placeholder`  | `string`                     | `'搜索图标'`       | 搜索框占位文本与无障碍名称                    |
@@ -135,10 +135,10 @@ setIconPickerIcons([
 
 ### Emits
 
-| 事件                | 参数                                           | 说明         |
-| ------------------- | ---------------------------------------------- | ------------ |
-| `update:modelValue` | `string \| string[] \| null`                   | 选中图标变化 |
-| `select`            | `item: IconPickerItem, group: IconPickerGroup` | 选中某个图标 |
+| 事件           | 参数                                           | 说明         |
+| -------------- | ---------------------------------------------- | ------------ |
+| `update:value` | `string \| string[] \| null`                   | 选中图标变化 |
+| `select`       | `item: IconPickerItem, group: IconPickerGroup` | 选中某个图标 |
 
 ### Slots
 

@@ -7,5 +7,5 @@ const selected = ref<string | null>(null)
 </script>
 
 <template>
-  <IconPicker v-model="selected" :items="iconGroups" :show-search="false" :height="320" />
+  <IconPicker v-model:value="selected" :items="iconGroups" :show-search="false" :height="320" />
 </template>

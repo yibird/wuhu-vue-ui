@@ -7,19 +7,14 @@ const props = withDefaults(defineProps<ImgComparisonSliderProps>(), {
   ariaLabel: '图片对比滑块',
   before: '',
   after: '',
-  altBefore: 'Before',
-  altAfter: 'After',
   direction: 'horizontal',
   disabled: false,
-  showLabels: false,
-  beforeLabel: 'Before',
-  afterLabel: 'After',
   aspectRatio: '16 / 9',
   keyboardStep: 1,
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number]
+  'update:value': [value: number]
   change: [value: number]
   dragstart: [value: number]
   dragend: [value: number]
@@ -30,8 +25,6 @@ defineSlots<{
   before?: () => unknown
   after?: () => unknown
   handle?: (props: ImgComparisonSliderSlotProps) => unknown
-  'before-label'?: () => unknown
-  'after-label'?: () => unknown
 }>()
 
 /**
@@ -68,11 +61,11 @@ function round(value: number): number {
 }
 
 const { value: position, setValue: setPositionValue } = useControllableState({
-  value: () => props.modelValue,
+  value: () => props.value,
   defaultValue: 50,
   normalize: (value) => round(clamp(value)),
   onChange: (next) => {
-    emit('update:modelValue', next)
+    emit('update:value', next)
     emit('change', next)
   },
 })
@@ -249,15 +242,14 @@ function handleKeydown(event: KeyboardEvent) {
   const largeStep = step * 10
   let next: number | undefined
 
-  const keySteps: Record<string, number> = {
-    ArrowLeft: -step,
-    ArrowRight: step,
-    // WAI-ARIA APG: Up/PageUp increase the value, Down/PageDown decrease it.
-    ArrowDown: -step,
-    ArrowUp: step,
-    PageDown: -largeStep,
-    PageUp: largeStep,
-  }
+  // Vertical sliders move the divider towards the top with the "up" keys, so
+  // the numeric percentage decreases (the value is measured from the top).
+  const keySteps: Record<string, number> = isHorizontal.value
+    ? { ArrowLeft: -step, ArrowRight: step }
+    : { ArrowUp: -step, ArrowDown: step }
+
+  keySteps.PageUp = isHorizontal.value ? largeStep : -largeStep
+  keySteps.PageDown = -keySteps.PageUp
 
   if (event.key in keySteps) {
     next = position.value + keySteps[event.key]!
@@ -292,7 +284,7 @@ defineExpose({
     class="w-img-comparison-slider"
     :class="[
       `w-img-comparison-slider--${direction}`,
-      { 'is-dragging': dragging, 'is-disabled': disabled, 'has-labels': showLabels },
+      { 'is-dragging': dragging, 'is-disabled': disabled },
       classes?.root,
     ]"
     :style="[rootStyle, styles?.root]"
@@ -307,7 +299,7 @@ defineExpose({
         <img
           v-if="before && !imageErrors.before"
           :src="before"
-          :alt="altBefore"
+          alt=""
           :class="classes?.image"
           :style="styles?.image"
           draggable="false"
@@ -315,14 +307,6 @@ defineExpose({
           @error="handleImageError('before', $event)"
         />
       </slot>
-      <div
-        v-if="showLabels"
-        class="w-img-comparison-slider__label w-img-comparison-slider__label--before"
-        :class="[classes?.label, classes?.beforeLabel]"
-        :style="[styles?.label, styles?.beforeLabel]"
-      >
-        <slot name="before-label">{{ beforeLabel }}</slot>
-      </div>
     </div>
 
     <div
@@ -334,7 +318,7 @@ defineExpose({
         <img
           v-if="after && !imageErrors.after"
           :src="after"
-          :alt="altAfter"
+          alt=""
           :class="classes?.image"
           :style="styles?.image"
           draggable="false"
@@ -342,14 +326,6 @@ defineExpose({
           @error="handleImageError('after', $event)"
         />
       </slot>
-      <div
-        v-if="showLabels"
-        class="w-img-comparison-slider__label w-img-comparison-slider__label--after"
-        :class="[classes?.label, classes?.afterLabel]"
-        :style="[styles?.label, styles?.afterLabel]"
-      >
-        <slot name="after-label">{{ afterLabel }}</slot>
-      </div>
     </div>
 
     <div

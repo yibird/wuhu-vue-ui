@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { detectFormat, detectMimeType } from '../core/detect'
 import { triggerDownload } from '../core/download'
@@ -243,7 +244,7 @@ onBeforeUnmount(() => {
               v-if="!entry.directory"
               type="button"
               class="w-file-viewer__icon-button is-small"
-              :title="messages.renderers.archive.downloadEntry"
+              v-tooltip="messages.renderers.archive.downloadEntry"
               :aria-label="messages.renderers.archive.downloadEntry"
               @click.stop="downloadEntry(entry)"
             >

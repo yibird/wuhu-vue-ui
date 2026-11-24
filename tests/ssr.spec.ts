@@ -33,6 +33,7 @@ import OrgTree from '../packages/org-tree/src/OrgTree.vue'
 import JsonViewer from '../packages/json-viewer/src/JsonViewer.vue'
 import ContextMenu from '../packages/context-menu/src/ContextMenu.vue'
 import SearchPanel from '../packages/search-panel/src/SearchPanel.vue'
+import Tooltip from '../packages/tooltip/src/Tooltip.vue'
 
 interface SsrCase {
   name: string
@@ -66,7 +67,7 @@ const cases: SsrCase[] = [
   { name: 'Exception', component: Exception, props: {} },
   { name: 'Ripple', component: Ripple, props: {} },
   { name: 'CodeEditor', component: CodeEditor, props: {} },
-  { name: 'Dock', component: Dock, props: { model: [] } },
+  { name: 'Dock', component: Dock, props: { items: [] } },
   { name: 'IconPicker', component: IconPicker, props: { items: [] } },
   { name: 'OrgTree', component: OrgTree, props: { data: [{ id: 'a', label: 'A' }] } },
   { name: 'JsonViewer', component: JsonViewer, props: { value: { a: 1 } } },
@@ -86,6 +87,7 @@ const cases: SsrCase[] = [
       items: [{ key: 'a', label: 'A' }],
     },
   },
+  { name: 'Tooltip', component: Tooltip, props: { content: 'tip' } },
 ]
 
 describe('SSR rendering', () => {

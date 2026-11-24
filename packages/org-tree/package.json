@@ -49,7 +49,9 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-vue-ui/core": "workspace:*"
+    "@wuhu-vue-ui/core": "workspace:*",
+    "@wuhu-vue-ui/empty": "workspace:*",
+    "@wuhu-vue-ui/tooltip": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

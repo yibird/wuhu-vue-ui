@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { h, nextTick, reactive } from 'vue'
 import Dock from '../Dock.vue'
 import type { DockItem, DockPosition } from '../types'
@@ -37,7 +37,11 @@ async function pointerMove(element: Element, clientX: number, clientY = 0): Prom
   await nextTick()
 }
 
-const basicModel: DockItem[] = [
+afterEach(() => {
+  document.body.innerHTML = ''
+})
+
+const basicItems: DockItem[] = [
   { label: 'Home', icon: '/icons/home.png' },
   { label: 'Divider', separator: true },
   { label: 'Docs' },
@@ -47,7 +51,8 @@ const basicModel: DockItem[] = [
 describe('Dock', () => {
   it('renders items, separators, images and accessibility attributes', () => {
     const wrapper = mount(Dock, {
-      props: { model: basicModel, ariaLabel: 'Applications' },
+      props: { items: basicItems },
+      attrs: { 'aria-label': 'Applications' },
     })
 
     const root = wrapper.get('.w-dock')
@@ -68,7 +73,7 @@ describe('Dock', () => {
 
   it('applies the position class', async () => {
     const wrapper = mount(Dock, {
-      props: { model: [{ label: 'Home' }], position: 'bottom' },
+      props: { items: [{ label: 'Home' }], position: 'bottom' },
     })
 
     expect(wrapper.get('.w-dock').classes()).toContain('w-dock--bottom')
@@ -89,7 +94,7 @@ describe('Dock', () => {
   it('emits select and runs commands', async () => {
     const command = vi.fn()
     const item: DockItem = { label: 'Home', command }
-    const wrapper = mount(Dock, { props: { model: [item] } })
+    const wrapper = mount(Dock, { props: { items: [item] } })
 
     await wrapper.get('.w-dock__item').trigger('click')
 
@@ -104,7 +109,7 @@ describe('Dock', () => {
   it('activates once on Enter without a duplicate keydown handler', async () => {
     const command = vi.fn()
     const wrapper = mount(Dock, {
-      props: { model: [{ label: 'Home', command }] },
+      props: { items: [{ label: 'Home', command }] },
     })
     const item = wrapper.get('.w-dock__item')
 
@@ -123,7 +128,7 @@ describe('Dock', () => {
     const open = vi.spyOn(window, 'open').mockImplementation(() => null)
     const wrapper = mount(Dock, {
       props: {
-        model: [{ label: 'Docs', url: 'https://example.com/docs', target: '_blank' }],
+        items: [{ label: 'Docs', url: 'https://example.com/docs', target: '_blank' }],
       },
     })
 
@@ -139,7 +144,7 @@ describe('Dock', () => {
     const command = vi.fn()
     const wrapper = mount(Dock, {
       props: {
-        model: [{ label: 'Locked', disabled: true, command, url: 'https://example.com' }],
+        items: [{ label: 'Locked', disabled: true, command, url: 'https://example.com' }],
       },
     })
 
@@ -158,7 +163,7 @@ describe('Dock', () => {
   it('magnifies items near the pointer with a smooth falloff', async () => {
     const wrapper = mount(Dock, {
       props: {
-        model: [{ label: 'A' }, { label: 'B' }, { label: 'C' }],
+        items: [{ label: 'A' }, { label: 'B' }, { label: 'C' }],
       },
     })
     mockRects(wrapper)
@@ -187,15 +192,15 @@ describe('Dock', () => {
     wrapper.unmount()
   })
 
-  it('re-measures after the model is mutated in place', async () => {
-    const model = reactive<DockItem[]>([{ label: 'A' }, { label: 'B' }])
-    const wrapper = mount(Dock, { props: { model } })
+  it('re-measures after the items are mutated in place', async () => {
+    const items = reactive<DockItem[]>([{ label: 'A' }, { label: 'B' }])
+    const wrapper = mount(Dock, { props: { items } })
     mockRects(wrapper)
 
     // Prime the cached centres with the original two items.
     await pointerMove(wrapper.get('.w-dock').element, 24, 24)
 
-    model.push({ label: 'C' })
+    items.push({ label: 'C' })
     await nextTick()
     mockRects(wrapper)
 
@@ -210,7 +215,7 @@ describe('Dock', () => {
 
   it('resets magnification when the pointer leaves', async () => {
     const wrapper = mount(Dock, {
-      props: { model: [{ label: 'A' }, { label: 'B' }] },
+      props: { items: [{ label: 'A' }, { label: 'B' }] },
     })
     mockRects(wrapper)
 
@@ -228,7 +233,7 @@ describe('Dock', () => {
   it('does not magnify disabled items', async () => {
     const wrapper = mount(Dock, {
       props: {
-        model: [{ label: 'A' }, { label: 'B', disabled: true }, { label: 'C' }],
+        items: [{ label: 'A' }, { label: 'B', disabled: true }, { label: 'C' }],
       },
     })
     mockRects(wrapper)
@@ -247,7 +252,7 @@ describe('Dock', () => {
 
   it('renders custom item slot content with index and active state', async () => {
     const wrapper = mount(Dock, {
-      props: { model: [{ label: 'A' }, { label: 'B' }] },
+      props: { items: [{ label: 'A' }, { label: 'B' }] },
       slots: {
         item: ({ item, index, active }: { item: DockItem; index: number; active: boolean }) =>
           h('span', { class: 'custom-item' }, `${item.label}-${index}-${active}`),
@@ -265,7 +270,7 @@ describe('Dock', () => {
 
   it('renders custom icon and tooltip slots', async () => {
     const wrapper = mount(Dock, {
-      props: { model: [{ label: 'Home' }] },
+      props: { items: [{ label: 'Home' }] },
       slots: {
         icon: ({ item }: { item: DockItem }) => h('span', { class: 'custom-icon' }, item.label),
         tooltip: ({ item }: { item: DockItem }) =>
@@ -274,19 +279,38 @@ describe('Dock', () => {
     })
 
     expect(wrapper.get('.custom-icon').text()).toBe('Home')
-    expect(wrapper.find('.custom-tip').exists()).toBe(false)
+    expect(document.body.querySelector('.custom-tip')).toBeNull()
 
     await wrapper.get('.w-dock__item').trigger('pointerenter')
-    expect(wrapper.get('.custom-tip').text()).toBe('Home!')
+    await nextTick()
+
+    expect(document.body.querySelector('.custom-tip')?.textContent).toBe('Home!')
+    expect(wrapper.get('.w-dock__item').attributes('aria-describedby')).toBe(
+      document.body.querySelector('.w-tooltip')?.id,
+    )
 
     await wrapper.get('.w-dock').trigger('pointerleave')
-    expect(wrapper.find('.custom-tip').exists()).toBe(false)
+    await nextTick()
+    expect(document.body.querySelector('.custom-tip')).toBeNull()
 
     wrapper.unmount()
   })
 
-  it('renders an empty container without a model', () => {
-    const wrapper = mount(Dock, { props: { model: [] } })
+  it('shows the item label in the shared tooltip', async () => {
+    const wrapper = mount(Dock, { props: { items: [{ label: 'Home' }] } })
+
+    await wrapper.get('.w-dock__item').trigger('pointerenter')
+    await nextTick()
+
+    const tooltip = document.body.querySelector<HTMLElement>('.w-tooltip')
+    expect(tooltip?.textContent).toBe('Home')
+    expect(tooltip?.dataset.placement).toBe('top')
+
+    wrapper.unmount()
+  })
+
+  it('renders an empty container without items', () => {
+    const wrapper = mount(Dock, { props: { items: [] } })
 
     expect(wrapper.find('.w-dock').exists()).toBe(true)
     expect(wrapper.findAll('.w-dock__item')).toHaveLength(0)

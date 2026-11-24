@@ -50,7 +50,7 @@ pnpm install
 
 ```text
 .
-├─ packages/                # 33 个 workspace 包：core + 32 个组件包
+├─ packages/                # 35 个 workspace 包：core + 34 个组件包
 │  ├─ core/                 # 公共工具、组合式函数与 DOM 基础设施
 │  ├─ scrollbar/            # 基础能力组件
 │  ├─ copy/
@@ -60,11 +60,13 @@ pnpm install
 │  ├─ resize-container/
 │  ├─ error-boundary/
 │  ├─ ellipsis/
+│  ├─ tooltip/
 │  ├─ permission/
 │  ├─ count-down/
 │  ├─ loading/
 │  ├─ view/
 │  ├─ exception/
+│  ├─ empty/
 │  ├─ gradient-text/        # 视觉表达组件
 │  ├─ number-ticker/
 │  ├─ sliding-highlight/

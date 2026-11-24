@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { computed } from 'vue'
 import type {
   OrgTreeClasses,
@@ -114,7 +115,7 @@ function toggle() {
             aria-hidden="true"
             :aria-label="expanded ? collapseLabel : expandLabel"
             :aria-expanded="expanded"
-            :title="expanded ? collapseLabel : expandLabel"
+            v-tooltip="expanded ? collapseLabel : expandLabel"
             @pointerdown.stop
             @click.stop="toggle"
           >

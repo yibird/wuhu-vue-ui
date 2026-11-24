@@ -14,7 +14,7 @@ function handleSelect(item: IconPickerItem) {
 
 <template>
   <div class="icon-picker-demo">
-    <IconPicker v-model="selected" :items="iconGroups" @select="handleSelect" />
+    <IconPicker v-model:value="selected" :items="iconGroups" @select="handleSelect" />
 
     <div class="icon-picker-demo__result">
       <span>当前图标</span>

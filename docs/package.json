@@ -36,6 +36,7 @@
     "@wuhu-vue-ui/slider-captcha": "workspace:*",
     "@wuhu-vue-ui/sliding-highlight": "workspace:*",
     "@wuhu-vue-ui/time": "workspace:*",
+    "@wuhu-vue-ui/tooltip": "workspace:*",
     "@wuhu-vue-ui/view": "workspace:*",
     "antdv-next": "^1.7.0",
     "pdfjs-dist": "^6.4.299",

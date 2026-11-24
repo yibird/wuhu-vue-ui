@@ -10,7 +10,7 @@ vi.mock('@wuhu-vue-ui/code-editor', async () => {
   const MockCodeEditor = defineComponent({
     name: 'CodeEditor',
     props: {
-      modelValue: { type: String, default: '' },
+      value: { type: String, default: '' },
       language: { type: String, default: '' },
       theme: { type: String, default: '' },
       readOnly: { type: Boolean, default: false },
@@ -92,7 +92,7 @@ describe('JsonViewer', () => {
     expect(editor.props('height')).toBe(240)
     expect(editor.props('width')).toBe(480)
     expect(editor.props('theme')).toBe('vs-dark')
-    expect(editor.props('modelValue')).toBe('{\n    "a": 1\n}')
+    expect(editor.props('value')).toBe('{\n    "a": 1\n}')
 
     wrapper.unmount()
   })
@@ -128,7 +128,7 @@ describe('JsonViewer', () => {
     await wrapper.setProps({ value: { count: 2 } })
 
     const editor = wrapper.findComponent(CodeEditor)
-    expect(editor.props('modelValue')).toContain('"count": 2')
+    expect(editor.props('value')).toContain('"count": 2')
     wrapper.unmount()
   })
 

@@ -35,7 +35,7 @@
         :class="props.classes?.triggerButton"
         :style="props.styles?.triggerButton"
         :aria-label="collapsed ? expandLabel : collapseLabel"
-        :title="collapsed ? expandLabel : collapseLabel"
+        v-tooltip="collapsed ? expandLabel : collapseLabel"
         :aria-controls="contentId"
         :aria-expanded="!collapsed"
         @click="toggle"
@@ -66,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { getCssSize, viewContextKey } from './context'
 import type { ViewCollapseEmits, ViewHeaderProps, ViewHeaderSlots } from './types'
 import { useCollapse } from './useCollapse'

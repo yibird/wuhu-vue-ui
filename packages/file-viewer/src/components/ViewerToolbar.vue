@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { computed } from 'vue'
 import Icon from './Icon.vue'
 import type { FileViewerToolbarSlotProps } from '../types'
@@ -69,7 +70,7 @@ function commitPage() {
             type="button"
             class="w-file-viewer__icon-button"
             :disabled="page <= 1"
-            :title="messages.previousPage"
+            v-tooltip="messages.previousPage"
             :aria-label="messages.previousPage"
             @click="emit('previousPage')"
           >
@@ -93,7 +94,7 @@ function commitPage() {
             type="button"
             class="w-file-viewer__icon-button"
             :disabled="page >= pageCount"
-            :title="messages.nextPage"
+            v-tooltip="messages.nextPage"
             :aria-label="messages.nextPage"
             @click="emit('nextPage')"
           >
@@ -115,7 +116,7 @@ function commitPage() {
           <button
             type="button"
             class="w-file-viewer__icon-button"
-            :title="messages.zoomOut"
+            v-tooltip="messages.zoomOut"
             :aria-label="messages.zoomOut"
             @click="emit('zoomOut')"
           >
@@ -124,7 +125,7 @@ function commitPage() {
           <button
             type="button"
             class="w-file-viewer__zoom-value"
-            :title="messages.resetZoom"
+            v-tooltip="messages.resetZoom"
             :aria-label="messages.resetZoom"
             @click="emit('resetZoom')"
           >
@@ -133,7 +134,7 @@ function commitPage() {
           <button
             type="button"
             class="w-file-viewer__icon-button"
-            :title="messages.zoomIn"
+            v-tooltip="messages.zoomIn"
             :aria-label="messages.zoomIn"
             @click="emit('zoomIn')"
           >
@@ -155,7 +156,7 @@ function commitPage() {
           <button
             type="button"
             class="w-file-viewer__icon-button"
-            :title="messages.rotateLeft"
+            v-tooltip="messages.rotateLeft"
             :aria-label="messages.rotateLeft"
             @click="emit('rotateLeft')"
           >
@@ -164,7 +165,7 @@ function commitPage() {
           <button
             type="button"
             class="w-file-viewer__icon-button"
-            :title="messages.rotateRight"
+            v-tooltip="messages.rotateRight"
             :aria-label="messages.rotateRight"
             @click="emit('rotateRight')"
           >
@@ -179,7 +180,7 @@ function commitPage() {
           v-if="allowDownload && hasSource"
           type="button"
           class="w-file-viewer__icon-button"
-          :title="messages.download"
+          v-tooltip="messages.download"
           :aria-label="messages.download"
           @click="emit('download')"
         >
@@ -189,7 +190,7 @@ function commitPage() {
           v-if="allowOpen && hasSource"
           type="button"
           class="w-file-viewer__icon-button"
-          :title="messages.openInNewTab"
+          v-tooltip="messages.openInNewTab"
           :aria-label="messages.openInNewTab"
           @click="emit('open')"
         >
@@ -199,7 +200,7 @@ function commitPage() {
           v-if="allowPrint && capabilities.print"
           type="button"
           class="w-file-viewer__icon-button"
-          :title="messages.print"
+          v-tooltip="messages.print"
           :aria-label="messages.print"
           @click="emit('print')"
         >
@@ -210,7 +211,7 @@ function commitPage() {
           type="button"
           class="w-file-viewer__icon-button"
           :class="{ 'is-active': showInfo }"
-          :title="messages.fileInfo"
+          v-tooltip="messages.fileInfo"
           :aria-label="messages.fileInfo"
           :aria-expanded="showInfo"
           @click="emit('toggleInfo')"
@@ -221,7 +222,7 @@ function commitPage() {
           v-if="showThemeToggle"
           type="button"
           class="w-file-viewer__icon-button"
-          :title="isDark ? messages.switchToLight : messages.switchToDark"
+          v-tooltip="isDark ? messages.switchToLight : messages.switchToDark"
           :aria-label="isDark ? messages.switchToLight : messages.switchToDark"
           @click="emit('toggleTheme')"
         >
@@ -231,7 +232,7 @@ function commitPage() {
           v-if="allowFullscreen"
           type="button"
           class="w-file-viewer__icon-button"
-          :title="isFullscreen ? messages.exitFullscreen : messages.fullscreen"
+          v-tooltip="isFullscreen ? messages.exitFullscreen : messages.fullscreen"
           :aria-label="isFullscreen ? messages.exitFullscreen : messages.fullscreen"
           @click="emit('toggleFullscreen')"
         >

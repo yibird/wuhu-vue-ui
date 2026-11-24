@@ -79,14 +79,14 @@ function handleSelect(item: IconPickerItem) {
       description="分组、搜索与虚拟滚动；icon 支持类名或 Vue 虚拟节点。"
       wide
     >
-      <IconPicker v-model="selected" :items="iconGroups" @select="handleSelect" />
+      <IconPicker v-model:value="selected" :items="iconGroups" @select="handleSelect" />
       <p class="hint">
         当前：{{ selected ?? '（未选择）' }} · 最近选择：{{ lastSelected?.label ?? '（无）' }}
       </p>
     </DemoCard>
 
     <DemoCard title="隐藏搜索" description="showSearch=false 时隐藏顶部工具栏。">
-      <IconPicker v-model="selected" :items="iconGroups" :show-search="false" :height="280" />
+      <IconPicker v-model:value="selected" :items="iconGroups" :show-search="false" :height="280" />
     </DemoCard>
 
     <DemoCard

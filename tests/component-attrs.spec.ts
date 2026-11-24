@@ -77,6 +77,7 @@ import IconPicker from '../packages/icon-picker/src/IconPicker.vue'
 import JsonViewer from '../packages/json-viewer/src/JsonViewer.vue'
 import ContextMenu from '../packages/context-menu/src/ContextMenu.vue'
 import SearchPanel from '../packages/search-panel/src/SearchPanel.vue'
+import Tooltip from '../packages/tooltip/src/Tooltip.vue'
 
 interface AttrCase {
   name: string
@@ -105,7 +106,7 @@ const components: AttrCase[] = [
   {
     name: 'WuImgComparisonSlider',
     component: WuImgComparisonSlider,
-    props: { modelValue: 50 },
+    props: { value: 50 },
   },
   { name: 'WuCommandMenu', component: WuCommandMenu, props: { items: [] } },
   { name: 'WuCropper', component: WuCropper, props: { src: '/photo.jpg' } },
@@ -131,7 +132,7 @@ const components: AttrCase[] = [
     component: OrgTree,
     props: { data: [{ id: 'root', label: 'Root' }] },
   },
-  { name: 'Dock', component: Dock, props: { model: [{ label: 'Home' }] } },
+  { name: 'Dock', component: Dock, props: { items: [{ label: 'Home' }] } },
   { name: 'Loading', component: Loading },
   { name: 'View', component: View, props: { full: false } },
   { name: 'SliderCaptcha', component: SliderCaptcha },
@@ -153,6 +154,7 @@ const components: AttrCase[] = [
       items: [{ key: 'a', label: 'A' }],
     },
   },
+  { name: 'Tooltip', component: Tooltip, props: { content: 'tip' } },
 ]
 
 describe('class / style pass-through contract', () => {
@@ -180,14 +182,18 @@ describe('class / style pass-through contract', () => {
       const contextMenu = document.querySelector<HTMLElement>('.w-context-menu')
       // SearchPanel teleports its dialog to body; consumer attrs land on the panel.
       const searchPanel = document.querySelector<HTMLElement>('.w-search-panel__panel')
+      // Tooltip renders a fragment (trigger wrapper + teleport), so expose it explicitly.
+      const tooltipTrigger = wrapper.find('.w-tooltip__trigger')
       const first = wrapper.find('*')
       const root = (contextMenu ??
         searchPanel ??
-        (wrapper.element instanceof Element
-          ? wrapper.element
-          : loading.exists()
-            ? loading.element
-            : first.element)) as HTMLElement
+        (tooltipTrigger.exists()
+          ? tooltipTrigger.element
+          : wrapper.element instanceof Element
+            ? wrapper.element
+            : loading.exists()
+              ? loading.element
+              : first.element)) as HTMLElement
       const classes = Array.from(root.classList)
 
       expect(classes).toContain('consumer-class')

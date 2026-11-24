@@ -16,8 +16,8 @@ export interface CodeEditorLabels {
 }
 
 export interface CodeEditorProps {
-  /** Editor content, used with `v-model`. */
-  modelValue?: string
+  /** Editor content, used with `v-model:value`. */
+  value?: string
   /** Monaco language identifier, e.g. `typescript` or `json`. */
   language?: string
   /**

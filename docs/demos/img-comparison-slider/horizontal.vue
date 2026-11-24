@@ -7,14 +7,9 @@ const position = ref(56)
 
 <template>
   <ImgComparisonSlider
-    v-model="position"
+    v-model:value="position"
     before="/comparison-before.svg"
     after="/comparison-after.svg"
-    alt-before="设计概念"
-    alt-after="视觉实现"
-    show-labels
-    before-label="概念稿"
-    after-label="实现效果"
   />
   <div class="slider-meta">
     <span>分割位置</span>
@@ -28,19 +23,6 @@ const position = ref(56)
   height: 320px;
 }
 /* Image comparison demo variants */
-.comparison-custom {
-  .comparison-label {
-    display: inline-flex;
-    padding: 4px 10px;
-    border-radius: var(--w-radius-full, 9999px);
-    background: var(--w-color-tooltip-bg, rgba(15, 23, 42, 0.94));
-    color: var(--w-color-tooltip-text, #ffffff);
-    font-size: 11px;
-    font-weight: 600;
-    backdrop-filter: blur(6px);
-  }
-}
-
 .comparison-knob {
   display: flex;
   align-items: center;

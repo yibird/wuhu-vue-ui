@@ -25,7 +25,7 @@ function handleSearch(value: string) {
   <div class="command-demo">
     <div class="command-demo__panel">
       <CommandMenu
-        v-model="selected"
+        v-model:value="selected"
         :items="items"
         :filterable="filterable"
         :disabled="disabled"

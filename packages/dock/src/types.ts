@@ -25,7 +25,7 @@ export interface DockItem {
 
 export interface DockProps {
   /** Items rendered in the dock. */
-  model: DockItem[]
+  items: DockItem[]
   /**
    * @desc 停靠位置，决定排列方向、放大原点与 Tooltip 方向
    * @default 'bottom'
@@ -51,8 +51,6 @@ export interface DockProps {
    * @default 8
    */
   gap?: number
-  /** Accessible name for the dock. */
-  ariaLabel?: string
 }
 
 export interface DockItemSlotProps {

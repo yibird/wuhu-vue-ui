@@ -1,5 +1,15 @@
 @import './token.less';
 
+/*
+ * Two-class specificity keeps host page element rules such as `.vp-doc ul`
+ * from leaking into the dock (padding-left, margin, list markers).
+ */
+.w-dock.w-dock {
+  padding: 8px;
+  margin: 0;
+  list-style: none;
+}
+
 .w-dock {
   --w-dock-size: 48px;
   --w-dock-gap: 8px;
@@ -8,9 +18,6 @@
   align-items: center;
   justify-content: center;
   gap: var(--w-dock-gap);
-  padding: 8px;
-  margin: 0;
-  list-style: none;
   background: var(--w-dock-color-surface-elevated);
   border: 1px solid var(--w-dock-color-border);
   border-radius: var(--w-dock-radius-xl);
@@ -27,21 +34,40 @@
   }
 
   /*
-   * Keep the tooltip clear of the scaled item tile. The tile grows from the
-   * dock-facing edge by (maxScale - 1) × size.
+   * The dock is pinned to the matching edge of its nearest positioned
+   * ancestor. Consumers that need a page-level dock override
+   * `.w-dock { position: fixed }` or use a positioned ancestor.
    */
-  --w-dock-tooltip-offset: calc(
-    var(--w-dock-size, 48px) * (var(--w-dock-max-scale, 1.6) - 1) + 12px
-  );
+  position: absolute;
 
   &--bottom,
   &--top {
+    left: 50%;
     flex-direction: row;
+    transform: translateX(-50%);
+  }
+
+  &--bottom {
+    bottom: var(--w-dock-offset, 16px);
+  }
+
+  &--top {
+    top: var(--w-dock-offset, 16px);
   }
 
   &--left,
   &--right {
+    top: 50%;
     flex-direction: column;
+    transform: translateY(-50%);
+  }
+
+  &--left {
+    left: var(--w-dock-offset, 16px);
+  }
+
+  &--right {
+    right: var(--w-dock-offset, 16px);
   }
 }
 
@@ -50,6 +76,12 @@
   flex: none;
   align-items: center;
   justify-content: center;
+}
+
+/* Reset host `li + li` rules that would skew the dock spacing. */
+.w-dock .w-dock__item-wrap,
+.w-dock .w-dock__separator {
+  margin: 0;
 }
 
 .w-dock__item {
@@ -169,47 +201,6 @@
   line-height: 1;
 }
 
-.w-dock__tooltip {
-  position: absolute;
-  z-index: 1;
-  padding: 5px 9px;
-  color: var(--w-dock-color-text);
-  font-size: var(--w-dock-font-size-xs);
-  letter-spacing: -0.004em;
-  line-height: 1.4;
-  white-space: nowrap;
-  background: var(--w-dock-color-surface-elevated);
-  border: 1px solid var(--w-dock-color-border-subtle);
-  border-radius: var(--w-dock-radius-sm);
-  box-shadow: var(--w-dock-shadow-md);
-  pointer-events: none;
-  animation: w-dock-tooltip-in 120ms var(--w-dock-easing-out) both;
-}
-
-.w-dock--bottom .w-dock__tooltip {
-  bottom: calc(100% + var(--w-dock-tooltip-offset));
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.w-dock--top .w-dock__tooltip {
-  top: calc(100% + var(--w-dock-tooltip-offset));
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.w-dock--left .w-dock__tooltip {
-  top: 50%;
-  left: calc(100% + var(--w-dock-tooltip-offset));
-  transform: translateY(-50%);
-}
-
-.w-dock--right .w-dock__tooltip {
-  top: 50%;
-  right: calc(100% + var(--w-dock-tooltip-offset));
-  transform: translateY(-50%);
-}
-
 .w-dock__separator {
   flex: none;
 }
@@ -240,19 +231,8 @@
   );
 }
 
-@keyframes w-dock-tooltip-in {
-  from {
-    opacity: 0;
-    translate: 0 2px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .w-dock__inner {
     transition: none;
-  }
-
-  .w-dock__tooltip {
-    animation: none;
   }
 }

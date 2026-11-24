@@ -46,7 +46,7 @@ function handleSearch(value: string) {
   <div class="command-demo">
     <div class="command-demo__panel">
       <CommandMenu
-        v-model="selected"
+        v-model:value="selected"
         :items="items"
         placeholder="输入一个不存在的命令，例如 focus"
         @search="handleSearch"

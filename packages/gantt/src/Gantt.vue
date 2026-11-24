@@ -8,6 +8,8 @@ import {
   usePointerDrag,
   useRaf,
 } from '@wuhu-vue-ui/core'
+import { Empty } from '@wuhu-vue-ui/empty'
+import { Tooltip } from '@wuhu-vue-ui/tooltip'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import type { Rect, Virtualizer } from '@tanstack/vue-virtual'
 import {
@@ -160,9 +162,7 @@ interface DragState {
 
 interface TooltipState {
   row: GanttRow
-  left: number
-  top: number
-  placement: 'top' | 'bottom'
+  anchor: HTMLElement
 }
 
 interface ContextMenuState {
@@ -541,11 +541,6 @@ function computeBarLayout(row: GanttRow, start: Date, end: Date): BarLayout {
     isMilestone: false,
     isGroup: row.hasChildren,
   }
-}
-
-function barLayout(row: GanttRow): BarLayout {
-  const { start, end } = effectiveDates(row)
-  return computeBarLayout(row, start, end)
 }
 
 const colorStyleCache = new Map<string, CSSProperties>()
@@ -988,24 +983,11 @@ function toggleTask(row: GanttRow) {
   emit('expand', row.task, expanded)
 }
 
-function showTooltip(row: GanttRow) {
+function showTooltip(row: GanttRow, event: MouseEvent) {
   if (dragState.value) return
-
-  const layout = barLayout(row)
-  const rawLeft = props.sidebarWidth + layout.left + layout.width / 2
-  const left = Math.min(
-    Math.max(rawLeft, props.sidebarWidth + 120),
-    props.sidebarWidth + timelineWidth.value - 120,
-  )
-  const top = row.index * props.rowHeight + layout.top
-  const placement: 'top' | 'bottom' = row.index > 0 ? 'top' : 'bottom'
-
-  tooltipState.value = {
-    row,
-    left,
-    top: placement === 'top' ? top - 8 : top + layout.height + 8,
-    placement,
-  }
+  const target = event.currentTarget
+  if (!(target instanceof HTMLElement)) return
+  tooltipState.value = { row, anchor: target }
 }
 
 function hideTooltip() {
@@ -1755,7 +1737,7 @@ defineExpose({
                   @click.stop="onTaskClick(view.row, $event)"
                   @dblclick.stop="onTaskDblClick(view.row, $event)"
                   @contextmenu.stop="onTaskContextMenu(view.row, $event)"
-                  @mouseenter="showTooltip(view.row)"
+                  @mouseenter="showTooltip(view.row, $event)"
                   @mouseleave="hideTooltip"
                   @keydown="onBarKeydown($event, view.row)"
                 >
@@ -1861,37 +1843,35 @@ defineExpose({
             <span class="w-gantt__today-dot" />
           </div>
 
-          <div
-            v-if="tooltipState"
-            class="w-gantt__tooltip"
-            :class="`is-${tooltipState.placement}`"
-            :style="{ left: `${tooltipState.left}px`, top: `${tooltipState.top}px` }"
-            aria-hidden="true"
-          >
-            <slot
-              name="tooltip"
-              :task="tooltipState.row.task"
-              :row="tooltipState.row"
-              :start="tooltipState.row.start"
-              :end="tooltipState.row.end"
-              :progress="tooltipState.row.progress"
-            >
-              <span class="w-gantt__tooltip-title">{{ tooltipState.row.task.name }}</span>
-              <span class="w-gantt__tooltip-dates">
-                {{ formatters.fullDate.format(tooltipState.row.start) }}
-                <template v-if="!isSameDay(tooltipState.row.start, tooltipState.row.end)">
-                  — {{ formatters.fullDate.format(tooltipState.row.end) }}
-                </template>
-              </span>
-              <span class="w-gantt__tooltip-progress">
-                {{ progressText }} {{ tooltipState.row.progress }}%
-              </span>
-            </slot>
-          </div>
+          <Tooltip v-if="tooltipState" :anchor="tooltipState.anchor" placement="top" :offset="8">
+            <template #content>
+              <div class="w-gantt__tooltip-content">
+                <slot
+                  name="tooltip"
+                  :task="tooltipState.row.task"
+                  :row="tooltipState.row"
+                  :start="tooltipState.row.start"
+                  :end="tooltipState.row.end"
+                  :progress="tooltipState.row.progress"
+                >
+                  <span class="w-gantt__tooltip-title">{{ tooltipState.row.task.name }}</span>
+                  <span class="w-gantt__tooltip-dates">
+                    {{ formatters.fullDate.format(tooltipState.row.start) }}
+                    <template v-if="!isSameDay(tooltipState.row.start, tooltipState.row.end)">
+                      — {{ formatters.fullDate.format(tooltipState.row.end) }}
+                    </template>
+                  </span>
+                  <span class="w-gantt__tooltip-progress">
+                    {{ progressText }} {{ tooltipState.row.progress }}%
+                  </span>
+                </slot>
+              </div>
+            </template>
+          </Tooltip>
 
           <div v-if="rows.length === 0 && !loading" class="w-gantt__empty">
             <slot name="empty" :view="view" :start-date="range.start" :end-date="range.end">
-              <span>{{ emptyText }}</span>
+              <Empty size="sm" :title="emptyText" />
             </slot>
           </div>
         </div>

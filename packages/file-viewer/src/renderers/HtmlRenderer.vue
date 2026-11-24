@@ -6,6 +6,7 @@ import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 import CodeBlock from './CodeBlock.vue'
 import { useCopy } from '@wuhu-vue-ui/core'
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { useTextSource } from './useTextSource'
 
 const props = defineProps<FileViewerRendererProps>()
@@ -70,7 +71,7 @@ onMounted(load)
         <button
           type="button"
           class="w-file-viewer__icon-button"
-          :title="copied ? messages.renderers.html.copied : messages.renderers.html.copy"
+          v-tooltip="copied ? messages.renderers.html.copied : messages.renderers.html.copy"
           :aria-label="copied ? messages.renderers.html.copied : messages.renderers.html.copy"
           @click="copy(source)"
         >

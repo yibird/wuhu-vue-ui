@@ -127,7 +127,7 @@ describe('CodeEditor', () => {
 
   it('creates a model with the initial value and forwards options', async () => {
     const wrapper = await mountReady({
-      modelValue: 'const answer = 42',
+      value: 'const answer = 42',
       language: 'typescript',
       theme: 'vs-dark',
       height: 200,
@@ -154,23 +154,23 @@ describe('CodeEditor', () => {
   })
 
   it('emits value updates from the editor', async () => {
-    const wrapper = await mountReady({ modelValue: 'a' })
+    const wrapper = await mountReady({ value: 'a' })
 
     monacoMock.editor.setValue('b')
 
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['b'])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual(['b'])
     expect(wrapper.emitted('change')?.[0]).toEqual(['b'])
 
     wrapper.unmount()
   })
 
-  it('syncs external modelValue without echoing it back', async () => {
-    const wrapper = await mountReady({ modelValue: 'a' })
+  it('syncs external value without echoing it back', async () => {
+    const wrapper = await mountReady({ value: 'a' })
 
-    await wrapper.setProps({ modelValue: 'external' })
+    await wrapper.setProps({ value: 'external' })
 
     expect(monacoMock.editor.setValue).toHaveBeenCalledWith('external')
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:value')).toBeUndefined()
     expect(wrapper.emitted('change')).toBeUndefined()
 
     wrapper.unmount()
@@ -227,7 +227,7 @@ describe('CodeEditor', () => {
   })
 
   it('exposes editor controls', async () => {
-    const wrapper = await mountReady({ modelValue: 'a' })
+    const wrapper = await mountReady({ value: 'a' })
     const vm = wrapper.vm as unknown as CodeEditorExpose
 
     expect(vm.getEditor()).toBe(monacoMock.editor)

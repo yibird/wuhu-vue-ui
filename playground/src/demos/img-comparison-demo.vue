@@ -15,14 +15,9 @@ const verticalPosition = ref(42)
       wide
     >
       <ImgComparisonSlider
-        v-model="horizontalPosition"
+        v-model:value="horizontalPosition"
         before="/comparison-before.svg"
         after="/comparison-after.svg"
-        alt-before="设计概念"
-        alt-after="视觉实现"
-        show-labels
-        before-label="概念稿"
-        after-label="实现效果"
       />
       <div class="slider-meta">
         <span>分割位置</span>
@@ -37,17 +32,12 @@ const verticalPosition = ref(42)
     >
       <div class="comparison-vertical">
         <ImgComparisonSlider
-          v-model="verticalPosition"
+          v-model:value="verticalPosition"
           before="/comparison-before.svg"
           after="/comparison-after.svg"
-          alt-before="方案 A"
-          alt-after="方案 B"
           direction="vertical"
           aspect-ratio="auto"
           :keyboard-step="5"
-          show-labels
-          before-label="方案 A"
-          after-label="方案 B"
         />
       </div>
       <div class="slider-meta">

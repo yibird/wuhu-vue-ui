@@ -2,7 +2,9 @@
 import type { Editor as CoreEditor } from '@tiptap/core'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import EditorPreview from './EditorPreview.vue'
 import EditorToolbar from './EditorToolbar.vue'
+import TableBubbleMenu from './TableBubbleMenu.vue'
 import { createTiptapExtensions } from './extensions'
 import { defaultTiptapEditorLabels } from './labels'
 import { lockBodyScroll, unlockBodyScroll } from './scrollLock'
@@ -15,11 +17,12 @@ import type {
 } from './types'
 
 const props = withDefaults(defineProps<TiptapEditorProps>(), {
-  modelValue: '',
+  value: '',
   placeholder: '请输入内容…',
   editable: true,
   disabled: false,
   toolbar: true,
+  preview: false,
   minHeight: 160,
   maxHeight: 520,
   ariaLabel: undefined,
@@ -37,9 +40,97 @@ defineSlots<TiptapEditorSlots>()
 
 const labels = computed(() => ({ ...defaultTiptapEditorLabels, ...props.labels }))
 const editable = computed(() => props.editable && !props.disabled)
+// Bare `preview` attributes arrive as an empty string in template compilations;
+// only an explicit `false` should disable the pane.
+const previewVisible = ref(props.preview !== false)
+const previewEnabled = computed(() => previewVisible.value)
+
+watch(
+  () => props.preview,
+  (value) => {
+    previewVisible.value = value !== false
+  },
+)
+
+function togglePreview() {
+  previewVisible.value = !previewVisible.value
+  emit('update:preview', previewVisible.value)
+}
+
+const previewRatio = ref(0.5)
+const bodyRef = ref<HTMLElement>()
+let splitCleanup: (() => void) | undefined
+
+const bodyStyle = computed<Record<string, string> | undefined>(() =>
+  previewEnabled.value
+    ? { '--w-tiptap-editor-split': `${Math.round(previewRatio.value * 100)}%` }
+    : undefined,
+)
+
+const splitterValue = computed(() => Math.round(previewRatio.value * 100))
+
+function clampSplit(value: number) {
+  return Math.min(0.8, Math.max(0.2, value))
+}
+
+function handleSplitterPointerDown(event: PointerEvent) {
+  if (event.button !== 0) return
+
+  const body = bodyRef.value
+  if (!body) return
+
+  const rect = body.getBoundingClientRect()
+  if (rect.width === 0) return
+
+  event.preventDefault()
+  const pointerId = event.pointerId
+  const startX = event.clientX
+  const startRatio = previewRatio.value
+
+  const move = (moveEvent: PointerEvent) => {
+    if (moveEvent.pointerId !== pointerId) return
+    previewRatio.value = clampSplit(startRatio + (moveEvent.clientX - startX) / rect.width)
+  }
+
+  const stop = (endEvent?: PointerEvent) => {
+    if (endEvent && endEvent.pointerId !== pointerId) return
+    splitCleanup?.()
+  }
+
+  splitCleanup?.()
+  splitCleanup = () => {
+    window.removeEventListener('pointermove', move)
+    window.removeEventListener('pointerup', stop)
+    window.removeEventListener('pointercancel', stop)
+    document.body.style.userSelect = ''
+    document.body.style.cursor = ''
+    splitCleanup = undefined
+  }
+
+  document.body.style.userSelect = 'none'
+  document.body.style.cursor = 'col-resize'
+  window.addEventListener('pointermove', move)
+  window.addEventListener('pointerup', stop)
+  window.addEventListener('pointercancel', stop)
+}
+
+function handleSplitterKeydown(event: KeyboardEvent) {
+  const step = event.shiftKey ? 0.1 : 0.02
+  let next = previewRatio.value
+
+  if (event.key === 'ArrowLeft') next -= step
+  else if (event.key === 'ArrowRight') next += step
+  else if (event.key === 'Home') next = 0.2
+  else if (event.key === 'End') next = 0.8
+  else return
+
+  event.preventDefault()
+  previewRatio.value = clampSplit(next)
+}
 const ariaLabel = computed(() => props.ariaLabel ?? labels.value.editor)
 const fullscreen = ref(false)
 const stats = ref({ characters: 0, words: 0 })
+const previewHtml = ref(props.value)
 const uploadingCount = ref(0)
 const dragging = ref(false)
 
@@ -264,7 +355,7 @@ function onDropEnd() {
 }
 
 const editor = useEditor({
-  content: props.modelValue,
+  content: props.value,
   editable: editable.value,
   extensions: createTiptapExtensions(() => props.placeholder, props.extensions),
   editorProps: {
@@ -297,13 +388,15 @@ const editor = useEditor({
   onCreate: ({ editor: instance }) => {
     updateStats(instance)
     syncAria()
+    previewHtml.value = instance.getHTML()
     emit('ready', instance)
   },
   onUpdate: ({ editor: instance }) => {
     scheduleStats(instance)
     const html = instance.getHTML()
-    if (html === props.modelValue) return
-    emit('update:modelValue', html)
+    previewHtml.value = html
+    if (html === props.value) return
+    emit('update:value', html)
     emit('change', html)
   },
   onFocus: ({ editor: instance }) => emit('focus', instance),
@@ -314,7 +407,7 @@ const editor = useEditor({
 })
 
 watch(
-  () => props.modelValue,
+  () => props.value,
   (value) => {
     const instance = editor.value
     if (!instance) return
@@ -322,6 +415,7 @@ watch(
     const next = value ?? ''
     if (next === instance.getHTML() || (!next && instance.isEmpty)) return
     instance.commands.setContent(next, { emitUpdate: false })
+    previewHtml.value = instance.getHTML()
     updateStats(instance)
   },
 )
@@ -357,6 +451,7 @@ onBeforeUnmount(() => {
   uploadController.abort()
   if (statsTimer) clearTimeout(statsTimer)
   statsTimer = undefined
+  splitCleanup?.()
   window.removeEventListener('keydown', handleWindowKeydown)
   if (bodyLocked) {
     unlockBodyScroll()
@@ -372,10 +467,12 @@ defineExpose<TiptapEditorExpose>({
   blur: () => editor.value?.commands.blur(),
   clearContent: (emitUpdate = true) => {
     editor.value?.commands.clearContent(emitUpdate)
+    previewHtml.value = editor.value?.getHTML() ?? ''
     updateStats()
   },
   setContent: (content, emitUpdate = false) => {
     editor.value?.commands.setContent(content, { emitUpdate })
+    previewHtml.value = editor.value?.getHTML() ?? ''
     updateStats()
   },
   getHTML: () => editor.value?.getHTML() ?? '',
@@ -399,7 +496,13 @@ defineExpose<TiptapEditorExpose>({
     @dragleave="onDragLeave"
     @drop="onDropEnd"
   >
-    <slot v-if="toolbar && editable && editor" name="toolbar" :editor="editor">
+    <slot
+      v-if="toolbar && editable && editor"
+      name="toolbar"
+      :editor="editor"
+      :preview="previewEnabled"
+      :toggle-preview="togglePreview"
+    >
       <EditorToolbar
         :editor="editor"
         :labels="labels"
@@ -408,14 +511,42 @@ defineExpose<TiptapEditorExpose>({
         :image-accept="imageAccept"
         :fullscreen="fullscreen"
         :allow-fullscreen="allowFullscreen"
+        :preview="previewEnabled"
         @error="handleImageError"
+        @ai="emit('ai', $event)"
         @toggle-fullscreen="toggleFullscreen"
+        @toggle-preview="togglePreview"
       />
     </slot>
 
-    <div class="w-tiptap-editor__body">
-      <EditorContent :editor="editor" />
+    <div
+      ref="bodyRef"
+      class="w-tiptap-editor__body"
+      :class="{ 'is-preview': previewEnabled }"
+      :style="bodyStyle"
+    >
+      <div class="w-tiptap-editor__editor">
+        <EditorContent :editor="editor" />
+      </div>
+      <div
+        v-if="previewEnabled"
+        class="w-tiptap-editor__splitter"
+        role="separator"
+        aria-orientation="vertical"
+        :aria-label="labels.previewSplitter"
+        :aria-valuemin="20"
+        :aria-valuemax="80"
+        :aria-valuenow="splitterValue"
+        tabindex="0"
+        @pointerdown="handleSplitterPointerDown"
+        @keydown="handleSplitterKeydown"
+      />
+      <div v-if="previewEnabled" class="w-tiptap-editor__preview">
+        <EditorPreview :content="previewHtml" :label="labels.preview" :extensions="extensions" />
+      </div>
     </div>
+
+    <TableBubbleMenu v-if="editor" :editor="editor" :labels="labels" />
 
     <div v-if="dragging && editable" class="w-tiptap-editor__dropzone" aria-hidden="true">
       {{ labels.dropImage }}

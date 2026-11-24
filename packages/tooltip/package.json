@@ -1,0 +1,57 @@
+{
+  "name": "@wuhu-vue-ui/tooltip",
+  "version": "0.0.1",
+  "description": "Accessible hover and focus tooltip component and directive for Vue 3.",
+  "keywords": [
+    "component",
+    "directive",
+    "tooltip",
+    "ui",
+    "vue",
+    "vue3"
+  ],
+  "homepage": "https://github.com/yibird/wuhu-vue-ui#readme",
+  "bugs": {
+    "url": "https://github.com/yibird/wuhu-vue-ui/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yibird/wuhu-vue-ui.git"
+  },
+  "funding": "https://github.com/sponsors/yibird",
+  "style": "./dist/style.css",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.node.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "@floating-ui/vue": "^2.0.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

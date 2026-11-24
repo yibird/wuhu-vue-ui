@@ -106,7 +106,7 @@ function iconComponent(item: DockItem): Component | undefined {
         </div>
 
         <div class="dock-demo__stage">
-          <Dock :model="model" :position="position" aria-label="应用导航" @select="handleSelect">
+          <Dock :items="model" :position="position" aria-label="应用导航" @select="handleSelect">
             <template #icon="{ item }">
               <img
                 v-if="isImageIcon(item)"
@@ -124,7 +124,7 @@ function iconComponent(item: DockItem): Component | undefined {
             </template>
 
             <template #tooltip="{ item }">
-              <span class="w-dock__tooltip dock-demo__tip">{{ item.label }}</span>
+              <span>{{ item.label }}</span>
             </template>
           </Dock>
         </div>
@@ -138,7 +138,7 @@ function iconComponent(item: DockItem): Component | undefined {
       description="通过 item 插槽完全接管项目内容，并获取 active 状态。"
     >
       <div class="dock-demo__stage">
-        <Dock :model="customModel" aria-label="自定义导航" @select="handleSelect">
+        <Dock :items="customModel" aria-label="自定义导航" @select="handleSelect">
           <template #item="{ item, active }">
             <span class="dock-demo__tile" :class="{ 'is-active': active }">
               <img
@@ -207,10 +207,11 @@ function iconComponent(item: DockItem): Component | undefined {
 }
 
 .dock-demo__stage {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: 600px;
   padding: 56px 16px 32px;
   border-radius: var(--w-radius-lg, 12px);
   background: var(--w-color-surface-subtle, #f1f5f9);
@@ -228,10 +229,6 @@ function iconComponent(item: DockItem): Component | undefined {
   height: 100%;
   border-radius: inherit;
   object-fit: cover;
-}
-
-.dock-demo__tip {
-  color: var(--w-color-primary, #4f46e5);
 }
 
 .dock-demo__tile {

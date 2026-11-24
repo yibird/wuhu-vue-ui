@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { formatBytes, formatDateTime } from '../core/format'
 import Icon from './Icon.vue'
 import type { FileInfoPanelProps } from './types'
@@ -17,7 +18,7 @@ const emit = defineEmits<{
       <button
         type="button"
         class="w-file-viewer__icon-button is-small"
-        :title="messages.close"
+        v-tooltip="messages.close"
         :aria-label="messages.close"
         @click="emit('close')"
       >

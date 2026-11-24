@@ -26,7 +26,7 @@
 
 ## 自定义插槽
 
-`action` 插槽接收 `expanded`、`toggle`、`overflowed`；`tooltip` 插槽接收完整 `text`。默认插槽用于替换 `text` 展示的内容。提示框定位由 Floating UI 负责，会自动翻转并避免超出视口。
+`action` 插槽接收 `expanded`、`toggle`、`overflowed`；`tooltip` 插槽接收完整 `text`。默认插槽用于替换 `text` 展示的内容。提示框复用 `@wuhu-vue-ui/tooltip`，由 Floating UI 定位，会自动翻转并避免超出视口。
 
 ```vue
 <Ellipsis :text="text" expandable tooltip>
@@ -71,13 +71,12 @@
 
 ### 类名
 
-| 类名                           | 说明                                          |
-| ------------------------------ | --------------------------------------------- |
-| `.w-ellipsis`                  | 根容器，配合 `.is-expanded`、`.is-overflowed` |
-| `.w-ellipsis__content`         | 文本容器，折叠时应用行数限制                  |
-| `.w-ellipsis__action`          | 展开 / 收起按钮                               |
-| `.w-ellipsis__tooltip`         | 完整文本提示框                                |
-| `.w-ellipsis__tooltip--top` 等 | 提示框实际方位（由 Floating UI 计算）         |
+| 类名                   | 说明                                          |
+| ---------------------- | --------------------------------------------- |
+| `.w-ellipsis`          | 根容器，配合 `.is-expanded`、`.is-overflowed` |
+| `.w-ellipsis__content` | 文本容器，折叠时应用行数限制                  |
+| `.w-ellipsis__action`  | 展开 / 收起按钮                               |
+| `.w-tooltip`           | 共享 Tooltip 浮层（Teleport 到 `body`）       |
 
 ### 可访问性
 

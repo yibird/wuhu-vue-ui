@@ -11,21 +11,12 @@ const presets = [0, 25, 50, 75, 100]
 <template>
   <div class="comparison-custom">
     <ImgComparisonSlider
-      v-model="position"
+      v-model:value="position"
       before="/comparison-before.svg"
       after="/comparison-after.svg"
-      alt-before="旧版页面"
-      alt-after="新版页面"
       aspect-ratio="16 / 7"
       :disabled="disabled"
-      show-labels
     >
-      <template #before-label>
-        <span class="comparison-label comparison-label--before">旧版</span>
-      </template>
-      <template #after-label>
-        <span class="comparison-label comparison-label--after">新版</span>
-      </template>
       <template #handle="{ position: value }">
         <span class="comparison-knob">{{ Math.round(value) }}%</span>
       </template>
@@ -53,19 +44,6 @@ const presets = [0, 25, 50, 75, 100]
   height: 320px;
 }
 /* Image comparison demo variants */
-.comparison-custom {
-  .comparison-label {
-    display: inline-flex;
-    padding: 4px 10px;
-    border-radius: var(--w-radius-full, 9999px);
-    background: var(--w-color-tooltip-bg, rgba(15, 23, 42, 0.94));
-    color: var(--w-color-tooltip-text, #ffffff);
-    font-size: 11px;
-    font-weight: 600;
-    backdrop-filter: blur(6px);
-  }
-}
-
 .comparison-knob {
   display: flex;
   align-items: center;

@@ -10,6 +10,7 @@ import { defaultCapabilities } from '../core/capabilities'
 import type { FileViewerRendererProps } from '../types'
 import CodeBlock from './CodeBlock.vue'
 import { useCopy } from '@wuhu-vue-ui/core'
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { useTextSource } from './useTextSource'
 
 const props = defineProps<FileViewerRendererProps>()
@@ -110,7 +111,7 @@ onMounted(loadText)
         <button
           type="button"
           class="w-file-viewer__icon-button"
-          :title="messages.renderers.code.wrap"
+          v-tooltip="messages.renderers.code.wrap"
           :aria-label="messages.renderers.code.wrap"
           :class="{ 'is-active': wrap }"
           @click="wrap = !wrap"
@@ -128,7 +129,7 @@ onMounted(loadText)
         <button
           type="button"
           class="w-file-viewer__icon-button"
-          :title="messages.renderers.code.lineNumbers"
+          v-tooltip="messages.renderers.code.lineNumbers"
           :aria-label="messages.renderers.code.lineNumbers"
           :class="{ 'is-active': lineNumbers }"
           @click="lineNumbers = !lineNumbers"
@@ -145,7 +146,7 @@ onMounted(loadText)
         <button
           type="button"
           class="w-file-viewer__icon-button"
-          :title="copied ? messages.renderers.code.copied : messages.renderers.code.copy"
+          v-tooltip="copied ? messages.renderers.code.copied : messages.renderers.code.copy"
           :aria-label="copied ? messages.renderers.code.copied : messages.renderers.code.copy"
           @click="copy(preparedText)"
         >

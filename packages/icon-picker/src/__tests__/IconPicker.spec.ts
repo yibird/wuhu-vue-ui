@@ -127,17 +127,17 @@ describe('IconPicker', () => {
     wrapper.unmount()
   })
 
-  it('emits selection and v-model updates', async () => {
-    const wrapper = mountPicker({ modelValue: null })
+  it('emits selection and v-model:value updates', async () => {
+    const wrapper = mountPicker({ value: null })
 
     await wrapper.get('.w-icon-picker__item').trigger('click')
 
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['arrow-0'])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual(['arrow-0'])
     const select = wrapper.emitted('select')?.[0]
     expect(select?.[0]).toMatchObject({ key: 'arrow-0', label: '箭头 0' })
     expect(select?.[1]).toMatchObject({ key: 'arrow' })
 
-    await wrapper.setProps({ modelValue: 'arrow-0' })
+    await wrapper.setProps({ value: 'arrow-0' })
     expect(wrapper.get('.w-icon-picker__item').classes()).toContain('is-selected')
     expect(wrapper.find('.w-icon-picker__clear').exists()).toBe(false)
 
@@ -157,21 +157,21 @@ describe('IconPicker', () => {
   })
 
   it('toggles multiple selections and renders check marks', async () => {
-    const wrapper = mountPicker({ multiple: true, modelValue: [] })
+    const wrapper = mountPicker({ multiple: true, value: [] })
     const items = wrapper.findAll('.w-icon-picker__item')
 
     await items[0]!.trigger('click')
-    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(['arrow-0'])
-    await wrapper.setProps({ modelValue: ['arrow-0'] })
+    expect(wrapper.emitted('update:value')?.at(-1)?.[0]).toEqual(['arrow-0'])
+    await wrapper.setProps({ value: ['arrow-0'] })
 
     await items[1]!.trigger('click')
-    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(['arrow-0', 'arrow-1'])
-    await wrapper.setProps({ modelValue: ['arrow-0', 'arrow-1'] })
+    expect(wrapper.emitted('update:value')?.at(-1)?.[0]).toEqual(['arrow-0', 'arrow-1'])
+    await wrapper.setProps({ value: ['arrow-0', 'arrow-1'] })
     expect(wrapper.findAll('.w-icon-picker__check')).toHaveLength(2)
 
     await items[0]!.trigger('click')
-    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(['arrow-1'])
-    await wrapper.setProps({ modelValue: ['arrow-1'] })
+    expect(wrapper.emitted('update:value')?.at(-1)?.[0]).toEqual(['arrow-1'])
+    await wrapper.setProps({ value: ['arrow-1'] })
     expect(wrapper.findAll('.w-icon-picker__check')).toHaveLength(1)
 
     wrapper.unmount()

@@ -127,7 +127,7 @@ function collectDeclarations(directory: string): string[] {
 
 export interface LibraryConfigOptions {
   /** Additional runtime dependencies to leave external in the bundle. */
-  external?: string[]
+  external?: (string | RegExp)[]
   /** Entry file relative to the package directory. Defaults to `index.ts`. */
   entry?: string
   /** Declaration root relative to the package directory. Defaults to the package root. */

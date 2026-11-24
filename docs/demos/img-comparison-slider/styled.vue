@@ -17,11 +17,6 @@ const styles = {
   <ImgComparisonSlider
     before="/comparison-before.svg"
     after="/comparison-after.svg"
-    alt-before="设计概念"
-    alt-after="视觉实现"
-    show-labels
-    before-label="概念稿"
-    after-label="实现效果"
     :classes="classes"
     :styles="styles"
   />

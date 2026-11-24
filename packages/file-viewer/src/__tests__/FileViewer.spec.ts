@@ -296,7 +296,7 @@ describe('FileViewer', () => {
   it('labels the reset zoom button for assistive technology', async () => {
     const wrapper = await mountWithRenderer(createPrintRenderer(true, true))
     const button = wrapper.find('.w-file-viewer__zoom-value')
-    expect(button.attributes('title')).toBe('Reset zoom to 100%')
+    expect(button.attributes('title')).toBeUndefined()
     expect(button.attributes('aria-label')).toBe('Reset zoom to 100%')
     wrapper.unmount()
   })

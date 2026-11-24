@@ -10,6 +10,10 @@ export interface TiptapEditorLabels {
   editor: string
   /** Accessible name of the toolbar. */
   toolbar: string
+  /** Accessible name of the live preview pane. */
+  preview: string
+  /** Accessible name of the preview splitter. */
+  previewSplitter: string
   undo: string
   redo: string
   bold: string
@@ -19,6 +23,24 @@ export interface TiptapEditorLabels {
   code: string
   /** Toolbar label of the font family menu. */
   fontFamily: string
+  /** Label of the block style menu. */
+  paragraphStyle: string
+  /** Paragraph option in the block style menu. */
+  paragraph: string
+  /** Toolbar label of the font size menu. */
+  fontSize: string
+  /** Option that resets the font size to the editor default. */
+  defaultSize: string
+  /** Toolbar label of the subscript toggle. */
+  subscript: string
+  /** Toolbar label of the superscript toggle. */
+  superscript: string
+  /** Toolbar label of the increase-indent action. */
+  indent: string
+  /** Toolbar label of the decrease-indent action. */
+  outdent: string
+  /** Toolbar label of the emoji picker. */
+  emoji: string
   heading1: string
   heading2: string
   heading3: string
@@ -31,6 +53,8 @@ export interface TiptapEditorLabels {
   alignCenter: string
   alignRight: string
   clearFormatting: string
+  /** Toolbar label of the format painter. */
+  formatPainter: string
   linkPlaceholder: string
   linkApply: string
   linkCancel: string
@@ -47,6 +71,10 @@ export interface TiptapEditorLabels {
   imageUploadFailed: string
   table: string
   insertTable: string
+  /** Heading of the table size picker. */
+  insertTablePanel: string
+  /** Live size hint inside the picker. Supports `{rows}` and `{cols}`. */
+  tableSize: string
   addRowBefore: string
   addRowAfter: string
   deleteRow: string
@@ -59,6 +87,24 @@ export interface TiptapEditorLabels {
   highlight: string
   color: string
   horizontalRule: string
+  /** Toolbar label and title of the video insertion action. */
+  video: string
+  videoPlaceholder: string
+  videoApply: string
+  videoCancel: string
+  /** Toolbar label and title of the attachment insertion action. */
+  attachment: string
+  attachmentUrlPlaceholder: string
+  attachmentNamePlaceholder: string
+  attachmentApply: string
+  attachmentCancel: string
+  /** Toolbar label of the print action. */
+  print: string
+  /** Toolbar label of the AI action. */
+  ai: string
+  aiPlaceholder: string
+  aiApply: string
+  aiCancel: string
   fullscreen: string
   exitFullscreen: string
   characters: string
@@ -74,8 +120,8 @@ export type TiptapEditorImageUpload = (file: File, signal?: AbortSignal) => stri
 
 export interface TiptapEditorProps
   extends /* @vue-ignore */ Omit<HTMLAttributes, 'onFocus' | 'onBlur' | 'onChange'> {
-  /** HTML content. Use `v-model` for two-way binding. */
-  modelValue?: string
+  /** HTML content. Use `v-model:value` for two-way binding. */
+  value?: string
   /** Placeholder shown when the document is empty. */
   placeholder?: string
   /** Whether the user can edit the content. */
@@ -84,6 +130,8 @@ export interface TiptapEditorProps
   disabled?: boolean
   /** Shows the built-in toolbar. */
   toolbar?: boolean
+  /** Shows a live read-only rendered preview next to the editor. Supports `v-model:preview`. */
+  preview?: boolean
   /** Minimum height of the editable area. */
   minHeight?: TiptapEditorSize
   /** Maximum height of the editable area before it starts scrolling. */
@@ -128,15 +176,24 @@ export interface TiptapEditorExpose {
 
 export interface TiptapEditorSlots {
   /** Replaces the built-in toolbar when editing is enabled. */
-  toolbar?: (props: { editor: Editor }) => VNodeChild
+  toolbar?: (props: { editor: Editor; preview: boolean; togglePreview: () => void }) => VNodeChild
+}
+
+/** Payload emitted when the toolbar AI action is submitted. */
+export interface TiptapEditorAiRequest {
+  editor: Editor
+  prompt: string
 }
 
 export interface TiptapEditorEmits {
-  'update:modelValue': [html: string]
+  'update:value': [html: string]
+  'update:preview': [preview: boolean]
   change: [html: string]
   ready: [editor: Editor]
   focus: [editor: Editor]
   blur: [editor: Editor]
+  /** The AI toolbar action was submitted; consumers handle the request. */
+  ai: [request: TiptapEditorAiRequest]
   'image-upload-start': [file: File]
   'image-upload-success': [url: string, file: File]
   'image-upload-error': [error: Error, file: File]

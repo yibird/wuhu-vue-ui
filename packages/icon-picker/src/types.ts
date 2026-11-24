@@ -35,8 +35,8 @@ export interface IconPickerEmptySlotProps {
 export interface IconPickerProps {
   /** Grouped icon data. Falls back to the global library set by `setIconPickerIcons`. */
   items?: IconPickerGroup[]
-  /** Selected icon key (single) or keys (multiple). Supports `v-model`. */
-  modelValue?: IconPickerModelValue
+  /** Selected icon key (single) or keys (multiple). Supports `v-model:value`. */
+  value?: IconPickerModelValue
   /** Allow toggling multiple icons. Defaults to false. */
   multiple?: boolean
   /** Show the search field. Defaults to `true`. */
@@ -70,7 +70,7 @@ export interface IconPickerProps {
 }
 
 export interface IconPickerEmits {
-  'update:modelValue': [value: IconPickerModelValue]
+  'update:value': [value: IconPickerModelValue]
   select: [item: IconPickerItem, group: IconPickerGroup]
 }
 

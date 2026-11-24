@@ -17,6 +17,7 @@
     "@wuhu-vue-ui/cropper": "workspace:*",
     "@wuhu-vue-ui/dock": "workspace:*",
     "@wuhu-vue-ui/ellipsis": "workspace:*",
+    "@wuhu-vue-ui/empty": "workspace:*",
     "@wuhu-vue-ui/error-boundary": "workspace:*",
     "@wuhu-vue-ui/exception": "workspace:*",
     "@wuhu-vue-ui/file-viewer": "workspace:*",
@@ -40,6 +41,7 @@
     "@wuhu-vue-ui/sliding-highlight": "workspace:*",
     "@wuhu-vue-ui/time": "workspace:*",
     "@wuhu-vue-ui/tiptap-editor": "workspace:*",
+    "@wuhu-vue-ui/tooltip": "workspace:*",
     "@wuhu-vue-ui/view": "workspace:*",
     "vue": "^3.5.44"
   },

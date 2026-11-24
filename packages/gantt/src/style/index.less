@@ -10,9 +10,6 @@
     transparent
   );
   --w-gantt-task-color: var(--w-gantt-color-primary);
-  --w-gantt-tooltip-bg: var(--w-gantt-color-tooltip-bg);
-  --w-gantt-tooltip-text: var(--w-gantt-color-tooltip-text);
-  --w-gantt-tooltip-muted: var(--w-gantt-color-tooltip-muted);
 
   position: relative;
   display: flex;
@@ -694,47 +691,6 @@
     transform: translate(-50%, -50%);
   }
 
-  /* Tooltip */
-  &__tooltip {
-    position: absolute;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 160px;
-    max-width: 280px;
-    padding: 10px 12px;
-    border-radius: var(--w-gantt-radius-md);
-    background: var(--w-gantt-tooltip-bg);
-    color: var(--w-gantt-tooltip-text);
-    box-shadow: var(--w-gantt-shadow-overlay);
-    font-size: var(--w-gantt-font-size-xs);
-    letter-spacing: -0.004em;
-    line-height: 1.45;
-    pointer-events: none;
-    transform: translate(-50%, -100%);
-    backdrop-filter: blur(8px);
-
-    &.is-bottom {
-      transform: translate(-50%, 0);
-    }
-  }
-
-  &__tooltip-title {
-    font-size: var(--w-gantt-font-size-xs);
-    font-weight: var(--w-gantt-font-weight-semibold);
-  }
-
-  &__tooltip-dates {
-    color: var(--w-gantt-tooltip-muted);
-  }
-
-  &__tooltip-progress {
-    color: var(--w-gantt-tooltip-text);
-    font-variant-numeric: tabular-nums;
-    opacity: 0.82;
-  }
-
   /* Context menu */
   &__context-menu {
     position: fixed;
@@ -876,4 +832,29 @@
   .w-gantt-context-menu-leave-active {
     transition: none;
   }
+}
+
+/*
+ * Tooltip content is teleported to <body>, so it cannot rely on `.w-gantt`
+ * ancestor variables or styles. Keep these selectors self-contained.
+ */
+.w-gantt__tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+  max-width: 280px;
+}
+
+.w-gantt__tooltip-title {
+  font-weight: 600;
+}
+
+.w-gantt__tooltip-dates {
+  opacity: 0.78;
+}
+
+.w-gantt__tooltip-progress {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.82;
 }

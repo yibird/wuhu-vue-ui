@@ -13,6 +13,7 @@ import {
   type ComponentPublicInstance,
 } from 'vue'
 import { useTimeoutFn } from '@wuhu-vue-ui/core'
+import { Empty } from '@wuhu-vue-ui/empty'
 import FileInfoPanel from './components/FileInfoPanel.vue'
 import Icon from './components/Icon.vue'
 import ViewerStatusBar from './components/ViewerStatusBar.vue'
@@ -839,11 +840,7 @@ onBeforeUnmount(() => {
     <div class="w-file-viewer__content" @wheel="handleWheel">
       <div v-if="status === 'empty'" class="w-file-viewer__state">
         <slot name="empty" v-bind="stateSlotProps">
-          <div class="w-file-viewer__state-icon">
-            <Icon name="file-viewer" :size="30" />
-          </div>
-          <h3>{{ messages.viewer.empty }}</h3>
-          <p>{{ messages.viewer.emptyHint }}</p>
+          <Empty :title="messages.viewer.empty" :description="messages.viewer.emptyHint" />
         </slot>
       </div>
 

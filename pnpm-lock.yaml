@@ -119,6 +119,9 @@ importers:
       '@wuhu-vue-ui/scrollbar':
         specifier: workspace:*
         version: link:../packages/scrollbar
+      '@wuhu-vue-ui/search-panel':
+        specifier: workspace:*
+        version: link:../packages/search-panel
       '@wuhu-vue-ui/slider-captcha':
         specifier: workspace:*
         version: link:../packages/slider-captcha
@@ -128,6 +131,9 @@ importers:
       '@wuhu-vue-ui/time':
         specifier: workspace:*
         version: link:../packages/time
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../packages/tooltip
       '@wuhu-vue-ui/view':
         specifier: workspace:*
         version: link:../packages/view
@@ -165,6 +171,12 @@ importers:
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
+      '@wuhu-vue-ui/empty':
+        specifier: workspace:*
+        version: link:../empty
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -204,6 +216,9 @@ importers:
 
   packages/cropper:
     dependencies:
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
       cropperjs:
         specifier: ^2.3.1
         version: 2.3.1
@@ -216,15 +231,24 @@ importers:
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
 
   packages/ellipsis:
     dependencies:
-      '@floating-ui/vue':
-        specifier: ^2.0.1
-        version: 2.0.1(vue@3.5.44(typescript@5.9.3))
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.44(typescript@5.9.3)
+
+  packages/empty:
+    dependencies:
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -246,6 +270,12 @@ importers:
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
+      '@wuhu-vue-ui/empty':
+        specifier: workspace:*
+        version: link:../empty
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
       pdfjs-dist:
         specifier: '>=3.0.0'
         version: 6.4.299
@@ -261,6 +291,12 @@ importers:
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
+      '@wuhu-vue-ui/empty':
+        specifier: workspace:*
+        version: link:../empty
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -285,6 +321,9 @@ importers:
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
+      '@wuhu-vue-ui/empty':
+        specifier: workspace:*
+        version: link:../empty
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -342,6 +381,12 @@ importers:
       '@wuhu-vue-ui/core':
         specifier: workspace:*
         version: link:../core
+      '@wuhu-vue-ui/empty':
+        specifier: workspace:*
+        version: link:../empty
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -447,12 +492,27 @@ importers:
       '@tiptap/vue-3':
         specifier: ^3.32.0
         version: 3.32.0(@floating-ui/dom@1.8.0)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(vue@3.5.44(typescript@5.9.3))
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.44(typescript@5.9.3)
+
+  packages/tooltip:
+    dependencies:
+      '@floating-ui/vue':
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.44(typescript@5.9.3))
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
 
   packages/view:
     dependencies:
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
       vue:
         specifier: ^3.5.0
         version: 3.5.44(typescript@5.9.3)
@@ -483,6 +543,9 @@ importers:
       '@wuhu-vue-ui/ellipsis':
         specifier: workspace:*
         version: link:../packages/ellipsis
+      '@wuhu-vue-ui/empty':
+        specifier: workspace:*
+        version: link:../packages/empty
       '@wuhu-vue-ui/error-boundary':
         specifier: workspace:*
         version: link:../packages/error-boundary
@@ -537,6 +600,9 @@ importers:
       '@wuhu-vue-ui/scrollbar':
         specifier: workspace:*
         version: link:../packages/scrollbar
+      '@wuhu-vue-ui/search-panel':
+        specifier: workspace:*
+        version: link:../packages/search-panel
       '@wuhu-vue-ui/slider-captcha':
         specifier: workspace:*
         version: link:../packages/slider-captcha
@@ -549,6 +615,9 @@ importers:
       '@wuhu-vue-ui/tiptap-editor':
         specifier: workspace:*
         version: link:../packages/tiptap-editor
+      '@wuhu-vue-ui/tooltip':
+        specifier: workspace:*
+        version: link:../packages/tooltip
       '@wuhu-vue-ui/view':
         specifier: workspace:*
         version: link:../packages/view

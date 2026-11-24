@@ -15,13 +15,19 @@ Element.prototype.scrollIntoView ??= () => {}
 
 function mountEditor(props: TiptapEditorProps = {}) {
   return mount(TiptapEditor, {
-    props: { modelValue: '<p>Hello</p>', ...props },
+    props: { value: '<p>Hello</p>', ...props },
     attachTo: document.body,
   })
 }
 
 function exposed(wrapper: ReturnType<typeof mountEditor>): TiptapEditorExpose {
   return wrapper.vm as unknown as TiptapEditorExpose
+}
+
+function firePointer(target: EventTarget, type: string, init: Record<string, unknown> = {}) {
+  const event = new Event(type, { bubbles: true, cancelable: true })
+  Object.assign(event, { button: 0, pointerId: 1, ...init })
+  target.dispatchEvent(event)
 }
 
 async function waitForEditor(wrapper: ReturnType<typeof mountEditor>) {
@@ -42,7 +48,66 @@ describe('TiptapEditor', () => {
     wrapper.unmount()
   })
 
-  it('emits update:modelValue and change when content changes', async () => {
+  it('renders a live preview when preview is enabled', async () => {
+    const wrapper = mountEditor({ preview: '' as unknown as boolean })
+    await waitForEditor(wrapper)
+    await flushPromises()
+
+    expect(wrapper.get('.w-tiptap-editor__preview').text()).toContain('Hello')
+
+    exposed(wrapper).editor!.commands.selectAll()
+    exposed(wrapper).editor!.commands.insertContent('Updated preview')
+    await flushPromises()
+    await nextTick()
+    await flushPromises()
+
+    expect(wrapper.get('.w-tiptap-editor__preview').text()).toContain('Updated preview')
+    wrapper.unmount()
+  })
+
+  it('toggles the preview from the toolbar', async () => {
+    const wrapper = mountEditor({ preview: false })
+    await waitForEditor(wrapper)
+
+    expect(wrapper.find('.w-tiptap-editor__preview').exists()).toBe(false)
+    const button = wrapper.get('button[aria-label="实时预览"]')
+    expect(button.attributes('aria-pressed')).toBe('false')
+
+    await button.trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.w-tiptap-editor__preview').exists()).toBe(true)
+    expect(wrapper.emitted('update:preview')?.[0]).toEqual([true])
+    expect(button.attributes('aria-pressed')).toBe('true')
+
+    await button.trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.w-tiptap-editor__preview').exists()).toBe(false)
+    expect(wrapper.emitted('update:preview')?.[1]).toEqual([false])
+    wrapper.unmount()
+  })
+
+  it('resizes the preview panes from the splitter', async () => {
+    const wrapper = mountEditor({ preview: true })
+    await waitForEditor(wrapper)
+    await flushPromises()
+
+    const body = wrapper.get('.w-tiptap-editor__body').element as HTMLElement
+    body.getBoundingClientRect = () => new DOMRect(0, 0, 1000, 400)
+    const splitter = wrapper.get('.w-tiptap-editor__splitter')
+
+    firePointer(splitter.element, 'pointerdown', { clientX: 500 })
+    firePointer(window, 'pointermove', { clientX: 700 })
+    await nextTick()
+    expect(splitter.attributes('aria-valuenow')).toBe('70')
+
+    firePointer(window, 'pointerup')
+    await splitter.trigger('keydown', { key: 'ArrowLeft' })
+    expect(splitter.attributes('aria-valuenow')).toBe('68')
+
+    wrapper.unmount()
+  })
+
+  it('emits update:value and change when content changes', async () => {
     const wrapper = mountEditor()
     await waitForEditor(wrapper)
 
@@ -50,7 +115,7 @@ describe('TiptapEditor', () => {
     exposed(wrapper).editor!.commands.insertContent('Hello world')
     await flushPromises()
 
-    const html = wrapper.emitted('update:modelValue')?.[0]?.[0]
+    const html = wrapper.emitted('update:value')?.[0]?.[0]
     expect(html).toContain('Hello world')
     expect(wrapper.emitted('change')?.[0]?.[0]).toBe(html)
     wrapper.unmount()
@@ -72,7 +137,7 @@ describe('TiptapEditor', () => {
   })
 
   it('renders the placeholder for an empty document', async () => {
-    const wrapper = mountEditor({ modelValue: '' })
+    const wrapper = mountEditor({ value: '' })
     await waitForEditor(wrapper)
 
     const empty = wrapper.find('.ProseMirror p.is-editor-empty')
@@ -81,11 +146,11 @@ describe('TiptapEditor', () => {
     wrapper.unmount()
   })
 
-  it('syncs content when modelValue changes', async () => {
+  it('syncs content when value changes', async () => {
     const wrapper = mountEditor()
     await waitForEditor(wrapper)
 
-    await wrapper.setProps({ modelValue: '<p>Updated</p>' })
+    await wrapper.setProps({ value: '<p>Updated</p>' })
     await flushPromises()
 
     expect(wrapper.find('.ProseMirror').html()).toContain('Updated')
@@ -156,16 +221,89 @@ describe('TiptapEditor', () => {
     wrapper.unmount()
   })
 
-  it('inserts a table from the table menu', async () => {
+  it('inserts a table with the size picked from the hover grid', async () => {
     const wrapper = mountEditor()
     await waitForEditor(wrapper)
 
-    await wrapper.get('[aria-label="表格"]').trigger('click')
-    await wrapper.get('.w-tiptap-editor__menu-item').trigger('click')
+    await wrapper.get('[data-tool-id="table"]').trigger('click')
     await flushPromises()
 
+    expect(wrapper.find('.w-tiptap-editor__table-picker').exists()).toBe(true)
+    expect(wrapper.findAll('.w-tiptap-editor__table-picker-cell')).toHaveLength(64)
+
+    await wrapper.get('[data-rows="2"][data-cols="4"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('.w-tiptap-editor__table-picker').exists()).toBe(false)
     expect(wrapper.findAll('.ProseMirror table')).toHaveLength(1)
-    expect(wrapper.findAll('.ProseMirror table tr')).toHaveLength(3)
+    expect(wrapper.findAll('.ProseMirror table tr')).toHaveLength(2)
+    expect(wrapper.findAll('.ProseMirror table tr:first-child th')).toHaveLength(4)
+    wrapper.unmount()
+  })
+
+  it('applies font size, paragraph style and sub/superscript marks', async () => {
+    const wrapper = mountEditor()
+    await waitForEditor(wrapper)
+
+    const editor = exposed(wrapper).editor!
+    editor.commands.selectAll()
+    await nextTick()
+
+    await wrapper.get('select[aria-label="字号"]').setValue('24px')
+    await flushPromises()
+    expect(editor.getAttributes('textStyle').fontSize).toBe('24px')
+    expect(exposed(wrapper).getHTML()).toContain('font-size: 24px')
+
+    editor.commands.selectAll()
+    await nextTick()
+    await wrapper.get('select[aria-label="字号"]').setValue('')
+    await flushPromises()
+    expect(editor.getAttributes('textStyle').fontSize).toBeUndefined()
+
+    await wrapper.get('select[aria-label="段落样式"]').setValue('2')
+    await flushPromises()
+    expect(editor.getHTML()).toContain('<h2>')
+
+    editor.commands.selectAll()
+    await nextTick()
+    await wrapper.get('[aria-label="上标"]').trigger('click')
+    await flushPromises()
+    expect(editor.isActive('superscript')).toBe(true)
+    expect(wrapper.find('.ProseMirror sup').exists()).toBe(true)
+
+    await wrapper.get('[aria-label="下标"]').trigger('click')
+    await flushPromises()
+    expect(editor.isActive('subscript')).toBe(true)
+    expect(wrapper.find('.ProseMirror sub').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('indents blocks and inserts an emoji from the toolbar', async () => {
+    const wrapper = mountEditor()
+    await waitForEditor(wrapper)
+
+    const editor = exposed(wrapper).editor!
+    editor.commands.setTextSelection(1)
+    await nextTick()
+
+    await wrapper.get('[aria-label="增加缩进"]').trigger('click')
+    await flushPromises()
+    expect(editor.getAttributes('paragraph').indent).toBe(1)
+    expect(wrapper.find('.ProseMirror p').attributes('style')).toContain('margin-left')
+
+    await wrapper.get('[aria-label="减少缩进"]').trigger('click')
+    await flushPromises()
+    expect(editor.getAttributes('paragraph').indent).toBe(0)
+
+    await wrapper.get('[aria-label="表情"]').trigger('click')
+    await flushPromises()
+    const emoji = wrapper.get('.w-tiptap-editor__emoji')
+    const emojiText = emoji.text()
+    await emoji.trigger('click')
+    await flushPromises()
+
+    expect(editor.getText()).toContain(emojiText)
+    expect(wrapper.find('.w-tiptap-editor__emoji-panel').exists()).toBe(false)
     wrapper.unmount()
   })
 
@@ -177,15 +315,12 @@ describe('TiptapEditor', () => {
     editor.commands.selectAll()
     await nextTick()
 
-    await wrapper.get('[aria-label="字体"]').trigger('click')
-    const menu = wrapper.get('.w-tiptap-editor__menu')
-    expect(menu.find('.w-tiptap-editor__menu-group').exists()).toBe(true)
-    expect(menu.findAll('.w-tiptap-editor__menu-item')).toHaveLength(8)
+    const select = wrapper.get('select[aria-label="字体"]')
+    const options = select.findAll('option')
+    expect(options).toHaveLength(8)
 
-    const arial = menu
-      .findAll('.w-tiptap-editor__menu-item')
-      .find((item) => item.text() === 'Arial')
-    await arial!.trigger('click')
+    const arialValue = options.find((option) => option.text() === 'Arial')!.attributes('value')!
+    await select.setValue(arialValue)
     await flushPromises()
 
     expect(editor.getAttributes('textStyle').fontFamily).toContain('Arial')
@@ -193,11 +328,7 @@ describe('TiptapEditor', () => {
 
     editor.commands.selectAll()
     await nextTick()
-    await wrapper.get('[aria-label="字体"]').trigger('click')
-    const reset = wrapper
-      .findAll('.w-tiptap-editor__menu-item')
-      .find((item) => item.text() === '默认字体')
-    await reset!.trigger('click')
+    await select.setValue('')
     await flushPromises()
 
     expect(editor.getAttributes('textStyle').fontFamily).toBeUndefined()
@@ -223,6 +354,68 @@ describe('TiptapEditor', () => {
     await flushPromises()
     expect(editor.isActive('highlight')).toBe(true)
     expect(wrapper.find('.ProseMirror mark').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('copies formatting with the format painter', async () => {
+    const wrapper = mountEditor()
+    await waitForEditor(wrapper)
+
+    const editor = exposed(wrapper).editor!
+    editor.commands.setContent('<p><strong>Bold</strong> plain</p>')
+    editor.commands.setTextSelection({ from: 1, to: 5 })
+    await nextTick()
+
+    await wrapper.get('[aria-label="格式刷"]').trigger('click')
+    expect(wrapper.get('[aria-label="格式刷"]').classes()).toContain('is-active')
+
+    editor.commands.setTextSelection({ from: 6, to: 11 })
+    await nextTick()
+
+    expect(exposed(wrapper).getHTML()).toContain('<strong>plain</strong>')
+    expect(wrapper.get('[aria-label="格式刷"]').classes()).not.toContain('is-active')
+    wrapper.unmount()
+  })
+
+  it('inserts video and attachment blocks from the toolbar', async () => {
+    const wrapper = mountEditor()
+    await waitForEditor(wrapper)
+
+    await wrapper.get('[aria-label="插入视频"]').trigger('click')
+    await wrapper
+      .get('input[aria-label="输入视频地址（mp4 / webm）"]')
+      .setValue('https://example.com/demo.mp4')
+    await wrapper.get('form').trigger('submit')
+    await flushPromises()
+
+    const video = wrapper.get('.ProseMirror video')
+    expect(video.attributes('src')).toBe('https://example.com/demo.mp4')
+    expect(video.attributes('controls')).toBeDefined()
+
+    await wrapper.get('[aria-label="插入附件"]').trigger('click')
+    await wrapper.get('input[aria-label="输入附件地址"]').setValue('/files/report.pdf')
+    await wrapper.get('input[aria-label="附件名称（可选）"]').setValue('季度报告.pdf')
+    await wrapper.get('form').trigger('submit')
+    await flushPromises()
+
+    const attachment = wrapper.get('.ProseMirror a[data-attachment]')
+    expect(attachment.text()).toBe('季度报告.pdf')
+    expect(attachment.attributes('href')).toBe('/files/report.pdf')
+    expect(attachment.attributes('download')).toBe('季度报告.pdf')
+    wrapper.unmount()
+  })
+
+  it('emits an AI request from the toolbar', async () => {
+    const wrapper = mountEditor()
+    await waitForEditor(wrapper)
+
+    await wrapper.get('[aria-label="AI 助手"]').trigger('click')
+    await wrapper.get('input[aria-label="输入 AI 指令"]').setValue('帮我润色这段文字')
+    await wrapper.get('form').trigger('submit')
+    await flushPromises()
+
+    const request = wrapper.emitted('ai')?.[0]?.[0] as { prompt: string } | undefined
+    expect(request?.prompt).toBe('帮我润色这段文字')
     wrapper.unmount()
   })
 
@@ -255,10 +448,10 @@ describe('TiptapEditor', () => {
     const wrapper = mountEditor()
     await waitForEditor(wrapper)
 
-    const tools = wrapper.findAll('.w-tiptap-editor__tool')
-    expect(tools.filter((tool) => tool.attributes('tabindex') === '0')).toHaveLength(1)
+    const stops = wrapper.findAll('[data-tool-id]')
+    expect(stops.filter((stop) => stop.attributes('tabindex') === '0')).toHaveLength(1)
 
-    const tabbable = tools.find((tool) => tool.attributes('tabindex') === '0')!
+    const tabbable = wrapper.get('[data-tool-id="bold"]')
     await tabbable.trigger('focus')
     await tabbable.trigger('keydown', { key: 'ArrowRight' })
     await nextTick()
@@ -267,7 +460,7 @@ describe('TiptapEditor', () => {
     wrapper.unmount()
   })
 
-  it('dismisses popovers on outside pointerdown and Escape', async () => {
+  it('dismisses popovers on outside pointerdown', async () => {
     const wrapper = mountEditor()
     await waitForEditor(wrapper)
 
@@ -276,12 +469,6 @@ describe('TiptapEditor', () => {
     document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }))
     await nextTick()
     expect(wrapper.find('.w-tiptap-editor__popover').exists()).toBe(false)
-
-    await wrapper.get('[aria-label="表格"]').trigger('click')
-    expect(wrapper.find('.w-tiptap-editor__menu').exists()).toBe(true)
-    await wrapper.get('.w-tiptap-editor__menu').trigger('keydown', { key: 'Escape' })
-    await nextTick()
-    expect(wrapper.find('.w-tiptap-editor__menu').exists()).toBe(false)
     wrapper.unmount()
   })
 
@@ -335,7 +522,7 @@ describe('TiptapEditor', () => {
 
   it('supports a custom toolbar slot', async () => {
     const wrapper = mount(TiptapEditor, {
-      props: { modelValue: '<p>Hello</p>' },
+      props: { value: '<p>Hello</p>' },
       slots: {
         toolbar: ({ editor }: { editor: unknown }) =>
           h('div', { class: 'custom-toolbar', 'data-ready': Boolean(editor) }),

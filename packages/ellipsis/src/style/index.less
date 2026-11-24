@@ -59,35 +59,4 @@
       border-radius: var(--w-ellipsis-radius-xs);
     }
   }
-
-  &__tooltip {
-    position: absolute;
-    z-index: var(--w-ellipsis-z-dropdown);
-    max-width: 320px;
-    padding: 7px 10px;
-    border-radius: var(--w-ellipsis-radius-md);
-    background: var(--w-ellipsis-color-tooltip-bg);
-    box-shadow: var(--w-ellipsis-shadow-lg);
-    color: var(--w-ellipsis-color-tooltip-text);
-    font-size: var(--w-ellipsis-font-size-xs);
-    letter-spacing: -0.004em;
-    line-height: 1.5;
-    text-align: left;
-    overflow-wrap: anywhere;
-    pointer-events: none;
-    animation: w-ellipsis-tooltip-in 120ms var(--w-ellipsis-easing-out) both;
-  }
-}
-
-@keyframes w-ellipsis-tooltip-in {
-  from {
-    opacity: 0;
-    scale: 0.98;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-ellipsis__tooltip {
-    animation: none;
-  }
 }

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import Gantt from '../Gantt.vue'
 import type { GanttContextMenuSelectEvent, GanttTask } from '../types'
@@ -65,12 +65,34 @@ const menuItemElements = () =>
   Array.from(document.body.querySelectorAll<HTMLElement>('.w-gantt__context-menu-item'))
 
 describe('Gantt', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+  })
+
   it('renders a row per visible task', () => {
     const wrapper = mountGantt()
     expect(wrapper.findAll('.w-gantt__row')).toHaveLength(3)
     expect(wrapper.findAll('.w-gantt__bar')).toHaveLength(3)
     expect(wrapper.text()).toContain('Group')
     expect(wrapper.text()).toContain('Task A')
+    wrapper.unmount()
+  })
+
+  it('shows the shared tooltip while hovering a task bar', async () => {
+    const wrapper = mountGantt()
+    const bar = wrapper.findAll('.w-gantt__bar')[1]!
+
+    await bar.trigger('mouseenter')
+    await nextTick()
+
+    const tooltip = document.body.querySelector('.w-tooltip')
+    expect(tooltip?.textContent).toContain('Task A')
+    expect(wrapper.find('.w-gantt__tooltip').exists()).toBe(false)
+
+    await bar.trigger('mouseleave')
+    await nextTick()
+    expect(document.body.querySelector('.w-tooltip')).toBeNull()
+
     wrapper.unmount()
   })
 

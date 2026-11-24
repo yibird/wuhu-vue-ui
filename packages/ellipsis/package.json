@@ -48,7 +48,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@floating-ui/vue": "^2.0.1"
+    "@wuhu-vue-ui/tooltip": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

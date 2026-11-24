@@ -75,20 +75,20 @@ function filter(item: CommandMenuItem, query: string) {
 
 ### Props
 
-| 属性             | 类型                           | 默认值               | 说明                               |
-| ---------------- | ------------------------------ | -------------------- | ---------------------------------- |
-| `items`          | `CommandMenuItem[]`            | —（必填）            | 命令列表，组件不会修改原数组       |
-| `modelValue`     | `string \| number`             | —                    | 当前选中项 key，支持 `v-model`     |
-| `placeholder`    | `string`                       | `'搜索命令...'`      | 搜索框占位文本                     |
-| `emptyText`      | `string`                       | `'未找到匹配的命令'` | 空结果提示                         |
-| `autoFocus`      | `boolean`                      | `false`              | 挂载后自动聚焦搜索框               |
-| `filterable`     | `boolean`                      | `true`               | 是否随输入过滤                     |
-| `filter`         | `CommandMenuFilter`            | —                    | 自定义匹配函数，参数为归一化查询词 |
-| `disabled`       | `boolean`                      | `false`              | 禁用搜索、导航与选择               |
-| `escapeBehavior` | `'clear' \| 'close' \| 'none'` | `'clear'`            | Escape 行为                        |
-| `maxHeight`      | `string \| number`             | `360`                | 结果列表最大高度                   |
-| `classes`        | `CommandMenuClasses`           | —                    | 语义化类名，按内部部件注入         |
-| `styles`         | `CommandMenuStyles`            | —                    | 语义化内联样式，按内部部件注入     |
+| 属性             | 类型                           | 默认值               | 说明                                 |
+| ---------------- | ------------------------------ | -------------------- | ------------------------------------ |
+| `items`          | `CommandMenuItem[]`            | —（必填）            | 命令列表，组件不会修改原数组         |
+| `value`          | `string \| number`             | —                    | 当前选中项 key，支持 `v-model:value` |
+| `placeholder`    | `string`                       | `'搜索命令...'`      | 搜索框占位文本                       |
+| `emptyText`      | `string`                       | `'未找到匹配的命令'` | 空结果提示                           |
+| `autoFocus`      | `boolean`                      | `false`              | 挂载后自动聚焦搜索框                 |
+| `filterable`     | `boolean`                      | `true`               | 是否随输入过滤                       |
+| `filter`         | `CommandMenuFilter`            | —                    | 自定义匹配函数，参数为归一化查询词   |
+| `disabled`       | `boolean`                      | `false`              | 禁用搜索、导航与选择                 |
+| `escapeBehavior` | `'clear' \| 'close' \| 'none'` | `'clear'`            | Escape 行为                          |
+| `maxHeight`      | `string \| number`             | `360`                | 结果列表最大高度                     |
+| `classes`        | `CommandMenuClasses`           | —                    | 语义化类名，按内部部件注入           |
+| `styles`         | `CommandMenuStyles`            | —                    | 语义化内联样式，按内部部件注入       |
 
 `classes` / `styles` 支持的部件键：`root`、`search`、`input`、`clear`、`list`、`group`、`groupLabel`、`item`、`empty`、`footer`。例如：
 
@@ -106,13 +106,13 @@ function filter(item: CommandMenuItem, query: string) {
 
 ### Emits
 
-| 事件                | 参数                    | 说明                                            |
-| ------------------- | ----------------------- | ----------------------------------------------- |
-| `update:modelValue` | `key: CommandMenuKey`   | 选中项变化                                      |
-| `select`            | `item: CommandMenuItem` | 用户选择某一项                                  |
-| `search`            | `value: string`         | 搜索文本变化                                    |
-| `escape`            | `event: KeyboardEvent`  | 按下 Escape（任何 `escapeBehavior` 下都会触发） |
-| `close`             | —                       | `escapeBehavior="close"` 时按下 Escape          |
+| 事件           | 参数                    | 说明                                            |
+| -------------- | ----------------------- | ----------------------------------------------- |
+| `update:value` | `key: CommandMenuKey`   | 选中项变化                                      |
+| `select`       | `item: CommandMenuItem` | 用户选择某一项                                  |
+| `search`       | `value: string`         | 搜索文本变化                                    |
+| `escape`       | `event: KeyboardEvent`  | 按下 Escape（任何 `escapeBehavior` 下都会触发） |
+| `close`        | —                       | `escapeBehavior="close"` 时按下 Escape          |
 
 ### Slots
 

@@ -36,6 +36,7 @@ const routes = [
   'view',
   'icon',
   'exception',
+  'tooltip',
   'ripple',
   'code-editor',
   'dock',

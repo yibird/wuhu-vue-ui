@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { CSSProperties } from 'vue'
 import { useControllableState, useKeyboardNavigation } from '@wuhu-vue-ui/core'
+import { Empty } from '@wuhu-vue-ui/empty'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import type { Rect, Virtualizer } from '@tanstack/vue-virtual'
 import IconGlyph from './IconGlyph'
@@ -17,7 +18,7 @@ import type {
 } from './types'
 
 const props = withDefaults(defineProps<IconPickerProps>(), {
-  modelValue: undefined,
+  value: undefined,
   multiple: false,
   showSearch: true,
   placeholder: '搜索图标',
@@ -46,7 +47,7 @@ const query = ref('')
 const activeGroupKey = ref<string | null>(null)
 const { value: selectedValue, setValue: setSelectedValue } =
   useControllableState<IconPickerModelValue>({
-    value: () => props.modelValue,
+    value: () => props.value,
     defaultValue: null,
     normalize: (value) => {
       if (value == null) return props.multiple ? [] : null
@@ -56,7 +57,7 @@ const { value: selectedValue, setValue: setSelectedValue } =
       }
       return Array.isArray(value) ? (value[0] ?? null) : value
     },
-    onChange: (value) => emit('update:modelValue', value),
+    onChange: (value) => emit('update:value', value),
   })
 const focusedKey = ref<string | null>(null)
 const scrollRef = ref<HTMLElement>()
@@ -456,28 +457,7 @@ onBeforeUnmount(() => {
 
           <div v-else class="w-icon-picker__empty">
             <slot name="empty" v-bind="emptySlotProps">
-              <span class="w-icon-picker__empty-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <rect
-                    x="4"
-                    y="4"
-                    width="16"
-                    height="16"
-                    rx="3"
-                    stroke="currentColor"
-                    stroke-width="1.6"
-                    stroke-dasharray="3 3"
-                  />
-                  <path
-                    d="M9 12h6M12 9v6"
-                    stroke="currentColor"
-                    stroke-width="1.6"
-                    stroke-linecap="round"
-                  />
-                </svg>
-              </span>
-              <strong>{{ emptyText }}</strong>
-              <span class="w-icon-picker__empty-hint">{{ emptyHint }}</span>
+              <Empty size="sm" :title="emptyText" :description="emptyHint" />
             </slot>
           </div>
         </div>

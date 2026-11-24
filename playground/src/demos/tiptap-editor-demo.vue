@@ -11,7 +11,7 @@ const content = ref(`
     <li>支持标题、列表、任务列表、引用、代码块、表格与 <a href="https://tiptap.dev">链接</a></li>
     <li>支持图片上传 / 拖拽 / 粘贴、撤销重做、全屏与清除格式</li>
   </ul>
-  <blockquote>所有内容通过 v-model 以 HTML 形式同步。</blockquote>
+  <blockquote>所有内容通过 v-model:value 以 HTML 形式同步。</blockquote>
 `)
 
 const readonlyContent = ref(
@@ -25,10 +25,10 @@ const emptyContent = ref('')
   <div class="tiptap-demo">
     <DemoCard
       title="开箱即用"
-      description="内置格式、标题、列表、任务列表、表格、图片、字体、颜色、高亮、链接、对齐、全屏与字数统计，通过 v-model 同步 HTML。"
+      description="内置格式、标题、列表、任务列表、表格、图片、字体、颜色、高亮、链接、对齐、全屏与字数统计，通过 v-model:value 同步 HTML。"
       wide
     >
-      <TiptapEditor v-model="content" placeholder="请输入内容…" />
+      <TiptapEditor v-model:value="content" placeholder="请输入内容…" />
       <details class="tiptap-demo__html">
         <summary>查看 HTML 输出</summary>
         <pre>{{ content }}</pre>
@@ -36,18 +36,21 @@ const emptyContent = ref('')
     </DemoCard>
 
     <DemoCard title="空白与占位" description="空文档时显示 placeholder，可直接开始输入。" wide>
-      <TiptapEditor v-model="emptyContent" placeholder="开始输入内容，试试工具栏的加粗与标题…" />
+      <TiptapEditor
+        v-model:value="emptyContent"
+        placeholder="开始输入内容，试试工具栏的加粗与标题…"
+      />
     </DemoCard>
 
     <DemoCard title="只读与禁用" description="通过 editable / disabled 控制交互状态。" wide>
       <div class="tiptap-demo__states">
         <div>
           <span class="tiptap-demo__label">editable=false</span>
-          <TiptapEditor :model-value="readonlyContent" :editable="false" />
+          <TiptapEditor :value="readonlyContent" :editable="false" />
         </div>
         <div>
           <span class="tiptap-demo__label">disabled</span>
-          <TiptapEditor :model-value="readonlyContent" disabled />
+          <TiptapEditor :value="readonlyContent" disabled />
         </div>
       </div>
     </DemoCard>

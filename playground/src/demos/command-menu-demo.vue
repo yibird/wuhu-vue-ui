@@ -106,7 +106,7 @@ function handleFlatClose() {
       <div class="command-demo">
         <div class="command-demo__panel">
           <CommandMenu
-            v-model="selected"
+            v-model:value="selected"
             :items="commandItems"
             placeholder="搜索命令..."
             @select="handleSelect"
@@ -139,7 +139,7 @@ function handleFlatClose() {
       <div class="command-demo">
         <div class="command-demo__panel">
           <CommandMenu
-            v-model="flatSelected"
+            v-model:value="flatSelected"
             :items="flatItems"
             escape-behavior="close"
             placeholder="输入命令名称..."

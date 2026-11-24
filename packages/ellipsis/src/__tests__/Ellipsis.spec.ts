@@ -27,8 +27,13 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  document.body.innerHTML = ''
   vi.unstubAllGlobals()
 })
+
+function getTooltip(): HTMLElement | null {
+  return document.body.querySelector('.w-tooltip')
+}
 
 const longText = 'Wuhu Vue UI 是一套面向复杂业务场景的 Vue 3 组件库，支持多行文本省略。'
 
@@ -190,21 +195,21 @@ describe('Ellipsis', () => {
     const wrapper = mount(Ellipsis, { props: { text: longText, tooltip: true } })
 
     await wrapper.get('.w-ellipsis__content').trigger('mouseenter')
-    expect(wrapper.find('.w-ellipsis__tooltip').exists()).toBe(false)
+    expect(getTooltip()).toBeNull()
 
     await mockOverflow(wrapper)
     await wrapper.get('.w-ellipsis__content').trigger('mouseenter')
+    await nextTick()
 
-    const tooltip = wrapper.get('.w-ellipsis__tooltip')
-    expect(tooltip.text()).toBe(longText)
-    expect(tooltip.attributes('role')).toBe('tooltip')
-    expect(tooltip.classes()).toContain('w-ellipsis__tooltip--top')
-    expect(wrapper.get('.w-ellipsis__content').attributes('aria-describedby')).toBe(
-      tooltip.attributes('id'),
-    )
+    const tooltip = getTooltip()
+    expect(tooltip?.textContent).toBe(longText)
+    expect(tooltip?.getAttribute('role')).toBe('tooltip')
+    expect(tooltip?.dataset.placement).toBe('top')
+    expect(wrapper.get('.w-ellipsis__content').attributes('aria-describedby')).toBe(tooltip?.id)
 
     await wrapper.get('.w-ellipsis__content').trigger('mouseleave')
-    expect(wrapper.find('.w-ellipsis__tooltip').exists()).toBe(false)
+    await nextTick()
+    expect(getTooltip()).toBeNull()
     wrapper.unmount()
   })
 
@@ -218,10 +223,11 @@ describe('Ellipsis', () => {
     await mockOverflow(wrapper)
 
     await wrapper.get('.w-ellipsis__content').trigger('focusin')
+    await nextTick()
 
-    const tooltip = wrapper.get('.w-ellipsis__tooltip')
-    expect(tooltip.classes()).toContain('w-ellipsis__tooltip--bottom')
-    expect(wrapper.get('.custom-tooltip').text()).toBe(`完整内容：${longText}`)
+    const tooltip = getTooltip()
+    expect(tooltip?.dataset.placement).toBe('bottom')
+    expect(tooltip?.querySelector('.custom-tooltip')?.textContent).toBe(`完整内容：${longText}`)
     wrapper.unmount()
   })
 
@@ -233,7 +239,7 @@ describe('Ellipsis', () => {
 
     await wrapper.get('.w-ellipsis__content').trigger('mouseenter')
 
-    expect(wrapper.find('.w-ellipsis__tooltip').exists()).toBe(false)
+    expect(getTooltip()).toBeNull()
     wrapper.unmount()
   })
 

@@ -115,7 +115,7 @@ function logValue() {
 
       <CodeEditor
         ref="editorRef"
-        v-model="value"
+        v-model:value="value"
         :language="language"
         :theme="theme"
         :read-only="readOnly"
@@ -135,7 +135,7 @@ function logValue() {
       description="readOnly 关闭编辑能力，height 使用数字时会转换为像素。"
     >
       <CodeEditor
-        :model-value="sample"
+        :value="sample"
         language="typescript"
         theme="vs-dark"
         read-only

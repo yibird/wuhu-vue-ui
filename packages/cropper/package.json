@@ -49,6 +49,7 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
+    "@wuhu-vue-ui/tooltip": "workspace:*",
     "cropperjs": "^2.3.1"
   },
   "peerDependencies": {

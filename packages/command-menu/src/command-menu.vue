@@ -12,6 +12,8 @@ import {
   type VNodeChild,
 } from 'vue'
 import { toCssUnit, useKeyboardNavigation } from '@wuhu-vue-ui/core'
+import { Empty } from '@wuhu-vue-ui/empty'
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import type {
   CommandMenuEmptySlotProps,
   CommandMenuItem,
@@ -21,7 +23,7 @@ import type {
 } from './types'
 
 const props = withDefaults(defineProps<CommandMenuProps>(), {
-  modelValue: undefined,
+  value: undefined,
   placeholder: '搜索命令...',
   emptyText: '未找到匹配的命令',
   autoFocus: false,
@@ -32,7 +34,7 @@ const props = withDefaults(defineProps<CommandMenuProps>(), {
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [key: CommandMenuKey]
+  'update:value': [key: CommandMenuKey]
   select: [item: CommandMenuItem]
   search: [value: string]
   escape: [event: KeyboardEvent]
@@ -62,10 +64,11 @@ const uid = `w-command-menu-${instance?.uid ?? 0}`
 
 const query = ref('')
 const hoveredKey = ref<CommandMenuKey | null>(null)
+let highlightFromHover = false
 const composing = ref(false)
 /**
  * Two independent indexes over the flattened, enabled item list:
- * - selectedIndex is derived from `modelValue`.
+ * - selectedIndex is derived from `value`.
  * - highlightIndex is the keyboard cursor and starts empty.
  */
 const highlightIndex = ref<number | null>(null)
@@ -138,10 +141,10 @@ const enabledItems = computed<CommandMenuItem[]>(() =>
   props.disabled ? [] : flatItems.value.filter((item) => !item.disabled),
 )
 
-const selectedKey = computed(() => props.modelValue)
+const selectedKey = computed(() => props.value)
 
 const selectedIndex = computed(() => {
-  const value = props.modelValue
+  const value = props.value
   if (value === undefined) return -1
   return enabledItems.value.findIndex((item) => item.key === value)
 })
@@ -279,6 +282,7 @@ function setHighlightIndex(index: number | null) {
   // The pointer may still rest over another row; drop that stale hover state so
   // only the keyboard-highlighted row stays highlighted.
   hoveredKey.value = null
+  highlightFromHover = false
 }
 
 const listNavigation = useKeyboardNavigation<CommandMenuItem>({
@@ -311,7 +315,7 @@ function handleEscape(event: KeyboardEvent) {
 function selectItem(item: CommandMenuItem) {
   if (isItemDisabled(item)) return
 
-  emit('update:modelValue', item.key)
+  emit('update:value', item.key)
   emit('select', item)
 }
 
@@ -323,16 +327,24 @@ function handleItemHover(item: CommandMenuItem) {
 
   // Keep the keyboard highlight in sync while the pointer moves between rows.
   hoveredKey.value = item.key
+  highlightFromHover = true
   const index = enabledItems.value.findIndex((candidate) => candidate.key === item.key)
   if (index >= 0) highlightIndex.value = index
 }
 
 function clearHover() {
   hoveredKey.value = null
+  // A highlight produced by hovering should disappear with the pointer; a
+  // keyboard-driven highlight stays until the user navigates elsewhere.
+  if (highlightFromHover) {
+    highlightIndex.value = null
+    highlightFromHover = false
+  }
 }
 
 function handleListMouseOver(event: MouseEvent) {
-  if (event.target === event.currentTarget) clearHover()
+  const target = event.target as Element | null
+  if (!target?.closest('[role="option"]')) clearHover()
 }
 
 function setOptionRef(el: Element | ComponentPublicInstance | null, key: CommandMenuKey) {
@@ -492,7 +504,7 @@ defineExpose({
         :class="props.classes?.clear"
         :style="props.styles?.clear"
         aria-label="清除搜索"
-        title="清除搜索"
+        v-tooltip="'清除搜索'"
         @mousedown.prevent
         @click="handleClear"
       >
@@ -599,47 +611,11 @@ defineExpose({
       role="status"
     >
       <slot name="empty" :query="query">
-        <svg
-          class="w-command-menu__empty-illustration"
-          viewBox="0 0 72 72"
-          fill="none"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <circle class="w-command-menu__empty-illustration-bg" cx="36" cy="36" r="30" />
-          <rect
-            x="19"
-            y="23"
-            width="28"
-            height="22"
-            rx="5"
-            stroke="currentColor"
-            stroke-width="1.8"
-            opacity="0.55"
-          />
-          <path d="M19 30h28" stroke="currentColor" stroke-width="1.6" opacity="0.4" />
-          <circle cx="25" cy="26.5" r="1.4" fill="currentColor" opacity="0.55" />
-          <path
-            d="M27 38h12M27 42h8"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            opacity="0.4"
-          />
-          <g class="w-command-menu__empty-illustration-lens">
-            <circle cx="48.5" cy="46" r="7.5" stroke="currentColor" stroke-width="2" />
-            <path
-              d="m54 51.5 5.5 5.5"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </g>
-        </svg>
-        <strong class="w-command-menu__empty-title">{{ emptyText }}</strong>
-        <span class="w-command-menu__empty-hint">
-          {{ query ? '换个关键词试试' : '暂无可用的命令' }}
-        </span>
+        <Empty
+          size="sm"
+          :title="emptyText"
+          :description="query ? '换个关键词试试' : '暂无可用的命令'"
+        />
       </slot>
     </div>
 

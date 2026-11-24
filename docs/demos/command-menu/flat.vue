@@ -31,7 +31,7 @@ function handleClose() {
   <div class="command-demo">
     <div class="command-demo__panel">
       <CommandMenu
-        v-model="selected"
+        v-model:value="selected"
         :items="items"
         escape-behavior="close"
         placeholder="输入命令名称..."

@@ -88,7 +88,7 @@ defineExpose<JsonViewerExpose>({
   <CodeEditor
     ref="viewerRef"
     class="w-json-viewer"
-    :model-value="formatted"
+    :value="formatted"
     language="json"
     :theme="theme"
     :height="height"

@@ -71,7 +71,7 @@ function handleSelect(item: CommandMenuItem) {
 <template>
   <div class="command-stage">
     <CommandMenu
-      v-model="selected"
+      v-model:value="selected"
       :items="items"
       placeholder="搜索页面、操作或成员..."
       @select="handleSelect"

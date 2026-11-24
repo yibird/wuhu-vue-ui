@@ -1,0 +1,75 @@
+@import './token.less';
+
+.w-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--w-empty-gap, 12px);
+  padding: var(--w-empty-padding, 32px 16px);
+  color: var(--w-empty-color-text, #0f172a);
+  font-family: var(--w-empty-font-family, inherit);
+  text-align: center;
+
+  &.is-sm {
+    --w-empty-gap: 8px;
+    --w-empty-padding: 20px 12px;
+    --w-empty-image-size: 120px;
+    --w-empty-title-size: var(--w-empty-font-size-md, 14px);
+    --w-empty-description-size: var(--w-empty-font-size-xs, 12px);
+  }
+
+  &.is-lg {
+    --w-empty-gap: 16px;
+    --w-empty-padding: 48px 24px;
+    --w-empty-image-size: 240px;
+    --w-empty-title-size: var(--w-empty-font-size-lg, 16px);
+    --w-empty-description-size: var(--w-empty-font-size-md, 14px);
+  }
+
+  &__image {
+    display: block;
+    width: var(--w-empty-image-size, 184px);
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: var(--w-empty-radius-lg, 12px);
+  }
+
+  &__illustration {
+    display: block;
+    width: var(--w-empty-image-size, 184px);
+    height: auto;
+  }
+
+  /*
+   * Two-class specificity keeps host page element rules such as
+   * `.vp-doc p` from leaking into the component.
+   */
+  & .w-empty__title {
+    margin: 0;
+    padding: 0;
+    color: var(--w-empty-color-text, #0f172a);
+    font-size: var(--w-empty-title-size, 15px);
+    font-weight: var(--w-empty-font-weight-semibold, 600);
+    line-height: var(--w-empty-line-height-tight, 1.35);
+  }
+
+  & .w-empty__description {
+    max-width: 36em;
+    margin: 0;
+    padding: 0;
+    color: var(--w-empty-color-text-secondary, #475569);
+    font-size: var(--w-empty-description-size, 13px);
+    line-height: 1.6;
+  }
+
+  &__extra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+}

@@ -1,0 +1,42 @@
+@import './token.less';
+
+.w-tooltip__trigger {
+  display: inline-flex;
+}
+
+.w-tooltip {
+  /* Floating UI writes position/left/top/transform inline. */
+  position: fixed;
+  z-index: var(--w-tooltip-z-index, 1000);
+  width: max-content;
+  max-width: var(--w-tooltip-max-width, min(320px, calc(100vw - 16px)));
+  padding: var(--w-tooltip-padding, 5px 9px);
+  overflow-wrap: anywhere;
+  color: var(--w-tooltip-color, #ffffff);
+  font-size: var(--w-tooltip-font-size, 12px);
+  line-height: var(--w-tooltip-line-height, 1.5);
+  text-align: left;
+  background: var(--w-tooltip-bg, #262626);
+  border-radius: var(--w-tooltip-radius, 6px);
+  box-shadow: var(--w-tooltip-shadow);
+  pointer-events: none;
+  animation: w-tooltip-in var(--w-tooltip-duration, 120ms)
+    var(--w-tooltip-easing, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+/*
+ * Animate opacity/scale only. A transform animation would override the
+ * translate Floating UI writes for positioning.
+ */
+@keyframes w-tooltip-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-tooltip {
+    animation: none;
+  }
+}

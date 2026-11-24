@@ -23,6 +23,8 @@ import CountDownDemo from '../demos/count-down-demo.vue'
 import LoadingDemo from '../demos/loading-demo.vue'
 import ViewDemo from '../demos/view-demo.vue'
 import ExceptionDemo from '../demos/exception-demo.vue'
+import EmptyDemo from '../demos/empty-demo.vue'
+import TooltipDemo from '../demos/tooltip-demo.vue'
 import RippleDemo from '../demos/ripple-demo.vue'
 import CodeEditorDemo from '../demos/code-editor-demo.vue'
 import DockDemo from '../demos/dock-demo.vue'
@@ -66,6 +68,8 @@ const demos: Record<string, Component> = {
   loading: LoadingDemo,
   view: ViewDemo,
   exception: ExceptionDemo,
+  empty: EmptyDemo,
+  tooltip: TooltipDemo,
   ripple: RippleDemo,
   'code-editor': CodeEditorDemo,
   dock: DockDemo,

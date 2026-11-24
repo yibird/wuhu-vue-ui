@@ -10,7 +10,7 @@ import type {
 } from './types'
 
 const props = withDefaults(defineProps<CodeEditorProps>(), {
-  modelValue: '',
+  value: '',
   language: 'plaintext',
   theme: 'vs',
   readOnly: false,
@@ -31,7 +31,7 @@ const labels = computed<CodeEditorLabels>(() => ({
 }))
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
+  'update:value': [value: string]
   change: [value: string]
   ready: [editor: MonacoEditor.IStandaloneCodeEditor]
   error: [error: Error]
@@ -118,7 +118,7 @@ function createEditor(api: MonacoApi) {
   const container = containerRef.value
   if (!container) throw new Error('Code editor container is not available.')
 
-  const textModel = api.editor.createModel(props.modelValue ?? '', props.language)
+  const textModel = api.editor.createModel(props.value ?? '', props.language)
   model.value = textModel
   createdModel = true
 
@@ -191,7 +191,7 @@ async function load(): Promise<void> {
 function handleContentChange() {
   if (syncingFromProps) return
   const value = editor.value?.getValue() ?? ''
-  emit('update:modelValue', value)
+  emit('update:value', value)
   emit('change', value)
 }
 
@@ -225,7 +225,7 @@ function layout() {
 }
 
 function getValue(): string {
-  return editor.value?.getValue() ?? props.modelValue ?? ''
+  return editor.value?.getValue() ?? props.value ?? ''
 }
 
 /**
@@ -267,7 +267,7 @@ function setTheme(theme: string) {
 }
 
 watch(
-  () => props.modelValue,
+  () => props.value,
   (value) => {
     const instance = editor.value
     if (!instance) return

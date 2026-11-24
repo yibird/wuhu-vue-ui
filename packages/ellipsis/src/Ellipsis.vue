@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, useId, watch } from 'vue'
+import { Tooltip } from '@wuhu-vue-ui/tooltip'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 import type { EllipsisActionSlotProps, EllipsisProps, EllipsisTooltipSlotProps } from './types'
 
 const props = withDefaults(defineProps<EllipsisProps>(), {
@@ -26,11 +26,9 @@ defineSlots<{
 }>()
 
 const contentRef = ref<HTMLElement | null>(null)
-const tooltipRef = ref<HTMLElement | null>(null)
 const expanded = ref(props.expanded)
 const overflowed = ref(false)
 const tooltipVisible = ref(false)
-const tooltipId = useId()
 
 let observer: ResizeObserver | undefined
 let unmounted = false
@@ -63,14 +61,6 @@ const actionSlotProps = computed<EllipsisActionSlotProps>(() => ({
 const tooltipSlotProps = computed<EllipsisTooltipSlotProps>(() => ({
   text: contentText.value,
 }))
-
-// Floating UI owns tooltip placement, flipping and viewport shifting, so the
-// component does not need to duplicate those rules in CSS.
-const { floatingStyles, placement } = useFloating(contentRef, tooltipRef, {
-  placement: () => props.tooltipPlacement,
-  middleware: [offset(6), flip(), shift({ padding: 8 })],
-  whileElementsMounted: autoUpdate,
-})
 
 /**
  * Reads the intrinsic overflow while the clamp is active. An expanded element
@@ -179,7 +169,6 @@ onBeforeUnmount(() => {
       :class="contentClasses"
       :style="contentStyle"
       :tabindex="showTooltip ? 0 : undefined"
-      :aria-describedby="showTooltip ? tooltipId : undefined"
       @mouseenter="handleMouseEnter"
       @mouseleave="hideTooltip"
       @focusin="handleFocusIn"
@@ -200,16 +189,16 @@ onBeforeUnmount(() => {
       </slot>
     </button>
 
-    <div
+    <Tooltip
       v-if="showTooltip && tooltipVisible"
-      ref="tooltipRef"
-      :id="tooltipId"
-      class="w-ellipsis__tooltip"
-      :class="`w-ellipsis__tooltip--${placement}`"
-      :style="floatingStyles"
-      role="tooltip"
+      :anchor="contentRef"
+      :placement="tooltipPlacement"
+      :offset="6"
+      @update:open="tooltipVisible = $event"
     >
-      <slot name="tooltip" v-bind="tooltipSlotProps">{{ contentText }}</slot>
-    </div>
+      <template #content>
+        <slot name="tooltip" v-bind="tooltipSlotProps">{{ contentText }}</slot>
+      </template>
+    </Tooltip>
   </component>
 </template>

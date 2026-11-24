@@ -1,6 +1,6 @@
 # CodeEditor 代码编辑器
 
-基于 Monaco Editor 封装的代码编辑器，支持 `v-model` 双向绑定、语言与主题切换、只读模式，并在浏览器端按需加载 Monaco。
+基于 Monaco Editor 封装的代码编辑器，支持 `v-model:value` 双向绑定、语言与主题切换、只读模式，并在浏览器端按需加载 Monaco。
 
 <demo vue="../../playground/src/demos/code-editor-demo.vue" />
 
@@ -43,7 +43,7 @@ JSON 查看器已抽离为独立包 `@wuhu-vue-ui/json-viewer`，内部基于 `C
 
 | 属性              | 类型                        | 默认值            | 说明                                                                                                                                                                                        |
 | ----------------- | --------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `modelValue`      | `string`                    | `''`              | 编辑器内容，配合 `v-model` 使用                                                                                                                                                             |
+| `value`           | `string`                    | `''`              | 编辑器内容，配合 `v-model:value` 使用                                                                                                                                                       |
 | `language`        | `string`                    | `'plaintext'`     | Monaco 语言标识，如 `typescript`、`json`                                                                                                                                                    |
 | `theme`           | `string`                    | `'vs'`            | Monaco 主题标识，如 `vs-dark`、`hc-black`；`auto` 在应用主题时读取 `data-w-theme` / `prefers-color-scheme` 解析为 `vs` 或 `vs-dark`（不注册主题监听）；主题是全局的，会影响页面上所有编辑器 |
 | `readOnly`        | `boolean`                   | `false`           | 只读模式                                                                                                                                                                                    |
@@ -57,14 +57,14 @@ JSON 查看器已抽离为独立包 `@wuhu-vue-ui/json-viewer`，内部基于 `C
 
 ### Emits
 
-| 事件                | 参数     | 说明                  |
-| ------------------- | -------- | --------------------- |
-| `update:modelValue` | `value`  | 编辑器内容变化        |
-| `change`            | `value`  | 编辑器内容变化        |
-| `ready`             | `editor` | Monaco 编辑器创建完成 |
-| `error`             | `Error`  | 动态加载或初始化失败  |
-| `focus`             | —        | 编辑器获得焦点        |
-| `blur`              | —        | 编辑器失去焦点        |
+| 事件           | 参数     | 说明                  |
+| -------------- | -------- | --------------------- |
+| `update:value` | `value`  | 编辑器内容变化        |
+| `change`       | `value`  | 编辑器内容变化        |
+| `ready`        | `editor` | Monaco 编辑器创建完成 |
+| `error`        | `Error`  | 动态加载或初始化失败  |
+| `focus`        | —        | 编辑器获得焦点        |
+| `blur`         | —        | 编辑器失去焦点        |
 
 ### Slots
 
@@ -87,7 +87,7 @@ const editorRef = ref<CodeEditorExpose | null>(null)
 </script>
 
 <template>
-  <CodeEditor ref="editorRef" v-model="code" language="typescript" />
+  <CodeEditor ref="editorRef" v-model:value="code" language="typescript" />
 </template>
 ```
 
@@ -105,6 +105,6 @@ const editorRef = ref<CodeEditorExpose | null>(null)
 ## 说明
 
 - 组件会创建并持有 Monaco 文本模型；卸载时调用 `editor.dispose()` 并销毁该模型。
-- `modelValue` 的外部变化通过 `setValue` 同步，并抑制由此产生的 `update:modelValue` / `change` 回传，避免循环更新。
+- `value` 的外部变化通过 `setValue` 同步，并抑制由此产生的 `update:value` / `change` 回传，避免循环更新。
 - `language`、`theme`、`readOnly`、`disabled`、`options`、`automaticLayout` 变化时会同步到已有实例。
 - 根节点为单根元素，支持 `class` 与 `style` 透传；`is-ready`、`is-loading`、`is-error`、`is-disabled` 可用于样式定制。

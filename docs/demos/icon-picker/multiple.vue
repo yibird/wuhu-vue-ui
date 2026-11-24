@@ -9,7 +9,7 @@ const summary = computed(() => (selected.value.length ? selected.value.join('、
 
 <template>
   <div class="icon-picker-demo">
-    <IconPicker v-model="selected" :items="iconGroups" multiple :height="320" />
+    <IconPicker v-model:value="selected" :items="iconGroups" multiple :height="320" />
     <p class="icon-picker-demo__hint">已选 {{ selected.length }} 个：{{ summary }}</p>
   </div>
 </template>

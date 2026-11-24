@@ -63,10 +63,6 @@
     transition: color var(--w-command-menu-duration-fast) var(--w-command-menu-easing-standard);
   }
 
-  &:focus-within &__search-icon {
-    color: var(--w-command-menu-color-primary);
-  }
-
   &__input {
     flex: 1 1 auto;
     min-width: 0;
@@ -301,38 +297,16 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
     min-height: 180px;
     padding: 32px 16px;
     color: var(--w-command-menu-color-text-tertiary);
     line-height: 1.6;
     text-align: center;
-  }
 
-  &__empty-illustration {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 4px;
-    color: var(--w-command-menu-color-text-tertiary);
-  }
-
-  &__empty-illustration-bg {
-    fill: var(--w-command-menu-color-primary-soft);
-  }
-
-  &__empty-illustration-lens {
-    color: var(--w-command-menu-color-primary);
-  }
-
-  &__empty-title {
-    color: var(--w-command-menu-color-text);
-    font-size: var(--w-command-menu-font-size-sm);
-    font-weight: var(--w-command-menu-font-weight-semibold);
-  }
-
-  &__empty-hint {
-    color: var(--w-command-menu-color-text-tertiary);
-    font-size: var(--w-command-menu-font-size-xs);
+    .w-empty {
+      width: 100%;
+      padding: 0;
+    }
   }
 
   &__footer {

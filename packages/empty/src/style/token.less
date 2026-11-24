@@ -1,0 +1,48 @@
+// Component-scoped tokens. Override on `.w-empty` to retheme without affecting
+// other packages. Sizes are declared in index.less per `is-*` variant.
+.w-empty {
+  --w-empty-color-text: #0f172a;
+  --w-empty-color-text-secondary: #475569;
+  --w-empty-illustration-surface: #f5f5f7;
+  --w-empty-illustration-soft: #dce0e6;
+  --w-empty-illustration-soft-strong: #aeb8c2;
+  --w-empty-illustration-gradient-start: #e1e6eb;
+  --w-empty-illustration-gradient-end: #f5f5f7;
+  --w-empty-illustration-dot: #ffffff;
+  --w-empty-font-family: inherit;
+  --w-empty-font-size-xs: 12px;
+  --w-empty-font-size-md: 14px;
+  --w-empty-font-size-lg: 16px;
+  --w-empty-font-weight-semibold: 600;
+  --w-empty-line-height-tight: 1.35;
+  --w-empty-radius-lg: 12px;
+  --w-empty-gap: 12px;
+  --w-empty-padding: 32px 16px;
+  --w-empty-image-size: 184px;
+  --w-empty-title-size: 15px;
+  --w-empty-description-size: 13px;
+}
+
+[data-w-theme='dark'] .w-empty {
+  --w-empty-color-text: #e2e8f0;
+  --w-empty-color-text-secondary: #cbd5e1;
+  --w-empty-illustration-surface: #2b3a4f;
+  --w-empty-illustration-soft: #1f2b3d;
+  --w-empty-illustration-soft-strong: #475569;
+  --w-empty-illustration-gradient-start: #334155;
+  --w-empty-illustration-gradient-end: #1f2b3d;
+  --w-empty-illustration-dot: #475569;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-w-theme]) .w-empty {
+    --w-empty-color-text: #e2e8f0;
+    --w-empty-color-text-secondary: #cbd5e1;
+    --w-empty-illustration-surface: #2b3a4f;
+    --w-empty-illustration-soft: #1f2b3d;
+    --w-empty-illustration-soft-strong: #475569;
+    --w-empty-illustration-gradient-start: #334155;
+    --w-empty-illustration-gradient-end: #1f2b3d;
+    --w-empty-illustration-dot: #475569;
+  }
+}

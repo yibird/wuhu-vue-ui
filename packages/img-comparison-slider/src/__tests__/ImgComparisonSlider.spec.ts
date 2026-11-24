@@ -15,15 +15,11 @@ describe('ImgComparisonSlider', () => {
       props: {
         before: '/before.png',
         after: '/after.png',
-        showLabels: true,
         classes: {
           root: 'custom-root',
           before: 'custom-before',
           after: 'custom-after',
           image: 'custom-image',
-          label: 'custom-label',
-          beforeLabel: 'custom-before-label',
-          afterLabel: 'custom-after-label',
           handle: 'custom-handle',
           line: 'custom-line',
           knob: 'custom-knob',
@@ -45,8 +41,6 @@ describe('ImgComparisonSlider', () => {
       'custom-after',
     )
     expect(wrapper.get('.custom-before img').classes()).toContain('custom-image')
-    expect(wrapper.get('.custom-before-label').classes()).toContain('custom-label')
-    expect(wrapper.get('.custom-after-label').classes()).toContain('custom-label')
     expect(wrapper.get('.w-img-comparison-slider__handle').classes()).toContain('custom-handle')
     expect(wrapper.get('.w-img-comparison-slider__line').classes()).toContain('custom-line')
     expect(wrapper.get('.w-img-comparison-slider__knob').classes()).toContain('custom-knob')
@@ -69,14 +63,14 @@ describe('ImgComparisonSlider', () => {
     const slider = wrapper.get('[role="slider"]')
 
     await slider.trigger('keydown', { key: 'ArrowRight' })
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([55])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual([55])
     expect(wrapper.emitted('change')?.[0]).toEqual([55])
 
     await slider.trigger('keydown', { key: 'Home' })
-    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([0])
+    expect(wrapper.emitted('update:value')?.[1]).toEqual([0])
 
     await slider.trigger('keydown', { key: 'End' })
-    expect(wrapper.emitted('update:modelValue')?.[2]).toEqual([100])
+    expect(wrapper.emitted('update:value')?.[2]).toEqual([100])
     expect(slider.attributes('aria-valuenow')).toBe('100')
     expect(wrapper.emitted('dragstart')).toBeUndefined()
     expect(wrapper.emitted('dragend')).toBeUndefined()
@@ -88,26 +82,26 @@ describe('ImgComparisonSlider', () => {
     })
 
     await wrapper.get('[role="slider"]').trigger('keydown', { key: 'ArrowLeft' })
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:value')).toBeUndefined()
   })
 
   it('reverts when a controlled parent rejects the update', async () => {
     const wrapper = mount(ImgComparisonSlider, {
-      props: { modelValue: 50, keyboardStep: 5 },
+      props: { value: 50, keyboardStep: 5 },
     })
     const slider = wrapper.get('[role="slider"]')
 
     await slider.trigger('keydown', { key: 'ArrowRight' })
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([55])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual([55])
     expect(slider.attributes('aria-valuenow')).toBe('50')
   })
 
   it('updates its position when the model changes', async () => {
     const wrapper = mount(ImgComparisonSlider, {
-      props: { modelValue: 20 },
+      props: { value: 20 },
     })
 
-    await wrapper.setProps({ modelValue: 75 })
+    await wrapper.setProps({ value: 75 })
     expect(wrapper.get('[role="slider"]').attributes('aria-valuenow')).toBe('75')
   })
 
@@ -119,16 +113,38 @@ describe('ImgComparisonSlider', () => {
     expect(wrapper.get('[role="slider"]').attributes('aria-orientation')).toBe('vertical')
   })
 
-  it('clips labels together with their image layer at 0% and 100%', async () => {
-    const wrapper = mount(ImgComparisonSlider, {
-      props: { showLabels: true, beforeLabel: '概念稿', afterLabel: '成品' },
+  it('uses the arrow keys that match the slider direction', async () => {
+    const horizontal = mount(ImgComparisonSlider, { props: { keyboardStep: 5 } })
+    const horizontalSlider = horizontal.get('[role="slider"]')
+
+    await horizontalSlider.trigger('keydown', { key: 'ArrowRight' })
+    expect(horizontal.emitted('update:value')?.[0]).toEqual([55])
+
+    await horizontalSlider.trigger('keydown', { key: 'ArrowUp' })
+    expect(horizontal.emitted('update:value')).toHaveLength(1)
+    horizontal.unmount()
+
+    const vertical = mount(ImgComparisonSlider, {
+      props: { direction: 'vertical', keyboardStep: 5 },
     })
+    const verticalSlider = vertical.get('[role="slider"]')
+
+    await verticalSlider.trigger('keydown', { key: 'ArrowUp' })
+    expect(vertical.emitted('update:value')?.[0]).toEqual([45])
+
+    await verticalSlider.trigger('keydown', { key: 'ArrowDown' })
+    expect(vertical.emitted('update:value')?.[1]).toEqual([50])
+
+    await verticalSlider.trigger('keydown', { key: 'ArrowRight' })
+    expect(vertical.emitted('update:value')).toHaveLength(2)
+    vertical.unmount()
+  })
+
+  it('clips both layers at 0% and 100%', async () => {
+    const wrapper = mount(ImgComparisonSlider)
     const beforeLayer = wrapper.get('.w-img-comparison-slider__layer--before')
     const afterLayer = wrapper.get('.w-img-comparison-slider__layer--after')
     const slider = wrapper.get('[role="slider"]')
-
-    expect(beforeLayer.get('.w-img-comparison-slider__label--before').text()).toBe('概念稿')
-    expect(afterLayer.get('.w-img-comparison-slider__label--after').text()).toBe('成品')
 
     await slider.trigger('keydown', { key: 'Home' })
     expect(beforeLayer.attributes('style')).toContain('inset(0 100% 0 0)')
@@ -153,7 +169,7 @@ describe('ImgComparisonSlider', () => {
       await slider.trigger('keydown', { key: 'ArrowRight' })
     }
 
-    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([50.4])
+    expect(wrapper.emitted('update:value')?.at(-1)).toEqual([50.4])
     expect(slider.attributes('aria-valuenow')).toBe('50.4')
     expect(slider.attributes('aria-valuetext')).toBe('50.4%')
   })
@@ -205,12 +221,12 @@ describe('ImgComparisonSlider', () => {
       }) as DOMRect
 
     root.element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([20])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual([20])
 
     window.dispatchEvent(pointer('pointercancel', { clientX: 0, clientY: 0 }))
     await nextTick()
 
-    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([50])
+    expect(wrapper.emitted('update:value')?.at(-1)).toEqual([50])
     expect(wrapper.get('[role="slider"]').attributes('aria-valuenow')).toBe('50')
     wrapper.unmount()
   })
@@ -238,7 +254,7 @@ describe('ImgComparisonSlider', () => {
 
     wrapper.get('.slot-action').element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
 
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:value')).toBeUndefined()
     expect(wrapper.emitted('dragstart')).toBeUndefined()
     wrapper.unmount()
   })
@@ -264,7 +280,7 @@ describe('ImgComparisonSlider', () => {
     root.element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
 
     expect(wrapper.emitted('dragstart')?.[0]).toEqual([50])
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([20])
+    expect(wrapper.emitted('update:value')?.[0]).toEqual([20])
 
     window.dispatchEvent(pointer('pointerup', { clientX: 20 }))
     wrapper.unmount()
@@ -289,8 +305,8 @@ describe('ImgComparisonSlider', () => {
       }) as DOMRect
 
     root.element.dispatchEvent(pointer('pointerdown', { clientX: 20 }))
-    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([20])
-    const updatesWhileDragging = wrapper.emitted('update:modelValue')?.length
+    expect(wrapper.emitted('update:value')?.[0]).toEqual([20])
+    const updatesWhileDragging = wrapper.emitted('update:value')?.length
 
     await wrapper.setProps({ disabled: true })
     expect(wrapper.emitted('dragend')).toHaveLength(1)
@@ -300,7 +316,7 @@ describe('ImgComparisonSlider', () => {
     window.dispatchEvent(pointer('pointerup', { clientX: 80 }))
     await nextTick()
 
-    expect(wrapper.emitted('update:modelValue')?.length).toBe(updatesWhileDragging)
+    expect(wrapper.emitted('update:value')?.length).toBe(updatesWhileDragging)
     expect(wrapper.emitted('dragend')).toHaveLength(1)
     wrapper.unmount()
   })

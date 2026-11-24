@@ -8,6 +8,7 @@ import {
   useKeyboardNavigation,
   usePointerDrag,
 } from '@wuhu-vue-ui/core'
+import { Empty } from '@wuhu-vue-ui/empty'
 import {
   computed,
   nextTick,
@@ -1207,7 +1208,7 @@ defineExpose({
         :style="styles?.empty"
       >
         <slot name="empty">
-          <span>{{ emptyText }}</span>
+          <Empty size="sm" :title="emptyText" />
         </slot>
       </div>
     </div>

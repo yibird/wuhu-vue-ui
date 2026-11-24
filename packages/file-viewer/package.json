@@ -52,7 +52,9 @@
     "prepack": "pnpm run build"
   },
   "dependencies": {
-    "@wuhu-vue-ui/core": "workspace:*"
+    "@wuhu-vue-ui/core": "workspace:*",
+    "@wuhu-vue-ui/empty": "workspace:*",
+    "@wuhu-vue-ui/tooltip": "workspace:*"
   },
   "peerDependencies": {
     "pdfjs-dist": ">=3.0.0",

@@ -14,12 +14,6 @@
 
   --w-img-comparison-slider-knob-size: 36px;
   --w-img-comparison-slider-line: var(--w-img-comparison-slider-color-surface);
-  /*
-   * Labels sit on top of arbitrary artwork, so they keep a dark scrim in both
-   * themes. Inverting them with the theme would put white pills on light images.
-   */
-  --w-img-comparison-slider-label-bg: rgba(15, 23, 42, 0.78);
-  --w-img-comparison-slider-label-text: #ffffff;
   --w-img-comparison-slider-knob-ring: color-mix(
     in srgb,
     var(--w-img-comparison-slider-color-primary) 32%,
@@ -92,42 +86,6 @@
     /* Neutral placeholder shown after an image fails to load. */
     &.has-image-error {
       background: var(--w-img-comparison-slider-color-surface-subtle);
-    }
-  }
-
-  &__label {
-    position: absolute;
-    z-index: 3;
-    top: 12px;
-    padding: 4px 10px;
-    border: 1px solid
-      color-mix(in srgb, var(--w-img-comparison-slider-color-surface) 14%, transparent);
-    border-radius: var(--w-img-comparison-slider-radius-full);
-    background: var(--w-img-comparison-slider-label-bg, rgba(15, 23, 42, 0.78));
-    color: var(--w-img-comparison-slider-label-text, #ffffff);
-    font-family: var(--w-img-comparison-slider-font-family);
-    font-size: var(--w-img-comparison-slider-font-size-2xs);
-    font-weight: var(--w-img-comparison-slider-font-weight-semibold);
-    line-height: 1.5;
-    letter-spacing: 0.02em;
-    pointer-events: none;
-    box-shadow: var(--w-img-comparison-slider-shadow-sm);
-    backdrop-filter: blur(8px);
-
-    &--before {
-      left: 12px;
-    }
-
-    &--after {
-      right: 12px;
-    }
-  }
-
-  &--vertical &__label {
-    &--after {
-      top: auto;
-      right: 12px;
-      bottom: 12px;
     }
   }
 

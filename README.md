@@ -2,7 +2,7 @@
 
 一套面向复杂业务场景的 Vue 3 组件库。采用 pnpm monorepo 组织，一个组件一个独立包，使用 TypeScript、Less、设计令牌（Design Tokens）、Vite+ 与 Husky 构建。
 
-- 32 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、异常页、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、搜索面板、右键菜单、富文本编辑、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
+- 34 个业务组件，覆盖滚动、复制、高亮、懒加载、尺寸监听、错误边界、相对时间、文本省略、权限控制、倒计时、加载动画、页面布局、异常页、空状态、文字提示、水波纹、图片对比、图片裁剪、列表重排、滑块验证、渐变文字、滚动数字、滑块高亮、命令面板、搜索面板、右键菜单、富文本编辑、代码编辑、JSON 查看、程序坞、图标选择、组织架构图、文件预览与甘特图。
 - 每个包只将 `vue` 作为 peer dependency；`@wuhu-vue-ui/cropper` 使用 `cropperjs` 提供裁剪能力，`@wuhu-vue-ui/icon-picker` 与 `@wuhu-vue-ui/gantt` 使用 `@tanstack/vue-virtual` 提供虚拟滚动，`@wuhu-vue-ui/tiptap-editor` 使用 Tiptap 提供富文本能力，`@wuhu-vue-ui/code-editor` 将 `monaco-editor` 作为可选 peer dependency。拼音等自定义搜索由使用方通过 `CommandMenu` 的 `filter` 注入。
 - 样式基于 `--w-*` CSS 变量，内置亮色 / 暗色主题，可按项目品牌覆盖。
 - 单包构建自动注入自身样式，无需手动引入组件 CSS。
@@ -10,41 +10,43 @@
 
 ## 组件一览
 
-| 包                                   | 组件                  | 说明                                                                 |
-| ------------------------------------ | --------------------- | -------------------------------------------------------------------- |
-| `@wuhu-vue-ui/scrollbar`             | `Scrollbar`           | 模拟原生滚动行为，自定义滚动条，支持横向 / 纵向、拖拽与点击轨道      |
-| `@wuhu-vue-ui/copy`                  | `Copy`                | 剪贴板写入，`text` 支持同步 / 异步、成功 / 失败状态与降级方案        |
-| `@wuhu-vue-ui/highlight`             | `Highlight`           | 安全的多关键词高亮，支持整词匹配、大小写与作用域插槽                 |
-| `@wuhu-vue-ui/lazy-container`        | `LazyContainer`       | 基于 IntersectionObserver 的懒渲染与进入 / 离开事件                  |
-| `@wuhu-vue-ui/resize-container`      | `ResizeContainer`     | 基于 ResizeObserver 的尺寸监听，支持防抖                             |
-| `@wuhu-vue-ui/error-boundary`        | `ErrorBoundary`       | 捕获子组件渲染错误，提供默认回退与重置能力                           |
-| `@wuhu-vue-ui/time`                  | `Time`                | 自动刷新的相对时间，基于 Intl.RelativeTimeFormat                     |
-| `@wuhu-vue-ui/ellipsis`              | `Ellipsis`            | 单行 / 多行文本省略，支持展开收起、溢出检测与悬浮提示                |
-| `@wuhu-vue-ui/permission`            | `Permission`          | 组件 / 组合式函数 / 指令三种权限校验，支持 all / any 与 fallback     |
-| `@wuhu-vue-ui/count-down`            | `CountDown`           | 目标时间或时长倒计时，支持暂停、重置、格式化与完成插槽               |
-| `@wuhu-vue-ui/loading`               | `Loading`             | 5 种内置加载动画，支持全屏遮罩、插槽与命令式创建 / 销毁              |
-| `@wuhu-vue-ui/view`                  | `View`                | 可组合的 Header / Sider / Content / Footer 页面布局，支持折叠        |
-| `@wuhu-vue-ui/exception`             | `Exception`           | 400 / 403 / 404 / 500 异常页，支持插图、插槽与自定义操作             |
-| `@wuhu-vue-ui/img-comparison-slider` | `ImgComparisonSlider` | 可拖拽、触摸与键盘操作的图片对比滑块                                 |
-| `@wuhu-vue-ui/ripple`                | `Ripple`              | Material 风格水波纹，提供组件、指令与组合式函数三种用法              |
-| `@wuhu-vue-ui/cropper`               | `Cropper`             | 基于 Cropper.js 2 的图片裁剪，支持缩放、旋转、比例与导出             |
-| `@wuhu-vue-ui/motion-group`          | `MotionGroup`         | 基于 TransitionGroup 的列表重排动画，内置 4 套预设                   |
-| `@wuhu-vue-ui/slider-captcha`        | `SliderCaptcha`       | Canvas 拼图滑块验证码，支持拖拽、键盘操作与自定义背景                |
-| `@wuhu-vue-ui/gradient-text`         | `GradientText`        | 线性 / 径向 / 锥形渐变文字，支持背景流动动画                         |
-| `@wuhu-vue-ui/number-ticker`         | `NumberTicker`        | 逐位滚动的数字动画，支持千分位、前缀与小数                           |
-| `@wuhu-vue-ui/sliding-highlight`     | `SlidingHighlight`    | 跟随悬浮 / 焦点的滑块高亮容器，支持任意直接子项与自定义样式          |
-| `@wuhu-vue-ui/command-menu`          | `CommandMenu`         | 命令面板：自定义过滤、分组、键盘导航与悬浮优先高亮                   |
-| `@wuhu-vue-ui/context-menu`          | `ContextMenu`         | 命令式右键菜单：分组、快捷键、键盘导航与视口内自动定位               |
-| `@wuhu-vue-ui/search-panel`          | `SearchPanel`         | 模态搜索面板：Mod+K 唤起、焦点管理、滚动锁与快捷键提示               |
-| `@wuhu-vue-ui/tiptap-editor`         | `TiptapEditor`        | 基于 Tiptap 的富文本编辑器，内置图片上传、表格、任务列表、颜色与全屏 |
-| `@wuhu-vue-ui/code-editor`           | `CodeEditor`          | 基于 Monaco 的代码编辑器，支持 v-model、语言 / 主题切换与只读模式    |
-| `@wuhu-vue-ui/json-viewer`           | `JsonViewer`          | 基于 CodeEditor 的只读 JSON 查看器，自动格式化对象与 JSON 字符串     |
-| `@wuhu-vue-ui/dock`                  | `Dock`                | macOS 风格程序坞，支持四向布局、指针放大与插槽定制                   |
-| `@wuhu-vue-ui/icon-picker`           | `IconPicker`          | 分组、搜索与虚拟滚动的图标选择器，支持类名与 VNode 图标              |
-| `@wuhu-vue-ui/gantt`                 | `Gantt`               | 层级任务、依赖、进度、里程碑、日 / 周 / 月视图与拖拽排期             |
-| `@wuhu-vue-ui/org-tree`              | `OrgTree`             | 可缩放平移、拖拽改父级的组织架构图，支持右键菜单与节点插槽           |
-| `@wuhu-vue-ui/file-viewer`           | `FileViewer`          | 图片、音视频、PDF、Office、Markdown、代码、EPUB 与压缩包预览         |
-| `@wuhu-vue-ui/core`                  | —                     | 公共工具函数与 Vue composables（防抖、节流、复制等）                 |
+| 包                                   | 组件                  | 说明                                                                                |
+| ------------------------------------ | --------------------- | ----------------------------------------------------------------------------------- |
+| `@wuhu-vue-ui/scrollbar`             | `Scrollbar`           | 模拟原生滚动行为，自定义滚动条，支持横向 / 纵向、拖拽与点击轨道                     |
+| `@wuhu-vue-ui/copy`                  | `Copy`                | 剪贴板写入，`text` 支持同步 / 异步、成功 / 失败状态与降级方案                       |
+| `@wuhu-vue-ui/highlight`             | `Highlight`           | 安全的多关键词高亮，支持整词匹配、大小写与作用域插槽                                |
+| `@wuhu-vue-ui/lazy-container`        | `LazyContainer`       | 基于 IntersectionObserver 的懒渲染与进入 / 离开事件                                 |
+| `@wuhu-vue-ui/resize-container`      | `ResizeContainer`     | 基于 ResizeObserver 的尺寸监听，支持防抖                                            |
+| `@wuhu-vue-ui/error-boundary`        | `ErrorBoundary`       | 捕获子组件渲染错误，提供默认回退与重置能力                                          |
+| `@wuhu-vue-ui/time`                  | `Time`                | 自动刷新的相对时间，基于 Intl.RelativeTimeFormat                                    |
+| `@wuhu-vue-ui/ellipsis`              | `Ellipsis`            | 单行 / 多行文本省略，支持展开收起、溢出检测与悬浮提示                               |
+| `@wuhu-vue-ui/permission`            | `Permission`          | 组件 / 组合式函数 / 指令三种权限校验，支持 all / any 与 fallback                    |
+| `@wuhu-vue-ui/count-down`            | `CountDown`           | 目标时间或时长倒计时，支持暂停、重置、格式化与完成插槽                              |
+| `@wuhu-vue-ui/loading`               | `Loading`             | 5 种内置加载动画，支持全屏遮罩、插槽与命令式创建 / 销毁                             |
+| `@wuhu-vue-ui/view`                  | `View`                | 可组合的 Header / Sider / Content / Footer 页面布局，支持折叠                       |
+| `@wuhu-vue-ui/exception`             | `Exception`           | 400 / 403 / 404 / 500 异常页，支持插图、插槽与自定义操作                            |
+| `@wuhu-vue-ui/empty`                 | `Empty`               | 统一空状态占位，内置插图，支持自定义图片、尺寸与操作插槽                            |
+| `@wuhu-vue-ui/tooltip`               | `Tooltip`             | 统一悬浮 / 聚焦文字提示，提供组件与指令两种用法，自动翻转并 Teleport                |
+| `@wuhu-vue-ui/img-comparison-slider` | `ImgComparisonSlider` | 可拖拽、触摸与键盘操作的图片对比滑块                                                |
+| `@wuhu-vue-ui/ripple`                | `Ripple`              | Material 风格水波纹，提供组件、指令与组合式函数三种用法                             |
+| `@wuhu-vue-ui/cropper`               | `Cropper`             | 基于 Cropper.js 2 的图片裁剪，支持缩放、旋转、比例与导出                            |
+| `@wuhu-vue-ui/motion-group`          | `MotionGroup`         | 基于 TransitionGroup 的列表重排动画，内置 4 套预设                                  |
+| `@wuhu-vue-ui/slider-captcha`        | `SliderCaptcha`       | Canvas 拼图滑块验证码，支持拖拽、键盘操作与自定义背景                               |
+| `@wuhu-vue-ui/gradient-text`         | `GradientText`        | 线性 / 径向 / 锥形渐变文字，支持背景流动动画                                        |
+| `@wuhu-vue-ui/number-ticker`         | `NumberTicker`        | 逐位滚动的数字动画，支持千分位、前缀与小数                                          |
+| `@wuhu-vue-ui/sliding-highlight`     | `SlidingHighlight`    | 跟随悬浮 / 焦点的滑块高亮容器，支持任意直接子项与自定义样式                         |
+| `@wuhu-vue-ui/command-menu`          | `CommandMenu`         | 命令面板：自定义过滤、分组、键盘导航与悬浮优先高亮                                  |
+| `@wuhu-vue-ui/context-menu`          | `ContextMenu`         | 命令式右键菜单：分组、快捷键、键盘导航与视口内自动定位                              |
+| `@wuhu-vue-ui/search-panel`          | `SearchPanel`         | 模态搜索面板：Mod+K 唤起、焦点管理、滚动锁与快捷键提示                              |
+| `@wuhu-vue-ui/tiptap-editor`         | `TiptapEditor`        | 基于 Tiptap 的富文本编辑器，内置图片 / 视频 / 附件、表格、格式刷、AI 指令与实时预览 |
+| `@wuhu-vue-ui/code-editor`           | `CodeEditor`          | 基于 Monaco 的代码编辑器，支持 v-model:value、语言 / 主题切换与只读模式             |
+| `@wuhu-vue-ui/json-viewer`           | `JsonViewer`          | 基于 CodeEditor 的只读 JSON 查看器，自动格式化对象与 JSON 字符串                    |
+| `@wuhu-vue-ui/dock`                  | `Dock`                | macOS 风格程序坞，支持四向布局、指针放大与插槽定制                                  |
+| `@wuhu-vue-ui/icon-picker`           | `IconPicker`          | 分组、搜索与虚拟滚动的图标选择器，支持类名与 VNode 图标                             |
+| `@wuhu-vue-ui/gantt`                 | `Gantt`               | 层级任务、依赖、进度、里程碑、日 / 周 / 月视图与拖拽排期                            |
+| `@wuhu-vue-ui/org-tree`              | `OrgTree`             | 可缩放平移、拖拽改父级的组织架构图，支持右键菜单与节点插槽                          |
+| `@wuhu-vue-ui/file-viewer`           | `FileViewer`          | 图片、音视频、PDF、Office、Markdown、代码、EPUB 与压缩包预览                        |
+| `@wuhu-vue-ui/core`                  | —                     | 公共工具函数与 Vue composables（防抖、节流、复制等）                                |
 
 ## 技术栈
 
@@ -98,7 +100,7 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 
 ```text
 .
-├─ packages/                   # 33 个 workspace 包：core + 32 个组件包
+├─ packages/                   # 35 个 workspace 包：core + 34 个组件包
 │  ├─ core/                    # 公共工具函数、composables 与 DOM 基础设施
 │  ├─ scrollbar/               # 基础能力组件
 │  ├─ copy/
@@ -108,6 +110,7 @@ pnpm test:memory       # 路由切换后的 JS 堆趋势
 │  ├─ resize-container/
 │  ├─ error-boundary/
 │  ├─ ellipsis/
+│  ├─ tooltip/
 │  ├─ permission/
 │  ├─ count-down/
 │  ├─ loading/
@@ -414,21 +417,18 @@ const position = ref(50)
 
 <template>
   <ImgComparisonSlider
-    v-model="position"
+    v-model:value="position"
     before="/before.jpg"
     after="/after.jpg"
-    show-labels
-    before-label="Before"
-    after-label="After"
     direction="horizontal"
   />
 </template>
 ```
 
-- 支持 `v-model`、鼠标 / 触摸拖拽与键盘（方向键、Home、End、PageUp/PageDown）。
-- `direction` 支持 `horizontal` 与 `vertical`。
-- `#before`、`#after`、`#handle`、`#before-label`、`#after-label` 插槽可替换图片或手柄内容。
-- 事件：`update:modelValue`、`change`、`dragstart`、`dragend`、`error`（参数 `(side, event)`，图片加载失败时触发）。
+- 支持 `v-model:value`、鼠标 / 触摸拖拽与键盘（Home、End、PageUp/PageDown）。
+- `direction` 为 `horizontal` 时使用左右方向键，为 `vertical` 时使用上下方向键。
+- `#before`、`#after`、`#handle` 插槽可替换图片或手柄内容。
+- 事件：`update:value`、`change`、`dragstart`、`dragend`、`error`（参数 `(side, event)`，图片加载失败时触发）。
 
 ### Cropper
 
@@ -624,7 +624,7 @@ function handleSelect(item: CommandMenuItem) {
 
 <template>
   <CommandMenu
-    v-model="selected"
+    v-model:value="selected"
     :items="items"
     placeholder="搜索命令..."
     @select="handleSelect"
@@ -636,8 +636,8 @@ function handleSelect(item: CommandMenuItem) {
 - `label`、`description` 与 `keywords` 都会参与匹配；中文支持全拼（`gongzuotai`）和首字母（`gzt`）。多个关键词以空格分隔时需同时命中。
 - `groupable` 按 `group` 分组，空分组自动隐藏；无 `group` 的项会保留在一个匿名分组中。`filterable=false` 时保留全部项。
 - 键盘活动项与鼠标悬浮项是两份独立状态：鼠标高亮优先于键盘活动高亮，移开后恢复活动项。方向键循环导航并跳过禁用项与分组标题。
-- 事件：`update:modelValue`、`select`（完整菜单项）、`search`（当前文本）、`escape`、`close`。`escapeBehavior` 支持 `clear | close | none`，默认清空搜索。
-- 输入框通过 `aria-activedescendant` 关联活动项；IME 组合输入期间 Enter 不会触发选择。`modelValue` 只表示“已选中项”，键盘移动不会改变它。
+- 事件：`update:value`、`select`（完整菜单项）、`search`（当前文本）、`escape`、`close`。`escapeBehavior` 支持 `clear | close | none`，默认清空搜索。
+- 输入框通过 `aria-activedescendant` 关联活动项；IME 组合输入期间 Enter 不会触发选择。`value` 只表示“已选中项”，键盘移动不会改变它。
 - 组件局部变量使用 `--w-command-menu-*` 前缀：`--w-command-menu-active-bg`（键盘活动背景）、`--w-command-menu-hover-bg`（鼠标悬浮背景）与 `--w-command-menu-selected-bg`（选中项背景，优先于悬浮状态）。
 - `classes` / `styles` 支持按部件注入：`root`、`search`、`input`、`clear`、`list`、`group`、`groupLabel`、`item`、`empty`，例如 `:classes="{ item: 'my-item' }"`、`:styles="{ list: { maxHeight: '420px' } }"`。
 

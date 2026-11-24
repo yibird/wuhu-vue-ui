@@ -122,17 +122,16 @@
 
 ### CSS 变量
 
-| 变量                                        | 默认值                                                                       | 说明       |
-| ------------------------------------------- | ---------------------------------------------------------------------------- | ---------- |
-| `--w-gantt-grid-line`                       | `var(--w-color-border-subtle, #f1f5f9)`                                      | 网格线     |
-| `--w-gantt-weekend-bg`                      | `var(--w-color-weekend, rgba(100, 116, 139, 0.045))`                         | 周末背景   |
-| `--w-gantt-header-bg`                       | `var(--w-color-surface, #ffffff)`                                            | 表头背景   |
-| `--w-gantt-dependency-color`                | `color-mix(in srgb, var(--w-color-text-tertiary, #5b6678) 40%, transparent)` | 依赖线颜色 |
-| `--w-gantt-task-color`                      | `var(--w-color-primary, #4f46e5)`                                            | 任务主色   |
-| `--w-gantt-task-soft`                       | 由任务色计算的浅色底                                                         | 任务条背景 |
-| `--w-gantt-task-border`                     | 由任务色计算的边框色                                                         | 任务条边框 |
-| `--w-gantt-tooltip-bg` / `-text` / `-muted` | 深色提示框配色                                                               | 悬停提示   |
-| `--w-gantt-header-height`                   | `56px`                                                                       | 表头高度   |
+| 变量                         | 默认值                                                                       | 说明       |
+| ---------------------------- | ---------------------------------------------------------------------------- | ---------- |
+| `--w-gantt-grid-line`        | `var(--w-color-border-subtle, #f1f5f9)`                                      | 网格线     |
+| `--w-gantt-weekend-bg`       | `var(--w-color-weekend, rgba(100, 116, 139, 0.045))`                         | 周末背景   |
+| `--w-gantt-header-bg`        | `var(--w-color-surface, #ffffff)`                                            | 表头背景   |
+| `--w-gantt-dependency-color` | `color-mix(in srgb, var(--w-color-text-tertiary, #5b6678) 40%, transparent)` | 依赖线颜色 |
+| `--w-gantt-task-color`       | `var(--w-color-primary, #4f46e5)`                                            | 任务主色   |
+| `--w-gantt-task-soft`        | 由任务色计算的浅色底                                                         | 任务条背景 |
+| `--w-gantt-task-border`      | 由任务色计算的边框色                                                         | 任务条边框 |
+| `--w-gantt-header-height`    | `56px`                                                                       | 表头高度   |
 
 ### 类名
 
@@ -146,7 +145,8 @@
 | `.w-gantt__timeline` / `__bar`                                              | 时间轴与任务条；任务条配合 `.is-group` / `.is-milestone` / `.is-dragging` |
 | `.w-gantt__dependency-path`                                                 | 依赖连线                                                                  |
 | `.w-gantt__today-line`                                                      | 今日线                                                                    |
-| `.w-gantt__tooltip`                                                         | 悬停提示                                                                  |
+| `.w-tooltip` / `.w-gantt__tooltip-content`                                  | 共享悬停提示浮层与内容容器（Teleport 到 `body`，视口定位）                |
+| `.w-gantt__tooltip-title` / `__tooltip-dates` / `__tooltip-progress`        | 提示内容排版                                                              |
 | `.w-gantt__context-menu` / `__context-menu-item` / `__context-menu-divider` | 右键菜单                                                                  |
 | `.w-gantt__empty` / `__loading`                                             | 空状态与加载状态                                                          |
 

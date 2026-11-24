@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from '@wuhu-vue-ui/tooltip'
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import type Cropper from 'cropperjs'
 import type { CropperCanvas, CropperImage, CropperSelection } from 'cropperjs'
@@ -558,7 +559,7 @@ defineExpose<CropperExpose>({
         class="w-cropper__action"
         :disabled="!ready || !interactions.scalable"
         :aria-label="labels.zoomOut"
-        :title="labels.zoomOut"
+        v-tooltip="labels.zoomOut"
         @click="zoom(-0.1)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -570,7 +571,7 @@ defineExpose<CropperExpose>({
         class="w-cropper__action"
         :disabled="!ready || !interactions.scalable"
         :aria-label="labels.zoomIn"
-        :title="labels.zoomIn"
+        v-tooltip="labels.zoomIn"
         @click="zoom(0.1)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -582,7 +583,7 @@ defineExpose<CropperExpose>({
         class="w-cropper__action"
         :disabled="!ready || !interactions.rotatable"
         :aria-label="labels.rotateLeft"
-        :title="labels.rotateLeft"
+        v-tooltip="labels.rotateLeft"
         @click="rotate(-90)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -595,7 +596,7 @@ defineExpose<CropperExpose>({
         class="w-cropper__action"
         :disabled="!ready || !interactions.rotatable"
         :aria-label="labels.rotateRight"
-        :title="labels.rotateRight"
+        v-tooltip="labels.rotateRight"
         @click="rotate(90)"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -608,7 +609,7 @@ defineExpose<CropperExpose>({
         class="w-cropper__action"
         :disabled="!ready"
         :aria-label="labels.reset"
-        :title="labels.reset"
+        v-tooltip="labels.reset"
         @click="reset"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">

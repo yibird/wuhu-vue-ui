@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useRaf } from '@wuhu-vue-ui/core'
+import { Tooltip } from '@wuhu-vue-ui/tooltip'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import type { TooltipPlacement } from '@wuhu-vue-ui/tooltip'
 import type { ComponentPublicInstance } from 'vue'
 import type { DockItem, DockProps, DockSlots } from './types'
 
@@ -10,7 +12,6 @@ const props = withDefaults(defineProps<DockProps>(), {
   baseSize: 48,
   maxScale: 1.6,
   gap: 8,
-  ariaLabel: undefined,
 })
 
 const emit = defineEmits<{
@@ -38,9 +39,25 @@ const activeIndex = computed(() => (focusIndex.value >= 0 ? focusIndex.value : h
 let itemCenters: number[] | null = null
 let resizeObserver: ResizeObserver | undefined
 
-const items = computed(() => props.model ?? [])
+const items = computed(() => props.items ?? [])
 const isHorizontal = computed(() => props.position === 'bottom' || props.position === 'top')
 const maxScale = computed(() => Math.max(1, props.maxScale))
+
+/** Tooltips sit on the far side of the dock from the magnified item tile. */
+const tooltipPlacement = computed<TooltipPlacement>(() => {
+  switch (props.position) {
+    case 'top':
+      return 'bottom'
+    case 'left':
+      return 'right'
+    case 'right':
+      return 'left'
+    default:
+      return 'top'
+  }
+})
+
+const tooltipOffset = computed(() => props.baseSize * (maxScale.value - 1) + 12)
 
 const rootStyle = computed<Record<string, string>>(() => ({
   '--w-dock-size': `${props.baseSize}px`,
@@ -204,11 +221,11 @@ function activate(item: DockItem | undefined, index: number, event: Event) {
  * array reference misses in-place `push`/`splice`/`sort`, which would leave the
  * cached centres shorter than the list and stop new items from magnifying.
  */
-const modelSignature = computed(() =>
+const itemsSignature = computed(() =>
   items.value.map((item) => item.id ?? (item.separator ? '|' : item.label)).join('\u0000'),
 )
 
-watch([modelSignature, () => props.position, () => props.baseSize, () => props.gap], () => {
+watch([itemsSignature, () => props.position, () => props.baseSize, () => props.gap], () => {
   invalidateItemCenters()
   resetScales()
 })
@@ -240,7 +257,6 @@ onBeforeUnmount(() => {
     ref="rootRef"
     class="w-dock"
     :class="[`w-dock--${position}`, { 'is-magnifying': hovering && magnification }]"
-    :aria-label="ariaLabel"
     :style="rootStyle"
     @pointerenter="handlePointerEnter"
     @pointermove="onPointerMove"
@@ -284,11 +300,18 @@ onBeforeUnmount(() => {
               </span>
             </slot>
           </span>
-
-          <slot v-if="isActive(index)" name="tooltip" :item="item">
-            <span class="w-dock__tooltip" aria-hidden="true">{{ item.label }}</span>
-          </slot>
         </button>
+
+        <Tooltip
+          v-if="isActive(index)"
+          :anchor="itemRefs[index] ?? null"
+          :placement="tooltipPlacement"
+          :offset="tooltipOffset"
+        >
+          <template #content>
+            <slot name="tooltip" :item="item">{{ item.label }}</slot>
+          </template>
+        </Tooltip>
       </li>
     </template>
   </ul>
